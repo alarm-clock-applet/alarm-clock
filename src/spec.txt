@@ -1,0 +1,43 @@
+
+
+
+Preferences:
+-------------
+
+Display:
+	Show icon?
+	Show label?
+		Alarm time
+		Time remaining
+		...
+
+Notification:
+	One of:
+	Play sound
+		Which sound?
+		Loop sound?
+	Start Rhythmbox
+	Command
+	
+	Extra:
+	Show notification bubble?
+
+Left-click:
+-----------
+	When alarm is ringing: Snooze
+	Otherwise:
+		Open set alarm dialog
+
+Right-click:
+-------------
+	Snooze(?)
+	Set alarm (default)
+	Clear alarm
+	Preferences
+	About
+	
+When ringing:
+-------------
+	Clock should "shake" back and forth.
+	Label should flash.
+	

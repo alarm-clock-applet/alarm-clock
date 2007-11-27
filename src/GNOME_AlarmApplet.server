@@ -1,0 +1,26 @@
+<oaf_info>
+<oaf_server iid="OAFIID:GNOME_AlarmApplet_Factory" type="exe"
+			location="/home/joh/workspace/alarm-applet/alarm-applet">
+
+	<oaf_attribute name="repo_ids" type="stringv">
+		<item value="IDL:Bonobo/GenericFactory:1.0"/>
+		<item value="IDL:Bonobo/Unknown:1.0"/>
+	</oaf_attribute>
+	<oaf_attribute name="name" type="string" value="Alarm Applet Factory"/>
+	<oaf_attribute name="description" type="string" value="Factory to create the alarm applet"/>
+</oaf_server>
+
+<oaf_server iid="OAFIID:GNOME_AlarmApplet" type="factory"
+	    	location="OAFIID:GNOME_AlarmApplet_Factory">
+
+	<oaf_attribute name="repo_ids" type="stringv">
+		<item value="IDL:GNOME/Vertigo/PanelAppletShell:1.0"/>
+		<item value="IDL:Bonobo/Control:1.0"/>
+		<item value="IDL:Bonobo/Unknown:1.0"/>
+	</oaf_attribute>
+	<oaf_attribute name="name" type="string" value="Alarm Clock"/>
+	<oaf_attribute name="description" type="string" value="Get up in the morning!"/>
+	<oaf_attribute name="panel:category" type="string" value="Accessories"/>
+	<oaf_attribute name="panel:icon" type="string" value="stock_alarm.png"/>
+</oaf_server>
+</oaf_info>
