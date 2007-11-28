@@ -6,7 +6,7 @@ G_BEGIN_DECLS
 #define ALARM_ICON 		 "stock_alarm.png"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 "../ui/alarm-applet.glade"
-#define ALARM_SOUNDS_DIR "/shared/workspace/gnome-alarmclock-applet/sounds"
+#define ALARM_SOUNDS_DIR "/usr/share/sounds"
 
 /* GConf keys */
 #define KEY_ALARMTIME		"alarm_time"
