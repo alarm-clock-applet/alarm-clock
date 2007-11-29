@@ -1937,6 +1937,8 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	// Set label visibility
 	g_object_set (applet->label, "visible", applet->show_label, NULL);
+	
+	g_debug ("GLADE DIR: %s", GNOME_GLADEDIR);
 
 	return TRUE;
 }

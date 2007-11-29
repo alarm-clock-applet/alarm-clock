@@ -1,5 +1,23 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* datadir */
+#undef DATADIR
+
+/* Glade Resources Directory */
+#undef GNOME_GLADEDIR
+
+/* Gnome Icon Directory */
+#undef GNOME_ICONDIR
+
+/* Gnome Pixmaps Directory */
+#undef GNOME_PIXMAPSDIR
+
+/* Gnome Sounds Directory */
+#undef GNOME_SOUNDSDIR
+
+/* libdir */
+#undef LIBDIR
+
 /* Name of package */
 #undef PACKAGE
 
@@ -17,6 +35,12 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* install prefix */
+#undef PREFIX
+
+/* sysconfdir */
+#undef SYSCONFDIR
 
 /* Version number of package */
 #undef VERSION

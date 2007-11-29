@@ -1,6 +1,6 @@
 <oaf_info>
 <oaf_server iid="OAFIID:GNOME_AlarmApplet_Factory" type="exe"
-			location="/home/joh/workspace/alarm-applet/alarm-applet">
+			location="@BINDIR@/alarm-applet">
 
 	<oaf_attribute name="repo_ids" type="stringv">
 		<item value="IDL:Bonobo/GenericFactory:1.0"/>
