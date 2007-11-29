@@ -1,2 +1,2 @@
 SUBDIRS = src
-DIST_SUBDIRS = src ui
+DIST_SUBDIRS = src
