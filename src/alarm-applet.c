@@ -797,13 +797,11 @@ alarm_file_entry_list_free (GList **list)
 	GList *l;
 	AlarmFileEntry *e;
 	
-	g_debug ("Alarm_file_entry_list_free (%p => )", list, *list);
+	g_debug ("Alarm_file_entry_list_free (%p => %p)", list, *list);
 	
 	// Free data
 	for (l = *list; l; l = l->next) {
-		g_debug ("\t Try to free from list %p data: %p", l, l->data);
 		e = (AlarmFileEntry *)l->data;
-		g_debug ("\t Try to free %p", e);
 		alarm_file_entry_free (e);
 	}
 	
@@ -835,11 +833,13 @@ load_stock_sounds_list (AlarmApplet *applet)
 		}
 	}
 	
+	alarm_file_entry_list_free(&(applet->sounds));
+	
 	// Free old stock sounds
-	for (l = applet->sounds, i = 0; l && i < applet->stock_sounds; l = l->next, i++) {
+	/*for (l = applet->sounds, i = 0; l && i < applet->stock_sounds; l = l->next, i++) {
 		alarm_file_entry_free ((AlarmFileEntry *)l->data);
 	}
-	g_list_free (applet->sounds);
+	g_list_free (applet->sounds);*/
 	
 	// Update stock length and sounds
 	applet->sounds = new;
@@ -1680,10 +1680,8 @@ button_cb (GtkWidget *widget,
 }
 
 static void
-destroy_cb (GtkObject *object)
+destroy_cb (GtkObject *object, AlarmApplet *applet)
 {
-	AlarmApplet *applet = (AlarmApplet *)object;
-	
 	if (applet->sounds != NULL) {
 		alarm_file_entry_list_free(&(applet->sounds));
 	}
