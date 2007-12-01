@@ -797,9 +797,13 @@ alarm_file_entry_list_free (GList **list)
 	GList *l;
 	AlarmFileEntry *e;
 	
+	g_debug ("Alarm_file_entry_list_free (%p => )", list, *list);
+	
 	// Free data
 	for (l = *list; l; l = l->next) {
+		g_debug ("\t Try to free from list %p data: %p", l, l->data);
 		e = (AlarmFileEntry *)l->data;
+		g_debug ("\t Try to free %p", e);
 		alarm_file_entry_free (e);
 	}
 	
@@ -1173,6 +1177,9 @@ started_gconf_changed (GConfClient  *client,
 	gboolean value;
 	time_t now;
 	
+	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
+		return;
+	
 	value = gconf_value_get_bool (entry->value);
 	time (&now);
 	
@@ -1197,6 +1204,9 @@ show_label_gconf_changed (GConfClient  *client,
 {
 	g_debug ("show_label_changed");
 	
+	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
+		return;
+	
 	applet->show_label = gconf_value_get_bool (entry->value);
 	
 	g_object_set (applet->label, "visible", applet->show_label, NULL);
@@ -1215,6 +1225,9 @@ label_type_gconf_changed (GConfClient  *client,
 	g_debug ("label_type_changed");
 	
 	const gchar *tmp;
+	
+	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
+		return;
 	
 	tmp = gconf_value_get_string (entry->value);
 	if (tmp) {
@@ -1240,6 +1253,9 @@ notify_type_gconf_changed (GConfClient  *client,
 	g_debug ("notify_type_changed");
 	
 	const gchar *tmp;
+	
+	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
+		return;
 	
 	tmp = gconf_value_get_string (entry->value);
 	if (tmp) {
@@ -1348,6 +1364,9 @@ sound_file_gconf_changed (GConfClient  *client,
 						  GConfEntry   *entry,
 						  AlarmApplet  *applet)
 {
+	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
+		return;
+	
 	const gchar *value = gconf_value_get_string (entry->value);
 	
 	g_debug ("sound_file_changed to %s", value);
@@ -1369,6 +1388,9 @@ sound_loop_gconf_changed (GConfClient  *client,
 {
 	g_debug ("sound_loop_changed");
 	
+	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
+		return;
+	
 	applet->notify_sound_loop = gconf_value_get_bool (entry->value);
 	
 	if (applet->preferences_dialog != NULL) {
@@ -1386,7 +1408,8 @@ command_gconf_changed (GConfClient  *client,
 {
 	g_debug ("command_changed");
 	
-	//const gchar *entry_value = gtk_entr
+	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
+		return;
 	
 	applet->notify_command = (gchar *)gconf_value_get_string (entry->value);
 	
@@ -1402,6 +1425,9 @@ notify_bubble_gconf_changed (GConfClient  *client,
 							 AlarmApplet  *applet)
 {
 	g_debug ("notify_bubble_changed");
+	
+	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
+		return;
 	
 	applet->notify_bubble = gconf_value_get_bool (entry->value);
 	
@@ -1819,6 +1845,8 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	AlarmApplet *applet;
 	AlarmFileEntry *item;
 	GtkWidget *hbox;
+	GdkPixbuf *icon;
+	GtkIconTheme *theme;
 	gchar *tmp;
 	
 	if (strcmp (iid, "OAFIID:GNOME_AlarmApplet") != 0)
@@ -1871,9 +1899,21 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	hbox = gtk_hbox_new(FALSE, 6);
 	
 	/* Set up icon and label */
-	applet->icon = g_object_new(GTK_TYPE_IMAGE, 
-								"file", "stock_alarm.png",
-								NULL);
+	theme = gtk_icon_theme_get_default ();
+	
+	icon = gtk_icon_theme_load_icon (theme,
+									 ALARM_ICON,
+									 22,
+									 0, NULL);
+	
+	if (icon == NULL) {
+		g_critical ("Icon not found.");
+	}
+	
+	applet->icon = gtk_image_new_from_pixbuf (icon);
+	
+	if (icon)
+		g_object_unref (icon);
 	
 	applet->label = g_object_new(GTK_TYPE_LABEL,
 								 "label", _("No alarm"),

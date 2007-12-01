@@ -21,6 +21,6 @@
 	<oaf_attribute name="name" type="string" value="Alarm Clock"/>
 	<oaf_attribute name="description" type="string" value="Get up in the morning!"/>
 	<oaf_attribute name="panel:category" type="string" value="Accessories"/>
-	<oaf_attribute name="panel:icon" type="string" value="stock_alarm.png"/>
+	<oaf_attribute name="panel:icon" type="string" value="alarm-clock.png"/>
 </oaf_server>
 </oaf_info>

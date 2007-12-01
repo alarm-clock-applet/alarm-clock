@@ -7,7 +7,7 @@ G_BEGIN_DECLS
 #include "config.h"
 #endif
 
-#define ALARM_ICON 		 "stock_alarm.png"
+#define ALARM_ICON 		 "alarm-clock"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR

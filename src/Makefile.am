@@ -28,6 +28,49 @@ $(server_DATA): $(server_in_files)
 uidir = $(gladedir)
 ui_DATA = ui/alarm-applet.glade
 
+icons =	\
+	alarm-clock.svg		\
+	alarm-clock.16.png	\
+	alarm-clock.22.png	\
+	alarm-clock.24.png	\
+	alarm-clock.32.png
+
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
+
+install-icons:
+	for icon in $(icons); do \
+		SIZE=`echo $$icon | cut -d. -f2`; \
+		FILE=`echo $$icon | cut -d. -f1,3`; \
+		if [ "$$SIZE" = "svg" ]; then \
+			SIZE="scalable"; \
+			FILE="$$FILE.svg"; \
+		else \
+			SIZE="$${SIZE}x$${SIZE}"; \
+		fi; \
+		mkdir -p $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/; \
+		$(INSTALL_DATA) $(srcdir)/icons/$$icon $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/$$FILE; \
+	done
+	@-if test -z "$(DESTDIR)"; then \
+		echo "Updating Gtk icon cache."; \
+		$(gtk_update_icon_cache); \
+	else \
+		echo "*** Icon cache not updated. After install, run this:"; \
+		echo "***   $(gtk_update_icon_cache)"; \
+	fi
+
+uninstall-icons:
+	for icon in $(icons); do \
+		SIZE=`echo $$icon | cut -d. -f2`; \
+		FILE=`echo $$icon | cut -d. -f1,3`; \
+		if [ "$$SIZE" = "svg" ]; then \
+			SIZE="scalable"; \
+			FILE="$$FILE.svg"; \
+		else \
+			SIZE="$${SIZE}x$${SIZE}"; \
+		fi; \
+		rm -f $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/$$FILE; \
+	done
+
 schemasdir   = @GCONF_SCHEMA_FILE_DIR@
 schemas_in_files = alarm.schemas.in
 schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
@@ -42,7 +85,9 @@ install-schemas: $(schemas_DATA)
 		$(schemas_DATA); \
 	fi
 
-install-data-local: install-schemas
+install-data-local: install-schemas install-icons
+
+uninstall-local: uninstall-icons
 
 #@INTLTOOL_SCHEMAS_RULE@
 
