@@ -1844,7 +1844,6 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	AlarmFileEntry *item;
 	GtkWidget *hbox;
 	GdkPixbuf *icon;
-	GtkIconTheme *theme;
 	gchar *tmp;
 	
 	if (strcmp (iid, "OAFIID:GNOME_AlarmApplet") != 0)
@@ -1897,9 +1896,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	hbox = gtk_hbox_new(FALSE, 6);
 	
 	/* Set up icon and label */
-	theme = gtk_icon_theme_get_default ();
-	
-	icon = gtk_icon_theme_load_icon (theme,
+	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
 									 ALARM_ICON,
 									 22,
 									 0, NULL);
@@ -1983,8 +1980,8 @@ alarm_applet_factory (PanelApplet *panelapplet,
 
 PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_AlarmApplet_Factory",
                              PANEL_TYPE_APPLET,
-                             "AlarmApplet",
-                             "0",
+                             "alarm_applet",
+                             VERSION,
                              alarm_applet_factory,
                              NULL);
 

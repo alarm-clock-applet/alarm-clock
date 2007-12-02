@@ -12,6 +12,10 @@ G_BEGIN_DECLS
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
 
+#ifndef VERSION
+#define VERSION "0.1"
+#endif
+
 /* GConf keys */
 #define KEY_ALARMTIME		"alarm_time"
 #define KEY_MESSAGE			"message"
