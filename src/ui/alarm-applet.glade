@@ -2,7 +2,6 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
-<requires lib="gnome"/>
 
 <widget class="GtkDialog" id="preferences">
   <property name="width_request">290</property>
@@ -387,9 +386,8 @@
 			  <property name="spacing">6</property>
 
 			  <child>
-			    <widget class="GtkComboBox" id="app-select">
+			    <widget class="GtkComboBox" id="app-combo">
 			      <property name="visible">True</property>
-			      <property name="items" translatable="yes"></property>
 			      <property name="add_tearoffs">False</property>
 			      <property name="focus_on_click">True</property>
 			    </widget>

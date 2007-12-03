@@ -9,6 +9,7 @@
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>
 #include <libgnomevfs/gnome-vfs.h>
+#include <libgnomevfs/gnome-vfs-application-registry.h>
 
 #include <panel-applet.h>
 #include <panel-applet-gconf.h>
@@ -104,10 +105,184 @@ to_basename (const gchar *filename)
 	return result;
 }
 
+static AlarmListEntry *
+alarm_list_entry_new (const gchar *name, const gchar *data, const gchar *icon)
+{
+	AlarmListEntry *entry;
+	
+	entry = g_new (AlarmListEntry, 1);
+	
+	entry->name = NULL;
+	entry->data = NULL;
+	entry->icon = NULL;
+	
+	if (name)
+		entry->name = g_strdup (name);
+	if (data)
+		entry->data = g_strdup (data);
+	if (icon)
+		entry->icon = g_strdup (icon);
+	
+	return entry;
+}
+
+static AlarmListEntry *
+alarm_list_entry_new_file (const gchar *data, GnomeVFSResult *ret, gchar **mime_ret)
+{
+	AlarmListEntry *entry;
+	GnomeVFSResult result;
+	GnomeVFSFileInfo *info;
+	GtkIconTheme *theme;
+	
+	theme = gtk_icon_theme_get_default ();
+	info = gnome_vfs_file_info_new ();
+	
+	result = gnome_vfs_get_file_info (data, info, 
+				GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS);
+	
+	if (ret != NULL)
+		*ret = result;
+	
+	if (result != GNOME_VFS_OK) {
+		g_critical ("Could not open uri: %s", data);
+		return NULL;
+	}
+	
+	entry = g_new (AlarmListEntry, 1);
+	entry->data = g_strdup (data);
+	entry->name = to_basename (info->name);
+	entry->icon = gnome_icon_lookup(theme, NULL,
+							 		entry->data, NULL, info,
+							 		info->mime_type, 0, 0);
+	
+	g_debug ("alarm_file_entry_new(%s) => %s, %s, %s", data, entry->data, entry->name, entry->icon);
+	
+	if (mime_ret != NULL)
+		*mime_ret = g_strdup (info->mime_type);
+	
+	gnome_vfs_file_info_unref (info);
+	
+	return entry;
+}
+
+static GList *
+alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
+{
+	GnomeVFSResult result;
+	GnomeVFSFileInfoOptions options;
+	GnomeVFSFileInfo *info;
+	
+	GtkIconTheme *theme;
+	
+	GList *list, *l, *flist;
+	AlarmListEntry *entry;
+	const gchar *mime;
+	gboolean valid;
+	gint i;
+	
+	theme = gtk_icon_theme_get_default ();
+	
+	
+	options = GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS;
+	
+	result = gnome_vfs_directory_list_load (&list, dir_uri, options);
+	
+	if (result != GNOME_VFS_OK) {
+		g_critical ("Could not open sounds directory: " ALARM_SOUNDS_DIR);
+		return NULL;
+	}
+	
+	g_debug ("Loading files in " ALARM_SOUNDS_DIR " ...");
+	
+	flist = NULL;
+	
+	for (l = list; l; l = l->next) {
+		info = l->data;
+		//g_debug ("-- %s", info->name);
+		if (info->type == GNOME_VFS_FILE_TYPE_REGULAR) {
+			mime = gnome_vfs_file_info_get_mime_type(info);
+			//g_debug (" [ regular file: MIME: %s ]", mime);
+			
+			valid = TRUE;
+			if (supported_types != NULL) {
+				valid = FALSE;
+				for (i = 0; supported_types[i] != NULL; i++) {
+					if (strstr (mime, supported_types[i]) != NULL) {
+						// MATCH
+						//g_debug (" [ MATCH ]");
+						valid = TRUE;
+						break;
+					}
+				}
+			}
+			
+			if (valid) {
+				entry = g_new (AlarmListEntry, 1);
+				entry->data = g_strdup_printf ("%s/%s", dir_uri, info->name);
+				entry->name = to_basename (info->name);
+				entry->icon = gnome_icon_lookup(theme, NULL,
+												entry->data, NULL, info,
+												mime, 0, 0);
+				//g_debug ("Icon found: %s", entry->icon);
+				flist = g_list_append (flist, entry);
+			}
+		}
+	}
+	
+	gnome_vfs_file_info_list_free (list);
+	
+	return flist;
+}
+
+static void
+alarm_list_entry_free (AlarmListEntry *e)
+{
+	g_free (e->data);
+	g_free (e->name);
+	g_free (e->icon);
+	g_free (e);
+}
+
+static void
+alarm_list_entry_list_free (GList **list)
+{
+	GList *l;
+	AlarmListEntry *e;
+	
+	g_debug ("Alarm_file_entry_list_free (%p => %p)", list, *list);
+	
+	// Free data
+	for (l = *list; l; l = l->next) {
+		e = (AlarmListEntry *)l->data;
+		alarm_list_entry_free (e);
+	}
+	
+	g_list_free (*list);
+	
+	*list = NULL;
+}
+
 /*
  * }} UTIL
  */
 
+/*
+ * Command handling {{
+ */
+
+static void
+command_run (AlarmApplet *applet) {
+	GError *err = NULL;
+	
+	if (!g_spawn_command_line_async (applet->notify_command, &err)) {
+		g_critical ("Could not launch `%s': %s", applet->notify_command, err->message);
+		g_error_free (err);
+	}
+}
+
+/*
+ * }} Command handling
+ */
 
 /*
  * Media player {{
@@ -380,6 +555,7 @@ trigger_alarm (AlarmApplet *applet)
 	case NOTIFY_COMMAND:
 		// Start app
 		g_debug ("START APP");
+		command_run (applet);
 		break;
 	default:
 		g_debug ("NOTIFICATION TYPE Not yet implemented.");
@@ -534,9 +710,9 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 	GtkTreeModel *model;
 	GtkCellRenderer *renderer;
 	GtkTreeIter iter;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf = NULL;
 	GtkIconTheme *theme;
-	AlarmFileEntry *entry;
+	AlarmListEntry *entry;
 	
 	g_debug ("fill_combo_box... %d", g_list_length (list));
 
@@ -566,17 +742,25 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 					NULL);
 
 	for (l = list; l != NULL; l = g_list_next (l)) {
-		entry = (AlarmFileEntry *) l->data;
+		entry = (AlarmListEntry *) l->data;
 		
-		g_debug ("Adding %s", entry->name);
+		g_debug ("Entry is %p", entry);
+		g_debug ("Adding URL %s", entry->data);
+		g_debug ("\t name: %s", entry->name);
+		g_debug ("\t icon: %s", entry->icon);
 		
 		pixbuf = gtk_icon_theme_load_icon (theme, entry->icon, 22, 0, NULL);
-	
+		
+		g_debug ("\t pixbuf: %s", pixbuf);
+		
+		g_debug ("#1");
 		gtk_list_store_append (GTK_LIST_STORE (model), &iter);
+		g_debug ("#2");
 		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 					PIXBUF_COL, pixbuf,
 					TEXT_COL, entry->name,
 					-1);
+		g_debug ("#3");
 	
 		//item->icon_path = gtk_tree_model_get_string_from_iter (model, &iter);
 	
@@ -674,153 +858,18 @@ display_set_alarm_dialog (AlarmApplet *applet)
 					  G_CALLBACK (set_alarm_dialog_response_cb), applet);
 }
 
-static AlarmFileEntry *
-alarm_file_entry_new (const gchar *uri, GnomeVFSResult *ret, gchar **mime_ret)
-{
-	AlarmFileEntry *entry;
-	GnomeVFSResult result;
-	GnomeVFSFileInfo *info;
-	GtkIconTheme *theme;
-	
-	theme = gtk_icon_theme_get_default ();
-	info = gnome_vfs_file_info_new ();
-	
-	result = gnome_vfs_get_file_info (uri, info, 
-				GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS);
-	
-	if (ret != NULL)
-		*ret = result;
-	
-	if (result != GNOME_VFS_OK) {
-		g_critical ("Could not open uri: %s", uri);
-		return NULL;
-	}
-	
-	entry = g_new (AlarmFileEntry, 1);
-	entry->uri = g_strdup (uri);
-	entry->name = to_basename (info->name);
-	entry->icon = gnome_icon_lookup(theme, NULL,
-							 		entry->uri, NULL, info,
-							 		info->mime_type, 0, 0);
-	
-	g_debug ("alarm_file_entry_new(%s) => %s, %s, %s", uri, entry->uri, entry->name, entry->icon);
-	
-	if (mime_ret != NULL)
-		*mime_ret = g_strdup (info->mime_type);
-	
-	gnome_vfs_file_info_unref (info);
-	
-	return entry;
-}
-
-static GList *
-alarm_file_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
-{
-	GnomeVFSResult result;
-	GnomeVFSFileInfoOptions options;
-	GnomeVFSFileInfo *info;
-	
-	GtkIconTheme *theme;
-	
-	GList *list, *l, *flist;
-	AlarmFileEntry *entry;
-	const gchar *mime;
-	gboolean valid;
-	gint i;
-	
-	theme = gtk_icon_theme_get_default ();
-	
-	
-	options = GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS;
-	
-	result = gnome_vfs_directory_list_load (&list, dir_uri, options);
-	
-	if (result != GNOME_VFS_OK) {
-		g_critical ("Could not open sounds directory: " ALARM_SOUNDS_DIR);
-		return NULL;
-	}
-	
-	g_debug ("Loading files in " ALARM_SOUNDS_DIR " ...");
-	
-	flist = NULL;
-	
-	for (l = list; l; l = l->next) {
-		info = l->data;
-		//g_debug ("-- %s", info->name);
-		if (info->type == GNOME_VFS_FILE_TYPE_REGULAR) {
-			mime = gnome_vfs_file_info_get_mime_type(info);
-			//g_debug (" [ regular file: MIME: %s ]", mime);
-			
-			valid = TRUE;
-			if (supported_types != NULL) {
-				valid = FALSE;
-				for (i = 0; supported_types[i] != NULL; i++) {
-					if (strstr (mime, supported_types[i]) != NULL) {
-						// MATCH
-						//g_debug (" [ MATCH ]");
-						valid = TRUE;
-						break;
-					}
-				}
-			}
-			
-			if (valid) {
-				entry = g_new (AlarmFileEntry, 1);
-				entry->uri = g_strdup_printf ("%s/%s", dir_uri, info->name);
-				entry->name = to_basename (info->name);
-				entry->icon = gnome_icon_lookup(theme, NULL,
-												entry->uri, NULL, info,
-												mime, 0, 0);
-				//g_debug ("Icon found: %s", entry->icon);
-				flist = g_list_append (flist, entry);
-			}
-		}
-	}
-	
-	gnome_vfs_file_info_list_free (list);
-	
-	return flist;
-}
-
-static void
-alarm_file_entry_free (AlarmFileEntry *e)
-{
-	g_free (e->uri);
-	g_free (e->name);
-	g_free (e->icon);
-	g_free (e);
-}
-
-static void
-alarm_file_entry_list_free (GList **list)
-{
-	GList *l;
-	AlarmFileEntry *e;
-	
-	g_debug ("Alarm_file_entry_list_free (%p => %p)", list, *list);
-	
-	// Free data
-	for (l = *list; l; l = l->next) {
-		e = (AlarmFileEntry *)l->data;
-		alarm_file_entry_free (e);
-	}
-	
-	g_list_free (*list);
-	
-	*list = NULL;
-}
-
 // Load stock sounds into list
 static void
 load_stock_sounds_list (AlarmApplet *applet)
 {
+	AlarmListEntry *entry, *new_entry;
 	GList *new, *l;
 	guint i, new_stock_len;
 	
 	//if (applet->sounds != NULL)
 	//	alarm_file_entry_list_free (&(applet->sounds));
 	
-	new = alarm_file_entry_list_new ("file://" ALARM_SOUNDS_DIR,
+	new = alarm_list_entry_list_new ("file://" ALARM_SOUNDS_DIR,
 									 supported_sound_mime_types);
 	
 	new_stock_len = g_list_length (new);
@@ -829,11 +878,13 @@ load_stock_sounds_list (AlarmApplet *applet)
 	if (g_list_length (applet->sounds) > applet->stock_sounds) {
 		l = g_list_nth (applet->sounds, applet->stock_sounds);
 		for (; l; l = l->next) {
-			new = g_list_append (new, l->data);
+			entry	  = (AlarmListEntry *) l->data;
+			new_entry = alarm_list_entry_new (entry->name, entry->data, entry->icon);
+			new = g_list_append (new, new_entry);
 		}
 	}
 	
-	alarm_file_entry_list_free(&(applet->sounds));
+	alarm_list_entry_list_free(&(applet->sounds));
 	
 	// Free old stock sounds
 	/*for (l = applet->sounds, i = 0; l && i < applet->stock_sounds; l = l->next, i++) {
@@ -845,6 +896,20 @@ load_stock_sounds_list (AlarmApplet *applet)
 	applet->sounds = new;
 	applet->stock_sounds = new_stock_len;
 }
+
+// Load stock apps into list
+static void
+load_app_list (AlarmApplet *applet)
+{
+	AlarmListEntry *entry;
+	
+	if (applet->apps != NULL)
+		alarm_list_entry_list_free (&(applet->apps));
+	
+	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
+	applet->apps = g_list_append (applet->apps, entry);
+}
+
 
 static void
 preferences_dialog_response_cb (GtkDialog *dialog,
@@ -922,7 +987,7 @@ pref_update_notify_type (AlarmApplet *applet)
 static void
 pref_update_sound_file (AlarmApplet *applet)
 {
-	AlarmFileEntry *item;
+	AlarmListEntry *item;
 	GtkTreeModel *model = NULL;
 	GtkTreeIter iter;
 	GtkTreePath *path;
@@ -953,7 +1018,7 @@ pref_update_sound_file (AlarmApplet *applet)
 		pos = combo_len - 2;
 		
 		for (l = g_list_nth (applet->sounds, pos); l != NULL; l = l->next, pos++) {
-			item = (AlarmFileEntry *) l->data;
+			item = (AlarmListEntry *) l->data;
 			
 			g_debug ("Adding %s to combo...", item->name);
 			
@@ -1021,7 +1086,7 @@ preferences_dialog_display (AlarmApplet *applet)
 	applet->pref_notify_sound_loop        = glade_xml_get_widget (ui, "sound-loop");
 	applet->pref_notify_app               = glade_xml_get_widget (ui, "start-app");
 	applet->pref_notify_app_box           = glade_xml_get_widget (ui, "app-box");
-	applet->pref_notify_app_select        = glade_xml_get_widget (ui, "app-select");
+	applet->pref_notify_app_combo         = glade_xml_get_widget (ui, "app-combo");
 	applet->pref_notify_app_command_box   = glade_xml_get_widget (ui, "app-command-box");
 	applet->pref_notify_app_command_entry = glade_xml_get_widget (ui, "app-command");
 	applet->pref_notify_bubble            = glade_xml_get_widget (ui, "notify-bubble");
@@ -1029,9 +1094,16 @@ preferences_dialog_display (AlarmApplet *applet)
 	// Load sounds list
 	load_stock_sounds_list (applet);
 	
-	// Fill
+	// Fill stock sounds
 	fill_combo_box (GTK_COMBO_BOX (applet->pref_notify_sound_combo),
 					applet->sounds, _("Select sound file..."));
+	
+	// Load applications list
+	load_app_list (applet);
+	
+	// Fill apps
+	fill_combo_box (GTK_COMBO_BOX (applet->pref_notify_app_combo),
+					applet->apps, _("Custom command..."));
 	
 	// Update UI
 	pref_update_label_show (applet);
@@ -1073,7 +1145,7 @@ preferences_dialog_display (AlarmApplet *applet)
 	g_signal_connect (applet->pref_notify_sound_loop, "toggled",
 					  G_CALLBACK (pref_notify_sound_loop_changed_cb), applet);
 	
-	g_signal_connect (applet->pref_notify_app_select, "changed",
+	g_signal_connect (applet->pref_notify_app_combo, "changed",
 					  G_CALLBACK (pref_notify_app_changed_cb), applet);
 	
 	g_signal_connect (applet->pref_notify_app_command_entry, "changed",
@@ -1273,7 +1345,7 @@ notify_type_gconf_changed (GConfClient  *client,
 static gboolean
 set_sound_file (AlarmApplet *applet, const gchar *uri)
 {
-	AlarmFileEntry *item, *p;
+	AlarmListEntry *item, *p;
 	GnomeVFSResult result;
 	gchar *mime;
 	GList *l;
@@ -1285,7 +1357,7 @@ set_sound_file (AlarmApplet *applet, const gchar *uri)
 	
 	g_debug ("set_sound_file (%s)", uri);
 	
-	item = alarm_file_entry_new (uri, &result, &mime);
+	item = alarm_list_entry_new_file (uri, &result, &mime);
 	
 	if (item == NULL) {
 		g_debug ("Invalid sound file: %s", uri);
@@ -1329,9 +1401,9 @@ set_sound_file (AlarmApplet *applet, const gchar *uri)
 	
 	// See if it's one of the already loaded files
 	for (l = applet->sounds, pos = 0; l != NULL; l = l->next, pos++) {
-		p = (AlarmFileEntry *) l->data;
-		g_debug ("CHECK %s == %s", p->uri, uri);
-		if (strcmp (p->uri, uri) == 0) {
+		p = (AlarmListEntry *) l->data;
+		g_debug ("CHECK %s == %s", p->data, uri);
+		if (strcmp (p->data, uri) == 0) {
 			g_debug ("set_sound_file FOUND at pos %d", pos);
 			break;
 		}
@@ -1341,6 +1413,7 @@ set_sound_file (AlarmApplet *applet, const gchar *uri)
 	
 	// If not, add it to the list
 	if (pos == g_list_length (applet->sounds)) {
+		g_debug ("Adding to list: %s %s %s", item->name, item->data, item->icon);
 		applet->sounds = g_list_append (applet->sounds, item);
 	}
 	
@@ -1352,10 +1425,10 @@ set_sound_file (AlarmApplet *applet, const gchar *uri)
 static const gchar *
 get_sound_file (AlarmApplet *applet)
 {
-	AlarmFileEntry *e;
-	e = (AlarmFileEntry *) g_list_nth_data (applet->sounds, applet->sound_pos);
+	AlarmListEntry *e;
+	e = (AlarmListEntry *) g_list_nth_data (applet->sounds, applet->sound_pos);
 	
-	return (const gchar *)e->uri;
+	return (const gchar *)e->data;
 }
 
 static void
@@ -1536,7 +1609,7 @@ pref_notify_sound_combo_changed_cb (GtkComboBox *combo,
 	g_debug ("Combo_changed");
 	
 	GtkTreeModel *model;
-	AlarmFileEntry *item;
+	AlarmListEntry *item;
 	guint current_index, len, combo_len;
 	
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (applet->pref_notify_sound_combo));
@@ -1557,9 +1630,9 @@ pref_notify_sound_combo_changed_cb (GtkComboBox *combo,
 		return;
 	}
 	
-	item = (AlarmFileEntry *) g_list_nth_data (applet->sounds, current_index);
+	item = (AlarmListEntry *) g_list_nth_data (applet->sounds, current_index);
 	
-	panel_applet_gconf_set_string (applet->parent, KEY_SOUND_FILE, item->uri, NULL);
+	panel_applet_gconf_set_string (applet->parent, KEY_SOUND_FILE, item->data, NULL);
 }
 
 static void
@@ -1586,7 +1659,7 @@ pref_play_sound_cb (GtkButton *button,
 
 static void
 pref_notify_app_changed_cb (GtkEditable *editable,
-								AlarmApplet *applet)
+							AlarmApplet *applet)
 {
 	
 	
@@ -1683,7 +1756,7 @@ static void
 destroy_cb (GtkObject *object, AlarmApplet *applet)
 {
 	if (applet->sounds != NULL) {
-		alarm_file_entry_list_free(&(applet->sounds));
+		alarm_list_entry_list_free(&(applet->sounds));
 	}
 
 	timer_remove (applet);
@@ -1841,7 +1914,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 					  gpointer data)
 {
 	AlarmApplet *applet;
-	AlarmFileEntry *item;
+	AlarmListEntry *item;
 	GtkWidget *hbox;
 	GdkPixbuf *icon;
 	gchar *tmp;
@@ -1862,6 +1935,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->preview_player = NULL;
 	applet->sounds = NULL;
 	applet->sound_pos = 0;
+	applet->apps = NULL;
 	
 	applet->parent = panelapplet;
 	

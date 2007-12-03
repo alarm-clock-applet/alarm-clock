@@ -4,4 +4,5 @@
 <glade-project>
   <name>Alarm Applet</name>
   <program_name>alarm-applet</program_name>
+  <gnome_support>FALSE</gnome_support>
 </glade-project>

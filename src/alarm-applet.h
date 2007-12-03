@@ -51,9 +51,9 @@ enum
 
 typedef struct {
 	gchar *name;
-	gchar *uri;
+	gchar *data;
 	gchar *icon;
-} AlarmFileEntry;
+} AlarmListEntry;
 
 typedef struct {
 	PanelApplet *parent;
@@ -93,7 +93,7 @@ typedef struct {
 	
 	GtkWidget *pref_notify_app;
 	GtkWidget *pref_notify_app_box;
-	GtkWidget *pref_notify_app_select;
+	GtkWidget *pref_notify_app_combo;
 	GtkWidget *pref_notify_app_command_box;
 	GtkWidget *pref_notify_app_command_entry;
 	
@@ -109,6 +109,7 @@ typedef struct {
 	GList *sounds;
 	guint stock_sounds;	// Number of stock sounds
 	guint sound_pos;	// Position of the current selected sound in the sounds list.
+	GList *apps;
 	
 	/* GStreamer */
 	GstElement *player;

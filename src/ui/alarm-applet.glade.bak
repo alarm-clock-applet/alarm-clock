@@ -2,7 +2,6 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
-<requires lib="gnome"/>
 
 <widget class="GtkDialog" id="preferences">
   <property name="width_request">290</property>
@@ -285,14 +284,10 @@
 			      <property name="spacing">0</property>
 
 			      <child>
-				<widget class="GtkFileChooserButton" id="sound-choose">
+				<widget class="GtkComboBox" id="sound-combo">
 				  <property name="visible">True</property>
-				  <property name="title" translatable="yes">Select A File</property>
-				  <property name="action">GTK_FILE_CHOOSER_ACTION_OPEN</property>
-				  <property name="local_only">True</property>
-				  <property name="show_hidden">False</property>
-				  <property name="do_overwrite_confirmation">False</property>
-				  <property name="width_chars">-1</property>
+				  <property name="add_tearoffs">False</property>
+				  <property name="focus_on_click">True</property>
 				</widget>
 				<packing>
 				  <property name="padding">0</property>
@@ -391,9 +386,8 @@
 			  <property name="spacing">6</property>
 
 			  <child>
-			    <widget class="GtkComboBox" id="app-select">
+			    <widget class="GtkComboBox" id="app-combo">
 			      <property name="visible">True</property>
-			      <property name="items" translatable="yes"></property>
 			      <property name="add_tearoffs">False</property>
 			      <property name="focus_on_click">True</property>
 			    </widget>
