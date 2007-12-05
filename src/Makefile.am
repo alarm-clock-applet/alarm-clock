@@ -15,8 +15,10 @@ LDADD =							\
 	$(LIBGLADE_LIBS)			\
 	$(GST_LIBS)					
 
-bin_PROGRAMS = alarm-applet
+bin_PROGRAMS = alarm-applet test_player
 alarm_applet_SOURCES = alarm-applet.c alarm-applet.h
+
+test_player_SOURCES = player.c player.h test_player.c
 
 serverdir       = $(libdir)/bonobo/servers
 server_in_files = GNOME_AlarmApplet.server.in
