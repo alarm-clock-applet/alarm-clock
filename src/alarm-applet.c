@@ -1,6 +1,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+#include <libxml/parser.h>
 
 #include <gtk/gtk.h>
 #include <gnome.h>
@@ -284,152 +285,51 @@ command_run (AlarmApplet *applet) {
  * }} Command handling
  */
 
-/*
- * Media player {{
+/**
+ * Player error
  */
 static void
-player_stop (AlarmApplet *applet)
+player_error_cb (MediaPlayer *player, GError *err, AlarmApplet *applet)
 {
-	if (applet->gst_watch_id) {
-		g_source_remove (applet->gst_watch_id);
-		
-		applet->gst_watch_id = 0;
-	}
+	gchar *uri;
 	
-	if (applet->player != NULL) {
-		g_debug ("Stopping player.");
-		gst_element_set_state (applet->player, GST_STATE_NULL);
-		g_debug ("Deleting pipeline\n");
+	uri = media_player_get_uri (player);
+	g_critical ("Could not play '%s': %s", err->message);
+	g_free (uri);
+	
+	if (applet->preferences_dialog)
+		display_error_dialog ("Could not play", err->message, GTK_WINDOW (applet->preferences_dialog));
+}
+
+static void
+player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApplet *applet)
+{
+	if (state == MEDIA_PLAYER_STOPPED) {
+		if (player == applet->player)
+			applet->player = NULL;
+		else if (player == applet->preview_player)
+			applet->preview_player = NULL;
 		
-		g_debug ("player is now %p", applet->player);
-		gst_object_unref (GST_OBJECT (applet->player));
+		g_debug ("Freeing media player %p", player);
 		
-		applet->player = NULL;
+		media_player_free (player);
 	}
 }
 
 static void
-player_preview_stop (AlarmApplet *applet)
+player_preview_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApplet *applet)
 {
-	/*if (applet->gst_watch_id) {
-		g_source_remove (applet->gst_watch_id);
-		
-		applet->gst_watch_id = 0;
-	}*/
+	const gchar *stock;
 	
-	if (applet->preview_player != NULL) {
-		gst_element_set_state (applet->preview_player, GST_STATE_NULL);
-		gst_object_unref (GST_OBJECT (applet->preview_player));
-		applet->preview_player = NULL;
-	}
+	if (state == MEDIA_PLAYER_PLAYING)
+		stock = "gtk-media-stop";
+	else
+		stock = "gtk-media-play";
 	
 	// Set stock
-	gtk_button_set_label (GTK_BUTTON (applet->pref_notify_sound_preview), "gtk-media-play");
-}
-
-static gboolean
-player_bus_check_errors (GstMessage *message, AlarmApplet *applet)
-{
-//	g_debug ("Got %s message\n", GST_MESSAGE_TYPE_NAME (message));
+	gtk_button_set_label (GTK_BUTTON (applet->pref_notify_sound_preview), stock);
 	
-	switch (GST_MESSAGE_TYPE (message)) {
-	case GST_MESSAGE_ERROR: {
-		GError *err;
-		gchar *debug;
-		
-		gst_message_parse_error (message, &err, &debug);
-		g_debug ("GStreamer error: %s\n", err->message);
-		display_error_dialog ("Could not play", err->message, GTK_WINDOW (applet->preferences_dialog));
-		g_error_free (err);
-		g_free (debug);
-		
-		return FALSE;
-		break;
-	}
-	default:
-		break;
-	}
-	
-	// No errors
-	return TRUE;
-}
-
-static gboolean
-player_bus_cb (GstBus     *bus,
-			 GstMessage *message,
-			 AlarmApplet *applet)
-{
-//	g_debug ("Got %s message\n", GST_MESSAGE_TYPE_NAME (message));
-	
-	if (player_bus_check_errors (message, applet)) {
-		if (GST_MESSAGE_TYPE (message) == GST_MESSAGE_EOS) {
-			// End of Stream, do we loop?
-			if (!applet->notify_sound_loop) {
-				player_stop (applet);
-				return FALSE;
-			}
-			
-			// Loop
-			gst_element_set_state (applet->player, GST_STATE_READY);
-			gst_element_set_state (applet->player, GST_STATE_PLAYING);
-		}
-		
-		// Keep notifying us
-		return TRUE;
-	}
-	
-	// There were errors
-	player_stop (applet);
-	
-	return FALSE;
-}
-
-static gboolean
-player_preview_bus_cb (GstBus     *bus,
-		 			   GstMessage *message,
-		 			   AlarmApplet *applet)
-{
-	// Any errors or EOS?
-	if (!player_bus_check_errors (message, applet) ||
-		GST_MESSAGE_TYPE (message) == GST_MESSAGE_EOS) {
-		
-		g_debug ("Stopping preview player.");
-		
-		player_preview_stop (applet);
-		
-		return FALSE;
-	}
-
-	// Keep notifying us
-	return TRUE;
-}
-
-static GstElement *
-create_player (const gchar *uri)
-{
-	GstElement *player, *audiosink, *videosink;
-	
-	// Initialize GStreamer
-	gst_init (NULL, NULL);
-	
-	/* Set up player */
-	player    = gst_element_factory_make ("playbin", "player");
-	audiosink = gst_element_factory_make ("gconfaudiosink", "player-audiosink");
-	videosink = gst_element_factory_make ("gconfvideosink", "player-videosink");
-	
-	if (!player || !audiosink || !videosink) {
-		g_critical ("Could not create player");
-		return NULL;
-	}
-	
-	// Set uri and sinks
-	g_object_set (player,
-				  "uri", uri, 
-				  "audio-sink", audiosink,
-				  "video-sink", videosink,
-				  NULL);
-	
-	return player;
+	player_state_cb (player, state, applet);
 }
 
 /**
@@ -438,44 +338,33 @@ create_player (const gchar *uri)
 static void
 player_start (AlarmApplet *applet)
 {
-	GstBus *bus;
+	if (applet->player == NULL)
+		applet->player = media_player_new (get_sound_file (applet),
+										   applet->notify_sound_loop,
+										   player_state_cb, applet,
+										   player_error_cb, applet);
 	
-	// Create player
-	applet->player = create_player (get_sound_file (applet));
+	media_player_set_uri (applet->player, get_sound_file (applet));
 	
-	// Attach bus watcher
-	bus = gst_pipeline_get_bus (GST_PIPELINE (applet->player));
-	applet->gst_watch_id = gst_bus_add_watch (bus, (GstBusFunc) player_bus_cb, applet);
-	gst_object_unref (bus);
-		
-	// Start playing
-	g_debug ("Playing %s...", get_sound_file (applet));
+	media_player_start (applet->player);
 	
-	gst_element_set_state (applet->player, GST_STATE_PLAYING);
+	g_debug ("player_start...");
 }
 
 static void
 player_preview_start (AlarmApplet *applet)
 {
-	GstBus *bus;
+	if (applet->preview_player == NULL)
+		applet->preview_player = media_player_new (get_sound_file (applet),
+												   FALSE,
+												   player_preview_state_cb, applet,
+												   player_error_cb, applet);
 	
-	if (applet->preview_player != NULL)
-		return;
+	media_player_set_uri (applet->preview_player, get_sound_file (applet));
+	
+	media_player_start (applet->preview_player);
 	
 	g_debug ("preview_start...");
-	
-	// Create player
-	applet->preview_player = create_player (get_sound_file (applet));
-	
-	// Attach bus watcher
-	bus = gst_pipeline_get_bus (GST_PIPELINE (applet->preview_player));
-	gst_bus_add_watch (bus, (GstBusFunc) player_preview_bus_cb, applet);
-	gst_object_unref (bus);
-	
-	gst_element_set_state (applet->preview_player, GST_STATE_PLAYING);
-	
-	// Set stock
-	gtk_button_set_label (GTK_BUTTON (applet->pref_notify_sound_preview), "gtk-media-stop");
 }
 
 /*
@@ -572,7 +461,8 @@ clear_alarm (AlarmApplet *applet)
 	update_label (applet);
 	
 	// Stop playback if present.
-	player_stop (applet);
+	if (applet->player && applet->player->state == MEDIA_PLAYER_PLAYING)
+		media_player_stop (applet->player);
 }
 
 static gboolean
@@ -744,26 +634,14 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 	for (l = list; l != NULL; l = g_list_next (l)) {
 		entry = (AlarmListEntry *) l->data;
 		
-		g_debug ("Entry is %p", entry);
-		g_debug ("Adding URL %s", entry->data);
-		g_debug ("\t name: %s", entry->name);
-		g_debug ("\t icon: %s", entry->icon);
-		
 		pixbuf = gtk_icon_theme_load_icon (theme, entry->icon, 22, 0, NULL);
 		
-		g_debug ("\t pixbuf: %s", pixbuf);
-		
-		g_debug ("#1");
 		gtk_list_store_append (GTK_LIST_STORE (model), &iter);
-		g_debug ("#2");
 		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 					PIXBUF_COL, pixbuf,
 					TEXT_COL, entry->name,
 					-1);
-		g_debug ("#3");
-	
-		//item->icon_path = gtk_tree_model_get_string_from_iter (model, &iter);
-	
+		
 		if (pixbuf)
 			g_object_unref (pixbuf);
 	}
@@ -897,17 +775,137 @@ load_stock_sounds_list (AlarmApplet *applet)
 	applet->stock_sounds = new_stock_len;
 }
 
+static gboolean
+is_executable_valid (gchar *executable)
+{
+    gchar *path;
+
+    path = g_find_program_in_path (executable);
+
+    if (path) {
+		g_free (path);
+		return TRUE;
+    }
+
+    return FALSE;
+}
+
+static gchar*
+gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
+{
+    const gchar * const *sys_langs;
+    xmlChar *node_lang;
+    xmlNode *element;
+    gchar *ret_val = NULL;
+    xmlChar *xml_val_name;
+    gint len;
+    gint i;
+
+    g_return_val_if_fail (parent != NULL, ret_val);
+    g_return_val_if_fail (parent->children != NULL, ret_val);
+    g_return_val_if_fail (val_name != NULL, ret_val);
+
+#if GLIB_CHECK_VERSION (2, 6, 0)
+    sys_langs = g_get_language_names ();
+#endif
+
+    xml_val_name = xmlCharStrdup (val_name);
+    len = xmlStrlen (xml_val_name);
+
+    for (element = parent->children; element != NULL; element = element->next) {
+		if (!xmlStrncmp (element->name, xml_val_name, len)) {
+		    node_lang = xmlNodeGetLang (element);
+	
+		    if (node_lang == NULL) {
+		    	ret_val = (gchar *) xmlNodeGetContent (element);
+		    } else {
+				for (i = 0; sys_langs[i] != NULL; i++) {
+				    if (!strcmp (sys_langs[i], node_lang)) {
+						ret_val = (gchar *) xmlNodeGetContent (element);
+						/* since sys_langs is sorted from most desirable to
+						 * least desirable, exit at first match
+						 */
+						break;
+				    }
+				}
+		    }
+		    xmlFree (node_lang);
+		}
+    }
+
+    xmlFree (xml_val_name);
+    return ret_val;
+}
+
 // Load stock apps into list
 static void
 load_app_list (AlarmApplet *applet)
 {
 	AlarmListEntry *entry;
+	gchar *filename, *name, *icon, *command;
+	xmlDoc *xml_doc;
+	xmlNode *root, *section, *element;
+    gchar *executable;
 	
 	if (applet->apps != NULL)
 		alarm_list_entry_list_free (&(applet->apps));
+
+	// We'll get the default media players from g-d-a.xml
+	// from gnome-control-center
+	filename = g_build_filename (DATADIR,
+								 "gnome-control-center",
+					 			 "gnome-default-applications.xml",
+					 			 NULL);
 	
-	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
-	applet->apps = g_list_append (applet->apps, entry);
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		g_critical ("Could not find %s.", filename);
+		return;
+	}
+
+    xml_doc = xmlParseFile (filename);
+
+    if (!xml_doc) {
+    	g_warning ("Could not load %s.", filename);
+    	return;
+    }
+
+    root = xmlDocGetRootElement (xml_doc);
+
+	for (section = root->children; section != NULL; section = section->next) {
+		if (!xmlStrncmp (section->name, "media-players", 13)) {
+		    for (element = section->children; element != NULL; element = element->next) {
+				if (!xmlStrncmp (element->name, "media-player", 12)) {
+				    executable = gnome_da_xml_get_string (element, "executable");
+				    if (is_executable_valid (executable)) {
+				    	name = gnome_da_xml_get_string (element, "name");
+				    	command = gnome_da_xml_get_string (element, "command");
+						icon = gnome_da_xml_get_string (element, "icon-name");
+						
+						g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
+						
+						entry = alarm_list_entry_new (name, command, icon);
+						
+						g_free (name);
+						g_free (command);
+						g_free (icon);
+						
+						applet->apps = g_list_append (applet->apps, entry);
+				    }
+				    
+				    if (executable)
+				    	g_free (executable);
+				}
+		    }
+	    }
+	}
+	
+	
+	
+	
+	g_free (filename);
+	
+//	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
+//	applet->apps = g_list_append (applet->apps, entry);
 }
 
 
@@ -934,7 +932,9 @@ preferences_dialog_response_cb (GtkDialog *dialog,
 	update_label (applet);
 	timer_start (applet);*/
 	
-	player_preview_stop (applet);
+	if (applet->preview_player) {
+		media_player_stop (applet->preview_player);
+	}
 	
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 	applet->preferences_dialog = NULL;
@@ -1054,6 +1054,8 @@ static void
 pref_update_command (AlarmApplet *applet)
 {
 	g_object_set (applet->pref_notify_app_command_entry, "text", applet->notify_command, NULL);
+	
+	
 }
 
 static void
@@ -1146,7 +1148,7 @@ preferences_dialog_display (AlarmApplet *applet)
 					  G_CALLBACK (pref_notify_sound_loop_changed_cb), applet);
 	
 	g_signal_connect (applet->pref_notify_app_combo, "changed",
-					  G_CALLBACK (pref_notify_app_changed_cb), applet);
+					  G_CALLBACK (pref_notify_app_combo_changed_cb), applet);
 	
 	g_signal_connect (applet->pref_notify_app_command_entry, "changed",
 					  G_CALLBACK (pref_notify_app_command_changed_cb), applet);
@@ -1372,7 +1374,6 @@ set_sound_file (AlarmApplet *applet, const gchar *uri)
 		return FALSE;
 	}
 	
-	// TODO: Add MIME type checks?
 	valid = FALSE;
 	for (i = 0; supported_sound_mime_types[i] != NULL; i++) {
 		if (strstr (mime, supported_sound_mime_types[i]) != NULL) {
@@ -1465,6 +1466,9 @@ sound_loop_gconf_changed (GConfClient  *client,
 		return;
 	
 	applet->notify_sound_loop = gconf_value_get_bool (entry->value);
+	
+	if (applet->player)
+		applet->player->loop = applet->notify_sound_loop;
 	
 	if (applet->preferences_dialog != NULL) {
 		pref_update_sound_loop (applet);
@@ -1648,9 +1652,9 @@ static void
 pref_play_sound_cb (GtkButton *button,
 					AlarmApplet *applet)
 {
-	if (applet->preview_player != NULL) {
+	if (applet->preview_player && applet->preview_player->state == MEDIA_PLAYER_PLAYING) {
 		// Stop preview player
-		player_preview_stop (applet);
+		media_player_stop (applet->preview_player);
 	} else {
 		// Start preview player
 		player_preview_start (applet);
@@ -1658,11 +1662,37 @@ pref_play_sound_cb (GtkButton *button,
 }
 
 static void
-pref_notify_app_changed_cb (GtkEditable *editable,
-							AlarmApplet *applet)
+pref_notify_app_combo_changed_cb (GtkComboBox *combo,
+								  AlarmApplet *applet)
 {
+	g_debug ("APP Combo_changed");
 	
+	GtkTreeModel *model;
+	AlarmListEntry *item;
+	guint current_index, len, combo_len;
 	
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (applet->pref_notify_app_combo));
+	combo_len = gtk_tree_model_iter_n_children (model, NULL);
+	current_index = gtk_combo_box_get_active (combo);
+	len = g_list_length (applet->apps);
+	
+	if (current_index < 0)
+		// None selected
+		return;
+	
+	if (current_index >= len) {
+		// Select sound file
+		g_debug ("CUSTOM command selected...");
+		
+		g_object_set (applet->pref_notify_app_command_entry, "sensitive", TRUE, NULL);
+		return;
+	}
+	
+	g_object_set (applet->pref_notify_app_command_entry, "sensitive", FALSE, NULL);
+	
+	item = (AlarmListEntry *) g_list_nth_data (applet->apps, current_index);
+	
+	panel_applet_gconf_set_string (applet->parent, KEY_COMMAND, item->data, NULL);
 }
 
 static void
@@ -1930,7 +1960,6 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->started = FALSE;
 	applet->alarm_triggered = FALSE;
 	applet->timer_id = 0;
-	applet->gst_watch_id = 0;
 	applet->player = NULL;
 	applet->preview_player = NULL;
 	applet->sounds = NULL;

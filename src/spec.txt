@@ -41,3 +41,24 @@ When ringing:
 	Clock should "shake" back and forth.
 	Label should flash.
 	
+	
+Modules:
+-------------
+
+applet.c		- Main module, loads UI etc.
+gconf.c			- GConf setters and callbacks
+
+timer.c			- Timer
+player.c		- Media player
+alarm.c			- Alarm notification types, player, command, ...
+
+list-entry.c	- AlarmListEntry
+util.c			- Misc utilities (?)
+
+ui.c			- User interface
+ui_prefs.c		- Preferences
+
+
+
+
+

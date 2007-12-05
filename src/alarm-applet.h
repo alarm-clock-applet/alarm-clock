@@ -3,6 +3,8 @@
 
 G_BEGIN_DECLS
 
+#include "player.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -111,10 +113,9 @@ typedef struct {
 	guint sound_pos;	// Position of the current selected sound in the sounds list.
 	GList *apps;
 	
-	/* GStreamer */
-	GstElement *player;
-	GstElement *preview_player;
-	guint gst_watch_id;
+	/* MediaPlayer */
+	MediaPlayer *player;
+	MediaPlayer *preview_player;
 	
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
@@ -129,7 +130,7 @@ static void display_set_alarm_dialog (AlarmApplet *applet);
 static void pref_label_show_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
 static void pref_label_type_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
 static void pref_notify_type_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_notify_app_changed_cb (GtkEditable *editable, AlarmApplet *applet);
+static void pref_notify_app_combo_changed_cb (GtkComboBox *combo, AlarmApplet *applet);
 static void pref_notify_app_command_changed_cb (GtkEditable *editable, AlarmApplet *applet);
 static void pref_notify_bubble_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
 static void pref_notify_sound_loop_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);

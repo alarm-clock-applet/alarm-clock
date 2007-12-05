@@ -10,18 +10,18 @@ INCLUDES =						\
 
 bin_PROGRAMS = alarm-applet test_player
 
-alarm_applet_SOURCES = alarm-applet.c alarm-applet.h
+test_player_SOURCES = player.c player.h test_player.c
+test_player_LDADD =				\
+	$(GLIB_LIBS)				\
+	$(GST_LIBS)
+
+alarm_applet_SOURCES = alarm-applet.c alarm-applet.h player.c player.h
 alarm_applet_LDADD =			\
 	$(GLIB_LIBS)				\
 	$(GNOME_LIBS2_LIBS)			\
 	$(GNOME_APPLETS_LIBS)		\
 	$(LIBGLADE_LIBS)			\
 	$(GST_LIBS)	
-
-test_player_SOURCES = player.c player.h test_player.c
-test_player_LDADD =				\
-	$(GLIB_LIBS)				\
-	$(GST_LIBS)
 
 serverdir       = $(libdir)/bonobo/servers
 server_in_files = GNOME_AlarmApplet.server.in
