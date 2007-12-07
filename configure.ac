@@ -131,5 +131,6 @@ AC_DEFINE_DIR(PREFIX, "${prefix}", [install prefix])
 
 
 AC_CONFIG_FILES([Makefile
-				 src/Makefile])
+				 src/Makefile
+				 src/tests/Makefile])
 AC_OUTPUT

@@ -8,12 +8,7 @@ INCLUDES =						\
 	$(GLIB_CFLAGS)				\
 	-I$(includedir) 			
 
-bin_PROGRAMS = alarm-applet test_player
-
-test_player_SOURCES = player.c player.h test_player.c
-test_player_LDADD =				\
-	$(GLIB_LIBS)				\
-	$(GST_LIBS)
+bin_PROGRAMS = alarm-applet
 
 alarm_applet_SOURCES = alarm-applet.c alarm-applet.h player.c player.h
 alarm_applet_LDADD =			\
