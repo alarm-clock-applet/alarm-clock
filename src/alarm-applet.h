@@ -23,6 +23,7 @@ G_BEGIN_DECLS
 #include "alarm-applet.h"
 #include "player.h"
 #include "util.h"
+#include "list-entry.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -69,12 +70,6 @@ enum
     TEXT_COL,
     N_COLUMNS
 };
-
-typedef struct {
-	gchar *name;
-	gchar *data;
-	gchar *icon;
-} AlarmListEntry;
 
 typedef struct {
 	PanelApplet *parent;

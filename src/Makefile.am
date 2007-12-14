@@ -10,7 +10,10 @@ INCLUDES =						\
 
 bin_PROGRAMS = alarm-applet
 
-alarm_applet_SOURCES = alarm-applet.c alarm-applet.h player.c player.h util.c util.h
+alarm_applet_SOURCES = alarm-applet.c alarm-applet.h \
+					   player.c player.h			 \
+					   util.c util.h				 \
+					   list-entry.c list-entry.h
 alarm_applet_LDADD =			\
 	$(GLIB_LIBS)				\
 	$(GNOME_LIBS2_LIBS)			\
