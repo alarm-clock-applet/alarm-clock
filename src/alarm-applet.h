@@ -3,7 +3,26 @@
 
 G_BEGIN_DECLS
 
+#include <string.h>
+#include <sys/time.h>
+#include <time.h>
+#include <libxml/parser.h>
+
+#include <gtk/gtk.h>
+#include <gnome.h>
+#include <glade/glade.h>
+#include <gdk/gdkkeysyms.h>
+#include <gconf/gconf-client.h>
+#include <gst/gst.h>
+#include <libgnomevfs/gnome-vfs.h>
+#include <libgnomevfs/gnome-vfs-application-registry.h>
+
+#include <panel-applet.h>
+#include <panel-applet-gconf.h>
+
+#include "alarm-applet.h"
 #include "player.h"
+#include "util.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
