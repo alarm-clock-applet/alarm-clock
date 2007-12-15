@@ -1,8 +1,6 @@
 #ifndef ALARMAPPLET_H_
 #define ALARMAPPLET_H_
 
-G_BEGIN_DECLS
-
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
@@ -20,7 +18,26 @@ G_BEGIN_DECLS
 #include <panel-applet.h>
 #include <panel-applet-gconf.h>
 
+G_BEGIN_DECLS
+
+typedef struct _AlarmApplet AlarmApplet;
+
+void update_label (AlarmApplet *applet);
+void timer_remove (AlarmApplet *applet);
+gboolean set_sound_file (AlarmApplet *applet, const gchar *uri);
+void timer_start (AlarmApplet *applet);
+void set_alarm_dialog_populate (AlarmApplet *applet);
+
+void pref_update_label_show (AlarmApplet *applet);
+void pref_update_label_type (AlarmApplet *applet);
+void pref_update_notify_type (AlarmApplet *applet);
+void pref_update_sound_file (AlarmApplet *applet);
+void pref_update_sound_loop (AlarmApplet *applet);
+void pref_update_command (AlarmApplet *applet);
+void pref_update_show_bubble (AlarmApplet *applet);
+
 #include "alarm-applet.h"
+#include "alarm-gconf.h"
 #include "player.h"
 #include "util.h"
 #include "list-entry.h"
@@ -37,20 +54,6 @@ G_BEGIN_DECLS
 #ifndef VERSION
 #define VERSION "0.1"
 #endif
-
-/* GConf keys */
-#define KEY_ALARMTIME		"alarm_time"
-#define KEY_MESSAGE			"message"
-#define KEY_STARTED			"started"
-#define KEY_SHOW_LABEL		"show_label"
-#define KEY_LABEL_TYPE		"label_type"
-#define KEY_NOTIFY_TYPE		"notify_type"
-#define KEY_SOUND_FILE		"sound_file"
-#define KEY_SOUND_LOOP		"sound_repeat"
-#define KEY_COMMAND			"command"
-#define KEY_NOTIFY_BUBBLE	"notify_bubble"
-
-#define N_GCONF_PREFS	10
 
 typedef enum {
 	LABEL_TYPE_INVALID = 0,
@@ -71,7 +74,7 @@ enum
     N_COLUMNS
 };
 
-typedef struct {
+struct _AlarmApplet {
 	PanelApplet *parent;
 	GtkWidget *icon;	/* alarm icon */
 	GtkWidget *label;	/* clock label */
@@ -133,13 +136,10 @@ typedef struct {
 	
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
-} AlarmApplet;
+};
 
 static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
 //static void time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
-static void update_label (AlarmApplet *applet);
-static void timer_remove (AlarmApplet *applet);
-static void set_alarm_dialog_populate (AlarmApplet *applet);
 static void display_set_alarm_dialog (AlarmApplet *applet);
 static void pref_label_show_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
 static void pref_label_type_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
