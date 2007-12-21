@@ -27,4 +27,7 @@ to_basename (const gchar *filename);
 gboolean
 command_run (const gchar *command);
 
+gboolean
+is_executable_valid (gchar *executable);
+
 #endif /*UTIL_H_*/

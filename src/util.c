@@ -3,6 +3,7 @@
  * 
  */
 
+#include <string.h>
 #include <time.h>
 #include <glib.h>
 #include "util.h"
@@ -84,4 +85,19 @@ command_run (const gchar *command) {
 	}
 	
 	return TRUE;
+}
+
+gboolean
+is_executable_valid (gchar *executable)
+{
+    gchar *path;
+
+    path = g_find_program_in_path (executable);
+
+    if (path) {
+		g_free (path);
+		return TRUE;
+    }
+
+    return FALSE;
 }

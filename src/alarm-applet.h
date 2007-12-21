@@ -27,20 +27,17 @@ void timer_remove (AlarmApplet *applet);
 gboolean set_sound_file (AlarmApplet *applet, const gchar *uri);
 void timer_start (AlarmApplet *applet);
 void set_alarm_dialog_populate (AlarmApplet *applet);
+const gchar *get_sound_file (AlarmApplet *applet);
+void load_stock_sounds_list (AlarmApplet *applet);
+void load_app_list (AlarmApplet *applet);
+void player_preview_start (AlarmApplet *applet);
 
-void pref_update_label_show (AlarmApplet *applet);
-void pref_update_label_type (AlarmApplet *applet);
-void pref_update_notify_type (AlarmApplet *applet);
-void pref_update_sound_file (AlarmApplet *applet);
-void pref_update_sound_loop (AlarmApplet *applet);
-void pref_update_command (AlarmApplet *applet);
-void pref_update_show_bubble (AlarmApplet *applet);
-
-#include "alarm-applet.h"
+#include "prefs.h"
 #include "alarm-gconf.h"
 #include "player.h"
 #include "util.h"
 #include "list-entry.h"
+#include "ui.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -140,18 +137,6 @@ struct _AlarmApplet {
 
 static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
 //static void time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
-static void display_set_alarm_dialog (AlarmApplet *applet);
-static void pref_label_show_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_label_type_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_notify_type_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_notify_app_combo_changed_cb (GtkComboBox *combo, AlarmApplet *applet);
-static void pref_notify_app_command_changed_cb (GtkEditable *editable, AlarmApplet *applet);
-static void pref_notify_bubble_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_notify_sound_loop_changed_cb (GtkToggleButton *togglebutton, AlarmApplet *applet);
-static void pref_notify_sound_combo_changed_cb (GtkComboBox *combo, AlarmApplet *applet);
-static void pref_play_sound_cb (GtkButton *button, AlarmApplet *applet);
-static void display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent);
-static const gchar *get_sound_file (AlarmApplet *applet);
 
 G_END_DECLS
 
