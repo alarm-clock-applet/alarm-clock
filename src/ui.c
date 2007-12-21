@@ -214,6 +214,133 @@ display_set_alarm_dialog (AlarmApplet *applet)
 					  G_CALLBACK (set_alarm_dialog_response_cb), applet);
 }
 
+
+static gboolean
+button_cb (GtkWidget *widget,
+						GdkEventButton *event,
+						gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	g_debug("BUTTON: %d", event->button);
+	
+	/* React only to left mouse button */
+	if (event->button == 2 || event->button == 3) {
+		return FALSE;
+	}
+	
+	/* TODO: if alarm is triggered { snooze } else */
+	
+	if (applet->alarm_triggered) {
+		g_debug ("Stopping alarm!");
+		clear_alarm (applet);
+	} else {
+		display_set_alarm_dialog (applet);
+	}
+	
+	return TRUE;
+}
+
+static void
+applet_back_change (PanelApplet			*a,
+					PanelAppletBackgroundType	type,
+					GdkColor			*color,
+					GdkPixmap			*pixmap,
+					AlarmApplet			*applet) 
+{
+        /* taken from the TrashApplet */
+        GtkRcStyle *rc_style;
+        GtkStyle *style;
+
+        /* reset style */
+        gtk_widget_set_style (GTK_WIDGET (applet->parent), NULL);
+        rc_style = gtk_rc_style_new ();
+        gtk_widget_modify_style (GTK_WIDGET (applet->parent), rc_style);
+        gtk_rc_style_unref (rc_style);
+
+        switch (type) {
+                case PANEL_COLOR_BACKGROUND:
+                        gtk_widget_modify_bg (GTK_WIDGET (applet->parent),
+                                        GTK_STATE_NORMAL, color);
+                        break;
+
+                case PANEL_PIXMAP_BACKGROUND:
+                        style = gtk_style_copy (GTK_WIDGET (
+                        		applet->parent)->style);
+                        if (style->bg_pixmap[GTK_STATE_NORMAL])
+                                g_object_unref
+                                        (style->bg_pixmap[GTK_STATE_NORMAL]);
+                        style->bg_pixmap[GTK_STATE_NORMAL] = g_object_ref
+                                (pixmap);
+                        gtk_widget_set_style (GTK_WIDGET (applet->parent),
+                                        style);
+                        g_object_unref (style);
+                        break;
+
+                case PANEL_NO_BACKGROUND:
+                default:
+                        break;
+        }
+
+}
+
+static void
+destroy_cb (GtkObject *object, AlarmApplet *applet)
+{
+	if (applet->sounds != NULL) {
+		alarm_list_entry_list_free(&(applet->sounds));
+	}
+
+	timer_remove (applet);
+}
+
+void
+ui_setup (AlarmApplet *applet)
+{
+	GtkWidget *hbox;
+	GdkPixbuf *icon;
+	
+	g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
+					  G_CALLBACK(button_cb), applet);
+	
+	g_signal_connect (G_OBJECT(applet->parent), "destroy",
+					  G_CALLBACK(destroy_cb), applet);
+	
+	g_signal_connect (G_OBJECT(applet->parent), "change_background",
+					  G_CALLBACK (applet_back_change), applet);
+	
+	/* Set up container hbox */
+	hbox = gtk_hbox_new(FALSE, 6);
+	
+	/* Set up icon and label */
+	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
+									 ALARM_ICON,
+									 22,
+									 0, NULL);
+	
+	if (icon == NULL) {
+		g_critical ("Icon not found.");
+	}
+	
+	applet->icon = gtk_image_new_from_pixbuf (icon);
+	
+	if (icon)
+		g_object_unref (icon);
+	
+	applet->label = g_object_new(GTK_TYPE_LABEL,
+								 "label", _("No alarm"),
+								 "use-markup", TRUE,
+								 NULL);
+	
+	/* Pack */
+	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->icon);
+	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->label);
+	
+	/* Add to container and show */
+	gtk_container_add (GTK_CONTAINER (applet->parent), hbox);
+	gtk_widget_show_all (GTK_WIDGET (applet->parent));
+}
+
 static void
 menu_set_alarm_cb (BonoboUIComponent *component,
 				   gpointer data,

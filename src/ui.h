@@ -30,6 +30,9 @@ void
 display_set_alarm_dialog (AlarmApplet *applet);
 
 void
+ui_setup (AlarmApplet *applet);
+
+void
 menu_setup (AlarmApplet *applet);
 
 #endif /*UI_H_*/

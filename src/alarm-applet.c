@@ -283,51 +283,6 @@ get_sound_file (AlarmApplet *applet)
 	return (const gchar *)e->data;
 }
 
-/*
- * UI CALLBACKS {{
- */
-
-static gboolean
-button_cb (GtkWidget *widget,
-						GdkEventButton *event,
-						gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	g_debug("BUTTON: %d", event->button);
-	
-	/* React only to left mouse button */
-	if (event->button == 2 || event->button == 3) {
-		return FALSE;
-	}
-	
-	/* TODO: if alarm is triggered { snooze } else */
-	
-	if (applet->alarm_triggered) {
-		g_debug ("Stopping alarm!");
-		clear_alarm (applet);
-	} else {
-		display_set_alarm_dialog (applet);
-	}
-	
-	return TRUE;
-}
-
-static void
-destroy_cb (GtkObject *object, AlarmApplet *applet)
-{
-	if (applet->sounds != NULL) {
-		alarm_list_entry_list_free(&(applet->sounds));
-	}
-
-	timer_remove (applet);
-}
-
-/*
- * }} UI CALLBACKS
- */
-
-
 
 
 
@@ -342,8 +297,6 @@ alarm_applet_factory (PanelApplet *panelapplet,
 {
 	AlarmApplet *applet;
 	AlarmListEntry *item;
-	GtkWidget *hbox;
-	GdkPixbuf *icon;
 	gchar *tmp;
 	
 	if (strcmp (iid, "OAFIID:GNOME_AlarmApplet") != 0)
@@ -386,42 +339,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	menu_setup(applet);
 	
 	/* Set up applet */
-	g_signal_connect (G_OBJECT(panelapplet), "button-press-event",
-					  G_CALLBACK(button_cb), applet);
-	
-	g_signal_connect (G_OBJECT(panelapplet), "destroy",
-					  G_CALLBACK(destroy_cb), applet);
-	
-	/* Set up container hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
-	
-	/* Set up icon and label */
-	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 ALARM_ICON,
-									 22,
-									 0, NULL);
-	
-	if (icon == NULL) {
-		g_critical ("Icon not found.");
-	}
-	
-	applet->icon = gtk_image_new_from_pixbuf (icon);
-	
-	if (icon)
-		g_object_unref (icon);
-	
-	applet->label = g_object_new(GTK_TYPE_LABEL,
-								 "label", _("No alarm"),
-								 "use-markup", TRUE,
-								 NULL);
-	
-	/* Pack */
-	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->icon);
-	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->label);
-	
-	/* Add to container and show */
-	gtk_container_add (GTK_CONTAINER (applet->parent), hbox);
-	gtk_widget_show_all (GTK_WIDGET (applet->parent));
+	ui_setup (applet);
 	
 	
 	
