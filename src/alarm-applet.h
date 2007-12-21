@@ -23,6 +23,7 @@ G_BEGIN_DECLS
 typedef struct _AlarmApplet AlarmApplet;
 
 gchar *supported_sound_mime_types[];
+GHashTable *app_command_map;
 
 void update_label (AlarmApplet *applet);
 void timer_remove (AlarmApplet *applet);

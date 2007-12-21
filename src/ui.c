@@ -241,6 +241,7 @@ button_cb (GtkWidget *widget,
 	return TRUE;
 }
 
+/* Taken from the GeyesApplet */
 static void
 applet_back_change (PanelApplet			*a,
 					PanelAppletBackgroundType	type,
@@ -292,6 +293,9 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 	}
 
 	timer_remove (applet);
+	
+	if (app_command_map != NULL)
+		g_hash_table_destroy (app_command_map);
 }
 
 void

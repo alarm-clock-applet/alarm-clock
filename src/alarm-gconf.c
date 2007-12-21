@@ -293,7 +293,7 @@ alarm_gconf_command_changed (GConfClient  *client,
 					   GConfEntry   *entry,
 					   AlarmApplet  *applet)
 {
-	g_debug ("command_changed");
+	g_debug ("[gconf] command_changed");
 	
 	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
 		return;
@@ -301,6 +301,7 @@ alarm_gconf_command_changed (GConfClient  *client,
 	applet->notify_command = (gchar *)gconf_value_get_string (entry->value);
 	
 	if (applet->preferences_dialog != NULL) {
+		g_debug ("gconf: CMD ENTRY HAS FOCUS? %d", GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry));
 		pref_update_command (applet);
 	}
 }

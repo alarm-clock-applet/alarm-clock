@@ -144,9 +144,39 @@ pref_update_sound_loop (AlarmApplet *applet)
 void
 pref_update_command (AlarmApplet *applet)
 {
+	guint pos, len;
+	GList *l;
+	gchar *tmp;
+	AlarmListEntry *item;
+	gboolean custom = FALSE;
+	
 	g_object_set (applet->pref_notify_app_command_entry, "text", applet->notify_command, NULL);
 	
+	// Check if the command is in our list.
+	len = g_list_length (applet->apps);
+	for (pos = 0, l = applet->apps; l; l = l->next, pos++) {
+		item = (AlarmListEntry *) l->data;
+		
+		if (strcmp (item->data, applet->notify_command) == 0) {
+			// FOUND
+			break;
+		}
+	}
 	
+	/* Only change sensitivity of the command entry if user
+	 * isn't typing a custom command there already. */ 
+	if (pos >= len) {
+		// Custom command
+		pos += 1;
+		custom = TRUE;
+	}
+	
+	g_debug ("CMD ENTRY HAS FOCUS? %d", GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry));
+	
+	if (!custom && !GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry))
+		g_object_set (applet->pref_notify_app_command_entry, "sensitive", FALSE, NULL);
+	
+	gtk_combo_box_set_active (GTK_COMBO_BOX (applet->pref_notify_app_combo), pos);
 }
 
 void
@@ -397,6 +427,11 @@ pref_notify_app_combo_changed_cb (GtkComboBox *combo,
 {
 	g_debug ("APP Combo_changed");
 	
+	if (GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry)) {
+		g_debug (" ---- Skipping because command_entry has focus!");
+		return;
+	}
+	
 	GtkTreeModel *model;
 	AlarmListEntry *item;
 	guint current_index, len, combo_len;
@@ -415,6 +450,7 @@ pref_notify_app_combo_changed_cb (GtkComboBox *combo,
 		g_debug ("CUSTOM command selected...");
 		
 		g_object_set (applet->pref_notify_app_command_entry, "sensitive", TRUE, NULL);
+		gtk_widget_grab_focus (applet->pref_notify_app_command_entry);
 		return;
 	}
 	
@@ -484,7 +520,7 @@ load_stock_sounds_list (AlarmApplet *applet)
 	applet->stock_sounds = new_stock_len;
 }
 
-static gchar*
+static gchar *
 gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
 {
     const gchar * const *sys_langs;
@@ -531,6 +567,34 @@ gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
     return ret_val;
 }
 
+static const gchar *
+get_app_command (const gchar *app)
+{
+	// TODO: Shouldn't be a global variable
+	if (app_command_map == NULL) {
+		app_command_map = g_hash_table_new (g_str_hash, g_str_equal);
+		
+		/* `rhythmbox-client --play' doesn't actually start playing unless
+		 * Rhythmbox is already running. Sounds like a Bug. */
+		g_hash_table_insert (app_command_map,
+							 "rhythmbox", "rhythmbox-client --play");
+		
+		g_hash_table_insert (app_command_map,
+							 "banshee", "banshee --play");
+		
+		// Note that totem should already be open with a file for this to work.
+		g_hash_table_insert (app_command_map,
+							 "totem", "totem --play");
+		
+		// Muine crashes and doesn't seem to have any play command
+		/*g_hash_table_insert (app_command_map,
+							 "muine", "muine");*/
+	}
+	
+	return g_hash_table_lookup (app_command_map, app);
+}
+
+
 // Load stock apps into list
 void
 load_app_list (AlarmApplet *applet)
@@ -540,6 +604,7 @@ load_app_list (AlarmApplet *applet)
 	xmlDoc *xml_doc;
 	xmlNode *root, *section, *element;
     gchar *executable;
+    const gchar *tmp;
 	
 	if (applet->apps != NULL)
 		alarm_list_entry_list_free (&(applet->apps));
@@ -572,8 +637,18 @@ load_app_list (AlarmApplet *applet)
 				    executable = gnome_da_xml_get_string (element, "executable");
 				    if (is_executable_valid (executable)) {
 				    	name = gnome_da_xml_get_string (element, "name");
-				    	command = gnome_da_xml_get_string (element, "command");
-						icon = gnome_da_xml_get_string (element, "icon-name");
+				    	icon = gnome_da_xml_get_string (element, "icon-name");
+				    	
+				    	// Lookup executable in app command map
+				    	tmp = get_app_command (executable);
+				    	if (tmp)
+				    		command = g_strdup (tmp);
+				    	else {
+				    		// Fall back to command specified in XML
+				    		command = gnome_da_xml_get_string (element, "command");
+				    	}
+						
+						
 						
 						g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
 						
