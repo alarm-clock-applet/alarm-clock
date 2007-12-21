@@ -213,3 +213,88 @@ display_set_alarm_dialog (AlarmApplet *applet)
 	g_signal_connect (applet->set_alarm_dialog, "response", 
 					  G_CALLBACK (set_alarm_dialog_response_cb), applet);
 }
+
+static void
+menu_set_alarm_cb (BonoboUIComponent *component,
+				   gpointer data,
+				   const gchar *cname)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	display_set_alarm_dialog (applet);
+}
+
+static void
+menu_clear_alarm_cb (BonoboUIComponent *component,
+					 gpointer data,
+					 const gchar *cname)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	clear_alarm (applet);
+	
+	g_debug("alarm_applet_clear_alarm");
+}
+
+static void
+menu_preferences_cb (BonoboUIComponent *component,
+								gpointer data,
+								const gchar *cname)
+{
+	/* Construct the preferences dialog and show it here */
+	g_debug("preferences_dialog");
+	
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	preferences_dialog_display (applet);
+}
+
+static void
+menu_about_cb (BonoboUIComponent *component,
+			   gpointer data,
+			   const gchar *cname)
+{
+	/* Construct the about dialog and show it here */
+	g_debug("about_dialog");
+}
+
+void
+menu_setup (AlarmApplet *applet)
+{
+	static const gchar *menu_xml =
+		"<popup name=\"button3\">\n"
+		"   <menuitem name=\"Set Alarm Item\" "
+		"			  verb=\"SetAlarm\" "
+		"			_label=\"_Set Alarm\" "
+		"		   pixtype=\"stock\" "
+		"		   pixname=\"gtk-apply\"/>\n"
+		"   <menuitem name=\"Clear Item\" "
+		"			  verb=\"ClearAlarm\" "
+		"			_label=\"_Clear alarm\" "
+		"		   pixtype=\"stock\" "
+		"		   pixname=\"gtk-clear\"/>\n"
+		"   <separator/>\n"
+		"   <menuitem name=\"Preferences Item\" "
+		"             verb=\"Preferences\" "
+		"           _label=\"_Preferences...\"\n"
+		"          pixtype=\"stock\" "
+		"          pixname=\"gtk-properties\"/>\n"
+		"   <menuitem name=\"About Item\" "
+		"             verb=\"About\" "
+		"           _label=\"_About...\"\n"
+		"          pixtype=\"stock\" "
+		"          pixname=\"gtk-about\"/>\n"
+		"</popup>\n";
+	
+	static const BonoboUIVerb menu_verbs [] = {
+			BONOBO_UI_VERB ("SetAlarm", menu_set_alarm_cb),
+			BONOBO_UI_VERB ("ClearAlarm", menu_clear_alarm_cb),
+			BONOBO_UI_VERB ("Preferences", menu_preferences_cb),
+			BONOBO_UI_VERB ("About", menu_about_cb),
+			BONOBO_UI_VERB_END
+	};
+	
+	panel_applet_setup_menu (PANEL_APPLET (applet->parent),
+	                         menu_xml,
+	                         menu_verbs,
+	                         applet);
+}

@@ -1,7 +1,7 @@
 #ifndef UI_H_
 #define UI_H_
 
-#include "ui.h"
+#include "alarm-applet.h"
 
 void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent);
@@ -28,5 +28,8 @@ set_alarm_dialog_populate (AlarmApplet *applet);
 
 void
 display_set_alarm_dialog (AlarmApplet *applet);
+
+void
+menu_setup (AlarmApplet *applet);
 
 #endif /*UI_H_*/

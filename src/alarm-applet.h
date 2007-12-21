@@ -22,14 +22,15 @@ G_BEGIN_DECLS
 
 typedef struct _AlarmApplet AlarmApplet;
 
+gchar *supported_sound_mime_types[];
+
 void update_label (AlarmApplet *applet);
 void timer_remove (AlarmApplet *applet);
 gboolean set_sound_file (AlarmApplet *applet, const gchar *uri);
 void timer_start (AlarmApplet *applet);
+void clear_alarm (AlarmApplet *applet);
 void set_alarm_dialog_populate (AlarmApplet *applet);
 const gchar *get_sound_file (AlarmApplet *applet);
-void load_stock_sounds_list (AlarmApplet *applet);
-void load_app_list (AlarmApplet *applet);
 void player_preview_start (AlarmApplet *applet);
 
 #include "prefs.h"

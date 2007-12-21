@@ -4,7 +4,7 @@
  * DEFINTIIONS {{
  */
 
-static gchar *supported_sound_mime_types [] = { "audio", "video", "application/ogg", NULL };
+gchar *supported_sound_mime_types [] = { "audio", "video", "application/ogg", NULL };
 
 /*
  * }} DEFINTIIONS
@@ -61,7 +61,7 @@ player_preview_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApple
 /**
  * Play sound via gstreamer
  */
-static void
+void
 player_start (AlarmApplet *applet)
 {
 	if (applet->player == NULL)
@@ -105,7 +105,7 @@ player_preview_start (AlarmApplet *applet)
  * TIMER {{
  */
 
-static void
+void
 trigger_alarm (AlarmApplet *applet)
 {
 	g_debug("ALARM: %s", applet->alarm_message);
@@ -129,7 +129,7 @@ trigger_alarm (AlarmApplet *applet)
 	}
 }
 
-static void
+void
 clear_alarm (AlarmApplet *applet)
 {
 	alarm_gconf_set_started (applet, FALSE);
@@ -191,169 +191,6 @@ timer_remove (AlarmApplet *applet)
 /*
  * }} TIMER
  */
-
-
-// Load stock sounds into list
-void
-load_stock_sounds_list (AlarmApplet *applet)
-{
-	AlarmListEntry *entry, *new_entry;
-	GList *new, *l;
-	guint i, new_stock_len;
-	
-	//if (applet->sounds != NULL)
-	//	alarm_file_entry_list_free (&(applet->sounds));
-	
-	new = alarm_list_entry_list_new ("file://" ALARM_SOUNDS_DIR,
-									 supported_sound_mime_types);
-	
-	new_stock_len = g_list_length (new);
-	
-	// Add custom entries if present
-	if (g_list_length (applet->sounds) > applet->stock_sounds) {
-		l = g_list_nth (applet->sounds, applet->stock_sounds);
-		for (; l; l = l->next) {
-			entry	  = (AlarmListEntry *) l->data;
-			new_entry = alarm_list_entry_new (entry->name, entry->data, entry->icon);
-			new = g_list_append (new, new_entry);
-		}
-	}
-	
-	alarm_list_entry_list_free(&(applet->sounds));
-	
-	// Free old stock sounds
-	/*for (l = applet->sounds, i = 0; l && i < applet->stock_sounds; l = l->next, i++) {
-		alarm_file_entry_free ((AlarmFileEntry *)l->data);
-	}
-	g_list_free (applet->sounds);*/
-	
-	// Update stock length and sounds
-	applet->sounds = new;
-	applet->stock_sounds = new_stock_len;
-}
-
-static gchar*
-gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
-{
-    const gchar * const *sys_langs;
-    xmlChar *node_lang;
-    xmlNode *element;
-    gchar *ret_val = NULL;
-    xmlChar *xml_val_name;
-    gint len;
-    gint i;
-
-    g_return_val_if_fail (parent != NULL, ret_val);
-    g_return_val_if_fail (parent->children != NULL, ret_val);
-    g_return_val_if_fail (val_name != NULL, ret_val);
-
-#if GLIB_CHECK_VERSION (2, 6, 0)
-    sys_langs = g_get_language_names ();
-#endif
-
-    xml_val_name = xmlCharStrdup (val_name);
-    len = xmlStrlen (xml_val_name);
-
-    for (element = parent->children; element != NULL; element = element->next) {
-		if (!xmlStrncmp (element->name, xml_val_name, len)) {
-		    node_lang = xmlNodeGetLang (element);
-	
-		    if (node_lang == NULL) {
-		    	ret_val = (gchar *) xmlNodeGetContent (element);
-		    } else {
-				for (i = 0; sys_langs[i] != NULL; i++) {
-				    if (!strcmp (sys_langs[i], node_lang)) {
-						ret_val = (gchar *) xmlNodeGetContent (element);
-						/* since sys_langs is sorted from most desirable to
-						 * least desirable, exit at first match
-						 */
-						break;
-				    }
-				}
-		    }
-		    xmlFree (node_lang);
-		}
-    }
-
-    xmlFree (xml_val_name);
-    return ret_val;
-}
-
-// Load stock apps into list
-void
-load_app_list (AlarmApplet *applet)
-{
-	AlarmListEntry *entry;
-	gchar *filename, *name, *icon, *command;
-	xmlDoc *xml_doc;
-	xmlNode *root, *section, *element;
-    gchar *executable;
-	
-	if (applet->apps != NULL)
-		alarm_list_entry_list_free (&(applet->apps));
-
-	// We'll get the default media players from g-d-a.xml
-	// from gnome-control-center
-	filename = g_build_filename (DATADIR,
-								 "gnome-control-center",
-					 			 "gnome-default-applications.xml",
-					 			 NULL);
-	
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		g_critical ("Could not find %s.", filename);
-		return;
-	}
-
-    xml_doc = xmlParseFile (filename);
-
-    if (!xml_doc) {
-    	g_warning ("Could not load %s.", filename);
-    	return;
-    }
-
-    root = xmlDocGetRootElement (xml_doc);
-
-	for (section = root->children; section != NULL; section = section->next) {
-		if (!xmlStrncmp (section->name, "media-players", 13)) {
-		    for (element = section->children; element != NULL; element = element->next) {
-				if (!xmlStrncmp (element->name, "media-player", 12)) {
-				    executable = gnome_da_xml_get_string (element, "executable");
-				    if (is_executable_valid (executable)) {
-				    	name = gnome_da_xml_get_string (element, "name");
-				    	command = gnome_da_xml_get_string (element, "command");
-						icon = gnome_da_xml_get_string (element, "icon-name");
-						
-						g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
-						
-						entry = alarm_list_entry_new (name, command, icon);
-						
-						g_free (name);
-						g_free (command);
-						g_free (icon);
-						
-						applet->apps = g_list_append (applet->apps, entry);
-				    }
-				    
-				    if (executable)
-				    	g_free (executable);
-				}
-		    }
-	    }
-	}
-	
-	
-	
-	
-	g_free (filename);
-	
-//	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
-//	applet->apps = g_list_append (applet->apps, entry);
-}
-
-/*
- * }} UI
- */
-
 
 
 
@@ -450,49 +287,6 @@ get_sound_file (AlarmApplet *applet)
  * UI CALLBACKS {{
  */
 
-static void
-menu_set_alarm_cb (BonoboUIComponent *component,
-				   gpointer data,
-				   const gchar *cname)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	display_set_alarm_dialog (applet);
-}
-
-static void
-menu_clear_alarm_cb (BonoboUIComponent *component,
-					 gpointer data,
-					 const gchar *cname)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	clear_alarm (applet);
-	
-	g_debug("alarm_applet_clear_alarm");
-}
-
-static void
-menu_preferences_cb (BonoboUIComponent *component,
-								gpointer data,
-								const gchar *cname)
-{
-	/* Construct the preferences dialog and show it here */
-	g_debug("preferences_dialog");
-	
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	preferences_dialog_display (applet);
-}
-
-static void
-menu_about_cb (BonoboUIComponent *component,
-			   gpointer data,
-			   const gchar *cname)
-{
-	/* Construct the about dialog and show it here */
-	g_debug("about_dialog");
-}
-
 static gboolean
 button_cb (GtkWidget *widget,
 						GdkEventButton *event,
@@ -540,48 +334,6 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 /*
  * INIT {{
  */
-
-static void
-menu_setup (AlarmApplet *applet)
-{
-	static const gchar *menu_xml =
-		"<popup name=\"button3\">\n"
-		"   <menuitem name=\"Set Alarm Item\" "
-		"			  verb=\"SetAlarm\" "
-		"			_label=\"_Set Alarm\" "
-		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-apply\"/>\n"
-		"   <menuitem name=\"Clear Item\" "
-		"			  verb=\"ClearAlarm\" "
-		"			_label=\"_Clear alarm\" "
-		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-clear\"/>\n"
-		"   <separator/>\n"
-		"   <menuitem name=\"Preferences Item\" "
-		"             verb=\"Preferences\" "
-		"           _label=\"_Preferences...\"\n"
-		"          pixtype=\"stock\" "
-		"          pixname=\"gtk-properties\"/>\n"
-		"   <menuitem name=\"About Item\" "
-		"             verb=\"About\" "
-		"           _label=\"_About...\"\n"
-		"          pixtype=\"stock\" "
-		"          pixname=\"gtk-about\"/>\n"
-		"</popup>\n";
-	
-	static const BonoboUIVerb menu_verbs [] = {
-			BONOBO_UI_VERB ("SetAlarm", menu_set_alarm_cb),
-			BONOBO_UI_VERB ("ClearAlarm", menu_clear_alarm_cb),
-			BONOBO_UI_VERB ("Preferences", menu_preferences_cb),
-			BONOBO_UI_VERB ("About", menu_about_cb),
-			BONOBO_UI_VERB_END
-	};
-	
-	panel_applet_setup_menu (PANEL_APPLET (applet->parent),
-	                         menu_xml,
-	                         menu_verbs,
-	                         applet);
-}
 
 static gboolean
 alarm_applet_factory (PanelApplet *panelapplet,
