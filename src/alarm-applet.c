@@ -129,6 +129,8 @@ trigger_alarm (AlarmApplet *applet)
 		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", applet->notify_type);
 	}
 	
+	update_tooltip (applet);
+	
 #ifdef HAVE_LIBNOTIFY
 	if (applet->notify_bubble) {
 		display_notification (applet);
@@ -144,6 +146,7 @@ clear_alarm (AlarmApplet *applet)
 	
 	timer_remove (applet);
 	update_label (applet);
+	update_tooltip (applet);
 	
 	// Stop playback if present.
 	if (applet->player && applet->player->state == MEDIA_PLAYER_PLAYING)
@@ -367,6 +370,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	if (applet->started) {
 		// Start the timer!
 		update_label (applet);
+		update_tooltip (applet);
 		timer_start (applet);
 	}
 	

@@ -165,6 +165,7 @@ alarm_gconf_started_changed (GConfClient  *client,
 	}
 	
 	update_label (applet);
+	update_tooltip (applet);
 }
 
 void

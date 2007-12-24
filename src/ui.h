@@ -13,6 +13,9 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 void
 update_label (AlarmApplet *applet);
 
+void
+update_tooltip (AlarmApplet *applet);
+
 gboolean
 is_separator (GtkTreeModel *model, GtkTreeIter *iter, gpointer sep_index);
 

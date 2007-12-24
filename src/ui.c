@@ -55,6 +55,34 @@ update_label (AlarmApplet *applet)
 	}
 }
 
+void
+update_tooltip (AlarmApplet *applet)
+{
+	gchar *tiptext;
+	struct tm *tm;
+	
+	if (applet->started || applet->alarm_triggered) {
+		tm = localtime (&(applet->alarm_time));
+	}
+	
+	if (applet->alarm_triggered) {
+		tiptext = g_strdup_printf (_("Alarm at %02d:%02d:%02d\n%s"), 
+								   tm->tm_hour, tm->tm_min, tm->tm_sec,
+								   applet->alarm_message);
+	} else if (applet->started) {
+		tiptext = g_strdup_printf (_("Alarm set to %02d:%02d:%02d\nMessage: %s"),
+								   tm->tm_hour, tm->tm_min, tm->tm_sec,
+								   applet->alarm_message);
+	} else {
+		// No alarm set or triggered
+		tiptext = g_strdup (_("Click to set alarm"));
+	}
+	
+	gtk_widget_set_tooltip_text (GTK_WIDGET (applet->parent), tiptext);
+	
+	g_free (tiptext);
+}
+
 gboolean
 is_separator (GtkTreeModel *model, GtkTreeIter *iter, gpointer sep_index)
 {
@@ -412,6 +440,8 @@ ui_setup (AlarmApplet *applet)
 	/* Add to container and show */
 	gtk_container_add (GTK_CONTAINER (applet->parent), hbox);
 	gtk_widget_show_all (GTK_WIDGET (applet->parent));
+	
+	update_tooltip (applet);
 }
 
 static void
