@@ -38,21 +38,21 @@ uidir = $(gladedir)
 ui_DATA = ui/alarm-applet.glade
 
 icons =	\
-	alarm-clock.svg		\
-	alarm-clock.16.png	\
-	alarm-clock.22.png	\
-	alarm-clock.24.png	\
-	alarm-clock.32.png	\
-	alarm-clock.36.png	\
-	alarm-clock.48.png	\
-	alarm-clock.64.png
+	icons/alarm-clock.svg		\
+	icons/alarm-clock.16.png	\
+	icons/alarm-clock.22.png	\
+	icons/alarm-clock.24.png	\
+	icons/alarm-clock.32.png	\
+	icons/alarm-clock.36.png	\
+	icons/alarm-clock.48.png	\
+	icons/alarm-clock.64.png
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 
 install-icons:
 	for icon in $(icons); do \
-		SIZE=`echo $$icon | cut -d. -f2`; \
-		FILE=`echo $$icon | cut -d. -f1,3`; \
+		SIZE=`basename $$icon | cut -d. -f2`; \
+		FILE=`basename $$icon | cut -d. -f1,3`; \
 		if [ "$$SIZE" = "svg" ]; then \
 			SIZE="scalable"; \
 			FILE="$$FILE.svg"; \
@@ -60,7 +60,7 @@ install-icons:
 			SIZE="$${SIZE}x$${SIZE}"; \
 		fi; \
 		mkdir -p $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/; \
-		$(INSTALL_DATA) $(srcdir)/icons/$$icon $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/$$FILE; \
+		$(INSTALL_DATA) $(srcdir)/$$icon $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/$$FILE; \
 	done
 	@-if test -z "$(DESTDIR)"; then \
 		echo "Updating Gtk icon cache."; \
@@ -72,8 +72,8 @@ install-icons:
 
 uninstall-icons:
 	for icon in $(icons); do \
-		SIZE=`echo $$icon | cut -d. -f2`; \
-		FILE=`echo $$icon | cut -d. -f1,3`; \
+		SIZE=`basename $$icon | cut -d. -f2`; \
+		FILE=`basename $$icon | cut -d. -f1,3`; \
 		if [ "$$SIZE" = "svg" ]; then \
 			SIZE="scalable"; \
 			FILE="$$FILE.svg"; \
@@ -97,13 +97,20 @@ install-schemas: $(schemas_DATA)
 		$(schemas_DATA); \
 	fi
 
+uninstall-data:
+	rm -rf $(pkgdatadir)
+
 install-data-local: install-schemas install-icons
 
-uninstall-local: uninstall-icons
+uninstall-local: uninstall-icons uninstall-data
 
 #@INTLTOOL_SCHEMAS_RULE@
 
 #@INTLTOOL_SERVER_RULE@
 
-#EXTRA_DIST = \
-#	     $(schemas_in_files)
+EXTRA_DIST = $(server_in_files)	\
+		     $(schemas_DATA)	\
+		     $(icons)			\
+		     $(ui_DATA)			\
+		     tests/*.c			\
+		     tests/Makefile.am	

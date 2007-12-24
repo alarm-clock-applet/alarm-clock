@@ -19,7 +19,6 @@ test_player_LDADD =				\
 test_list_entry_SOURCES = $(top_srcdir)/src/list-entry.c	\
 						  $(top_srcdir)/src/list-entry.h	\
 						  $(top_srcdir)/src/util.c			\
-						  $(top_srcdir)/src/list.h			\
 						  test_list_entry.c
 
 test_list_entry_LDADD =			\
