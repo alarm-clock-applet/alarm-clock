@@ -126,8 +126,14 @@ trigger_alarm (AlarmApplet *applet)
 		command_run (applet->notify_command);
 		break;
 	default:
-		g_debug ("NOTIFICATION TYPE Not yet implemented.");
+		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", applet->notify_type);
 	}
+	
+#ifdef HAVE_LIBNOTIFY
+	if (applet->notify_bubble) {
+		display_notification (applet);
+	}
+#endif
 }
 
 void
@@ -142,6 +148,13 @@ clear_alarm (AlarmApplet *applet)
 	// Stop playback if present.
 	if (applet->player && applet->player->state == MEDIA_PLAYER_PLAYING)
 		media_player_stop (applet->player);
+	
+	// Close notification if present.
+#ifdef HAVE_LIBNOTIFY
+	if (applet->notify) {
+		close_notification (applet);
+	}
+#endif
 }
 
 static gboolean

@@ -235,7 +235,12 @@ preferences_dialog_display (AlarmApplet *applet)
 	pref_update_sound_file (applet);
 	pref_update_sound_loop (applet);
 	pref_update_command (applet);
+	
+#ifdef HAVE_LIBNOTIFY
 	pref_update_show_bubble (applet);
+#else
+	g_object_set (applet->pref_notify_bubble, "sensitive", FALSE, NULL);
+#endif
 	
 	// Set response and connect signal handlers
 	
@@ -275,8 +280,10 @@ preferences_dialog_display (AlarmApplet *applet)
 					  G_CALLBACK (pref_notify_app_command_changed_cb), applet);
 	
 	// Bubble
+#ifdef HAVE_LIBNOTIFY
 	g_signal_connect (applet->pref_notify_bubble, "toggled",
 					  G_CALLBACK (pref_notify_bubble_changed_cb), applet);
+#endif
 	
 	// Show it all
 	gtk_widget_show_all (GTK_WIDGET (applet->preferences_dialog));

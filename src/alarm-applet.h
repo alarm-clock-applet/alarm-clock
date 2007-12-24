@@ -18,6 +18,10 @@
 #include <panel-applet.h>
 #include <panel-applet-gconf.h>
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 G_BEGIN_DECLS
 
 typedef struct _AlarmApplet AlarmApplet;
@@ -40,10 +44,6 @@ void player_preview_start (AlarmApplet *applet);
 #include "util.h"
 #include "list-entry.h"
 #include "ui.h"
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #define ALARM_ICON 		 "alarm-clock"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
@@ -91,6 +91,11 @@ struct _AlarmApplet {
 	GtkWidget *minute;
 	GtkWidget *second;
 	GtkWidget *message;
+	
+	/* Notification */
+#ifdef HAVE_LIBNOTIFY
+	NotifyNotification *notify;
+#endif
 	
 	/* Preferences */
 	GtkDialog *preferences_dialog;

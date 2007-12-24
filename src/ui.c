@@ -298,6 +298,75 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 		g_hash_table_destroy (app_command_map);
 }
 
+/* Taken from the battery applet */
+gboolean
+display_notification (AlarmApplet *applet)
+{
+#ifdef HAVE_LIBNOTIFY
+	GError *error = NULL;
+	GdkPixbuf *icon;
+	gboolean result;
+	const gchar *message;
+	
+	if (!notify_is_initted () && !notify_init (_("Alarm Applet")))
+		return FALSE;
+
+  	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
+									 ALARM_ICON,
+									 48,
+									 GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
+	
+	if (icon == NULL) {
+		g_critical ("Icon not found.");
+	}
+	
+	if (applet->alarm_message)
+		message = applet->alarm_message;
+	else
+		message = "";
+	
+	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->parent));
+
+	/* XXX: it would be nice to pass this as a named icon */
+	notify_notification_set_icon_from_pixbuf (applet->notify, icon);
+	gdk_pixbuf_unref (icon);
+
+	result = notify_notification_show (applet->notify, &error);
+	
+	if (error)
+	{
+	   g_warning (error->message);
+	   g_error_free (error);
+	}
+
+	//g_object_unref (G_OBJECT (n));
+
+	return result;
+#else
+	return FALSE;
+#endif
+}
+
+gboolean
+close_notification (AlarmApplet *applet)
+{
+#ifdef HAVE_LIBNOTIFY
+	gboolean result;
+	GError *error = NULL;
+	
+	result = notify_notification_close (applet->notify, &error);
+	
+	if (error)
+	{
+	   g_warning (error->message);
+	   g_error_free (error);
+	}
+	
+	g_object_unref (applet->notify);
+	applet->notify = NULL;
+#endif
+}
+
 void
 ui_setup (AlarmApplet *applet)
 {

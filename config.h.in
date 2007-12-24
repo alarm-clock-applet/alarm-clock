@@ -15,6 +15,9 @@
 /* Gnome Sounds Directory */
 #undef GNOME_SOUNDSDIR
 
+/* libnotify available */
+#undef HAVE_LIBNOTIFY
+
 /* libdir */
 #undef LIBDIR
 

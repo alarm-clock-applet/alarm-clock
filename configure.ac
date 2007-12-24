@@ -26,6 +26,7 @@ LIBGNOME_REQUIRED=2.8.0
 LIBGNOMEUI_REQUIRED=2.8.0
 LIBPANEL_REQUIRED=2.13.4
 GNOME_ICON_THEME_REQUIRED=2.15.91
+LIBNOTIFY_REQUIRED=0.3.2
 
 dnl LIBXML_REQUIRED=2.5.0
 dnl LIBNOTIFY_REQUIRED=0.3.2
@@ -83,6 +84,19 @@ dnl -- check for libgnome (required) ------------------------------------------
 PKG_CHECK_MODULES(GNOME_LIBS2, libgnome-2.0 >= $LIBGNOME_REQUIRED libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED)
 AC_SUBST(GNOME_LIBS2_CFLAGS)
 AC_SUBST(GNOME_LIBS2_LIBS)
+
+dnl -- check for libnotify (optional) -----------------------------------------
+LIBNOTIFY_CFLAGS=
+LIBNOTIFY_LIBS=
+PKG_CHECK_MODULES(LIBNOTIFY, libnotify >= $LIBNOTIFY_REQUIRED,
+		  HAVE_LIBNOTIFY="yes", HAVE_LIBNOTIFY="no")
+
+if test "x$HAVE_LIBNOTIFY" = "xyes"; then
+	AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify available])
+fi
+
+AC_SUBST(LIBNOTIFY_CFLAGS)
+AC_SUBST(LIBNOTIFY_LIBS)
 
 dnl ***************************************************************************
 dnl *** find paths to installed binaries                                    ***

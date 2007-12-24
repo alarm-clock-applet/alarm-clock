@@ -314,6 +314,7 @@ alarm_gconf_notify_bubble_change (GConfClient  *client,
 {
 	g_debug ("notify_bubble_changed");
 	
+#ifdef HAVE_LIBNOTIFY
 	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
 		return;
 	
@@ -322,6 +323,7 @@ alarm_gconf_notify_bubble_change (GConfClient  *client,
 	if (applet->preferences_dialog != NULL) {
 		pref_update_show_bubble (applet);
 	}
+#endif
 }
 
 

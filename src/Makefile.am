@@ -6,6 +6,7 @@ INCLUDES =						\
 	$(GST_CFLAGS)				\
 	$(GNOME_LIBS2_CFLAGS)		\
 	$(GLIB_CFLAGS)				\
+	$(LIBNOTIFY_CFLAGS)			\
 	-I$(includedir) 			
 
 bin_PROGRAMS = alarm-applet
@@ -23,7 +24,8 @@ alarm_applet_LDADD =			\
 	$(GNOME_LIBS2_LIBS)			\
 	$(GNOME_APPLETS_LIBS)		\
 	$(LIBGLADE_LIBS)			\
-	$(GST_LIBS)	
+	$(GST_LIBS)					\
+	$(LIBNOTIFY_LIBS)
 
 serverdir       = $(libdir)/bonobo/servers
 server_in_files = GNOME_AlarmApplet.server.in
