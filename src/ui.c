@@ -353,7 +353,7 @@ display_notification (AlarmApplet *applet)
 	else
 		message = "";
 	
-	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->parent));
+	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->icon));
 
 	/* XXX: it would be nice to pass this as a named icon */
 	notify_notification_set_icon_from_pixbuf (applet->notify, icon);
@@ -480,11 +480,35 @@ menu_preferences_cb (BonoboUIComponent *component,
 
 static void
 menu_about_cb (BonoboUIComponent *component,
-			   gpointer data,
+			   AlarmApplet *applet,
 			   const gchar *cname)
 {
 	/* Construct the about dialog and show it here */
 	g_debug("about_dialog");
+	
+	static const gchar *const authors[] = {
+            "Johannes H. Jensen <joh@deworks.net>",
+            NULL
+    };
+    static const gchar *const documenters[] = {
+            "Johannes H. Jensen <joh@deworks.net>",
+            NULL
+    };
+    static const gchar *const artists[] = {
+            "Johannes H. Jensen <joh@deworks.net>",
+            NULL
+    };
+
+    gtk_show_about_dialog (NULL,
+    					   "program-name", ALARM_NAME,
+    					   "title", _("About " ALARM_NAME),
+                           "version",       VERSION,
+                           "copyright",     "\xC2\xA9 2007 Johannes H. Jensen",
+                           "authors",       authors,
+                           "documenters",   documenters,
+                           "artists",       artists, 
+                           "logo-icon-name", ALARM_ICON,
+                           NULL);
 }
 
 void

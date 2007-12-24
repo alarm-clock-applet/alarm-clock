@@ -45,6 +45,7 @@ void player_preview_start (AlarmApplet *applet);
 #include "list-entry.h"
 #include "ui.h"
 
+#define ALARM_NAME		 "Alarm Clock Applet"
 #define ALARM_ICON 		 "alarm-clock"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
