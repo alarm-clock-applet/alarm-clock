@@ -95,6 +95,7 @@ install-schemas: $(schemas_DATA)
 		GCONF_CONFIG_SOURCE=`$(GCONFTOOL) --get-default-source` \
 		$(GCONFTOOL) --makefile-install-rule \
 		$(schemas_DATA); \
+		killall -SIGTERM gconfd-2; \
 	fi
 
 uninstall-schemas: $(schemas_DATA)
@@ -102,6 +103,7 @@ uninstall-schemas: $(schemas_DATA)
 		GCONF_CONFIG_SOURCE=`$(GCONFTOOL) --get-default-source` \
 		$(GCONFTOOL) --makefile-uninstall-rule \
 		$(schemas_DATA); \
+		killall -SIGTERM gconfd-2; \
 	fi
 
 uninstall-data:

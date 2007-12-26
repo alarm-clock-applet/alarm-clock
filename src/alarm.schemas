@@ -103,7 +103,7 @@
 	      	<owner>alarm-applet</owner>
 			<type>string</type>
 			<locale name="C">
-				<default></default>
+				<default>rhythmbox-client --play</default>
 				<short>Command to run on alarm.</short>
 				<long>The command to run for the "command" notification type.</long>
 			</locale>
