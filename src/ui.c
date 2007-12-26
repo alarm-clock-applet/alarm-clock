@@ -494,7 +494,7 @@ menu_about_cb (BonoboUIComponent *component,
             NULL
     };
     static const gchar *const artists[] = {
-            "Johannes H. Jensen <joh@deworks.net>",
+            "Lasse Gulvåg Sætre <lassegs@gmail.com>",
             NULL
     };
 
