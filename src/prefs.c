@@ -242,6 +242,7 @@ preferences_dialog_display (AlarmApplet *applet)
 	pref_update_show_bubble (applet);
 #else
 	g_object_set (applet->pref_notify_bubble, "sensitive", FALSE, NULL);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (applet->pref_notify_bubble), _("This feature requires libnotify to be installed"));
 #endif
 	
 	// Set response and connect signal handlers
