@@ -150,6 +150,8 @@ pref_update_command (AlarmApplet *applet)
 	AlarmListEntry *item;
 	gboolean custom = FALSE;
 	
+	g_debug ("pref_update_command setting entry to %s", applet->notify_command);
+	
 	g_object_set (applet->pref_notify_app_command_entry, "text", applet->notify_command, NULL);
 	
 	// Check if the command is in our list.
@@ -173,8 +175,8 @@ pref_update_command (AlarmApplet *applet)
 	
 	g_debug ("CMD ENTRY HAS FOCUS? %d", GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry));
 	
-	if (!custom && !GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry))
-		g_object_set (applet->pref_notify_app_command_entry, "sensitive", FALSE, NULL);
+	if (!GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry))
+		g_object_set (applet->pref_notify_app_command_entry, "sensitive", custom, NULL);
 	
 	gtk_combo_box_set_active (GTK_COMBO_BOX (applet->pref_notify_app_combo), pos);
 }

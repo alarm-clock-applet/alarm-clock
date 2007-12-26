@@ -299,7 +299,8 @@ alarm_gconf_command_changed (GConfClient  *client,
 	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
 		return;
 	
-	applet->notify_command = (gchar *)gconf_value_get_string (entry->value);
+	g_free (applet->notify_command);
+	applet->notify_command = g_strdup (gconf_value_get_string (entry->value));
 	
 	if (applet->preferences_dialog != NULL) {
 		g_debug ("gconf: CMD ENTRY HAS FOCUS? %d", GTK_WIDGET_HAS_FOCUS (applet->pref_notify_app_command_entry));
@@ -425,4 +426,119 @@ setup_gconf (AlarmApplet *applet)
 				applet, NULL, NULL);
 	g_free (key);
 	
+}
+
+/* Load gconf values into applet */
+void
+load_gconf (AlarmApplet *applet)
+{
+	AlarmListEntry *entry;
+	GConfClient *client;
+	GConfValue	*value;
+	gchar       *key;
+	gchar		*tmp;
+	
+	client = gconf_client_get_default ();
+	
+	
+	// ALARM_TIME:
+	applet->alarm_time    = panel_applet_gconf_get_int (applet->parent, KEY_ALARMTIME, NULL);
+	if (applet->alarm_time == 0)
+		// Default to now + 5 mins
+		applet->alarm_time = DEF_ALARMTIME;
+	
+	
+	// STARTED: Defaults to 0 if key isn't found, so we can fetch started directly.
+	applet->started = panel_applet_gconf_get_bool (applet->parent, KEY_STARTED, NULL);
+	
+	
+	// MESSAGE:
+	// ..get_string() Returns NULL if key is not found. The empty string if a default is found.
+	tmp = panel_applet_gconf_get_string (applet->parent, KEY_MESSAGE, NULL);
+	if (tmp == NULL)
+		tmp = DEF_MESSAGE;
+	applet->alarm_message = g_strdup (tmp);
+	
+	
+	// SHOW_LABEL:
+	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
+	value = gconf_client_get (client, key, NULL);
+	if (value == NULL)
+		// Schema defaults not found
+		applet->show_label = DEF_SHOW_LABEL;
+	else {
+		applet->show_label = gconf_value_get_bool (value);
+		gconf_value_free (value);
+	}
+	g_free (key);
+	
+	
+	// LABEL_TYPE:
+	tmp = panel_applet_gconf_get_string (applet->parent, KEY_LABEL_TYPE, NULL);
+	if (tmp == NULL || !gconf_string_to_enum (label_type_enum_map, tmp, (gint *)&(applet->label_type))) {
+		// Schema defaults not found or unable to map
+		applet->label_type = DEF_LABEL_TYPE;
+	}
+	g_free(tmp);
+	
+	
+	// NOTIFY_TYPE:
+	tmp = panel_applet_gconf_get_string (applet->parent, KEY_NOTIFY_TYPE, NULL);
+	if (tmp == NULL || !gconf_string_to_enum (notify_type_enum_map, tmp, (gint *)&(applet->notify_type))) {
+		// Schema defaults not found or unable to map
+		applet->notify_type = DEF_NOTIFY_TYPE;
+	}
+	g_free(tmp);
+	
+	
+	// SOUND_FILE:
+	tmp = panel_applet_gconf_get_string (applet->parent, KEY_SOUND_FILE, NULL);
+	if (!set_sound_file (applet, tmp)) {
+		// Set it to the first stock sound
+		applet->sound_pos = 0;
+	}
+	g_free(tmp);
+	
+	
+	// SOUD_LOOP
+	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SOUND_LOOP);
+	value = gconf_client_get (client, key, NULL);
+	if (value == NULL)
+		// Schema defaults not found
+		applet->notify_sound_loop = DEF_SOUND_LOOP;
+	else {
+		applet->notify_sound_loop = gconf_value_get_bool (value);
+		gconf_value_free (value);
+	}
+	g_free (key);
+	
+	
+	
+	// COMMAND:
+	applet->notify_command = panel_applet_gconf_get_string (applet->parent, KEY_COMMAND, NULL);
+	if (applet->notify_command == NULL) {
+		// Fall back to the first app
+		if (g_list_length (applet->apps) > 0) {
+			entry = applet->apps->data;
+			applet->notify_command = g_strdup (entry->data);
+			g_debug ("FIRST APP: %s", applet->notify_command);
+		} else {
+			// Failsafe
+			g_debug ("FAILSAFE CMD");
+			applet->notify_command = g_strdup (DEF_COMMAND);
+		}
+	}
+	
+	
+	// NOTIFY_BUBBLE:
+	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_NOTIFY_BUBBLE);
+	value = gconf_client_get (client, key, NULL);
+	if (value == NULL)
+		// Schema defaults not found
+		applet->notify_bubble = DEF_NOTIFY_BUBBLE;
+	else {
+		applet->notify_bubble = gconf_value_get_bool (value);
+		gconf_value_free (value);
+	}
+	g_free (key);
 }

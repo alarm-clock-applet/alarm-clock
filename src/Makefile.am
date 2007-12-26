@@ -97,12 +97,19 @@ install-schemas: $(schemas_DATA)
 		$(schemas_DATA); \
 	fi
 
+uninstall-schemas: $(schemas_DATA)
+	if test -z "$(DESTDIR)"; then \
+		GCONF_CONFIG_SOURCE=`$(GCONFTOOL) --get-default-source` \
+		$(GCONFTOOL) --makefile-uninstall-rule \
+		$(schemas_DATA); \
+	fi
+
 uninstall-data:
 	rm -rf $(pkgdatadir)
 
 install-data-local: install-schemas install-icons
 
-uninstall-local: uninstall-icons uninstall-data
+uninstall-local: uninstall-schemas uninstall-icons uninstall-data
 
 #@INTLTOOL_SCHEMAS_RULE@
 

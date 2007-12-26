@@ -231,6 +231,8 @@ display_set_alarm_dialog (AlarmApplet *applet)
 	applet->message = glade_xml_get_widget (ui, "message");
 	ok_button = glade_xml_get_widget (ui, "ok-button");
 	
+	g_object_set (applet->set_alarm_dialog, "icon-name", ALARM_ICON, NULL);
+	
 	set_alarm_dialog_populate (applet);
 	
 	/* Set response and connect signal handlers */
@@ -431,6 +433,7 @@ ui_setup (AlarmApplet *applet)
 	applet->label = g_object_new(GTK_TYPE_LABEL,
 								 "label", _("No alarm"),
 								 "use-markup", TRUE,
+								 "visible", applet->show_label,
 								 NULL);
 	
 	/* Pack */
@@ -455,25 +458,21 @@ menu_set_alarm_cb (BonoboUIComponent *component,
 
 static void
 menu_clear_alarm_cb (BonoboUIComponent *component,
-					 gpointer data,
+					 AlarmApplet *applet,
 					 const gchar *cname)
 {
-	AlarmApplet *applet = (AlarmApplet *)data;
+	g_debug("menu_clear_alarm");
 	
 	clear_alarm (applet);
-	
-	g_debug("alarm_applet_clear_alarm");
 }
 
 static void
 menu_preferences_cb (BonoboUIComponent *component,
-								gpointer data,
-								const gchar *cname)
+					 AlarmApplet *applet,
+					 const gchar *cname)
 {
 	/* Construct the preferences dialog and show it here */
 	g_debug("preferences_dialog");
-	
-	AlarmApplet *applet = (AlarmApplet *)data;
 	
 	preferences_dialog_display (applet);
 }
@@ -500,14 +499,15 @@ menu_about_cb (BonoboUIComponent *component,
     };
 
     gtk_show_about_dialog (NULL,
-    					   "program-name", ALARM_NAME,
-    					   "title", _("About " ALARM_NAME),
+    					   "program-name",	ALARM_NAME,
+    					   "title", 		_("About " ALARM_NAME),
                            "version",       VERSION,
                            "copyright",     "\xC2\xA9 2007 Johannes H. Jensen",
+                           "website",		"http://joh.deworks.net/blog/?page_id=58",
                            "authors",       authors,
                            "documenters",   documenters,
                            "artists",       artists, 
-                           "logo-icon-name", ALARM_ICON,
+                           "logo-icon-name",ALARM_ICON,
                            NULL);
 }
 

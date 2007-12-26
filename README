@@ -1,0 +1,40 @@
+GNOME Alarm Applet
+=================
+
+This package contains an applet for use with the GNOME panel. Therefore, it
+requires gnome-core to be installed.
+
+Requirements
+------------
+
+You need at least:
+
+    gnome-panel-2.13.4
+    glib-2.13.0
+    gtk-2.11.0
+    gnome-vfs-2.15.4
+    gconf-2.8.0
+    libglade-2.4.0
+    gstreamer-0.10.2
+    libgnome-2.8.0
+    libgnomeui-2.8.0
+    gnome-icon-theme-2.15.91
+
+Some extras that improve functionality:
+
+    libnotify-0.3.2
+
+Installation
+------------
+
+Unpackage with:
+
+tar zxvf alarm-applet-<VERSION>.tar.gz'
+cd alarm-applet-<VERSION>
+
+
+Compile with the usual:
+
+./configure --prefix=/usr
+make
+make install

@@ -297,6 +297,8 @@ get_sound_file (AlarmApplet *applet)
 	AlarmListEntry *e;
 	e = (AlarmListEntry *) g_list_nth_data (applet->sounds, applet->sound_pos);
 	
+	g_debug ("get_sound_file returning %p", e);
+	
 	return (const gchar *)e->data;
 }
 
@@ -338,7 +340,9 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->set_alarm_dialog = NULL;
 	applet->preferences_dialog = NULL;
 	
-	/* Preferences (defaults) TODO: Add GConf schema */
+	/* Preferences (defaults). 
+	 * ...gconf_get_string can return NULL if the key is not found. We can't
+	 * assume the schema provides the default values for strings. */
 	applet->show_label = TRUE;
 	applet->label_type = LABEL_TYPE_ALARM;
 	applet->notify_type = NOTIFY_SOUND;
@@ -349,8 +353,17 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	panel_applet_add_preferences (applet->parent, ALARM_SCHEMA_DIR, NULL);
 	panel_applet_set_flags (PANEL_APPLET (panelapplet), PANEL_APPLET_EXPAND_MINOR);
 	
+	// Load sounds list
+	load_stock_sounds_list (applet);
+	
+	// Load applications list
+	load_app_list (applet);
+	
 	/* Set up gconf handlers */
 	setup_gconf (applet);
+	
+	/* Load gconf values */
+	load_gconf (applet);
 	
 	/* Set up properties menu */
 	menu_setup(applet);
@@ -359,55 +372,12 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	ui_setup (applet);
 	
 	
-	
-	/* Fetch gconf data */
-	applet->started       = panel_applet_gconf_get_bool (applet->parent, KEY_STARTED, NULL);
-	applet->alarm_time    = panel_applet_gconf_get_int (applet->parent, KEY_ALARMTIME, NULL);
-	tmp					  = panel_applet_gconf_get_string (applet->parent, KEY_MESSAGE, NULL);
-	
-	applet->alarm_message = g_strdup (tmp);
-	
 	if (applet->started) {
 		// Start the timer!
 		update_label (applet);
 		update_tooltip (applet);
 		timer_start (applet);
 	}
-	
-	/* Fetch preference data */
-	applet->show_label          = panel_applet_gconf_get_bool (applet->parent, KEY_SHOW_LABEL, NULL);
-	applet->notify_sound_loop   = panel_applet_gconf_get_bool (applet->parent, KEY_SOUND_LOOP, NULL);
-	applet->notify_command      = panel_applet_gconf_get_string (applet->parent, KEY_COMMAND, NULL);
-	applet->notify_bubble       = panel_applet_gconf_get_bool (applet->parent, KEY_NOTIFY_BUBBLE, NULL);
-	
-	// Load sounds list
-	load_stock_sounds_list (applet);
-	
-	// Fetch sound file
-	tmp = panel_applet_gconf_get_string (applet->parent, KEY_SOUND_FILE, NULL);
-	
-	if (!set_sound_file (applet, tmp)) {
-		if (g_list_length (applet->sounds) > 0) {
-			// Set it to the first stock sound
-			applet->sound_pos = 0;
-		}
-	}
-	g_free(tmp);
-	
-	tmp = panel_applet_gconf_get_string (applet->parent, KEY_LABEL_TYPE, NULL);
-	if (tmp) {
-		gconf_string_to_enum (label_type_enum_map, tmp, (gint *)&(applet->label_type));
-	}
-	g_free(tmp);
-	
-	tmp = panel_applet_gconf_get_string (applet->parent, KEY_NOTIFY_TYPE, NULL);
-	if (tmp) {
-		gconf_string_to_enum (notify_type_enum_map, tmp, (gint *)&(applet->notify_type));
-	}
-	g_free(tmp);
-	
-	// Set label visibility
-	g_object_set (applet->label, "visible", applet->show_label, NULL);
 	
 	g_debug ("GLADE DIR: %s", GNOME_GLADEDIR);
 

@@ -22,8 +22,20 @@ G_BEGIN_DECLS
 
 #define N_GCONF_PREFS	10
 
-GConfEnumStringPair label_type_enum_map [];
+/* Failsafe defaults for use when the schema isn't found
+ * or doesn't provide sensible defaults */
+#define DEF_ALARMTIME		(time (NULL) + 60 * 5)
+#define DEF_MESSAGE			"Alarm!"
+#define DEF_SHOW_LABEL		TRUE
+#define DEF_LABEL_TYPE		LABEL_TYPE_ALARM
+#define DEF_NOTIFY_TYPE		NOTIFY_SOUND
+#define DEF_SOUND_FILE		""				// Should default to first in stock sound list
+#define DEF_SOUND_LOOP		TRUE
+#define DEF_COMMAND			""				// Should default to first in app list
+#define DEF_NOTIFY_BUBBLE	TRUE
 
+/* We store enums as strings */
+GConfEnumStringPair label_type_enum_map [];
 GConfEnumStringPair notify_type_enum_map [];
 
 /**
@@ -51,6 +63,9 @@ alarm_gconf_set_started (AlarmApplet *applet, gboolean started);
  */
 void
 setup_gconf (AlarmApplet *applet);
+
+void
+load_gconf (AlarmApplet *applet);
 
 G_END_DECLS
 
