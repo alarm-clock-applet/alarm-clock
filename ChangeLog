@@ -1,0 +1,211 @@
+2007-12-26 14:48  joh
+
+	* src/prefs.c: Preferences Dialog:
+	  - Add tooltip which explains why the notification bubble
+	  check-box is disabled when libnotify isn't present.
+
+2007-12-26 14:44  joh
+
+	* src/Makefile.am, src/alarm-gconf.c, src/alarm.schemas: More
+	  robust handling of GConf settings.
+	  Provide more sensible GConf defaults.
+
+2007-12-26 03:33  joh
+
+	* AUTHORS, README, src/Makefile.am, src/alarm-applet.c,
+	  src/alarm-gconf.c, src/alarm-gconf.h, src/player.c, src/prefs.c,
+	  src/ui.c, src/ui/alarm-applet.glade: - Added a more robust system
+	  for handling gconf keys. This fixes a bug which causes the applet
+	  to crash if the schema isn't installed.
+	  - Fixed a bug where the command entry would be unsensitive even
+	  if a custom command is set in gconf.
+	  - Set window icons to the dialogs in alarm-applet.glade
+
+2007-12-24 02:32  joh
+
+	* src/alarm-applet.h, src/ui.c: Add About dialog.
+
+2007-12-24 01:29  joh
+
+	* Makefile.am, src/Makefile.am, src/tests/Makefile.am: make dist
+	  work
+
+2007-12-24 00:41  joh
+
+	* src/alarm-applet.c, src/alarm-gconf.c, src/ui.c, src/ui.h: Add
+	  tooltip.
+
+2007-12-24 00:18  joh
+
+	* config.h.in, configure.ac, src/Makefile.am, src/alarm-applet.c,
+	  src/alarm-applet.h, src/alarm-gconf.c, src/prefs.c, src/ui.c,
+	  src/ui.h: Add support for notification bubbles with libnotify.
+
+2007-12-21 19:41  joh
+
+	* src/alarm-applet.c, src/alarm-applet.h, src/alarm-gconf.c,
+	  src/prefs.c, src/ui.c: prefs.c:
+	  - Added hard-coded command-map for apps. Should ideally be in
+	  some XML file.
+	  - Added app-detection to the app-combo
+
+2007-12-21 10:24  joh
+
+	* src/alarm-applet.c, src/ui.c, src/ui.h: ui.c: Add support for
+	  panel background.
+
+2007-12-21 10:14  joh
+
+	* src/alarm-applet.c, src/alarm-applet.h, src/prefs.c, src/prefs.h,
+	  src/ui.c, src/ui.h: Some more code migration.
+
+2007-12-21 10:03  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h,
+	  src/prefs.c, src/prefs.h, src/ui.c, src/ui.h, src/util.c,
+	  src/util.h: UI and Preferences code moved to ui.c and prefs.c
+
+2007-12-15 01:12  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h,
+	  src/alarm-gconf.c, src/alarm-gconf.h: alarm-applet.c: GConf
+	  abstracted to alarm-gconf.c
+
+2007-12-14 22:29  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h:
+	  alarm-applet.c: Use list-entry.o
+
+2007-12-14 14:28  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h,
+	  src/list-entry.c, src/list-entry.h, src/tests/Makefile.am,
+	  src/tests/test_list_entry.c, src/tests/test_util.c, src/util.c,
+	  src/util.h: Utilities and AlarmListEntry moved to separate
+	  modules.
+	  alarm-applet.c: Use util.o
+
+2007-12-07 17:14  joh
+
+	* src/tests/Makefile.am:
+
+2007-12-07 17:13  joh
+
+	* configure.ac, src/Makefile.am, src/test_player.c, src/tests,
+	  src/tests/test_player.c: Move tests to src/tests
+
+2007-12-05 02:47  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h,
+	  src/player.h, src/spec.txt: alarm-applet.c:
+	  - Modified to use MediaPlayer.
+	  - ( More modularization coming up )
+
+2007-12-05 02:05  joh
+
+	* src/Makefile.am: Linking per-binary added.
+
+2007-12-05 02:01  joh
+
+	* src/Makefile.am: Updated to compile test_player
+
+2007-12-05 02:00  joh
+
+	* src/test_player.c: Simple test program for the media player.
+
+2007-12-05 02:00  joh
+
+	* src/player.c, src/player.h: Media player abstraction!
+
+2007-12-03 00:18  joh
+
+	* src/alarm-applet.c, src/alarm-applet.h,
+	  src/icons/alarm-clock.svg, src/ui/alarm-applet.glade,
+	  src/ui/alarm-applet.glade.bak, src/ui/alarm-applet.gladep,
+	  src/ui/alarm-applet.gladep.bak: Added a test app-list. Should
+	  parse from gnome-default-applications.xml in the future.
+	  - Fixed a bug due to Glade adding an empty text renderer to the
+	  app-combo.
+
+2007-12-02 00:11  joh
+
+	* ., src: svn:ignore updated.
+
+2007-12-02 00:10  joh
+
+	* src/icons/alarm-clock.36.png, src/icons/alarm-clock.48.png,
+	  src/icons/alarm-clock.64.png: Extra icon sizes.
+
+2007-12-02 00:09  joh
+
+	* src/Makefile.am, src/alarm-applet.c, src/alarm-applet.h,
+	  src/icons/alarm-clock.16.png, src/icons/alarm-clock.22.png,
+	  src/icons/alarm-clock.24.png, src/icons/alarm-clock.32.png,
+	  src/icons/alarm-clock.svg: icons:
+	  - SVG size updated to contain the entire icon.
+	  alarm-applet.c:
+	  - Removed redundant GtkIconTheme pointer.
+
+2007-12-01 19:34  joh
+
+	* src/alarm-applet.c: alarm-applet.c:
+	  - destroy_cb bug fixed: Invalid signal handler for "destroy"
+	  signal. Was casting the GtkObject to AlarmApplet. DUH!
+
+2007-12-01 18:38  joh
+
+	* src/GNOME_AlarmApplet.server.in, src/Makefile.am,
+	  src/alarm-applet.c, src/alarm-applet.h, src/icons,
+	  src/icons/alarm-clock.16.png, src/icons/alarm-clock.22.png,
+	  src/icons/alarm-clock.24.png, src/icons/alarm-clock.32.png,
+	  src/icons/alarm-clock.svg: Makefile.am:
+	  - Icons added for installation.
+	  
+	  alarm-clock.c:
+	  - Checks for valid gconf settings added to gconf callbacks.
+	  - BUG: Crashes on destroy_cb()
+
+2007-11-29 22:52  joh
+
+	* AUTHORS, ChangeLog, Makefile.am, NEWS, README, autogen.sh, m4,
+	  m4/ac-define-dir.m4, m4/acinclude.m4, src/Makefile,
+	  src/Makefile.old: Working autotoolized.
+
+2007-11-29 22:44  joh
+
+	* config.h.in, configure.ac, src/GNOME_AlarmApplet.server,
+	  src/GNOME_AlarmApplet.server.in, src/Makefile, src/Makefile.am,
+	  src/Makefile.old, src/alarm-applet.c, src/alarm-applet.h,
+	  src/alarm.schemas, src/ui, ui: Code reorganization.
+
+2007-11-28 22:40  joh
+
+	* Makefile.am, config.h.in, configure.ac, src/Makefile.am:
+	  Autoconfig stuff, not working yet.
+
+2007-11-28 18:23  joh
+
+	* ., src: svn:ignores
+
+2007-11-28 18:19  joh
+
+	* src/alarm-applet.h: alarm-applet.h:
+	  - Use /usr/share/sounds for standard sounds directory.
+
+2007-11-27 20:21  joh
+
+	* branches, tags, ., src, src/GNOME_AlarmApplet.server,
+	  src/Makefile, src/alarm-applet.c, src/alarm-applet.h,
+	  src/alarm.schemas, src/spec.txt, ui, ui/alarm-applet.glade,
+	  ui/alarm-applet.glade.bak, ui/alarm-applet.gladep,
+	  ui/alarm-applet.gladep.bak: Initial import.
+	  - Timer works, timestamp based.
+	  - GConf works, although second notification often is redundant.
+	  - Different labels works.
+	  - Notification by sound works.
+	  - Custom sounds works.
+	  - TODO:
+	  - Notification by commands
+	  - Standard application list (Rhythmbox, etc.)
+	  - Notification bubble (libnotify)
+

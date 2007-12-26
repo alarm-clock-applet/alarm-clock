@@ -2,7 +2,7 @@ dnl ***************************************************************************
 dnl *** configure.ac for ALARM-APPLET                                       ***
 dnl ***************************************************************************
 
-AC_INIT([GNOME Alarm Applet], [0.1],
+AC_INIT([GNOME Alarm Applet], [0.1.1],
 		[Johannes H. Jensen <joh@deworks.net>],
 		[alarm-applet])
 		
