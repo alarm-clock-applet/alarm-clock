@@ -315,6 +315,228 @@ applet_back_change (PanelApplet			*a,
 
 }
 
+/* Taken from gnome-panel/button-widget.c */
+static void
+load_icon (AlarmApplet *applet)
+{
+	GtkWidget *w;
+	GdkPixbuf *icon;
+	gint	  size, pbsize;
+	
+	w = GTK_WIDGET (applet->parent);
+	
+	if (panel_applet_get_orient (applet->parent) == PANEL_APPLET_ORIENT_UP ||
+		panel_applet_get_orient (applet->parent) == PANEL_APPLET_ORIENT_DOWN)
+		size = w->allocation.height;
+	else
+		size = w->allocation.width;
+	
+	if (size < 22)
+		size = 16;
+	else if (size < 24)
+		size = 22;
+	else if (size < 32)
+		size = 24;
+	else if (size < 48)
+		size = 32;
+	else if (size < 64)
+		size = 48;
+	else
+		size = 64;
+
+	// Reload icon only if the size is different.}
+	icon = gtk_image_get_pixbuf (GTK_IMAGE (applet->icon));
+	
+	if (icon) {
+		if (IS_HORIZONTAL (applet->parent))
+			pbsize = gdk_pixbuf_get_height (icon);
+		else
+			pbsize = gdk_pixbuf_get_width (icon);
+		
+		if (pbsize == size) {
+			// Do nothing
+			//g_debug ("load_icon: Existing size the same.");
+			return;
+		}
+	}
+	
+	g_debug ("Resizing icon to %dx%d...", size, size);
+	
+	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
+									 ALARM_ICON,
+									 size,
+									 0, NULL);
+	
+	if (icon == NULL) {
+		g_critical ("Icon not found.");
+		return;
+	}
+	
+	g_object_set (applet->icon, "pixbuf", icon, NULL);
+	
+	if (icon)
+		g_object_unref (icon);
+}
+
+static void
+change_size_cb (GtkWidget 	  *widget,
+				GtkAllocation *alloc,
+				AlarmApplet	  *applet) 
+{
+	/*GdkPixbuf	*icon;
+	gint		size;*/
+	
+	load_icon (applet);
+
+	
+
+	/*widget->allocation = *allocation;
+
+	if (GTK_WIDGET_REALIZED (widget)) {
+		gdk_window_move_resize (button->event_window, 
+					allocation->x,
+					allocation->y,
+					allocation->width,
+					allocation->height);
+	}*/
+}
+
+/* Taken from the clock applet */
+static int
+calculate_minimum_width (GtkWidget   *widget,
+						 const gchar *text)
+{
+	PangoContext *context;
+	PangoLayout  *layout;
+	int	      width, height;
+	int	      focus_width = 0;
+	int	      focus_pad = 0;
+
+	context = gtk_widget_get_pango_context (widget);
+
+	layout = pango_layout_new (context);
+	pango_layout_set_alignment (layout, PANGO_ALIGN_LEFT);
+	pango_layout_set_text (layout, text, -1);
+	pango_layout_get_pixel_size (layout, &width, &height);
+	g_object_unref (G_OBJECT (layout));
+	layout = NULL;
+
+	gtk_widget_style_get (widget,
+			      "focus-line-width", &focus_width,
+			      "focus-padding", &focus_pad,
+			      NULL);
+
+	width += 2 * (focus_width + focus_pad + widget->style->xthickness);
+
+	return width;
+}
+
+static void
+update_orient (AlarmApplet *applet)
+{
+	const gchar *text;
+	int          min_width;
+	gdouble      new_angle;
+	gdouble      angle;
+	gint		 width;
+	GtkWidget	*box;
+	
+	if (IS_HORIZONTAL (applet->parent) && ORIENT_IS_HORIZONTAL (applet->orient)) {
+		// Nothing to do, both old and new orientation is horizontal.
+		return;
+	}
+	
+	/* Do we need to repack? */
+	if (IS_HORIZONTAL (applet->parent) != ORIENT_IS_HORIZONTAL (applet->orient)) {
+		g_debug ("update_orient: REPACK");
+		
+		// Add new
+		if (IS_HORIZONTAL (applet->parent))
+			box = gtk_hbox_new(FALSE, 6);
+		else
+			box = gtk_vbox_new(FALSE, 6);
+		
+		/* Keep children */
+		g_object_ref (applet->icon);
+		g_object_ref (applet->label);
+		
+		/* Remove old */
+		gtk_container_remove (GTK_CONTAINER (applet->box), applet->icon);
+		gtk_container_remove (GTK_CONTAINER (applet->box), applet->label);
+		gtk_container_remove (GTK_CONTAINER (applet->parent), applet->box);
+		
+		/* Pack */
+		gtk_box_pack_start_defaults(GTK_BOX (box), applet->icon);
+		gtk_box_pack_start_defaults(GTK_BOX (box), applet->label);
+		
+		applet->box = box;
+		
+		/* Add to container and show */
+		gtk_container_add (GTK_CONTAINER (applet->parent), box);
+		gtk_widget_show_all (GTK_WIDGET (applet->parent));
+	}
+	
+	switch (panel_applet_get_orient (applet->parent)) {
+	case PANEL_APPLET_ORIENT_LEFT:
+		new_angle = 270;
+		break;
+	case PANEL_APPLET_ORIENT_RIGHT:
+		new_angle = 90;
+		break;
+	default:
+		new_angle = 0;
+		break;
+	}
+	
+	
+	angle = gtk_label_get_angle (GTK_LABEL (applet->label));
+	if (angle != new_angle) {
+		//unfix_size (cd);
+		gtk_label_set_angle (GTK_LABEL (applet->label), new_angle);
+	}
+
+	/*text = gtk_label_get_text (GTK_LABEL (applet->label));
+	min_width = calculate_minimum_width (GTK_WIDGET (applet->parent), text);
+	
+	width = GTK_WIDGET (applet->parent)->allocation.width;
+	
+	g_debug ("update_orient: min_width: %d, width: %d", min_width, width);
+	*/
+	
+	
+	
+	/*if (orient == PANEL_APPLET_ORIENT_LEFT &&
+	    min_width > width)
+		new_angle = 270;
+	else if (orient == PANEL_APPLET_ORIENT_RIGHT &&
+		min_width > width)
+		new_angle = 90;
+	else
+		new_angle = 0;
+	
+	g_debug ("update_orient: new_angle: %d", new_angle);
+	
+	angle = gtk_label_get_angle (GTK_LABEL (applet->label));
+	if (angle != new_angle) {
+		//unfix_size (cd);
+		gtk_label_set_angle (GTK_LABEL (applet->label), new_angle);
+	}*/
+}
+
+static void
+orient_change_cb (PanelApplet *a,
+					  PanelAppletOrient orient,
+					  AlarmApplet *applet)
+{
+	g_debug ("applet_orient_change");
+	
+	update_orient (applet);
+	
+	// Store new orientation
+	applet->orient = panel_applet_get_orient (applet->parent);
+}
+
+
 static void
 destroy_cb (GtkObject *object, AlarmApplet *applet)
 {
@@ -409,39 +631,43 @@ ui_setup (AlarmApplet *applet)
 	g_signal_connect (G_OBJECT(applet->parent), "destroy",
 					  G_CALLBACK(destroy_cb), applet);
 	
-	g_signal_connect (G_OBJECT(applet->parent), "change_background",
+	g_signal_connect (G_OBJECT(applet->parent), "change-background",
 					  G_CALLBACK (applet_back_change), applet);
 	
-	/* Set up container hbox */
-	hbox = gtk_hbox_new(FALSE, 6);
+	g_signal_connect (G_OBJECT(applet->parent), "change-orient",
+					  G_CALLBACK (orient_change_cb), applet);
+	
+	g_signal_connect (G_OBJECT(applet->parent), "size-allocate",
+					  G_CALLBACK (change_size_cb), applet);
+	
+	/* Set up container box */
+	if (IS_HORIZONTAL (applet->parent))
+		applet->box = gtk_hbox_new(FALSE, 6);
+	else
+		applet->box = gtk_vbox_new(FALSE, 6);
+	
+	/* Store orientation for future reference */
+	applet->orient = panel_applet_get_orient (applet->parent);
 	
 	/* Set up icon and label */
-	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 ALARM_ICON,
-									 22,
-									 0, NULL);
-	
-	if (icon == NULL) {
-		g_critical ("Icon not found.");
-	}
-	
-	applet->icon = gtk_image_new_from_pixbuf (icon);
-	
-	if (icon)
-		g_object_unref (icon);
+	applet->icon = gtk_image_new ();
+	load_icon (applet);
 	
 	applet->label = g_object_new(GTK_TYPE_LABEL,
-								 "label", _("No alarm"),
+								 "label", ALARM_DEF_LABEL,
 								 "use-markup", TRUE,
 								 "visible", applet->show_label,
 								 NULL);
 	
 	/* Pack */
-	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->icon);
-	gtk_box_pack_start_defaults(GTK_BOX(hbox), applet->label);
+	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);
+	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->label);
+	
+	/* Update orientation */
+	update_orient (applet);
 	
 	/* Add to container and show */
-	gtk_container_add (GTK_CONTAINER (applet->parent), hbox);
+	gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
 	gtk_widget_show_all (GTK_WIDGET (applet->parent));
 	
 	update_tooltip (applet);

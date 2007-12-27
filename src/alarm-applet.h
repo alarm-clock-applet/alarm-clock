@@ -50,6 +50,7 @@ void player_preview_start (AlarmApplet *applet);
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
+#define ALARM_DEF_LABEL	 _("No alarm")
 
 #ifndef VERSION
 #define VERSION "0.1"
@@ -76,8 +77,12 @@ enum
 
 struct _AlarmApplet {
 	PanelApplet *parent;
+	PanelAppletOrient orient;
+	
+	/* Panel UI */
 	GtkWidget *icon;	/* alarm icon */
 	GtkWidget *label;	/* clock label */
+	GtkWidget *box;		/* packing box */
 	
 	/* Alarm */
 	time_t 	 alarm_time;
