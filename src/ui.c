@@ -382,54 +382,11 @@ static void
 change_size_cb (GtkWidget 	  *widget,
 				GtkAllocation *alloc,
 				AlarmApplet	  *applet) 
-{
-	/*GdkPixbuf	*icon;
-	gint		size;*/
-	
+{	
 	load_icon (applet);
-
-	
-
-	/*widget->allocation = *allocation;
-
-	if (GTK_WIDGET_REALIZED (widget)) {
-		gdk_window_move_resize (button->event_window, 
-					allocation->x,
-					allocation->y,
-					allocation->width,
-					allocation->height);
-	}*/
 }
 
-/* Taken from the clock applet */
-static int
-calculate_minimum_width (GtkWidget   *widget,
-						 const gchar *text)
-{
-	PangoContext *context;
-	PangoLayout  *layout;
-	int	      width, height;
-	int	      focus_width = 0;
-	int	      focus_pad = 0;
 
-	context = gtk_widget_get_pango_context (widget);
-
-	layout = pango_layout_new (context);
-	pango_layout_set_alignment (layout, PANGO_ALIGN_LEFT);
-	pango_layout_set_text (layout, text, -1);
-	pango_layout_get_pixel_size (layout, &width, &height);
-	g_object_unref (G_OBJECT (layout));
-	layout = NULL;
-
-	gtk_widget_style_get (widget,
-			      "focus-line-width", &focus_width,
-			      "focus-padding", &focus_pad,
-			      NULL);
-
-	width += 2 * (focus_width + focus_pad + widget->style->xthickness);
-
-	return width;
-}
 
 static void
 update_orient (AlarmApplet *applet)
@@ -494,33 +451,6 @@ update_orient (AlarmApplet *applet)
 		//unfix_size (cd);
 		gtk_label_set_angle (GTK_LABEL (applet->label), new_angle);
 	}
-
-	/*text = gtk_label_get_text (GTK_LABEL (applet->label));
-	min_width = calculate_minimum_width (GTK_WIDGET (applet->parent), text);
-	
-	width = GTK_WIDGET (applet->parent)->allocation.width;
-	
-	g_debug ("update_orient: min_width: %d, width: %d", min_width, width);
-	*/
-	
-	
-	
-	/*if (orient == PANEL_APPLET_ORIENT_LEFT &&
-	    min_width > width)
-		new_angle = 270;
-	else if (orient == PANEL_APPLET_ORIENT_RIGHT &&
-		min_width > width)
-		new_angle = 90;
-	else
-		new_angle = 0;
-	
-	g_debug ("update_orient: new_angle: %d", new_angle);
-	
-	angle = gtk_label_get_angle (GTK_LABEL (applet->label));
-	if (angle != new_angle) {
-		//unfix_size (cd);
-		gtk_label_set_angle (GTK_LABEL (applet->label), new_angle);
-	}*/
 }
 
 static void
@@ -672,6 +602,11 @@ ui_setup (AlarmApplet *applet)
 	
 	update_tooltip (applet);
 }
+
+
+
+
+
 
 static void
 menu_set_alarm_cb (BonoboUIComponent *component,
