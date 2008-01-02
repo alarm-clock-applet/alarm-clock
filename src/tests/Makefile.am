@@ -6,10 +6,11 @@ INCLUDES =						\
 	$(GST_CFLAGS)				\
 	$(GNOME_LIBS2_CFLAGS)		\
 	$(GLIB_CFLAGS)				\
+	$(GCONF_CFLAGS)				\
 	-I$(includedir) 			\
 	-I$(top_srcdir)/src
 
-bin_PROGRAMS = test_player test_list_entry test_util
+bin_PROGRAMS = test_player test_list_entry test_util test_alarm
 
 test_player_SOURCES = $(top_srcdir)/src/player.c $(top_srcdir)/src/player.h test_player.c
 test_player_LDADD =				\
@@ -29,3 +30,12 @@ test_list_entry_LDADD =			\
 test_util_SOURCES = $(top_srcdir)/src/util.c $(top_srcdir)/src/util.h test_util.c
 test_util_LDADD =				\
 	$(GLIB_LIBS)				
+
+test_alarm_SOURCES = 			\
+	$(top_srcdir)/src/alarm.h	\
+	$(top_srcdir)/src/alarm.c	\
+	test_alarm.c
+	
+test_alarm_LDADD =				\
+	$(GLIB_LIBS)				\
+	$(GCONF_LIBS)

@@ -29,7 +29,6 @@ GNOME_ICON_THEME_REQUIRED=2.15.91
 LIBNOTIFY_REQUIRED=0.3.2
 
 dnl LIBXML_REQUIRED=2.5.0
-dnl LIBNOTIFY_REQUIRED=0.3.2
 
 dnl ***************************************************************************
 
@@ -61,6 +60,11 @@ dnl -- check for gnome-vfs (required) -----------------------------------------
 PKG_CHECK_MODULES(GNOME_VFS, [gnome-vfs-2.0 >= $GNOME_VFS_REQUIRED])
 AC_SUBST(GNOME_VFS_CFLAGS)
 AC_SUBST(GNOME_VFS_LIBS)
+
+dnl -- check for gconf (required) -----------------------------------------
+PKG_CHECK_MODULES(GCONF, [gconf-2.0 >= $GCONF_REQUIRED])
+AC_SUBST(GCONF_CFLAGS)
+AC_SUBST(GCONF_LIBS)
 
 dnl -- check for libglade (required) ------------------------------------------
 PKG_CHECK_MODULES(LIBGLADE, libglade-2.0 >= $LIBGLADE_REQUIRED)
