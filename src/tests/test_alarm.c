@@ -128,7 +128,7 @@ void test_alarm_object (void)
 	g_object_unref (alarm);
 	
 	alarm = alarm_new ("/apps/alarm-applet", 0);
-	alarm2 = alarm_new ("/apps/alarm-applet", 1);
+	alarm2 = alarm_new ("/apps/alarm-applet", 7);
 	
 	DUMP_ALARM (alarm);
 	DUMP_ALARM (alarm2);
@@ -157,6 +157,30 @@ test_alarm_set (gpointer data)
 	g_object_set (alarm, "sound_repeat", TRUE, NULL);
 }
 
+void
+test_alarm_list (void)
+{
+	GList *list, *l;
+	guint i = 0;
+	
+	gchar *gconf_dir;
+	guint id, time;
+	AlarmType type;
+	gchar *message;
+	AlarmNotifyType ntype;
+	gchar *sound_file;
+	gboolean sound_repeat;
+	gchar *command;
+	
+	list = alarm_get_list ("/apps/alarm-applet");
+	
+	for (l = list; l; l = l->next, i++) {
+		g_print ("List entry #%d:", i);
+		alarm = ALARM (l->data);
+		DUMP_ALARM (alarm);
+	}
+}
+
 int main (void)
 {
 	GMainLoop *loop;
@@ -164,6 +188,7 @@ int main (void)
 	test_alarm_type ();
 	test_alarm_notify_type ();
 	test_alarm_object ();
+	test_alarm_list ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);
 	

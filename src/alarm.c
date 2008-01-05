@@ -2,6 +2,8 @@
  * Copyright/Licensing information.
  */
 
+#include <stdio.h>
+
 #include "alarm.h"
 
 G_DEFINE_TYPE (Alarm, alarm, G_TYPE_OBJECT);
@@ -773,7 +775,7 @@ alarm_gen_id_dir (const gchar *gconf_dir)
 		if (key)
 			g_free (key);
 		
-		key = g_strdup_printf("%s/alarm%d", gconf_dir, id);
+		key = g_strdup_printf("%s/" ALARM_GCONF_DIR_PREFIX "%d", gconf_dir, id);
 		id++;
 		
 	} while (gconf_client_dir_exists (client, key, NULL));
@@ -827,7 +829,7 @@ alarm_gconf_get_dir (Alarm *alarm)
 	
 	g_return_val_if_fail (IS_ALARM (alarm), NULL);
 	
-	key = g_strdup_printf ("%s/alarm%d", alarm->gconf_dir, alarm->id);
+	key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d", alarm->gconf_dir, alarm->id);
 	
 	return key;
 }
@@ -842,7 +844,7 @@ alarm_gconf_get_full_key (Alarm *alarm, const gchar *key)
 	if (!key)
 		return NULL;
 	
-	full_key = g_strdup_printf ("%s/alarm%d/%s", alarm->gconf_dir, alarm->id, key);
+	full_key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d/%s", alarm->gconf_dir, alarm->id, key);
 
 	return full_key;
 }
@@ -928,3 +930,53 @@ alarm_bind (Alarm *alarm,
 	arg = alarm_bind_arg_new (G_OBJECT (alarm), prop);
 	g_signal_connect (dest, tmp, G_CALLBACK (alarm_bind_update), arg);
 }
+
+static gint
+alarm_list_item_compare (gconstpointer a, gconstpointer b)
+{
+	return strcmp ((const gchar *)a, (const gchar *)b);
+}
+
+/*
+ * Get list of alarms in gconf_dir
+ */
+GList *
+alarm_get_list (const gchar *gconf_dir)
+{
+	GConfClient *client;
+	GSList *dirs = NULL;
+	GSList *l = NULL;
+	gchar *tmp, *dir;
+	
+	GList *ret = NULL;
+	Alarm *alarm;
+	gint id;
+	
+	client = gconf_client_get_default ();
+	dirs = gconf_client_all_dirs (client, gconf_dir, NULL);
+	
+	g_return_val_if_fail (dirs, NULL);
+	
+	dirs = g_slist_sort (dirs, alarm_list_item_compare);
+	
+	for (l = dirs; l; l = l->next) {
+		tmp = (gchar *)l->data;
+		dir = g_path_get_basename (tmp);
+		
+		if (sscanf (dir, ALARM_GCONF_DIR_PREFIX "%d", &id) > 0 && id >= 0) {
+			g_debug ("alarm_get_list: found VALID %s #%d", dir, id);
+			
+			alarm = alarm_new (gconf_dir, id);
+			ret = g_list_append (ret, alarm);
+		}
+		
+		g_free (dir);
+		g_free (tmp);
+	}
+	
+	g_slist_free (dirs);
+	
+	return ret;
+}
+
+

@@ -91,6 +91,11 @@ struct _AlarmClass {
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
 
 /*
+ * GConf settings
+ */
+#define ALARM_GCONF_DIR_PREFIX		"alarm"
+
+/*
  * Function prototypes.
  */
 
@@ -127,6 +132,9 @@ alarm_notify_type_to_string (AlarmNotifyType type);
 AlarmNotifyType 
 alarm_notify_type_from_string (const gchar *type);
 
+
+GList *
+alarm_get_list (const gchar *gconf_dir);
 
 G_END_DECLS
 
