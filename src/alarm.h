@@ -11,6 +11,27 @@
 G_BEGIN_DECLS
 
 /*
+ * Utility macros
+ */
+
+#define TYPE_ALARM (alarm_get_type())
+
+#define ALARM(object) \
+  (G_TYPE_CHECK_INSTANCE_CAST((object), TYPE_ALARM, Alarm))
+
+#define ALARM_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST((klass), TYPE_ALARM, AlarmClass))
+
+#define IS_ALARM(object) \
+  (G_TYPE_CHECK_INSTANCE_TYPE((object), TYPE_ALARM))
+
+#define IS_ALARM_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_TYPE((klass), TYPE_ALARM))
+
+#define ALARM_GET_CLASS(object) \
+  (G_TYPE_INSTANCE_GET_CLASS((object), TYPE_ALARM, AlarmClass))
+
+/*
  * Structure definitions
  */
 
@@ -33,57 +54,36 @@ struct _Alarm {
 	GObject parent;
 	
 	gchar *gconf_dir;		/* GConf directory */
-	guint id;				/* Alarm ID */
-	/* Alarm */
-/*	time_t	 alarm;
-	gchar	*message;
-	gboolean started;*/
+	gint id;				/* Alarm ID */
 	
-	/* Notification */
-/*	AlarmNotifyType	 notify_type;
-	gboolean		 notify_sound_loop;
-	gchar			*notify_sound;
-	gchar			*notify_command;*/
+	/* GConf mapped values */
+	AlarmType type;
+	time_t time;
+	gboolean active;
+	gchar *message;
+	
+	AlarmNotifyType notify_type;
+	gchar *sound_file;
+	gboolean sound_loop;
+	gchar *command;
 };
 
 struct _AlarmClass {
 	GObjectClass parent;
 	
 	/* Signals */
-	
+	//void	(*)(Alarm *alarm);
 };
-
-static GConfEnumStringPair alarm_type_enum_map [];
-static GConfEnumStringPair alarm_notify_type_enum_map [];
-
-/*
- * Utility macros
- */
-
-#define TYPE_ALARM (alarm_get_type())
-
-#define ALARM(object) \
-  (G_TYPE_CHECK_INSTANCE_CAST((object), TYPE_ALARM, Alarm))
-
-#define ALARM_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST((klass), TYPE_ALARM, AlarmClass))
-
-#define IS_ALARM(object) \
-  (G_TYPE_CHECK_INSTANCE_TYPE((object), TYPE_ALARM))
-
-#define IS_ALARM_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_TYPE((klass), TYPE_ALARM))
-
-#define ALARM_GET_CLASS(object) \
-  (G_TYPE_INSTANCE_GET_CLASS((object), TYPE_ALARM, AlarmClass))
 
 
 /* 
- * Failsafe defaults for use when the schema isn't found
- * or doesn't provide sensible defaults
+ * Failsafe defaults for the GConf-mapped properties for 
+ * use when the schema isn't found or doesn't provide 
+ * sensible defaults.
  */
 #define ALARM_DEFAULT_TYPE			ALARM_TYPE_CLOCK
 #define ALARM_DEFAULT_TIME			(time (NULL) + 60 * 5)
+#define ALARM_DEFAULT_ACTIVE		FALSE
 #define ALARM_DEFAULT_MESSAGE		"Alarm!"
 #define ALARM_DEFAULT_NOTIFY_TYPE	ALARM_NOTIFY_SOUND
 #define ALARM_DEFAULT_SOUND_FILE	""				// Should default to first in stock sound list
@@ -97,6 +97,18 @@ static GConfEnumStringPair alarm_notify_type_enum_map [];
 /* used by ALARM_TYPE */
 GType 
 alarm_get_type (void);
+
+Alarm *
+alarm_new (const gchar *gconf_dir, gint id);
+
+guint
+alarm_gen_id_dir (const gchar *gconf_dir);
+
+guint
+alarm_gen_id (Alarm *alarm);
+
+gchar *
+alarm_gconf_get_dir (Alarm *alarm);
 
 gchar *
 alarm_gconf_get_full_key (Alarm *alarm, const gchar *key);
@@ -114,28 +126,6 @@ alarm_notify_type_to_string (AlarmNotifyType type);
 
 AlarmNotifyType 
 alarm_notify_type_from_string (const gchar *type);
-
-
-
-/* <internal> */
-
-static void alarm_class_init (AlarmClass *class);
-
-/* Prototypes and constants for property manipulation */
-static void alarm_set_property(GObject *object,
-                               guint prop_id,
-                               const GValue *value,
-                               GParamSpec *pspec);
-
-static void alarm_get_property(GObject *object,
-                               guint prop_id,
-                               GValue *value,
-                               GParamSpec *pspec);
-
-/*
- * Method definitions.
- */
-
 
 
 G_END_DECLS

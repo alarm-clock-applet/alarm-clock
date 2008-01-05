@@ -73,10 +73,26 @@ void test_alarm_notify_type (void)
 			 alarm_notify_type_from_string ("command"));
 }
 
+Alarm *alarm, *alarm2;
+
+void 
+test_alarm_object_changed (GObject *object, 
+						   GParamSpec *param,
+						   gpointer data)
+{
+	g_print ("Alarm Object %p changed: %s\n", object, g_param_spec_get_name (param));
+}
+
+void
+test_alarm_object_sound_repeat_changed (GObject *object, 
+									    GParamSpec *param,
+									    gpointer data)
+{
+	g_print ("Alarm Object::sound_repeat changed\n");
+}
+
 void test_alarm_object (void)
 {
-	Alarm *alarm;
-	
 	gchar *gconf_dir;
 	guint id, time;
 	AlarmType type;
@@ -110,13 +126,53 @@ void test_alarm_object (void)
 	DUMP_ALARM (alarm);
 	
 	g_object_unref (alarm);
+	
+	alarm = alarm_new ("/apps/alarm-applet", 0);
+	alarm2 = alarm_new ("/apps/alarm-applet", 1);
+	
+	DUMP_ALARM (alarm);
+	DUMP_ALARM (alarm2);
+	
+	g_signal_connect (alarm, "notify", 
+					  G_CALLBACK (test_alarm_object_changed),
+					  NULL);
+	
+	g_signal_connect (alarm, "notify::sound-repeat",
+					  G_CALLBACK (test_alarm_object_sound_repeat_changed),
+					  NULL);
+	
+	g_signal_connect (alarm2, "notify", 
+					  G_CALLBACK (test_alarm_object_changed),
+					  NULL);
+	
+	alarm_bind (alarm, "command", G_OBJECT (alarm2), "message");
+}
+
+gboolean
+test_alarm_set (gpointer data)
+{
+	Alarm *alarm = ALARM (data);
+	
+	g_debug ("set sound_repeat");
+	g_object_set (alarm, "sound_repeat", TRUE, NULL);
 }
 
 int main (void)
 {
+	GMainLoop *loop;
+	
 	test_alarm_type ();
 	test_alarm_notify_type ();
 	test_alarm_object ();
+	
+	loop = g_main_loop_new (g_main_context_default(), FALSE);
+	
+//	g_timeout_add_seconds (5, test_alarm_set, alarm);
+	
+	g_main_loop_run (loop);
+	
+	g_object_unref (alarm);
+	g_object_unref (alarm2);
 	
 	return 0;
 }

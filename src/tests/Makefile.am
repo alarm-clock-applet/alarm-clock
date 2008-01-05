@@ -39,3 +39,6 @@ test_alarm_SOURCES = 			\
 test_alarm_LDADD =				\
 	$(GLIB_LIBS)				\
 	$(GCONF_LIBS)
+	
+test_alarm_cpp:
+	cpp $(INCLUDES) ../alarm.c
