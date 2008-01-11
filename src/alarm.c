@@ -56,6 +56,7 @@ static GConfEnumStringPair alarm_notify_type_enum_map [] = {
 	{ 0, NULL }
 };
 
+/* Property indexes */
 static enum {
 	PROP_ALARM_0,
 	PROP_DIR,
@@ -80,6 +81,20 @@ static enum {
 #define PROP_NAME_SOUND_FILE	"sound_file"
 #define PROP_NAME_SOUND_LOOP	"sound_repeat"
 #define PROP_NAME_COMMAND		"command"
+
+/* Signal indexes */
+static enum
+{
+  SIGNAL_ALARM,
+  LAST_SIGNAL
+} AlarmSignal;
+
+/* Signal identifier map */
+static guint alarm_signal[LAST_SIGNAL] = {0};
+
+/* Prototypes for signal handlers */
+static void alarm_alarm (Alarm *alarm);
+
 
 /* Initialize the Alarm class */
 static void 
@@ -195,10 +210,18 @@ alarm_class_init (AlarmClass *class)
 	g_type_class_add_private (class, sizeof (AlarmPrivate));
 	
 	/* set signal handlers */
-	/*class->unpacked = media_unpacked;
-	class->throw_out = media_throw_out;*/
+	class->alarm = alarm_alarm;
 
 	/* install signals and default handlers */
+	alarm_signal[SIGNAL_ALARM] = g_signal_new ("alarm",		/* name */
+											   TYPE_ALARM,	/* class type identifier */
+											   G_SIGNAL_RUN_LAST, /* options */
+											   G_STRUCT_OFFSET (AlarmClass, alarm), /* handler offset */
+											   NULL, /* accumulator function */
+											   NULL, /* accumulator data */
+											   g_cclosure_marshal_VOID__VOID, /* marshaller */
+											   G_TYPE_NONE, /* type of return value */
+											   0);
 }
 
 static void
@@ -612,6 +635,18 @@ alarm_get_property (GObject *object,
 	}
 }
 
+static void 
+alarm_alarm (Alarm *alarm)
+{
+	g_debug ("alarm_alarm (%p)", alarm);
+}
+
+void
+alarm_trigger (Alarm *alarm)
+{
+	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
+}
+
 static void
 alarm_gconf_connect (Alarm *alarm)
 {
@@ -803,6 +838,8 @@ AlarmType alarm_type_from_string (const gchar *type)
 {
 	AlarmType ret = ALARM_TYPE_INVALID;
 	
+	g_return_val_if_fail(type, ret);
+	
 	gconf_string_to_enum (alarm_type_enum_map, type, (gint *)&ret);
 	
 	return ret;
@@ -816,6 +853,8 @@ const gchar *alarm_notify_type_to_string (AlarmNotifyType type)
 AlarmNotifyType alarm_notify_type_from_string (const gchar *type)
 {
 	AlarmNotifyType ret = ALARM_NOTIFY_INVALID;
+	
+	g_return_val_if_fail (type, ret);
 	
 	gconf_string_to_enum (alarm_notify_type_enum_map, type, (gint *)&ret);
 	

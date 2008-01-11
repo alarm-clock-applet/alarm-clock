@@ -160,7 +160,7 @@ test_alarm_set (gpointer data)
 void
 test_alarm_list (void)
 {
-	GList *list, *l;
+	GList *list = NULL, *l;
 	guint i = 0;
 	
 	gchar *gconf_dir;
@@ -181,6 +181,27 @@ test_alarm_list (void)
 	}
 }
 
+void
+test_alarm_signal_alarm (Alarm *alarmd, gchar *data)
+{
+	g_debug ("ALARM on %p! Data is %s", alarmd, data);
+}
+
+void
+test_alarm_signals (void)
+{
+	alarm = alarm_new ("/apps/alarm-applet", 0);
+	
+	g_debug ("CONNECTING alarm TO %p", alarm);
+	
+	/* Test signals */
+	g_signal_connect (alarm, "alarm",
+					  G_CALLBACK (test_alarm_signal_alarm),
+					  "the data");
+	
+	alarm_trigger (alarm);
+}
+
 int main (void)
 {
 	GMainLoop *loop;
@@ -189,6 +210,7 @@ int main (void)
 	test_alarm_notify_type ();
 	test_alarm_object ();
 	test_alarm_list ();
+	test_alarm_signals ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);
 	

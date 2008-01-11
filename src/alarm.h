@@ -72,7 +72,7 @@ struct _AlarmClass {
 	GObjectClass parent;
 	
 	/* Signals */
-	//void	(*)(Alarm *alarm);
+	void (*alarm)(Alarm *alarm);	/* Alarm triggered! */
 };
 
 
@@ -132,9 +132,11 @@ alarm_notify_type_to_string (AlarmNotifyType type);
 AlarmNotifyType 
 alarm_notify_type_from_string (const gchar *type);
 
-
 GList *
 alarm_get_list (const gchar *gconf_dir);
+
+void
+alarm_trigger (Alarm *alarm);
 
 G_END_DECLS
 
