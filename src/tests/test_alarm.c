@@ -1,4 +1,5 @@
 #include "alarm.h"
+#include <time.h>
 
 #define DUMP_ALARM(alarm)	g_object_get ((alarm), 				\
 										  "gconf-dir", &gconf_dir, 	\
@@ -10,6 +11,7 @@
 										  "sound_file", &sound_file,\
 										  "sound_repeat", &sound_repeat,\
 										  "command", &command,	\
+										  "active", &active,	\
 										  NULL);				\
 							g_print ("\nAlarm %p:\n"			\
 									 "\tgconf-dir: %s\n"		\
@@ -21,12 +23,13 @@
 									 "\tsound_file: %s\n"		\
 									 "\tsound_repeat: %d\n"		\
 									 "\tcommand: %s\n"			\
+									 "\tactive: %s\n"			\
 									 ,(alarm), gconf_dir, id,	\
 									 alarm_type_to_string (type),\
 									 time, message, 			\
 									 alarm_notify_type_to_string (ntype),\
 									 sound_file, sound_repeat,	\
-									 command);
+									 command, (active) ? "YES" : "NO");
 
 										  
 void test_alarm_type (void)
@@ -101,6 +104,7 @@ void test_alarm_object (void)
 	gchar *sound_file;
 	gboolean sound_repeat;
 	gchar *command;
+	gboolean active;
 	
 	g_type_init();
 	
@@ -162,6 +166,7 @@ test_alarm_list (void)
 {
 	GList *list = NULL, *l;
 	guint i = 0;
+	Alarm *a;
 	
 	gchar *gconf_dir;
 	guint id, time;
@@ -171,28 +176,32 @@ test_alarm_list (void)
 	gchar *sound_file;
 	gboolean sound_repeat;
 	gchar *command;
+	gboolean active;
+	
+	g_print ("\nTEST ALARM LIST:\n"
+			 "==================\n");
 	
 	list = alarm_get_list ("/apps/alarm-applet");
 	
 	for (l = list; l; l = l->next, i++) {
 		g_print ("List entry #%d:", i);
-		alarm = ALARM (l->data);
-		DUMP_ALARM (alarm);
+		a = ALARM (l->data);
+		DUMP_ALARM (a);
+		g_object_unref (a);
 	}
 }
 
 void
-test_alarm_signal_alarm (Alarm *alarmd, gchar *data)
+test_alarm_signal_alarm (Alarm *a, gchar *data)
 {
-	g_debug ("ALARM on %p! Data is %s", alarmd, data);
+	g_debug ("ALARM on %p! Data: %s", a, data);
 }
 
 void
 test_alarm_signals (void)
 {
-	alarm = alarm_new ("/apps/alarm-applet", 0);
-	
-	g_debug ("CONNECTING alarm TO %p", alarm);
+	g_print ("\nTEST ALARM SIGNALS:\n"
+			 "==================\n");
 	
 	/* Test signals */
 	g_signal_connect (alarm, "alarm",
@@ -200,6 +209,46 @@ test_alarm_signals (void)
 					  "the data");
 	
 	alarm_trigger (alarm);
+}
+
+void
+test_alarm_timer (void)
+{
+	/* Test alarm */
+	gint now = time(NULL);
+	
+	/*g_object_unref (alarm);
+	g_object_unref (alarm2);
+	
+	alarm = alarm_new ("/apps/alarm-applet", 0);
+	alarm2 = alarm_new ("/apps/alarm-applet", 1);*/
+	
+	g_print ("\nTEST ALARM TIMER:\n"
+			 "==================\n");
+	
+	
+	alarm_disable (alarm);
+	alarm_disable (alarm2);
+	
+	g_print ("test_alarm_timer: Setting alarm (%p) to 10 seconds from now.\n", alarm);
+	
+	g_object_set (alarm,
+				  "time", now + 10,
+				  "active", TRUE,
+				  NULL);
+	
+	g_print ("test_alarm_timer: Setting alarm (%p) to 15 seconds from now.\n", alarm2);
+	
+	g_object_set (alarm2, "time", now + 15, NULL);
+	alarm_enable(alarm2);
+}
+
+gboolean
+test_alarm_timer_disable2 (gpointer data)
+{
+	alarm_disable(alarm2);
+	
+	return FALSE;
 }
 
 int main (void)
@@ -211,10 +260,14 @@ int main (void)
 	test_alarm_object ();
 	test_alarm_list ();
 	test_alarm_signals ();
+	test_alarm_timer ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);
 	
 //	g_timeout_add_seconds (5, test_alarm_set, alarm);
+	
+	// Remove alarm from alarm2 after 10 seconds
+	g_timeout_add_seconds (10, test_alarm_timer_disable2, NULL);
 	
 	g_main_loop_run (loop);
 	

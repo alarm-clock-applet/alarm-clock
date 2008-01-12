@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include <time.h>
 
 #include "alarm.h"
 
@@ -32,6 +33,11 @@ static void alarm_gconf_dir_changed (GConfClient *client,
 									 GConfEntry *entry,
 									 gpointer data);
 
+static void alarm_timer_start (Alarm *alarm);
+static void alarm_timer_remove (Alarm *alarm);
+static gboolean alarm_timer_is_started (Alarm *alarm);
+
+
 #define ALARM_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_ALARM, AlarmPrivate))
 
@@ -41,6 +47,7 @@ struct _AlarmPrivate
 {
 	GConfClient *gconf_client;
 	guint gconf_listener;
+	guint timer_id;
 };
 
 
@@ -479,7 +486,18 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		break;
 	case PROP_ACTIVE:
+		bool = alarm->active;
 		alarm->active = g_value_get_boolean (value);
+		
+		g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
+		if (alarm->active && !alarm_timer_is_started(alarm))
+			// Start timer
+			alarm_timer_start (alarm);
+		else if (!alarm->active && alarm_timer_is_started(alarm))
+			// Stop timer
+			alarm_timer_remove (alarm);
+		
+		
 		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_ACTIVE);
 		
@@ -635,17 +653,99 @@ alarm_get_property (GObject *object,
 	}
 }
 
+/*
+ * ALARM signal {{
+ */
+
 static void 
 alarm_alarm (Alarm *alarm)
 {
-	g_debug ("alarm_alarm (%p)", alarm);
+	g_debug ("[%p] #%d: alarm_alarm", alarm, alarm->id);
 }
 
 void
 alarm_trigger (Alarm *alarm)
 {
 	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
+	
+	alarm_disable (alarm);
 }
+
+/*
+ * Convenience functions for enabling/disabling the alarm.
+ */
+void
+alarm_enable (Alarm *alarm)
+{
+	g_object_set (alarm, "active", TRUE, NULL);
+}
+
+void
+alarm_disable (Alarm *alarm)
+{
+	g_object_set (alarm, "active", FALSE, NULL);
+}
+
+static gboolean
+alarm_timer_update (Alarm *alarm)
+{
+	time_t now;
+	
+	time (&now);
+	
+	if (now >= alarm->time) {
+		alarm_trigger (alarm);
+		
+		// Remove callback
+		return FALSE;
+	} else if (alarm->time - now <= 10) {
+		g_debug ("[%p] #%d %2d...", alarm, alarm->id, (int)(alarm->time - now));
+	}
+	
+	// Keep callback
+	return TRUE;
+}
+
+static void
+alarm_timer_start (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
+	
+	g_debug ("[%p] #%d timer_start", alarm, alarm->id);
+	
+	// Remove old timer, if any
+	alarm_timer_remove (alarm);
+	
+	// Keep us updated every 1 second
+	priv->timer_id = g_timeout_add_seconds (1, (GSourceFunc) alarm_timer_update, alarm);
+}
+
+static gboolean
+alarm_timer_is_started (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
+		
+	return priv->timer_id > 0;
+}
+
+static void
+alarm_timer_remove (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
+	
+	if (alarm_timer_is_started(alarm)) {
+		g_debug ("#%d timer_remove (%p)", alarm->id, alarm);
+		
+		g_source_remove (priv->timer_id);
+		
+		priv->timer_id = 0;
+	}
+}
+
+
+/*
+ * }} ALARM signal
+ */
 
 static void
 alarm_gconf_connect (Alarm *alarm)
@@ -725,8 +825,10 @@ alarm_gconf_dir_changed (GConfClient *client,
 		break;
 	case PROP_ACTIVE:
 		b = gconf_value_get_bool (entry->value);
-		if (b != alarm->active)
+		if (b != alarm->active) {
+			g_debug ("[%p] #%d GCONF-ACTIVE changed from %d to %d", alarm, alarm->id, alarm->active, b);
 			g_object_set (alarm, name, b, NULL);
+		}
 		break;
 	case PROP_MESSAGE:
 		str = gconf_value_get_string (entry->value);
@@ -923,7 +1025,7 @@ alarm_bind_update (GObject *object,
 	AlarmBindArg *arg = (AlarmBindArg *)data;
 	gpointer d;
 	
-	g_debug ("alarm_bind_update %p [%s] -> %p [%s]", object, pspec->name, arg->object, arg->name);
+	g_debug ("alarm_bind_update #%d(%p) [%s] -> %p [%s]", alarm->id, alarm, pspec->name, arg->object, arg->name);
 	
 	g_object_get (object, pspec->name, &d, NULL);
 	

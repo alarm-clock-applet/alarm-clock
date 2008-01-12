@@ -138,6 +138,12 @@ alarm_get_list (const gchar *gconf_dir);
 void
 alarm_trigger (Alarm *alarm);
 
+void
+alarm_enable (Alarm *alarm);
+
+void
+alarm_disable (Alarm *alarm);
+
 G_END_DECLS
 
 #endif /*ALARM_H_*/
