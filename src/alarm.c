@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "player.h"
 #include "alarm.h"
 
 G_DEFINE_TYPE (Alarm, alarm, G_TYPE_OBJECT);
@@ -37,6 +38,10 @@ static void alarm_timer_start (Alarm *alarm);
 static void alarm_timer_remove (Alarm *alarm);
 static gboolean alarm_timer_is_started (Alarm *alarm);
 
+static void alarm_player_start (Alarm *alarm);
+
+static void alarm_error (Alarm *alarm, GError *err);
+
 
 #define ALARM_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_ALARM, AlarmPrivate))
@@ -48,6 +53,7 @@ struct _AlarmPrivate
 	GConfClient *gconf_client;
 	guint gconf_listener;
 	guint timer_id;
+	MediaPlayer *player;
 };
 
 
@@ -93,11 +99,12 @@ static enum {
 static enum
 {
   SIGNAL_ALARM,
+  SIGNAL_ERROR,
   LAST_SIGNAL
 } AlarmSignal;
 
 /* Signal identifier map */
-static guint alarm_signal[LAST_SIGNAL] = {0};
+static guint alarm_signal[LAST_SIGNAL] = {0, 0};
 
 /* Prototypes for signal handlers */
 static void alarm_alarm (Alarm *alarm);
@@ -218,6 +225,7 @@ alarm_class_init (AlarmClass *class)
 	
 	/* set signal handlers */
 	class->alarm = alarm_alarm;
+	class->error = alarm_error;
 
 	/* install signals and default handlers */
 	alarm_signal[SIGNAL_ALARM] = g_signal_new ("alarm",		/* name */
@@ -229,6 +237,17 @@ alarm_class_init (AlarmClass *class)
 											   g_cclosure_marshal_VOID__VOID, /* marshaller */
 											   G_TYPE_NONE, /* type of return value */
 											   0);
+	
+	alarm_signal[SIGNAL_ERROR] = g_signal_new ("error",
+											   TYPE_ALARM,
+											   G_SIGNAL_RUN_LAST,
+											   G_STRUCT_OFFSET (AlarmClass, error),
+											   NULL,
+											   NULL,
+											   g_cclosure_marshal_VOID__POINTER,
+											   G_TYPE_NONE,
+											   1,
+											   G_TYPE_POINTER);
 }
 
 static void
@@ -654,6 +673,29 @@ alarm_get_property (GObject *object,
 }
 
 /*
+ * ERROR signal {{
+ */
+GQuark
+alarm_error_quark (void)
+{
+	return g_quark_from_static_string ("alarm-error-quark");
+}
+
+static void
+alarm_error (Alarm *alarm, GError *err)
+{
+	g_warning("[%p] #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
+}
+
+void
+alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg)
+{
+	GError *err = g_error_new (ALARM_ERROR, code, "%s", msg);
+	
+	g_signal_emit (alarm, alarm_signal[SIGNAL_ERROR], 0, err, NULL);
+}
+
+/*
  * ALARM signal {{
  */
 
@@ -669,6 +711,20 @@ alarm_trigger (Alarm *alarm)
 	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
 	
 	alarm_disable (alarm);
+	
+	switch (alarm->notify_type) {
+	case ALARM_NOTIFY_SOUND:
+		// Start sound playback
+		g_debug("[%p] #%d Start player", alarm, alarm->id);
+		alarm_player_start (alarm);
+		break;
+	case ALARM_NOTIFY_COMMAND:
+		// Start app
+		g_debug("[%p] #%d Start command", alarm, alarm->id);
+		break;
+	default:
+		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", alarm->notify_type);
+	}
 }
 
 /*
@@ -685,6 +741,8 @@ alarm_disable (Alarm *alarm)
 {
 	g_object_set (alarm, "active", FALSE, NULL);
 }
+
+
 
 static gboolean
 alarm_timer_update (Alarm *alarm)
@@ -1120,4 +1178,64 @@ alarm_get_list (const gchar *gconf_dir)
 	return ret;
 }
 
+
+/**
+ * Player error
+ */
+static void
+alarm_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
+{
+	Alarm *alarm = ALARM (data);
+	gchar *uri;
+	gchar *msg;
+	
+	uri = media_player_get_uri (player);
+	msg = g_strdup_printf ("Could not play '%s': %s", uri, err->message);
+	
+	g_critical (msg);
+	
+	/* Emit error signal */
+	alarm_error_trigger (alarm, ALARM_ERROR_PLAY, msg);
+	
+	g_free (uri);
+	g_free (msg);
+}
+
+static void
+alarm_player_state_cb (MediaPlayer *player, MediaPlayerState state, gpointer data)
+{
+	Alarm *alarm	   = ALARM (data);
+	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+	
+	if (state == MEDIA_PLAYER_STOPPED) {
+		g_debug ("[%p] #%d Freeing media player %p", alarm, alarm->id, player);
+		
+		media_player_free (player);
+		
+		priv->player = NULL;
+	}
+}
+
+
+/**
+ * Play sound via gstreamer
+ */
+static void
+alarm_player_start (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+	
+	if (priv->player == NULL) {
+		priv->player = media_player_new (alarm->sound_file,
+										 alarm->sound_loop,
+										 alarm_player_state_cb, alarm,
+										 alarm_player_error_cb, alarm);
+	} else {
+		media_player_set_uri (priv->player, alarm->sound_file);
+	}
+	
+	media_player_start (priv->player);
+	
+	g_debug ("[%p] #%d player_start...", alarm, alarm->id);
+}
 

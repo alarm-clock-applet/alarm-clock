@@ -157,7 +157,7 @@ test_alarm_set (gpointer data)
 {
 	Alarm *alarm = ALARM (data);
 	
-	g_debug ("set sound_repeat");
+	g_print ("set sound_repeat\n");
 	g_object_set (alarm, "sound_repeat", TRUE, NULL);
 }
 
@@ -194,7 +194,13 @@ test_alarm_list (void)
 void
 test_alarm_signal_alarm (Alarm *a, gchar *data)
 {
-	g_debug ("ALARM on %p! Data: %s", a, data);
+	g_print ("ALARM on %p! Data: %s\n", a, data);
+}
+
+void
+test_alarm_signal_error (Alarm *a, GError *err, gchar *data)
+{
+	g_print ("ERROR on %p! Message: %s, Code: %d, Data: %s", a, err->message, err->code, data);
 }
 
 void
@@ -203,12 +209,18 @@ test_alarm_signals (void)
 	g_print ("\nTEST ALARM SIGNALS:\n"
 			 "==================\n");
 	
-	/* Test signals */
+	/* Test alarm signals */
 	g_signal_connect (alarm, "alarm",
 					  G_CALLBACK (test_alarm_signal_alarm),
 					  "the data");
 	
 	alarm_trigger (alarm);
+	
+	/* Test error signals */
+	g_signal_connect (alarm, "error", G_CALLBACK (test_alarm_signal_error),
+					  "the error data");
+	
+	alarm_error_trigger (alarm, 123, "Something bad happened");
 }
 
 void
@@ -243,6 +255,21 @@ test_alarm_timer (void)
 	alarm_enable(alarm2);
 }
 
+void
+test_alarm_trigger (void)
+{
+	g_print ("\nTEST ALARM TRIGGER:\n"
+			 "==================\n");
+	
+	g_object_set (alarm,
+				  "notify_type", ALARM_NOTIFY_SOUND,
+				  "sound_file", "file:///usr/share/sounds/generic.wav",
+				  "sound_repeat", FALSE,
+				  NULL);
+	
+	alarm_trigger (alarm);
+}
+
 gboolean
 test_alarm_timer_disable2 (gpointer data)
 {
@@ -260,6 +287,7 @@ int main (void)
 	test_alarm_object ();
 	test_alarm_list ();
 	test_alarm_signals ();
+	test_alarm_trigger ();
 	test_alarm_timer ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);

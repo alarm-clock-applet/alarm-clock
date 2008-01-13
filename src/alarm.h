@@ -72,8 +72,20 @@ struct _AlarmClass {
 	GObjectClass parent;
 	
 	/* Signals */
-	void (*alarm)(Alarm *alarm);	/* Alarm triggered! */
+	void (*alarm)(Alarm *alarm);				/* Alarm triggered! */
+	void (*error)(Alarm *alarm, GError *err);	/* An error occured */
 };
+
+/*
+ * Error codes
+ */
+#define ALARM_ERROR		alarm_error_quark ()
+
+typedef enum {
+	ALARM_ERROR_NONE,
+	ALARM_ERROR_PLAY,		/* Error playing sound */
+	ALARM_ERROR_COMMAND		/* Error launching command */
+} AlarmErrorCode;
 
 
 /* 
@@ -143,6 +155,12 @@ alarm_enable (Alarm *alarm);
 
 void
 alarm_disable (Alarm *alarm);
+
+GQuark
+alarm_error_quark (void);
+
+void
+alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg);
 
 G_END_DECLS
 
