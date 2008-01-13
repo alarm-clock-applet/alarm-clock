@@ -268,6 +268,14 @@ test_alarm_trigger (void)
 				  NULL);
 	
 	alarm_trigger (alarm);
+	
+	
+	g_object_set (alarm2,
+				  "notify_type", ALARM_NOTIFY_COMMAND,
+				  "command", "ls -a",
+				  NULL);
+	
+	alarm_trigger (alarm2);
 }
 
 gboolean

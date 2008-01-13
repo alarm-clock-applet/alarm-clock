@@ -39,6 +39,7 @@ static void alarm_timer_remove (Alarm *alarm);
 static gboolean alarm_timer_is_started (Alarm *alarm);
 
 static void alarm_player_start (Alarm *alarm);
+static void alarm_command_run (Alarm *alarm);
 
 static void alarm_error (Alarm *alarm, GError *err);
 
@@ -721,6 +722,7 @@ alarm_trigger (Alarm *alarm)
 	case ALARM_NOTIFY_COMMAND:
 		// Start app
 		g_debug("[%p] #%d Start command", alarm, alarm->id);
+		alarm_command_run (alarm);
 		break;
 	default:
 		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", alarm->notify_type);
@@ -1199,6 +1201,7 @@ alarm_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
 	
 	g_free (uri);
 	g_free (msg);
+	g_error_free (err);
 }
 
 static void
@@ -1237,5 +1240,28 @@ alarm_player_start (Alarm *alarm)
 	media_player_start (priv->player);
 	
 	g_debug ("[%p] #%d player_start...", alarm, alarm->id);
+}
+
+/*
+ * Run Command
+ */
+static void
+alarm_command_run (Alarm *alarm)
+{
+	GError *err = NULL;
+	gchar *msg;
+	
+	if (!g_spawn_command_line_async (alarm->command, &err)) {
+		
+		msg = g_strdup_printf ("Could not launch `%s': %s", alarm->command, err->message);
+		
+		g_critical (msg);
+		
+		/* Emit error signal */
+		alarm_error_trigger (alarm, ALARM_ERROR_COMMAND, msg);
+		
+		g_free (msg);
+		g_error_free (err);
+	}
 }
 
