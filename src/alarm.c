@@ -79,6 +79,7 @@ static enum {
 	PROP_TIME,
 	PROP_ACTIVE,
 	PROP_MESSAGE,
+	PROP_TIMER,
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
@@ -91,6 +92,7 @@ static enum {
 #define PROP_NAME_TIME			"time"
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
+#define PROP_NAME_TIMER			"timer"
 #define PROP_NAME_NOTIFY_TYPE	"notify_type"
 #define PROP_NAME_SOUND_FILE	"sound_file"
 #define PROP_NAME_SOUND_LOOP	"sound_repeat"
@@ -121,6 +123,7 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *time_param;
 	GParamSpec *active_param;
 	GParamSpec *message_param;
+	GParamSpec *timer_param;
 	GParamSpec *notify_type_param;
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
@@ -177,6 +180,14 @@ alarm_class_init (AlarmClass *class)
 										 ALARM_DEFAULT_MESSAGE,
 										 G_PARAM_READWRITE);
 	
+	timer_param = g_param_spec_uint (PROP_NAME_TIMER,
+									 "alarm timer",
+									 "storage for the timer alarm type",
+									 0,					/* min */
+									 UINT_MAX,			/* max */
+									 0,					/* default */
+									 G_PARAM_READWRITE);
+	
 	notify_type_param = g_param_spec_uint (PROP_NAME_NOTIFY_TYPE,
 										"notification type",
 										"what kind of notification should be used",
@@ -217,6 +228,7 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_TIME, time_param);
 	g_object_class_install_property (g_object_class, PROP_ACTIVE, active_param);
 	g_object_class_install_property (g_object_class, PROP_MESSAGE, message_param);
+	g_object_class_install_property (g_object_class, PROP_TIMER, timer_param);
 	g_object_class_install_property (g_object_class, PROP_NOTIFY_TYPE, notify_type_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
@@ -322,6 +334,21 @@ alarm_gconf_load (Alarm *alarm)
 	} else {
 		// Not found in GConf, fall back to defaults
 		g_object_set (alarm, PROP_NAME_MESSAGE, ALARM_DEFAULT_MESSAGE, NULL);
+	}
+	
+	/*
+	 * TIMER (storage for timer alarm type)
+	 */
+	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMER);
+	val = gconf_client_get (client, key, NULL);
+	g_free (key);
+	
+	if (val) {
+		alarm->timer = (time_t)gconf_value_get_int (val);
+		gconf_value_free (val);
+	} else {
+		// Not found in GConf, fall back to defaults
+		g_object_set (alarm, PROP_NAME_TIMER, ALARM_DEFAULT_TIMER, NULL);
 	}
 	
 	/*
@@ -552,6 +579,21 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		
 		break;
+	case PROP_TIMER:
+		alarm->timer = g_value_get_uint (value);
+		
+		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMER);
+		
+		if (!gconf_client_set_int (client, key, alarm->timer, &err)) {
+			
+			g_critical ("Could not set %s (gconf): %s", 
+						key, err->message);
+			
+			g_error_free (err);
+		}
+		
+		g_free (key);
+		break;
 	case PROP_NOTIFY_TYPE:
 		alarm->notify_type = g_value_get_uint (value);
 		
@@ -654,6 +696,9 @@ alarm_get_property (GObject *object,
 		break;
 	case PROP_MESSAGE:
 		g_value_set_string (value, alarm->message);
+		break;
+	case PROP_TIMER:
+		g_value_set_uint (value, alarm->timer);
 		break;
 	case PROP_NOTIFY_TYPE:
 		g_value_set_uint (value, alarm->notify_type);
@@ -894,6 +939,11 @@ alarm_gconf_dir_changed (GConfClient *client,
 		str = gconf_value_get_string (entry->value);
 		if (strcmp (str, alarm->message) != 0)
 			g_object_set (alarm, name, str, NULL);
+		break;
+	case PROP_TIMER:
+		i = gconf_value_get_int (entry->value);
+		if (i != alarm->timer)
+			g_object_set (alarm, name, i, NULL);
 		break;
 	case PROP_NOTIFY_TYPE:
 		str = gconf_value_get_string (entry->value);

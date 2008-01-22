@@ -61,6 +61,9 @@ struct _Alarm {
 	time_t time;
 	gboolean active;
 	gchar *message;
+	time_t timer;			/* For storing the timer value for 
+							 * later use, as it can not be obtained
+							 * from the timestamp in the 'time' property. */
 	
 	AlarmNotifyType notify_type;
 	gchar *sound_file;
@@ -101,6 +104,7 @@ typedef enum {
 #define ALARM_DEFAULT_SOUND_FILE	""				// Should default to first in stock sound list
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
+#define ALARM_DEFAULT_TIMER			0
 
 /*
  * GConf settings

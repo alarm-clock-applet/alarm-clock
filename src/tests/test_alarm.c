@@ -1,5 +1,7 @@
 #include "alarm.h"
 #include <time.h>
+#include <glib.h>
+#include <string.h>
 
 #define DUMP_ALARM(alarm)	g_object_get ((alarm), 				\
 										  "gconf-dir", &gconf_dir, 	\
@@ -7,6 +9,7 @@
 										  "type", &type,		\
 										  "time", &time,		\
 										  "message", &message,	\
+										  "timer", &timer,		\
 										  "notify_type", &ntype,\
 										  "sound_file", &sound_file,\
 										  "sound_repeat", &sound_repeat,\
@@ -19,6 +22,7 @@
 									 "\ttype: %s\n"				\
 									 "\ttime: %d\n"				\
 									 "\tmessage: %s\n"			\
+									 "\ttimer: %d\n"			\
 									 "\tnotify_type: %s\n"		\
 									 "\tsound_file: %s\n"		\
 									 "\tsound_repeat: %d\n"		\
@@ -26,7 +30,7 @@
 									 "\tactive: %s\n"			\
 									 ,(alarm), gconf_dir, id,	\
 									 alarm_type_to_string (type),\
-									 time, message, 			\
+									 time, message, timer,		\
 									 alarm_notify_type_to_string (ntype),\
 									 sound_file, sound_repeat,	\
 									 command, (active) ? "YES" : "NO");
@@ -45,6 +49,10 @@ void test_alarm_type (void)
 			 alarm_type_to_string (ALARM_TYPE_CLOCK),
 			 alarm_type_to_string (ALARM_TYPE_TIMER));
 	
+	g_assert(alarm_type_to_string (ALARM_TYPE_INVALID) == NULL);
+	g_assert(strcmp (alarm_type_to_string (ALARM_TYPE_CLOCK), "clock") == 0);
+	g_assert(strcmp (alarm_type_to_string (ALARM_TYPE_TIMER), "timer") == 0);
+	
 	g_print ("alarm_type_from_string:\n"
 			 "\tinvalid: %d\n"
 			 "\tclock: %d\n"
@@ -52,11 +60,15 @@ void test_alarm_type (void)
 			 alarm_type_from_string ("invalid"),
 			 alarm_type_from_string ("clock"),
 			 alarm_type_from_string ("timer"));
+	
+	g_assert (alarm_type_from_string ("invalid") == ALARM_TYPE_INVALID);
+	g_assert (alarm_type_from_string ("clock") == ALARM_TYPE_CLOCK);
+	g_assert (alarm_type_from_string ("timer") == ALARM_TYPE_TIMER);
 }
 
 void test_alarm_notify_type (void)
 {
-	g_print ("TEST ALARM NOTIFY TYPE:\n"
+	g_print ("\nTEST ALARM NOTIFY TYPE:\n"
 			 "======================\n");
 	
 	g_print ("alarm_notify_type_to_string:\n"
@@ -67,6 +79,10 @@ void test_alarm_notify_type (void)
 			 alarm_notify_type_to_string (ALARM_NOTIFY_SOUND),
 			 alarm_notify_type_to_string (ALARM_NOTIFY_COMMAND));
 	
+	g_assert(alarm_notify_type_to_string (ALARM_NOTIFY_INVALID) == NULL);
+	g_assert(strcmp (alarm_notify_type_to_string (ALARM_NOTIFY_SOUND), "sound") == 0);
+	g_assert(strcmp (alarm_notify_type_to_string (ALARM_NOTIFY_COMMAND), "command") == 0);
+	
 	g_print ("alarm_notify_type_from_string:\n"
 			 "\tinvalid: %d\n"
 			 "\tsound: %d\n"
@@ -74,6 +90,10 @@ void test_alarm_notify_type (void)
 			 alarm_notify_type_from_string ("invalid"),
 			 alarm_notify_type_from_string ("sound"),
 			 alarm_notify_type_from_string ("command"));
+	
+	g_assert (alarm_notify_type_from_string ("invalid") == ALARM_NOTIFY_INVALID);
+	g_assert (alarm_notify_type_from_string ("sound") == ALARM_NOTIFY_SOUND);
+	g_assert (alarm_notify_type_from_string ("command") == ALARM_NOTIFY_COMMAND);
 }
 
 Alarm *alarm, *alarm2;
@@ -97,7 +117,7 @@ test_alarm_object_sound_repeat_changed (GObject *object,
 void test_alarm_object (void)
 {
 	gchar *gconf_dir;
-	guint id, time;
+	guint id, time, timer;
 	AlarmType type;
 	gchar *message;
 	AlarmNotifyType ntype;
@@ -122,6 +142,7 @@ void test_alarm_object (void)
 	g_object_set (alarm, "type", ALARM_TYPE_TIMER, NULL);
 	g_object_set (alarm, "time", 1234, NULL);
 	g_object_set (alarm, "message", "Wakety zooom!", NULL);
+	g_object_set (alarm, "timer", 4567, NULL);
 	g_object_set (alarm, "notify_type", ALARM_NOTIFY_COMMAND, NULL);
 	g_object_set (alarm, "sound_file", "file:///foo/bar", NULL);
 	g_object_set (alarm, "sound_repeat", FALSE, NULL);
@@ -169,7 +190,7 @@ test_alarm_list (void)
 	Alarm *a;
 	
 	gchar *gconf_dir;
-	guint id, time;
+	guint id, time, timer;
 	AlarmType type;
 	gchar *message;
 	AlarmNotifyType ntype;
@@ -224,7 +245,7 @@ test_alarm_signals (void)
 }
 
 void
-test_alarm_timer (void)
+test_alarm_timers (void)
 {
 	/* Test alarm */
 	gint now = time(NULL);
@@ -235,7 +256,7 @@ test_alarm_timer (void)
 	alarm = alarm_new ("/apps/alarm-applet", 0);
 	alarm2 = alarm_new ("/apps/alarm-applet", 1);*/
 	
-	g_print ("\nTEST ALARM TIMER:\n"
+	g_print ("\nTEST ALARM TIMERS:\n"
 			 "==================\n");
 	
 	
@@ -296,7 +317,7 @@ int main (void)
 	test_alarm_list ();
 	test_alarm_signals ();
 	test_alarm_trigger ();
-	test_alarm_timer ();
+	test_alarm_timers ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);
 	
