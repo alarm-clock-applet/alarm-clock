@@ -1,4 +1,5 @@
 #include "alarm.h"
+#include "testutils.h"
 #include <time.h>
 #include <glib.h>
 #include <string.h>
@@ -148,12 +149,36 @@ void test_alarm_object (void)
 	g_object_set (alarm, "sound_repeat", FALSE, NULL);
 	g_object_set (alarm, "command", "wiggle-your-toe --arg", NULL);
 	
+	/* Verify properties */
+	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", "/apps/alarm-applet");
+	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
+	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
+	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
+	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
+	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
+	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
+	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
+	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
+	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
+	
 	DUMP_ALARM (alarm);
 	
 	g_object_unref (alarm);
 	
 	alarm = alarm_new ("/apps/alarm-applet", 0);
 	alarm2 = alarm_new ("/apps/alarm-applet", 7);
+	
+	/* Verify properties */
+	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", "/apps/alarm-applet");
+	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
+	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
+	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
+	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
+	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
+	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
+	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
+	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
+	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
 	
 	DUMP_ALARM (alarm);
 	DUMP_ALARM (alarm2);
@@ -170,6 +195,7 @@ void test_alarm_object (void)
 					  G_CALLBACK (test_alarm_object_changed),
 					  NULL);
 	
+	g_print ("\nBINDING alarm%d/command to alarm%d/message...\n", alarm->id, alarm2->id);
 	alarm_bind (alarm, "command", G_OBJECT (alarm2), "message");
 }
 
@@ -259,20 +285,24 @@ test_alarm_timers (void)
 	g_print ("\nTEST ALARM TIMERS:\n"
 			 "==================\n");
 	
-	
 	alarm_disable (alarm);
 	alarm_disable (alarm2);
 	
-	g_print ("test_alarm_timer: Setting alarm (%p) to 10 seconds from now.\n", alarm);
+	g_print ("test_alarm_timer: Setting alarm #%d (%p) to 5 seconds from now.\n", alarm->id, alarm);
 	
 	g_object_set (alarm,
-				  "time", now + 10,
+				  "type", ALARM_TYPE_CLOCK,
+				  "time", now + 5,
 				  "active", TRUE,
 				  NULL);
 	
-	g_print ("test_alarm_timer: Setting alarm (%p) to 15 seconds from now.\n", alarm2);
+	g_print ("test_alarm_timer: Setting alarm #%d (%p) TIMER to 10 seconds.\n", alarm2->id, alarm2);
+
+	g_object_set (alarm2, 
+				  "type", ALARM_TYPE_TIMER,
+				  "timer", 10,
+				  NULL);
 	
-	g_object_set (alarm2, "time", now + 15, NULL);
 	alarm_enable(alarm2);
 }
 
@@ -324,7 +354,7 @@ int main (void)
 //	g_timeout_add_seconds (5, test_alarm_set, alarm);
 	
 	// Remove alarm from alarm2 after 10 seconds
-	g_timeout_add_seconds (10, test_alarm_timer_disable2, NULL);
+	//g_timeout_add_seconds (10, test_alarm_timer_disable2, NULL);
 	
 	g_main_loop_run (loop);
 	

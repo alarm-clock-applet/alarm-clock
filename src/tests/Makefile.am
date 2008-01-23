@@ -32,9 +32,7 @@ test_util_LDADD =				\
 	$(GLIB_LIBS)				
 
 test_alarm_SOURCES = 			\
-	$(top_srcdir)/src/alarm.h	\
 	$(top_srcdir)/src/alarm.c	\
-	$(top_srcdir)/src/player.h	\
 	$(top_srcdir)/src/player.c	\
 	test_alarm.c
 	
@@ -44,4 +42,4 @@ test_alarm_LDADD =				\
 	$(GST_LIBS)
 	
 test_alarm_cpp:
-	cpp $(INCLUDES) ../alarm.c
+	cpp $(INCLUDES) test_alarm.c

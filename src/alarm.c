@@ -497,6 +497,7 @@ alarm_set_property (GObject *object,
 		if (d != alarm->id) {
 			alarm_gconf_disconnect (alarm);
 			alarm->id = d;
+			alarm_gconf_load (alarm);
 			alarm_gconf_connect (alarm);
 		}
 		break;
@@ -536,10 +537,16 @@ alarm_set_property (GObject *object,
 		bool = alarm->active;
 		alarm->active = g_value_get_boolean (value);
 		
-		g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
-		if (alarm->active && !alarm_timer_is_started(alarm))
+		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
+		if (alarm->active && !alarm_timer_is_started(alarm)) {
+			if (alarm->type == ALARM_TYPE_TIMER) {
+				/* If we're a TIMER, update the "time" property to now + timer */
+				g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
+			}
+			
 			// Start timer
 			alarm_timer_start (alarm);
+		}
 		else if (!alarm->active && alarm_timer_is_started(alarm))
 			// Stop timer
 			alarm_timer_remove (alarm);
