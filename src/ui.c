@@ -587,7 +587,7 @@ ui_setup (AlarmApplet *applet)
 								 "label", ALARM_DEF_LABEL,
 								 "use-markup", TRUE,
 								 "visible", applet->show_label,
-								 "no-show-all", TRUE,
+								 "no-show-all", TRUE,			/* So gtk_widget_show_all() won't set visible to TRUE */
 								 NULL);
 	
 	/* Pack */
