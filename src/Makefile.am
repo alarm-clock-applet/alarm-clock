@@ -17,7 +17,9 @@ alarm_applet_SOURCES = alarm-applet.c alarm-applet.h \
 					   list-entry.c list-entry.h	 \
 					   alarm-gconf.c alarm-gconf.h	 \
 					   ui.c ui.h					 \
-					   prefs.c prefs.h
+					   prefs.c prefs.h				 \
+					   alarms-list.c				 \
+					   alarm.c
 
 alarm_applet_LDADD =			\
 	$(GLIB_LIBS)				\
@@ -45,7 +47,9 @@ icons =	\
 	icons/alarm-clock.32.png	\
 	icons/alarm-clock.36.png	\
 	icons/alarm-clock.48.png	\
-	icons/alarm-clock.64.png
+	icons/alarm-clock.64.png	\
+	icons/alarm-timer.svg		\
+	icons/alarm-timer.16.png
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 

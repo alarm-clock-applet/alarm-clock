@@ -47,6 +47,7 @@ void player_preview_start (AlarmApplet *applet);
 
 #define ALARM_NAME		 "Alarm Clock Applet"
 #define ALARM_ICON 		 "alarm-clock"
+#define TIMER_ICON		 "alarm-timer"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
@@ -84,7 +85,9 @@ struct _AlarmApplet {
 	GtkWidget *label;	/* clock label */
 	GtkWidget *box;		/* packing box */
 	
-	/* Alarm */
+	/* Alarms */
+	GList	*alarms;
+	
 	time_t 	 alarm_time;
 	gchar	*alarm_message;
 	gboolean started;
@@ -97,6 +100,9 @@ struct _AlarmApplet {
 	GtkWidget *minute;
 	GtkWidget *second;
 	GtkWidget *message;
+	
+	/* List-alarms */
+	GtkDialog *list_alarms_dialog;
 	
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY

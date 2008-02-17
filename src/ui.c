@@ -1,5 +1,8 @@
+#include <time.h>
+
 #include "alarm-applet.h"
 #include "ui.h"
+#include "alarms-list.h"
 
 void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent)
@@ -619,6 +622,15 @@ menu_set_alarm_cb (BonoboUIComponent *component,
 }
 
 static void
+menu_list_alarms_cb (BonoboUIComponent *component,
+					 gpointer data,
+					 const gchar *cname)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	display_list_alarms_dialog (applet);
+}
+
+static void
 menu_clear_alarm_cb (BonoboUIComponent *component,
 					 AlarmApplet *applet,
 					 const gchar *cname)
@@ -678,11 +690,11 @@ menu_setup (AlarmApplet *applet)
 {
 	static const gchar *menu_xml =
 		"<popup name=\"button3\">\n"
-		"   <menuitem name=\"Set Alarm Item\" "
-		"			  verb=\"SetAlarm\" "
-		"			_label=\"_Set Alarm\" "
+		"   <menuitem name=\"List Alarms\" "
+		"			  verb=\"ListAlarms\" "
+		"			_label=\"_Edit Alarms\" "
 		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-apply\"/>\n"
+		"		   pixname=\"gtk-edit\"/>\n"
 		"   <menuitem name=\"Clear Item\" "
 		"			  verb=\"ClearAlarm\" "
 		"			_label=\"_Clear alarm\" "
@@ -702,7 +714,7 @@ menu_setup (AlarmApplet *applet)
 		"</popup>\n";
 	
 	static const BonoboUIVerb menu_verbs [] = {
-			BONOBO_UI_VERB ("SetAlarm", menu_set_alarm_cb),
+			BONOBO_UI_VERB ("ListAlarms", menu_list_alarms_cb),
 			BONOBO_UI_VERB ("ClearAlarm", menu_clear_alarm_cb),
 			BONOBO_UI_VERB ("Preferences", menu_preferences_cb),
 			BONOBO_UI_VERB ("About", menu_about_cb),

@@ -4,6 +4,8 @@
 #include <glib.h>
 #include <string.h>
 
+#define GCONF_DIR "/apps/panel/applets/applet_8/prefs"
+
 #define DUMP_ALARM(alarm)	g_object_get ((alarm), 				\
 										  "gconf-dir", &gconf_dir, 	\
 										  "id", &id,			\
@@ -133,7 +135,7 @@ void test_alarm_object (void)
 			 "==================\n");
 	
 	alarm = g_object_new (TYPE_ALARM, 
-						  "gconf-dir", "/apps/alarm-applet",
+						  "gconf-dir", GCONF_DIR,
 						  NULL);
 	
 	DUMP_ALARM (alarm);
@@ -150,7 +152,7 @@ void test_alarm_object (void)
 	g_object_set (alarm, "command", "wiggle-your-toe --arg", NULL);
 	
 	/* Verify properties */
-	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", "/apps/alarm-applet");
+	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
 	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
 	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
 	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
@@ -165,11 +167,11 @@ void test_alarm_object (void)
 	
 	g_object_unref (alarm);
 	
-	alarm = alarm_new ("/apps/alarm-applet", 0);
-	alarm2 = alarm_new ("/apps/alarm-applet", 7);
+	alarm = alarm_new (GCONF_DIR, 0);
+	alarm2 = alarm_new (GCONF_DIR, 7);
 	
 	/* Verify properties */
-	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", "/apps/alarm-applet");
+	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
 	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
 	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
 	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
@@ -228,7 +230,7 @@ test_alarm_list (void)
 	g_print ("\nTEST ALARM LIST:\n"
 			 "==================\n");
 	
-	list = alarm_get_list ("/apps/alarm-applet");
+	list = alarm_get_list (GCONF_DIR);
 	
 	for (l = list; l; l = l->next, i++) {
 		g_print ("List entry #%d:", i);

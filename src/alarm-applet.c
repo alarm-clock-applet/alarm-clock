@@ -1,5 +1,7 @@
 #include "alarm-applet.h"
 
+#include "alarm.h"
+
 /*
  * DEFINTIIONS {{
  */
@@ -324,6 +326,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	/* Initialize applet struct */
 	applet = g_new(AlarmApplet, 1);
+	applet->alarms = NULL;
 	applet->alarm_time = 0;
 	applet->alarm_message = NULL;
 	applet->started = FALSE;
@@ -338,6 +341,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->parent = panelapplet;
 	
 	applet->set_alarm_dialog = NULL;
+	applet->list_alarms_dialog = NULL;
 	applet->preferences_dialog = NULL;
 	
 	/* Preferences (defaults). 
@@ -364,6 +368,11 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	/* Load gconf values */
 	load_gconf (applet);
+	
+	/* Load alarms */
+	tmp = panel_applet_get_preferences_key(applet->parent);
+	applet->alarms = alarm_get_list (tmp);
+	g_free (tmp);
 	
 	/* Set up properties menu */
 	menu_setup(applet);

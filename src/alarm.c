@@ -1213,7 +1213,8 @@ alarm_get_list (const gchar *gconf_dir)
 	client = gconf_client_get_default ();
 	dirs = gconf_client_all_dirs (client, gconf_dir, NULL);
 	
-	g_return_val_if_fail (dirs, NULL);
+	if (!dirs)
+		return NULL;
 	
 	dirs = g_slist_sort (dirs, alarm_list_item_compare);
 	
