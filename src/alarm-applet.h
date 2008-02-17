@@ -103,6 +103,7 @@ struct _AlarmApplet {
 	
 	/* List-alarms */
 	GtkDialog *list_alarms_dialog;
+	GtkListStore *list_alarms_store;
 	
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY

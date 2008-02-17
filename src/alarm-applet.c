@@ -342,6 +342,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	applet->set_alarm_dialog = NULL;
 	applet->list_alarms_dialog = NULL;
+	applet->list_alarms_store = NULL;
 	applet->preferences_dialog = NULL;
 	
 	/* Preferences (defaults). 

@@ -160,6 +160,12 @@ alarm_enable (Alarm *alarm);
 void
 alarm_disable (Alarm *alarm);
 
+void
+alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
+
+void
+alarm_update_time (Alarm *alarm);
+
 GQuark
 alarm_error_quark (void);
 

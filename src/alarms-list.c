@@ -3,18 +3,38 @@
 static void 
 list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 						 gchar                 *path,
-						 gpointer               user_data)
+						 gpointer               data)
 {
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	GtkListStore *model = applet->list_alarms_store;
 	GtkTreeIter iter;
-	GtkListStore *model = GTK_LIST_STORE (user_data);
+	gboolean active;
+	gint *ind;
 	
-	g_debug ("Activate %s", path);
+	Alarm *alarm;
 	
-	gtk_tree_model_get_iter_from_string (model, &iter, path);
+	GtkTreePath *tpath = gtk_tree_path_new_from_string (path);
+	ind = gtk_tree_path_get_indices (tpath);
 	
+	g_debug ("Activate %s: %d", path, ind[0]);
+	
+	gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (model), &iter, path);
+	gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, ACTIVE_COLUMN, &active, -1);
 	gtk_list_store_set (model, &iter,
-						ACTIVE_COLUMN, FALSE,
+						ACTIVE_COLUMN, !active,
 						-1);
+	
+	alarm = ALARM (g_list_nth_data (applet->alarms, ind[0]));
+	
+	g_debug ("Update alarm #%d", alarm->id);
+	if (!active) {
+		// Update time
+		g_debug ("\tUpdate TIME!");
+		alarm_update_time (alarm);
+	}
+	
+	g_object_set (alarm, "active", !active, NULL);
 }
 
 static void 
@@ -102,6 +122,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 								G_TYPE_BOOLEAN,
 								G_TYPE_INT,
 								G_TYPE_STRING);
+	applet->list_alarms_store = store;
 	
 	/* 
 	 * Insert alarms
@@ -134,7 +155,8 @@ display_list_alarms_dialog (AlarmApplet *applet)
 				  /*"mode",  GTK_CELL_RENDERER_MODE_EDITABLE,*/
 				  "activatable", TRUE,
 				  NULL);
-	g_signal_connect (active_renderer, "toggled", list_alarms_toggled_cb, store);
+	
+	g_signal_connect (active_renderer, "toggled", list_alarms_toggled_cb, applet);
 	
 	time_renderer = gtk_cell_renderer_text_new ();
 	

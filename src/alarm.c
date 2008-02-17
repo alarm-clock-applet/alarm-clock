@@ -1323,3 +1323,54 @@ alarm_command_run (Alarm *alarm)
 	}
 }
 
+/*
+ * Set time according to hour, min, sec
+ */
+void
+alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
+{
+	time_t now;
+	struct tm *tm;
+	
+	time (&now);
+	tm = localtime (&now);
+	
+	// Check if the alarm is for tomorrow
+	if (hour < tm->tm_hour ||
+		(hour == tm->tm_hour && minute < tm->tm_min) ||
+		(hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
+		
+		g_debug("alarm_set_time: Alarm is for tomorrow.");
+		tm->tm_mday++;
+	}
+	
+	tm->tm_hour = hour;
+	tm->tm_min = minute;
+	tm->tm_sec = second;
+	
+	// DEBUG:
+	char tmp[512];
+	strftime (tmp, sizeof (tmp), "%c", tm);
+	g_debug ("alarm_set_time: Alarm will trigger at %s", tmp);
+	
+	g_object_set (alarm, "time", mktime (tm), NULL);
+}
+
+/*
+ * Update the alarm time to point to the nearest future
+ * hour/min/sec according to the previous timestamp.
+ */
+void
+alarm_update_time (Alarm *alarm)
+{
+	time_t now;
+	struct tm *tm;
+	
+	time (&now);
+	
+	if (now > alarm->time) {
+		tm = localtime (&(alarm->time));
+		alarm_set_time(alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
+	}
+}
+
