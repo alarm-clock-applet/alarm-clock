@@ -52,7 +52,12 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 		g_object_set (renderer, "active", a->active, NULL);
 		break;
 	case TIME_COLUMN:
-		tm = localtime (&(a->time));
+		if (a->type == ALARM_TYPE_TIMER) {
+			tm = gmtime (&(a->timer));
+		} else {
+			tm = localtime (&(a->time));
+		}
+		
 		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 		
 		g_object_set (renderer, "text", tmp, NULL);
@@ -65,6 +70,19 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 	default:
 		break;
 	}
+}
+
+static void 
+alarm_object_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	Alarm *a = ALARM (object);
+	//GtkListStore *model = GTK_LIST_STORE (data);
+	
+	g_print ("Alarm #%d changed: %s\n", a->id, g_param_spec_get_name (param));
+	
+	/*g_object_notify (model, g_param_spec_get_name (param));*/
 }
 
 static void
@@ -131,6 +149,10 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	 */
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
+		
+		g_signal_connect (a, "notify", 
+						  G_CALLBACK (alarm_object_changed),
+						  store);
 		
 		gtk_list_store_append (store, &iter);
 		
