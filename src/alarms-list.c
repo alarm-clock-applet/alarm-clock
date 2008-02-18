@@ -124,7 +124,6 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	GdkPixbuf *type_alarm_icon, *type_timer_icon;
 	
 	GladeXML *ui;
-	GtkWidget *list_alarms_box, *close_button;
 	
 	/* 
 	 * Fetch widgets
@@ -132,8 +131,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	ui = glade_xml_new (ALARM_UI_XML, "list-alarms", NULL);
 	
 	applet->list_alarms_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "list-alarms"));
-	list_alarms_box = glade_xml_get_widget (ui, "list-alarms-box");
-	//glose_button	= glade_xml_get_widget (ui, "list-alarms-close");
+	view = glade_xml_get_widget (ui, "list-alarms-view");
 	
 	g_signal_connect (applet->list_alarms_dialog, "response", 
 					  G_CALLBACK (list_alarms_dialog_response_cb), applet);
@@ -229,12 +227,9 @@ display_list_alarms_dialog (AlarmApplet *applet)
 											LABEL_COLUMN, NULL);
 	
 	/* 
-	 * Create tree view 
+	 * Set up tree view 
 	 */
-	view = g_object_new (GTK_TYPE_TREE_VIEW,
-						 "model", store,
-						 "headers-visible", FALSE,
-						 NULL);
+	gtk_tree_view_set_model (view, store);
 	
 	gtk_tree_view_append_column (view, type_col);
 	gtk_tree_view_append_column (view, active_col);
@@ -242,7 +237,8 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	gtk_tree_view_append_column (view, label_col);
 	
 	
-	gtk_box_pack_start_defaults (GTK_BOX (list_alarms_box), GTK_WIDGET (view));
+	//gtk_container_add (GTK_CONTAINER (list_alarms_box), GTK_WIDGET (view));
+	//gtk_box_pack_start_defaults (GTK_BOX (list_alarms_scrol), GTK_WIDGET (view));
 	
 	gtk_widget_show_all (GTK_WIDGET (applet->list_alarms_dialog));
 }
