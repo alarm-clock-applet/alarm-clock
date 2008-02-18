@@ -5,75 +5,78 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 						 gchar                 *path,
 						 gpointer               data)
 {
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	GtkListStore *model = applet->list_alarms_store;
+	GtkListStore *model = GTK_LIST_STORE (data);
 	GtkTreeIter iter;
-	gboolean active;
-	gint *ind;
-	
 	Alarm *alarm;
 	
-	GtkTreePath *tpath = gtk_tree_path_new_from_string (path);
-	ind = gtk_tree_path_get_indices (tpath);
-	
-	g_debug ("Activate %s: %d", path, ind[0]);
-	
 	gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL (model), &iter, path);
-	gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, ACTIVE_COLUMN, &active, -1);
-	gtk_list_store_set (model, &iter,
-						ACTIVE_COLUMN, !active,
-						-1);
+	gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, 0, &alarm, -1);
 	
-	alarm = ALARM (g_list_nth_data (applet->alarms, ind[0]));
+	g_debug ("list_alarms_toggled %s: #%d", path, alarm->id);
 	
-	g_debug ("Update alarm #%d", alarm->id);
-	if (!active) {
+	if (!alarm->active && alarm->type == ALARM_TYPE_CLOCK) {
 		// Update time
 		g_debug ("\tUpdate TIME!");
 		alarm_update_time (alarm);
 	}
 	
-	g_object_set (alarm, "active", !active, NULL);
+	g_object_set (alarm, "active", !(alarm->active), NULL);
 }
 
 static void 
-alarm_type_get_icon (GtkTreeViewColumn *tree_column, 
-					 GtkCellRenderer *renderer,
-					 GtkTreeModel *model,
-					 GtkTreeIter *iter, 
-					 gpointer data)
+alarm_update_renderer (GtkTreeViewColumn *tree_column, 
+					   GtkCellRenderer *renderer,
+					   GtkTreeModel *model,
+					   GtkTreeIter *iter, 
+					   gpointer data)
 {
-	AlarmType type;
-	
-	gtk_tree_model_get (model, iter, TYPE_COLUMN, &type, -1);
-	
-	if (type == ALARM_TYPE_TIMER) {
-		g_object_set (renderer, "icon-name", TIMER_ICON, NULL);
-	} else {
-		g_object_set (renderer, "icon-name", ALARM_ICON, NULL);
-	}
-}
-
-static void 
-alarm_time_to_str (GtkTreeViewColumn *tree_column, 
-				   GtkCellRenderer *renderer,
-				   GtkTreeModel *model,
-				   GtkTreeIter *iter, 
-				   gpointer data)
-{
+	AlarmColumn col = (AlarmColumn)data;
+	Alarm *a;
 	time_t time;
 	struct tm *tm;
 	gchar *tmp;
 	
-	gtk_tree_model_get (model, iter, TIME_COLUMN, &time, -1);
+	gtk_tree_model_get (model, iter, 0, &a, -1);
 	
-	tm = localtime (&time);
-	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+	//g_debug ("alarm_update_render: alarm #%d, col %d", a->id, col);
 	
-	g_object_set (renderer, "text", tmp, NULL);
+	switch (col) {
+	case TYPE_COLUMN:
+		if (a->type == ALARM_TYPE_TIMER) {
+			g_object_set (renderer, "icon-name", TIMER_ICON, NULL);
+		} else {
+			g_object_set (renderer, "icon-name", ALARM_ICON, NULL);
+		}
+		break;
+	case ACTIVE_COLUMN:
+		g_object_set (renderer, "active", a->active, NULL);
+		break;
+	case TIME_COLUMN:
+		tm = localtime (&(a->time));
+		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+		
+		g_object_set (renderer, "text", tmp, NULL);
+		
+		g_free (tmp);
+		break;
+	case LABEL_COLUMN:
+		g_object_set (renderer, "text", a->message, NULL);
+		break;
+	default:
+		break;
+	}
+}
+
+static void
+list_alarms_dialog_response_cb (GtkDialog *dialog,
+								gint rid,
+								AlarmApplet *applet)
+{
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	applet->list_alarms_dialog = NULL;
 	
-	g_free (tmp);
+	g_object_unref (applet->list_alarms_store);
+	applet->list_alarms_store = NULL;
 }
 
 void
@@ -103,7 +106,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	GdkPixbuf *type_alarm_icon, *type_timer_icon;
 	
 	GladeXML *ui;
-	GtkWidget *list_alarms_box;
+	GtkWidget *list_alarms_box, *close_button;
 	
 	/* 
 	 * Fetch widgets
@@ -112,16 +115,15 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	
 	applet->list_alarms_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "list-alarms"));
 	list_alarms_box = glade_xml_get_widget (ui, "list-alarms-box");
+	//glose_button	= glade_xml_get_widget (ui, "list-alarms-close");
 	
+	g_signal_connect (applet->list_alarms_dialog, "response", 
+					  G_CALLBACK (list_alarms_dialog_response_cb), applet);
 	
 	/* 
 	 * Create list store model
 	 */
-	store = gtk_list_store_new (ALARMS_N_COLUMNS,
-								G_TYPE_INT,
-								G_TYPE_BOOLEAN,
-								G_TYPE_INT,
-								G_TYPE_STRING);
+	store = gtk_list_store_new (1, TYPE_ALARM);
 	applet->list_alarms_store = store;
 	
 	/* 
@@ -132,12 +134,12 @@ display_list_alarms_dialog (AlarmApplet *applet)
 		
 		gtk_list_store_append (store, &iter);
 		
-		gtk_list_store_set (store, &iter,
-							TYPE_COLUMN, a->type,
+		gtk_list_store_set (store, &iter, 0, a, -1);
+							/*TYPE_COLUMN, a->type,
 							ACTIVE_COLUMN, a->active,
 							TIME_COLUMN, a->time,
 							LABEL_COLUMN, a->message,
-							-1);
+							-1);*/
 		
 		g_print ("Alarm #%d: %s\n", a->id, a->message);
 	}
@@ -155,8 +157,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 				  /*"mode",  GTK_CELL_RENDERER_MODE_EDITABLE,*/
 				  "activatable", TRUE,
 				  NULL);
-	
-	g_signal_connect (active_renderer, "toggled", list_alarms_toggled_cb, applet);
+	g_signal_connect (active_renderer, "toggled", list_alarms_toggled_cb, store);
 	
 	time_renderer = gtk_cell_renderer_text_new ();
 	
@@ -174,15 +175,18 @@ display_list_alarms_dialog (AlarmApplet *applet)
 					_("Type"), type_renderer, 
 					NULL);
 	
-	gtk_tree_view_column_set_cell_data_func(type_col, type_renderer,
-											alarm_type_get_icon, 
-											NULL, NULL);
+	gtk_tree_view_column_set_cell_data_func (type_col, type_renderer,
+											 alarm_update_renderer, 
+											 TYPE_COLUMN, NULL);
 	
 	
 	active_col = gtk_tree_view_column_new_with_attributes(
 					_("Active"), active_renderer,
-					"active", ACTIVE_COLUMN,
 					NULL);
+	
+	gtk_tree_view_column_set_cell_data_func (active_col, active_renderer,
+											 alarm_update_renderer, 
+											 ACTIVE_COLUMN, NULL);
 	
 	
 	time_col = gtk_tree_view_column_new_with_attributes(
@@ -190,20 +194,24 @@ display_list_alarms_dialog (AlarmApplet *applet)
 					NULL);
 	
 	gtk_tree_view_column_set_cell_data_func(time_col, time_renderer,
-											alarm_time_to_str,
-											NULL, NULL);
+											alarm_update_renderer,
+											TIME_COLUMN, NULL);
 	
 	
 	label_col = gtk_tree_view_column_new_with_attributes(
 					_("Label"), label_renderer,
-					"text", LABEL_COLUMN,
 					NULL);
+	
+	gtk_tree_view_column_set_cell_data_func(label_col, label_renderer,
+											alarm_update_renderer,
+											LABEL_COLUMN, NULL);
 	
 	/* 
 	 * Create tree view 
 	 */
 	view = g_object_new (GTK_TYPE_TREE_VIEW,
 						 "model", store,
+						 "headers-visible", FALSE,
 						 NULL);
 	
 	gtk_tree_view_append_column (view, type_col);

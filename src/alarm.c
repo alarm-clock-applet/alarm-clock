@@ -1329,7 +1329,7 @@ alarm_command_run (Alarm *alarm)
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
 {
-	time_t now;
+	time_t now, new;
 	struct tm *tm;
 	
 	time (&now);
@@ -1353,7 +1353,9 @@ alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
 	strftime (tmp, sizeof (tmp), "%c", tm);
 	g_debug ("alarm_set_time: Alarm will trigger at %s", tmp);
 	
-	g_object_set (alarm, "time", mktime (tm), NULL);
+	new = mktime (tm);
+	g_debug ("alarm_set_time: Setting to %d", new);
+	g_object_set (alarm, "time", new, NULL);
 }
 
 /*
@@ -1369,7 +1371,9 @@ alarm_update_time (Alarm *alarm)
 	time (&now);
 	
 	if (now > alarm->time) {
+		g_debug ("update_time: %d > %d", now, alarm->time);
 		tm = localtime (&(alarm->time));
+		g_debug ("update_time: %d > %d", now, alarm->time);
 		alarm_set_time(alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 }

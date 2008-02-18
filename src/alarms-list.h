@@ -4,13 +4,13 @@
 #include "alarm-applet.h"
 #include "alarm.h"
 
-enum {
+typedef enum {
 	TYPE_COLUMN,
 	ACTIVE_COLUMN,
 	TIME_COLUMN,
 	LABEL_COLUMN,
 	ALARMS_N_COLUMNS
-};
+} AlarmColumn;
 
 
 void
