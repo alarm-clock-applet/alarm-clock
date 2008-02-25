@@ -116,6 +116,29 @@ delete_button_cb (GtkButton *button, gpointer data)
 	g_debug ("Delete alarm");
 }
 
+static void
+list_alarm_selected_cb (GtkTreeView       *view,
+						GtkTreePath       *path,
+						GtkTreeViewColumn *column,
+						gpointer           data)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	Alarm *a;
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	model = gtk_tree_view_get_model (view);
+	
+	if (!gtk_tree_model_get_iter (model, &iter, path)) {
+		g_warning ("Could not get iter.");
+		return;
+	}
+	
+	gtk_tree_model_get (model, &iter, 0, &a, -1);
+	
+	display_edit_alarm_dialog (applet, a);
+}
+
 
 
 void
@@ -266,6 +289,11 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	gtk_tree_view_append_column (view, active_col);
 	gtk_tree_view_append_column (view, time_col);
 	gtk_tree_view_append_column (view, label_col);
+	
+	/*
+	 * Set up signal handlers
+	 */
+	g_signal_connect (view, "row-activated", G_CALLBACK (list_alarm_selected_cb), applet);
 	
 	
 	//gtk_container_add (GTK_CONTAINER (list_alarms_box), GTK_WIDGET (view));

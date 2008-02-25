@@ -61,7 +61,7 @@ type_toggle_cb (GtkToggleButton *toggle, gpointer data)
 		g_object_set (dialog->alarm, "type", ALARM_TYPE_TIMER, NULL);
 	}
 	
-	time_changed_cb (dialog->hour_spin, dialog);
+	time_changed_cb (GTK_SPIN_BUTTON (dialog->hour_spin), dialog);
 }
 
 static void
@@ -104,6 +104,9 @@ alarm_time_changed (GObject *object,
 	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
 	
 	/* Only interesting if alarm is a CLOCK */
+	g_debug ("dialog: %p", dialog);
+	g_debug ("alarm: %p", dialog->alarm);
+	g_debug ("\t -> #%d", dialog->alarm->id);
 	if (dialog->alarm->type != ALARM_TYPE_CLOCK)
 		return;
 	
@@ -116,7 +119,9 @@ alarm_timer_changed (GObject *object,
 					 gpointer data)
 {
 	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
-	
+	g_debug ("dialog: %p", dialog);
+	g_debug ("alarm: %p", dialog->alarm);
+	g_debug ("\t -> #%d", dialog->alarm->id);
 	/* Only interesting if alarm is a TIMER */
 	if (dialog->alarm->type != ALARM_TYPE_TIMER)
 		return;
@@ -153,6 +158,18 @@ alarm_settings_dialog_update (AlarmSettingsDialog *dialog)
 	}
 	
 	g_object_set (dialog->label_entry, "text", alarm->message, NULL);
+	
+	alarm_settings_time_update (dialog);
+}
+
+static void
+alarm_settings_dialog_response_cb (GtkDialog *dialog,
+								  gint rid,
+								  AlarmSettingsDialog *settings_dialog)
+{
+	gtk_widget_destroy (GTK_WIDGET (dialog));
+	
+	g_free (settings_dialog);
 }
 
 static AlarmSettingsDialog *
@@ -161,7 +178,7 @@ alarm_settings_dialog_new (Alarm *alarm)
 	AlarmSettingsDialog *dialog;
 	GtkWidget *clock_content, *timer_content;
 	
-	dialog = g_new(AlarmSettingsDialog, 1);
+	dialog = g_new (AlarmSettingsDialog, 1);
 	
 	GladeXML *ui = glade_xml_new (ALARM_UI_XML, "edit-alarm", NULL);
 	
@@ -169,6 +186,9 @@ alarm_settings_dialog_new (Alarm *alarm)
 	
 	dialog->alarm = alarm;
 	dialog->dialog = glade_xml_get_widget (ui, "edit-alarm");
+	
+	g_signal_connect (dialog->dialog, "response", 
+					  G_CALLBACK (alarm_settings_dialog_response_cb), dialog);
 	
 	/*
 	 * TYPE TOGGLE BUTTONS
@@ -185,9 +205,6 @@ alarm_settings_dialog_new (Alarm *alarm)
 	gtk_container_add (GTK_CONTAINER (dialog->timer_toggle), timer_content);
 	gtk_widget_show_all (GTK_WIDGET (dialog->timer_toggle));
 	
-	g_signal_connect (dialog->clock_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	g_signal_connect (dialog->timer_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	
 	/*
 	 * GENERAL SETTINGS
 	 */
@@ -197,10 +214,6 @@ alarm_settings_dialog_new (Alarm *alarm)
 	dialog->hour_spin = glade_xml_get_widget (ui, "hour-spin");
 	dialog->min_spin = glade_xml_get_widget (ui, "minute-spin");
 	dialog->sec_spin = glade_xml_get_widget (ui, "second-spin");
-	
-	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
 	
 	/*
 	 * Populate widgets
@@ -216,8 +229,17 @@ alarm_settings_dialog_new (Alarm *alarm)
 	 * Special widgets require special attention!
 	 */
 	g_signal_connect (alarm, "notify::type", G_CALLBACK (alarm_type_changed), dialog);
+	g_signal_connect (dialog->clock_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
+	g_signal_connect (dialog->timer_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
+		
 	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_time_changed), dialog);
 	g_signal_connect (alarm, "notify::timer", G_CALLBACK (alarm_timer_changed), dialog);
+	
+	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
+	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
+	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
+	
+	return dialog;
 }
 
 void
@@ -235,7 +257,9 @@ display_add_alarm_dialog (AlarmApplet *applet)
 }
 
 void
-display_edit_alarm_dialog (Alarm *a)
+display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm)
 {
+	AlarmSettingsDialog *dialog;
 	
+	dialog = alarm_settings_dialog_new (alarm);
 }
