@@ -164,6 +164,9 @@ void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
 
 void
+alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second);
+
+void
 alarm_update_time (Alarm *alarm);
 
 GQuark

@@ -1,4 +1,5 @@
 #include "alarms-list.h"
+#include "edit-alarm.h"
 
 static void 
 list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
@@ -97,6 +98,26 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 	applet->list_alarms_store = NULL;
 }
 
+static void
+add_button_cb (GtkButton *button, gpointer data)
+{
+	display_add_alarm_dialog ((AlarmApplet *)data);
+}
+
+static void
+edit_button_cb (GtkButton *button, gpointer data)
+{
+	g_debug ("Edit alarm");
+}
+
+static void
+delete_button_cb (GtkButton *button, gpointer data)
+{
+	g_debug ("Delete alarm");
+}
+
+
+
 void
 display_list_alarms_dialog (AlarmApplet *applet)
 {
@@ -112,18 +133,16 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	
 	GtkListStore *store;
 	GtkTreeView *view;
-	
+	GtkTreeIter iter;
+	GdkPixbuf *type_alarm_icon, *type_timer_icon;
 	GtkCellRenderer *type_renderer, *active_renderer,
 					*time_renderer, *label_renderer;
 	
 	GtkTreeViewColumn *type_col, *active_col,
 					  *time_col, *label_col;
 	
-	GtkTreeIter iter;
-	
-	GdkPixbuf *type_alarm_icon, *type_timer_icon;
-	
 	GladeXML *ui;
+	GtkButton *add_button, *edit_button, *delete_button;
 	
 	/* 
 	 * Fetch widgets
@@ -131,10 +150,22 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	ui = glade_xml_new (ALARM_UI_XML, "list-alarms", NULL);
 	
 	applet->list_alarms_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "list-alarms"));
-	view = glade_xml_get_widget (ui, "list-alarms-view");
+	view = GTK_TREE_VIEW (glade_xml_get_widget (ui, "list-alarms-view"));
 	
 	g_signal_connect (applet->list_alarms_dialog, "response", 
 					  G_CALLBACK (list_alarms_dialog_response_cb), applet);
+	
+	// Buttons
+	add_button = GTK_BUTTON (glade_xml_get_widget (ui, "add-button"));
+	edit_button = GTK_BUTTON (glade_xml_get_widget (ui, "edit-button"));
+	delete_button = GTK_BUTTON (glade_xml_get_widget (ui, "delete-button"));
+	
+	g_signal_connect (add_button, "clicked",
+					  G_CALLBACK (add_button_cb), applet);
+	g_signal_connect (edit_button, "clicked",
+					  G_CALLBACK (edit_button_cb), applet);
+	g_signal_connect (delete_button, "clicked",
+					  G_CALLBACK (delete_button_cb), applet);
 	
 	/* 
 	 * Create list store model
@@ -177,7 +208,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 				  /*"mode",  GTK_CELL_RENDERER_MODE_EDITABLE,*/
 				  "activatable", TRUE,
 				  NULL);
-	g_signal_connect (active_renderer, "toggled", list_alarms_toggled_cb, store);
+	g_signal_connect (active_renderer, "toggled", G_CALLBACK (list_alarms_toggled_cb), store);
 	
 	time_renderer = gtk_cell_renderer_text_new ();
 	
@@ -229,7 +260,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	/* 
 	 * Set up tree view 
 	 */
-	gtk_tree_view_set_model (view, store);
+	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
 	
 	gtk_tree_view_append_column (view, type_col);
 	gtk_tree_view_append_column (view, active_col);

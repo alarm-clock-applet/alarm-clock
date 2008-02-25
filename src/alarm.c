@@ -1057,7 +1057,8 @@ AlarmType alarm_type_from_string (const gchar *type)
 {
 	AlarmType ret = ALARM_TYPE_INVALID;
 	
-	g_return_val_if_fail(type, ret);
+	if (!type)
+		return ret;
 	
 	gconf_string_to_enum (alarm_type_enum_map, type, (gint *)&ret);
 	
@@ -1073,7 +1074,8 @@ AlarmNotifyType alarm_notify_type_from_string (const gchar *type)
 {
 	AlarmNotifyType ret = ALARM_NOTIFY_INVALID;
 	
-	g_return_val_if_fail (type, ret);
+	if (!type)
+		return ret;
 	
 	gconf_string_to_enum (alarm_notify_type_enum_map, type, (gint *)&ret);
 	
@@ -1138,12 +1140,21 @@ alarm_bind_update (GObject *object,
 				   GParamSpec *pspec,
 				   gpointer data)
 {
-	Alarm *alarm	  = ALARM (object);
+	//Alarm *alarm;
 	AlarmBindArg *arg = (AlarmBindArg *)data;
 	gpointer d;
 	
-	g_debug ("alarm_bind_update #%d(%p) [%s] -> %p [%s]", alarm->id, alarm, pspec->name, arg->object, arg->name);
+	/*
+	 * Determine which argument is the alarm
+	 */
+	/*if (IS_ALARM (object)) {
+		 alarm = ALARM (object);
+	} else {
+		alarm = ALARM (arg->object);
+	}
 	
+	g_debug ("alarm_bind_update #%d(%p) [%s] -> %p [%s]", alarm->id, alarm, pspec->name, arg->object, arg->name);
+	*/
 	g_object_get (object, pspec->name, &d, NULL);
 	
 	// Block other signal handler
@@ -1356,6 +1367,17 @@ alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
 	new = mktime (tm);
 	g_debug ("alarm_set_time: Setting to %d", new);
 	g_object_set (alarm, "time", new, NULL);
+}
+
+/*
+ * Set timer according to hour, min, sec
+ */
+void
+alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second)
+{
+	time_t timer = second + minute * 60 + hour * 60 * 60;
+	
+	g_object_set (alarm, "timer", timer, NULL);
 }
 
 /*

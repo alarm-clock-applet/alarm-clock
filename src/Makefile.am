@@ -19,6 +19,7 @@ alarm_applet_SOURCES = alarm-applet.c alarm-applet.h \
 					   ui.c ui.h					 \
 					   prefs.c prefs.h				 \
 					   alarms-list.c				 \
+					   edit-alarm.c					 \
 					   alarm.c
 
 alarm_applet_LDADD =			\

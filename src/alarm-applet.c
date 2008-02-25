@@ -371,9 +371,8 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	load_gconf (applet);
 	
 	/* Load alarms */
-	tmp = panel_applet_get_preferences_key(applet->parent);
-	applet->alarms = alarm_get_list (tmp);
-	g_free (tmp);
+	applet->gconf_dir = panel_applet_get_preferences_key(applet->parent);
+	applet->alarms = alarm_get_list (applet->gconf_dir);
 	
 	/* Set up properties menu */
 	menu_setup(applet);
@@ -390,7 +389,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	}
 	
 	g_debug ("GLADE DIR: %s", GNOME_GLADEDIR);
-
+	
 	return TRUE;
 }
 

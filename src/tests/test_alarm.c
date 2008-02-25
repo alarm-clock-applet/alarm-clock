@@ -4,7 +4,7 @@
 #include <glib.h>
 #include <string.h>
 
-#define GCONF_DIR "/apps/panel/applets/applet_8/prefs"
+#define GCONF_DIR "/apps/alarm-applet"
 
 #define DUMP_ALARM(alarm)	g_object_get ((alarm), 				\
 										  "gconf-dir", &gconf_dir, 	\

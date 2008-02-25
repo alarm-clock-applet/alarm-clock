@@ -79,6 +79,7 @@ enum
 struct _AlarmApplet {
 	PanelApplet *parent;
 	PanelAppletOrient orient;
+	gchar *gconf_dir;
 	
 	/* Panel UI */
 	GtkWidget *icon;	/* alarm icon */
