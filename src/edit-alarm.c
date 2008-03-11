@@ -152,8 +152,10 @@ alarm_settings_dialog_update (AlarmSettingsDialog *dialog)
 	Alarm *alarm = ALARM (dialog->alarm);
 	
 	if (alarm->type == ALARM_TYPE_TIMER) {
+		g_debug ("alarm_settings_dialog_update (%p): setting timer toggle to TRUE.", dialog);
 		g_object_set (dialog->timer_toggle, "active", TRUE, NULL);
 	} else {
+		g_debug ("alarm_settings_dialog_update (%p): setting clock toggle to TRUE.", dialog);
 		g_object_set (dialog->clock_toggle, "active", TRUE, NULL);
 	}
 	
@@ -164,12 +166,13 @@ alarm_settings_dialog_update (AlarmSettingsDialog *dialog)
 
 static void
 alarm_settings_dialog_response_cb (GtkDialog *dialog,
-								  gint rid,
-								  AlarmSettingsDialog *settings_dialog)
+								   gint rid,
+								   AlarmSettingsDialog *settings_dialog)
 {
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 	
-	g_free (settings_dialog);
+	// TODO: Why does this cause a segfault?
+	//g_free (settings_dialog);
 }
 
 static AlarmSettingsDialog *
@@ -214,6 +217,20 @@ alarm_settings_dialog_new (Alarm *alarm)
 	dialog->hour_spin = glade_xml_get_widget (ui, "hour-spin");
 	dialog->min_spin = glade_xml_get_widget (ui, "minute-spin");
 	dialog->sec_spin = glade_xml_get_widget (ui, "second-spin");
+	
+	/*
+	 * glade_xml_get_widget() caches its widgets. 
+	 * So if g_object_destroy() got called on it, the next call to 
+	 * glade_xml_get_widget() would return a pointer to the destroyed widget.
+	 * Therefore we must call g_object_ref() on the widgets we intend to reuse.
+	 */
+	g_object_ref (dialog->dialog);
+	g_object_ref (dialog->clock_toggle);
+	g_object_ref (dialog->timer_toggle);
+	g_object_ref (dialog->label_entry);
+	g_object_ref (dialog->hour_spin);
+	g_object_ref (dialog->min_spin);
+	g_object_ref (dialog->sec_spin);
 	
 	/*
 	 * Populate widgets
