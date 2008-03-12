@@ -71,10 +71,4 @@ void
 pref_notify_bubble_changed_cb (GtkToggleButton *togglebutton,
 							AlarmApplet *applet);
 
-void
-load_stock_sounds_list (AlarmApplet *applet);
-
-void
-load_app_list (AlarmApplet *applet);
-
 #endif /*PREFS_H_*/
