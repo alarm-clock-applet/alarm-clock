@@ -7,6 +7,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libgnomevfs/gnome-vfs.h>
+#include <libgnomeui/libgnomeui.h>
 
 #include "list-entry.h"
 #include "util.h"
