@@ -39,6 +39,7 @@ static void alarm_timer_remove (Alarm *alarm);
 static gboolean alarm_timer_is_started (Alarm *alarm);
 
 static void alarm_player_start (Alarm *alarm);
+static void alarm_player_stop (Alarm *alarm);
 static void alarm_command_run (Alarm *alarm);
 
 static void alarm_error (Alarm *alarm, GError *err);
@@ -796,6 +797,15 @@ alarm_disable (Alarm *alarm)
 	g_object_set (alarm, "active", FALSE, NULL);
 }
 
+/*
+ * Clear the alarm. This will stop any running players.
+ */
+void
+alarm_clear (Alarm *alarm)
+{
+	alarm_player_stop (alarm);
+}
+
 
 
 static gboolean
@@ -1249,6 +1259,28 @@ alarm_get_list (const gchar *gconf_dir)
 	return ret;
 }
 
+/*
+ * Connect a signal callback to all alarms in list.
+ */
+void
+alarm_signal_connect_list (GList *instances,
+						   const gchar *detailed_signal,
+						   GCallback c_handler,
+						   gpointer data)
+{
+	GList *l;
+	Alarm *a;
+	g_debug ("alarm_signal_connect_list");
+	for (l = instances; l != NULL; l = l->next) {
+		a = ALARM (l->data);
+		
+		g_debug (" - connecting #%d: %s...", a->id, detailed_signal);
+		
+		gboolean ret = g_signal_connect (a, detailed_signal, c_handler, data);
+		g_debug (" = %d", ret);
+	}
+}
+
 
 /**
  * Player error
@@ -1309,6 +1341,19 @@ alarm_player_start (Alarm *alarm)
 	media_player_start (priv->player);
 	
 	g_debug ("[%p] #%d player_start...", alarm, alarm->id);
+}
+
+/**
+ * Stop player
+ */
+static void
+alarm_player_stop (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+	
+	if (priv->player != NULL) {
+		media_player_stop (priv->player);
+	}
 }
 
 /*

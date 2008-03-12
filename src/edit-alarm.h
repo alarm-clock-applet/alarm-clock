@@ -3,11 +3,15 @@
 
 #include "alarm-applet.h"
 #include "alarm.h"
+#include "player.h"
 
 typedef struct _AlarmSettingsDialog {
 	
 	AlarmApplet *applet;
 	Alarm *alarm;
+	
+	/* Media player for previews */
+	MediaPlayer *player;
 	
 	GtkWidget *dialog;
 	GtkWidget *clock_toggle, *timer_toggle;

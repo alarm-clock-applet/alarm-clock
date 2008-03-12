@@ -1,12 +1,20 @@
 #include "edit-alarm.h"
 #include "alarm-applet.h"
 #include "alarm.h"
+#include "player.h"
+
+#include <glib.h>
+#include <glib-object.h>
+#include <gtk/gtk.h>
 
 static void
 alarm_settings_update_time (AlarmSettingsDialog *dialog);
 
 static void
 time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
+
+static void
+sound_combo_changed_cb (GtkComboBox *combo, AlarmSettingsDialog *dialog);
 
 
 /*
@@ -86,7 +94,7 @@ alarm_settings_update_time (AlarmSettingsDialog *dialog)
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->sec_spin), tm->tm_sec);
 }
 
-void
+static void
 alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 {
 	// Enable selected
@@ -113,77 +121,26 @@ static void
 alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 {
 	AlarmListEntry *item;
-	GtkTreeModel *model = NULL;
-	GtkTreeIter iter;
-	GtkTreePath *path;
-	GtkIconTheme *theme;
-	GdkPixbuf *pixbuf;
 	GList *l;
 	guint pos, len, combo_len;
 	gint sound_pos = -1;
-	gchar *tmp;
 	
-	/*if (applet->notify_sound_file == NULL) {
-		g_debug ("pref_update_sound_file IS NULL or EMPTY");
-		// Select first in list
-		gtk_combo_box_set_active (GTK_COMBO_BOX (applet->pref_notify_sound_combo), 0);
-		return;
-	}*/
+	g_debug ("alarm_settings_update_sound (%p): sound_combo: %p, applet: %p, sounds: %p", dialog, dialog->notify_sound_combo, dialog->applet, dialog->applet->sounds);
 	
-	/*model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->notify_sound_combo));
-	combo_len = gtk_tree_model_iter_n_children (model, NULL);
-	len = g_list_length (applet->sounds);
-	
-	pos = len;
-	
-	// Check if our list in model is up-to-date
-	// We will only detect changes in size
-	// Separator + Select sound file ... takes 2 spots
-	/*if (len > combo_len - 2) {
-		// Add new items
-		theme = gtk_icon_theme_get_default ();
-		pos = combo_len - 2;
-		
-		for (l = g_list_nth (applet->sounds, pos); l != NULL; l = l->next, pos++) {
-			item = (AlarmListEntry *) l->data;
-			
-			g_debug ("Adding %s to combo...", item->name);
-			
-			pixbuf = gtk_icon_theme_load_icon (theme, item->icon, 22, 0, NULL);
-			
-			gtk_list_store_insert (GTK_LIST_STORE (model), &iter, pos);
-			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-								PIXBUF_COL, pixbuf,
-								TEXT_COL, item->name,
-								-1);
-			
-			//item->icon_path = gtk_tree_model_get_string_from_iter (model, &iter);
-		
-			if (pixbuf)
-				g_object_unref (pixbuf);
-		}
-	}*/
-	
-			
+	/* Fill sounds list */
+	fill_combo_box (GTK_COMBO_BOX (dialog->notify_sound_combo),
+					dialog->applet->sounds, _("Select sound file..."));
 	
 	// Look for the selected sound file
 	for (l = dialog->applet->sounds, pos = 0; l != NULL; l = l->next, pos++) {
-		tmp = (gchar *)l->data;
-		if (strcmp (tmp, dialog->alarm->sound_file) == 0) {
+		item = (AlarmListEntry *)l->data;
+		if (strcmp (item->data, dialog->alarm->sound_file) == 0) {
 			// Match!
 			sound_pos = pos;
 			gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->notify_sound_combo), pos);
 			break;
 		}
 	}
-	
-	/*if (sound_pos > 0) {
-		
-	}*/
-	
-	/*g_debug ("set_row_sep_func to %d", pos);
-	gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (dialog->notify_sound_combo),
-										  is_separator, GINT_TO_POINTER (pos), NULL);*/
 }
 
 static void
@@ -192,6 +149,8 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	Alarm *alarm = ALARM (dialog->alarm);
 	
 	g_object_set (dialog->label_entry, "text", alarm->message, NULL);
+	g_object_set (dialog->notify_sound_loop_check, "active", alarm->sound_loop, NULL);
+	
 	
 	alarm_settings_update_type (dialog);
 	alarm_settings_update_time (dialog);
@@ -256,9 +215,77 @@ alarm_notify_type_changed (GObject *object,
 	alarm_settings_update_notify_type (dialog);
 }
 
+void
+alarm_settings_sound_file_changed (GObject *object, 
+								   GParamSpec *param,
+								   gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	g_debug ("alarm_settings_sound_file_changed (%p)", data);
+	
+	// Block sound combo signals to prevent infinite loop
+	// because the "changed" signal will be emitted when we
+	// change the combo box tree model.
+	g_signal_handlers_block_matched (dialog->notify_sound_combo, 
+									 G_SIGNAL_MATCH_FUNC, 
+									 0, 0, NULL, sound_combo_changed_cb, NULL);
+	
+	// Update UI
+	alarm_settings_update_sound (dialog);
+	
+	// Unblock combo signals
+	g_signal_handlers_unblock_matched (dialog->notify_sound_combo, 
+									   G_SIGNAL_MATCH_FUNC,
+									   0, 0, NULL, sound_combo_changed_cb, NULL);
+}
+
+static void
+alarm_sound_repeat_changed (GObject *object, 
+							GParamSpec *param,
+							gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	g_debug ("alarm_sound_repeat_changed to: %d", dialog->alarm->sound_loop);
+}
 
 
+/*
+ * GUI utils
+ */
 
+static void
+open_sound_file_chooser (AlarmSettingsDialog *dialog)
+{
+	GtkWidget *chooser;
+	
+	chooser = gtk_file_chooser_dialog_new (_("Select sound file..."),
+										   GTK_WINDOW (dialog->dialog),
+										   GTK_FILE_CHOOSER_ACTION_OPEN,
+										   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+										   GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+										   NULL);
+	
+	gtk_file_chooser_set_uri (GTK_FILE_CHOOSER (chooser), dialog->alarm->sound_file);
+	
+	if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT) {
+		gchar *uri;
+		
+		uri = gtk_file_chooser_get_uri (GTK_FILE_CHOOSER (chooser));
+		
+		g_debug ("RESPONSE ACCEPT: %s", uri);
+		
+		g_object_set (dialog->alarm, "sound_file", uri, NULL);
+		
+		g_free (uri);
+	} else {
+		g_debug ("RESPONSE CANCEL");
+		alarm_settings_update_sound (dialog);
+	}
+	
+	gtk_widget_destroy (chooser);
+}
 
 
 
@@ -325,11 +352,113 @@ notify_type_changed_cb (GtkToggleButton *togglebutton,
 }
 
 static void
+sound_combo_changed_cb (GtkComboBox *combo,
+						AlarmSettingsDialog *dialog)
+{
+	g_debug ("Combo_changed");
+	
+	GtkTreeModel *model;
+	AlarmListEntry *item;
+	guint current_index, len, combo_len;
+	
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->notify_sound_combo));
+	combo_len = gtk_tree_model_iter_n_children (model, NULL);
+	current_index = gtk_combo_box_get_active (combo);
+	len = g_list_length (dialog->applet->sounds);
+	
+	g_debug ("Current index: %d, n sounds: %d", current_index, len);
+	
+	if (current_index < 0)
+		// None selected
+		return;
+	
+	if (current_index >= len) {
+		// Select sound file
+		g_debug ("Open SOUND file chooser...");
+		open_sound_file_chooser (dialog);
+		return;
+	}
+	
+	// Valid file selected, update alarm
+	item = (AlarmListEntry *) g_list_nth_data (dialog->applet->sounds, current_index);
+	g_object_set (dialog->alarm, "sound_file", item->data, NULL);
+}
+
+
+
+/*
+ * Preview player {{
+ */
+
+static void
+player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApplet *applet)
+{
+	if (state == MEDIA_PLAYER_STOPPED) {
+		if (player == applet->player)
+			applet->player = NULL;
+		else if (player == applet->preview_player)
+			applet->preview_player = NULL;
+		
+		g_debug ("Freeing media player %p", player);
+		
+		media_player_free (player);
+	}
+}
+
+static void
+preview_player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmSettingsDialog *dialog)
+{
+	const gchar *stock;
+	
+	if (state == MEDIA_PLAYER_PLAYING) {
+		stock = "gtk-media-stop";
+	} else {
+		stock = "gtk-media-play";
+		
+		g_debug ("AlarmSettingsDialog: Freeing media player %p", player);
+		
+		media_player_free (player);
+		dialog->player = NULL;
+	}
+	
+	// Set stock
+	gtk_button_set_label (GTK_BUTTON (dialog->notify_sound_preview), stock);
+}
+
+void
+preview_sound_cb (GtkButton *button,
+				  AlarmSettingsDialog *dialog)
+{
+	if (dialog->player && dialog->player->state == MEDIA_PLAYER_PLAYING) {
+		// Stop preview player
+		media_player_stop (dialog->player);
+	} else {
+		// Start preview player
+		if (dialog->player == NULL)
+			dialog->player = media_player_new (dialog->alarm->sound_file,
+											   dialog->alarm->sound_loop,
+											   preview_player_state_cb, dialog,
+											   media_player_error_cb, dialog->dialog);
+	
+		g_debug ("AlarmSettingsDialog: preview_start...");
+		media_player_start (dialog->player);
+	}
+}
+
+/*
+ * }} Preview player
+ */
+
+
+static void
 alarm_settings_dialog_response_cb (GtkDialog *dialog,
 								   gint rid,
 								   AlarmSettingsDialog *settings_dialog)
 {
 	gtk_widget_destroy (GTK_WIDGET (dialog));
+	
+	if (settings_dialog->player)
+		media_player_free (settings_dialog->player);
 	
 	// TODO: Why does this cause a segfault?
 	//g_free (settings_dialog);
@@ -356,6 +485,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	
 	dialog->applet = applet;
 	dialog->alarm  = alarm;
+	dialog->player = NULL;
 	dialog->dialog = glade_xml_get_widget (ui, "edit-alarm");
 	
 	/* Response from dialog */
@@ -402,13 +532,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	dialog->notify_app_command_entry = glade_xml_get_widget (ui, "app-command-entry");
 	dialog->notify_bubble_check      = glade_xml_get_widget (ui, "notify-bubble-check");
 	
-	/* Load sounds list */
-	load_stock_sounds_list (applet);
-	
-	/* Fill stock sounds */
-	fill_combo_box (GTK_COMBO_BOX (dialog->notify_sound_combo),
-					applet->sounds, _("Select sound file..."));
-	
+		
 	/*
 	 * Populate widgets
 	 */
@@ -450,6 +574,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 * Bind widgets
 	 */
 	alarm_bind (alarm, "message", dialog->label_entry, "text");
+	alarm_bind (alarm, "sound-repeat", dialog->notify_sound_loop_check, "active");
 	
 	/*
 	 * Special widgets require special attention!
@@ -472,6 +597,15 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);
 	g_signal_connect (dialog->notify_sound_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
 	g_signal_connect (dialog->notify_app_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
+	
+	/* sound file */
+	g_signal_connect (alarm, "notify::sound-file", 
+					  G_CALLBACK (alarm_settings_sound_file_changed), dialog);
+	g_signal_connect (dialog->notify_sound_combo, "changed",
+					  G_CALLBACK (sound_combo_changed_cb), dialog);
+	
+	g_signal_connect (dialog->notify_sound_preview, "clicked",
+					  G_CALLBACK (preview_sound_cb), dialog);
 	
 	return dialog;
 }

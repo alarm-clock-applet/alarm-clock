@@ -152,10 +152,19 @@ GList *
 alarm_get_list (const gchar *gconf_dir);
 
 void
+alarm_signal_connect_list (GList *instances,
+						   const gchar *detailed_signal,
+						   GCallback c_handler,
+						   gpointer data);
+
+void
 alarm_trigger (Alarm *alarm);
 
 void
 alarm_enable (Alarm *alarm);
+
+void
+alarm_clear (Alarm *alarm);
 
 void
 alarm_disable (Alarm *alarm);

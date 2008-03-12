@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include <glib.h>
+#include <glib-object.h>
 #include "util.h"
 
 /**
@@ -101,3 +102,4 @@ is_executable_valid (gchar *executable)
 
     return FALSE;
 }
+

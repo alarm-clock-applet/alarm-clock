@@ -136,6 +136,9 @@ list_alarm_selected_cb (GtkTreeView       *view,
 	
 	gtk_tree_model_get (model, &iter, 0, &a, -1);
 	
+	// Clear any running alarms
+	alarm_clear (a);
+	
 	display_edit_alarm_dialog (applet, a);
 }
 

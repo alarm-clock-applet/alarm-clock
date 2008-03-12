@@ -15,21 +15,8 @@ GHashTable *app_command_map = NULL;
 
 
 /**
- * Player error
+ * Player state changed
  */
-static void
-player_error_cb (MediaPlayer *player, GError *err, AlarmApplet *applet)
-{
-	gchar *uri;
-	
-	uri = media_player_get_uri (player);
-	g_critical ("Could not play '%s': %s", err->message);
-	g_free (uri);
-	
-	if (applet->preferences_dialog)
-		display_error_dialog ("Could not play", err->message, GTK_WINDOW (applet->preferences_dialog));
-}
-
 static void
 player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApplet *applet)
 {
@@ -71,7 +58,7 @@ player_start (AlarmApplet *applet)
 		applet->player = media_player_new (get_sound_file (applet),
 										   applet->notify_sound_loop,
 										   player_state_cb, applet,
-										   player_error_cb, applet);
+										   media_player_error_cb, applet);
 	
 	media_player_set_uri (applet->player, get_sound_file (applet));
 	
@@ -87,7 +74,7 @@ player_preview_start (AlarmApplet *applet)
 		applet->preview_player = media_player_new (get_sound_file (applet),
 												   FALSE,
 												   player_preview_state_cb, applet,
-												   player_error_cb, applet);
+												   media_player_error_cb, applet);
 	
 	media_player_set_uri (applet->preview_player, get_sound_file (applet));
 	
@@ -304,7 +291,62 @@ get_sound_file (AlarmApplet *applet)
 	return (const gchar *)e->data;
 }
 
+// Load sounds into list
+void
+load_sounds_list (AlarmApplet *applet)
+{
+	Alarm *alarm;
+	AlarmListEntry *entry;
+	GList *l, *l2;
+	gboolean found;
+	
+	g_assert (applet->alarms);
+	
+	// Free old list
+	if (applet->sounds != NULL)
+		alarm_list_entry_list_free (&(applet->sounds));
+	
+	// Load stock sounds
+	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_SOUNDS_DIR,
+												supported_sound_mime_types);
+	
+	// Load custom sounds from alarms
+	for (l = applet->alarms; l != NULL; l = l->next) {
+		alarm = ALARM (l->data);
+		found = FALSE;
+		for (l2 = applet->sounds; l2 != NULL; l2 = l2->next) {
+			entry = (AlarmListEntry *)l2->data;
+			if (strcmp (alarm->sound_file, entry->data) == 0) {
+				// FOUND
+				found = TRUE;
+				break;
+			}
+		}
+		
+		if (!found) {
+			// Add to list
+			entry = alarm_list_entry_new_file (alarm->sound_file, NULL, NULL);
+			if (entry) {
+				applet->sounds = g_list_append (applet->sounds, entry);
+			}
+		}
+	}
+}
 
+// Notify callback for changes to an alarm's sound_file
+void
+alarm_sound_file_changed (GObject *object, 
+						  GParamSpec *param,
+						  gpointer data)
+{
+	Alarm *alarm		= ALARM (object);
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	g_debug ("alarm_sound_file_changed: #%d", alarm->id);
+	
+	// Reload sounds list
+	load_sounds_list (applet);
+}
 
 
 /*
@@ -359,7 +401,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	panel_applet_set_flags (PANEL_APPLET (panelapplet), PANEL_APPLET_EXPAND_MINOR);
 	
 	// Load sounds list
-	load_stock_sounds_list (applet);
+	//load_stock_sounds_list (applet);
 	
 	// Load applications list
 	load_app_list (applet);
@@ -373,6 +415,13 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	/* Load alarms */
 	applet->gconf_dir = panel_applet_get_preferences_key(applet->parent);
 	applet->alarms = alarm_get_list (applet->gconf_dir);
+	
+	/* Load sounds from alarms */
+	load_sounds_list (applet);
+	
+	/* Connect sound_file notify callback to all alarms */
+	alarm_signal_connect_list (applet->alarms, "notify::sound-file", 
+							   G_CALLBACK (alarm_sound_file_changed), applet);
 	
 	/* Set up properties menu */
 	menu_setup(applet);

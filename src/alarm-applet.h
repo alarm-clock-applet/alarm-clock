@@ -159,6 +159,10 @@ struct _AlarmApplet {
 static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
 //static void time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
 
+void load_sounds_list (AlarmApplet *applet);
+
+void alarm_sound_file_changed (GObject *object, GParamSpec *param, gpointer data);
+
 G_END_DECLS
 
 #endif /*ALARMAPPLET_H_*/

@@ -124,6 +124,8 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 
 	model = GTK_TREE_MODEL (gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING));
 	gtk_combo_box_set_model (combo_box, model);
+	
+	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));
 
 	renderer = gtk_cell_renderer_pixbuf_new ();
 
@@ -685,6 +687,9 @@ menu_about_cb (BonoboUIComponent *component,
                            NULL);
 }
 
+/*
+ * Set up menu
+ */
 void
 menu_setup (AlarmApplet *applet)
 {
@@ -726,3 +731,25 @@ menu_setup (AlarmApplet *applet)
 	                         menu_verbs,
 	                         applet);
 }
+
+
+
+/*
+ * An error callback for MediaPlayers
+ */
+void
+media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent)
+{
+	gchar *uri, *tmp;
+	
+	uri = media_player_get_uri (player);
+	tmp = g_strdup_printf (_("%s: %s"), uri, err->message);
+	
+	g_critical (_("Could not play '%s': %s"), uri, err->message);
+	display_error_dialog (_("Could not play"), tmp, parent);
+	
+	g_free (tmp);
+	g_free (uri);
+}
+
+

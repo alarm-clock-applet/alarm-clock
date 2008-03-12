@@ -52,4 +52,7 @@ ui_setup (AlarmApplet *applet);
 void
 menu_setup (AlarmApplet *applet);
 
+void
+media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent);
+
 #endif /*UI_H_*/
