@@ -163,6 +163,8 @@ void load_sounds_list (AlarmApplet *applet);
 
 void alarm_sound_file_changed (GObject *object, GParamSpec *param, gpointer data);
 
+void load_apps_list (AlarmApplet *applet);
+
 G_END_DECLS
 
 #endif /*ALARMAPPLET_H_*/

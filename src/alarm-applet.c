@@ -300,14 +300,14 @@ load_sounds_list (AlarmApplet *applet)
 	GList *l, *l2;
 	gboolean found;
 	
-	g_assert (applet->alarms);
+	//g_assert (applet->alarms);
 	
 	// Free old list
 	if (applet->sounds != NULL)
 		alarm_list_entry_list_free (&(applet->sounds));
 	
 	// Load stock sounds
-	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_SOUNDS_DIR,
+	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_SOUNDS_DIR, 
 												supported_sound_mime_types);
 	
 	// Load custom sounds from alarms
@@ -346,6 +346,162 @@ alarm_sound_file_changed (GObject *object,
 	
 	// Reload sounds list
 	load_sounds_list (applet);
+}
+
+static gchar *
+gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
+{
+    const gchar * const *sys_langs;
+    xmlChar *node_lang;
+    xmlNode *element;
+    gchar *ret_val = NULL;
+    xmlChar *xml_val_name;
+    gint len;
+    gint i;
+
+    g_return_val_if_fail (parent != NULL, ret_val);
+    g_return_val_if_fail (parent->children != NULL, ret_val);
+    g_return_val_if_fail (val_name != NULL, ret_val);
+
+#if GLIB_CHECK_VERSION (2, 6, 0)
+    sys_langs = g_get_language_names ();
+#endif
+
+    xml_val_name = xmlCharStrdup (val_name);
+    len = xmlStrlen (xml_val_name);
+
+    for (element = parent->children; element != NULL; element = element->next) {
+		if (!xmlStrncmp (element->name, xml_val_name, len)) {
+		    node_lang = xmlNodeGetLang (element);
+	
+		    if (node_lang == NULL) {
+		    	ret_val = (gchar *) xmlNodeGetContent (element);
+		    } else {
+				for (i = 0; sys_langs[i] != NULL; i++) {
+				    if (!strcmp (sys_langs[i], node_lang)) {
+						ret_val = (gchar *) xmlNodeGetContent (element);
+						/* since sys_langs is sorted from most desirable to
+						 * least desirable, exit at first match
+						 */
+						break;
+				    }
+				}
+		    }
+		    xmlFree (node_lang);
+		}
+    }
+
+    xmlFree (xml_val_name);
+    return ret_val;
+}
+
+static const gchar *
+get_app_command (const gchar *app)
+{
+	// TODO: Shouldn't be a global variable
+	if (app_command_map == NULL) {
+		app_command_map = g_hash_table_new (g_str_hash, g_str_equal);
+		
+		/* `rhythmbox-client --play' doesn't actually start playing unless
+		 * Rhythmbox is already running. Sounds like a Bug. */
+		g_hash_table_insert (app_command_map,
+							 "rhythmbox", "rhythmbox-client --play");
+		
+		g_hash_table_insert (app_command_map,
+							 "banshee", "banshee --play");
+		
+		// Note that totem should already be open with a file for this to work.
+		g_hash_table_insert (app_command_map,
+							 "totem", "totem --play");
+		
+		// Muine crashes and doesn't seem to have any play command
+		/*g_hash_table_insert (app_command_map,
+							 "muine", "muine");*/
+	}
+	
+	return g_hash_table_lookup (app_command_map, app);
+}
+
+// Load stock apps into list
+void
+load_apps_list (AlarmApplet *applet)
+{
+	AlarmListEntry *entry;
+	gchar *filename, *name, *icon, *command;
+	xmlDoc *xml_doc;
+	xmlNode *root, *section, *element;
+    gchar *executable;
+    const gchar *tmp;
+	
+	if (applet->apps != NULL)
+		alarm_list_entry_list_free (&(applet->apps));
+
+	// We'll get the default media players from g-d-a.xml
+	// from gnome-control-center
+	filename = g_build_filename (DATADIR,
+								 "gnome-control-center",
+					 			 "gnome-default-applications.xml",
+					 			 NULL);
+	
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		g_critical ("Could not find %s.", filename);
+		return;
+	}
+
+    xml_doc = xmlParseFile (filename);
+
+    if (!xml_doc) {
+    	g_warning ("Could not load %s.", filename);
+    	return;
+    }
+
+    root = xmlDocGetRootElement (xml_doc);
+
+	for (section = root->children; section != NULL; section = section->next) {
+		if (!xmlStrncmp (section->name, "media-players", 13)) {
+		    for (element = section->children; element != NULL; element = element->next) {
+				if (!xmlStrncmp (element->name, "media-player", 12)) {
+				    executable = gnome_da_xml_get_string (element, "executable");
+				    if (is_executable_valid (executable)) {
+				    	name = gnome_da_xml_get_string (element, "name");
+				    	icon = gnome_da_xml_get_string (element, "icon-name");
+				    	
+				    	// Lookup executable in app command map
+				    	tmp = get_app_command (executable);
+				    	if (tmp)
+				    		command = g_strdup (tmp);
+				    	else {
+				    		// Fall back to command specified in XML
+				    		command = gnome_da_xml_get_string (element, "command");
+				    	}
+						
+						
+						
+						g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
+						
+						entry = alarm_list_entry_new (name, command, icon);
+						
+						g_free (name);
+						g_free (command);
+						g_free (icon);
+						
+						applet->apps = g_list_append (applet->apps, entry);
+				    }
+				    
+				    if (executable)
+				    	g_free (executable);
+				}
+		    }
+	    }
+	}
+	
+	
+	
+	
+	g_free (filename);
+	
+//	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
+//	applet->apps = g_list_append (applet->apps, entry);
 }
 
 
@@ -404,7 +560,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	//load_stock_sounds_list (applet);
 	
 	// Load applications list
-	load_app_list (applet);
+	//load_app_list (applet);
 	
 	/* Set up gconf handlers */
 	setup_gconf (applet);

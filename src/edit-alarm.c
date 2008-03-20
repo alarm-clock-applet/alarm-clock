@@ -16,6 +16,9 @@ time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
 static void
 sound_combo_changed_cb (GtkComboBox *combo, AlarmSettingsDialog *dialog);
 
+static void
+app_combo_changed_cb (GtkComboBox *combo, AlarmSettingsDialog *dialog);
+
 
 /*
  * Utility functions
@@ -144,6 +147,50 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 }
 
 static void
+alarm_settings_update_app (AlarmSettingsDialog *dialog)
+{
+	AlarmListEntry *item;
+	GList *l;
+	guint pos, len, combo_len;
+	gboolean custom = FALSE;
+	
+	g_debug ("alarm_settings_update_app (%p): app_combo: %p, applet: %p, apps: %p", dialog, dialog->notify_app_combo, dialog->applet, dialog->applet->apps);
+	g_debug ("alarm_settings_update_app setting entry to %s", dialog->alarm->command);
+	
+	/* Fill apps list */
+	fill_combo_box (GTK_COMBO_BOX (dialog->notify_app_combo),
+					dialog->applet->apps, _("Custom command..."));
+	
+	/* Fill command entry */
+	//g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
+	
+	// Look for the selected command
+	len = g_list_length (dialog->applet->apps);
+	for (l = dialog->applet->apps, pos = 0; l != NULL; l = l->next, pos++) {
+		item = (AlarmListEntry *)l->data;
+		if (strcmp (item->data, dialog->alarm->command) == 0) {
+			// Match!
+			break;
+		}
+	}
+	
+	/* Only change sensitivity of the command entry if user
+	 * isn't typing a custom command there already. */ 
+	if (pos >= len) {
+		// Custom command
+		pos += 1;
+		custom = TRUE;
+	}
+	
+	g_debug ("CMD ENTRY HAS FOCUS? %d", GTK_WIDGET_HAS_FOCUS (dialog->notify_app_command_entry));
+	
+	if (!GTK_WIDGET_HAS_FOCUS (dialog->notify_app_command_entry))
+		g_object_set (dialog->notify_app_command_entry, "sensitive", custom, NULL);
+	
+	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->notify_app_combo), pos);
+}
+
+static void
 alarm_settings_update (AlarmSettingsDialog *dialog)
 {
 	Alarm *alarm = ALARM (dialog->alarm);
@@ -156,6 +203,7 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	alarm_settings_update_time (dialog);
 	alarm_settings_update_notify_type (dialog);
 	alarm_settings_update_sound (dialog);
+	alarm_settings_update_app (dialog);
 }
 
 
@@ -191,7 +239,7 @@ alarm_time_changed (GObject *object,
 	alarm_settings_update_time (dialog);
 }
 
-void
+static void
 alarm_timer_changed (GObject *object, 
 					 GParamSpec *param,
 					 gpointer data)
@@ -205,7 +253,7 @@ alarm_timer_changed (GObject *object,
 	alarm_settings_update_time (dialog);
 }
 
-void
+static void
 alarm_notify_type_changed (GObject *object, 
 						   GParamSpec *param,
 						   gpointer data)
@@ -215,7 +263,7 @@ alarm_notify_type_changed (GObject *object,
 	alarm_settings_update_notify_type (dialog);
 }
 
-void
+static void
 alarm_settings_sound_file_changed (GObject *object, 
 								   GParamSpec *param,
 								   gpointer data)
@@ -248,6 +296,31 @@ alarm_sound_repeat_changed (GObject *object,
 	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
 	
 	g_debug ("alarm_sound_repeat_changed to: %d", dialog->alarm->sound_loop);
+}
+
+static void
+alarm_settings_command_changed (GObject *object, 
+								GParamSpec *param,
+								gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	g_debug ("alarm_settings_command_changed (%p)", data);
+	
+	// Block sound combo signals to prevent infinite loop
+	// because the "changed" signal will be emitted when we
+	// change the combo box tree model.
+	g_signal_handlers_block_matched (dialog->notify_app_combo, 
+									 G_SIGNAL_MATCH_FUNC, 
+									 0, 0, NULL, app_combo_changed_cb, NULL);
+	
+	// Update UI
+	alarm_settings_update_app (dialog);
+	
+	// Unblock combo signals
+	g_signal_handlers_unblock_matched (dialog->notify_app_combo, 
+									   G_SIGNAL_MATCH_FUNC,
+									   0, 0, NULL, app_combo_changed_cb, NULL);
 }
 
 
@@ -355,7 +428,7 @@ static void
 sound_combo_changed_cb (GtkComboBox *combo,
 						AlarmSettingsDialog *dialog)
 {
-	g_debug ("Combo_changed");
+	g_debug ("SOUND Combo_changed");
 	
 	GtkTreeModel *model;
 	AlarmListEntry *item;
@@ -382,6 +455,46 @@ sound_combo_changed_cb (GtkComboBox *combo,
 	// Valid file selected, update alarm
 	item = (AlarmListEntry *) g_list_nth_data (dialog->applet->sounds, current_index);
 	g_object_set (dialog->alarm, "sound_file", item->data, NULL);
+}
+
+static void
+app_combo_changed_cb (GtkComboBox *combo,
+					  AlarmSettingsDialog *dialog)
+{
+	g_debug ("APP Combo_changed");
+	
+	if (GTK_WIDGET_HAS_FOCUS (dialog->notify_app_command_entry)) {
+		g_debug (" ---- Skipping because command_entry has focus!");
+		return;
+	}
+	
+	GtkTreeModel *model;
+	AlarmListEntry *item;
+	guint current_index, len, combo_len;
+	
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->notify_app_combo));
+	combo_len = gtk_tree_model_iter_n_children (model, NULL);
+	current_index = gtk_combo_box_get_active (combo);
+	len = g_list_length (dialog->applet->apps);
+	
+	if (current_index < 0)
+		// None selected
+		return;
+	
+	if (current_index >= len) {
+		// Custom command
+		g_debug ("CUSTOM command selected...");
+		
+		g_object_set (dialog->notify_app_command_entry, "sensitive", TRUE, NULL);
+		gtk_widget_grab_focus (dialog->notify_app_command_entry);
+		return;
+	}
+	
+	g_object_set (dialog->notify_app_command_entry, "sensitive", FALSE, NULL);
+	
+	
+	item = (AlarmListEntry *) g_list_nth_data (dialog->applet->apps, current_index);
+	g_object_set (dialog->alarm, "command", item->data, NULL);
 }
 
 
@@ -532,7 +645,12 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	dialog->notify_app_command_entry = glade_xml_get_widget (ui, "app-command-entry");
 	dialog->notify_bubble_check      = glade_xml_get_widget (ui, "notify-bubble-check");
 	
-		
+	
+	/*
+	 * Load apps list
+	 */
+	load_apps_list (applet);
+	
 	/*
 	 * Populate widgets
 	 */
@@ -575,6 +693,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 */
 	alarm_bind (alarm, "message", dialog->label_entry, "text");
 	alarm_bind (alarm, "sound-repeat", dialog->notify_sound_loop_check, "active");
+	alarm_bind (alarm, "command", dialog->notify_app_command_entry, "text");
 	
 	/*
 	 * Special widgets require special attention!
@@ -606,6 +725,16 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	
 	g_signal_connect (dialog->notify_sound_preview, "clicked",
 					  G_CALLBACK (preview_sound_cb), dialog);
+	
+	/* app / command */
+	g_signal_connect (alarm, "notify::command",
+					  G_CALLBACK (alarm_settings_command_changed), dialog);
+	
+	g_signal_connect (dialog->notify_app_combo, "changed",
+					  G_CALLBACK (app_combo_changed_cb), dialog);
+	
+	/*g_signal_connect (dialog->notify_app_command_entry, "changed",
+					  G_CALLBACK (app_command_changed_cb), dialog);*/
 	
 	return dialog;
 }
