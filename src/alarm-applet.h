@@ -105,6 +105,7 @@ struct _AlarmApplet {
 	/* List-alarms */
 	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
+	GtkTreeView *list_alarms_view;
 	
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY
@@ -164,6 +165,8 @@ void load_sounds_list (AlarmApplet *applet);
 void alarm_sound_file_changed (GObject *object, GParamSpec *param, gpointer data);
 
 void load_apps_list (AlarmApplet *applet);
+
+void alarm_applet_update_alarms_list (AlarmApplet *applet);
 
 G_END_DECLS
 

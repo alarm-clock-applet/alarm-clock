@@ -170,6 +170,9 @@ void
 alarm_disable (Alarm *alarm);
 
 void
+alarm_delete (Alarm *alarm);
+
+void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
 
 void

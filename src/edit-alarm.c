@@ -656,8 +656,6 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 */
 	alarm_settings_update (dialog);
 	
-	
-	
 	/*
 	 * glade_xml_get_widget() caches its widgets. 
 	 * So if g_object_destroy() got called on it, the next call to 

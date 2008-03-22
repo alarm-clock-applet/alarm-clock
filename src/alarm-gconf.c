@@ -431,7 +431,6 @@ setup_gconf (AlarmApplet *applet)
 				(GConfClientNotifyFunc) alarm_gconf_notify_bubble_change,
 				applet, NULL, NULL);
 	g_free (key);
-	
 }
 
 /* Load gconf values into applet.

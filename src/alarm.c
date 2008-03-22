@@ -798,6 +798,28 @@ alarm_disable (Alarm *alarm)
 }
 
 /*
+ * Delete alarm. This will remove all configuration
+ * associated with this alarm.
+ */
+void
+alarm_delete (Alarm *alarm)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+	GConfClient *client = priv->gconf_client;
+	gchar *key;
+	
+	// Disconnect gconf listeners
+	alarm_gconf_disconnect (alarm);
+	
+	// Remove configuration
+	key = alarm_gconf_get_dir (alarm);
+	g_debug ("alarm_delete: recursive unset on %s", key);
+	gconf_client_recursive_unset (client, key, 0, NULL);
+	gconf_client_unset (client, key, NULL);
+	g_free (key);
+}
+
+/*
  * Clear the alarm. This will stop any running players.
  */
 void
@@ -931,7 +953,7 @@ alarm_gconf_dir_changed (GConfClient *client,
 		return;
 	}
 	
-//	g_debug ("alarm_gconf changed: %s", name);
+	g_debug ("alarm_gconf changed: %s", name);
 	
 	switch (param->param_id) {
 	case PROP_TYPE:

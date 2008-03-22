@@ -509,6 +509,25 @@ load_apps_list (AlarmApplet *applet)
  * INIT {{
  */
 
+void
+alarm_applet_update_alarms_list (AlarmApplet *applet)
+{
+	if (applet->alarms != NULL) {
+		GList *l;
+		
+		/* Free old alarm objects */
+		for (l = applet->alarms; l != NULL; l = l->next) {
+			g_object_unref (ALARM (l->data));
+		}
+		
+		/* Free list */
+		g_list_free (applet->alarms);
+	}
+	
+	/* Fetch list of alarms */
+	applet->alarms = alarm_get_list (applet->gconf_dir);
+}
+
 static gboolean
 alarm_applet_factory (PanelApplet *panelapplet,
 					  const gchar *iid,
@@ -569,8 +588,8 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	load_gconf (applet);
 	
 	/* Load alarms */
-	applet->gconf_dir = panel_applet_get_preferences_key(applet->parent);
-	applet->alarms = alarm_get_list (applet->gconf_dir);
+	applet->gconf_dir = panel_applet_get_preferences_key (applet->parent);
+	alarm_applet_update_alarms_list (applet);
 	
 	/* Load sounds from alarms */
 	load_sounds_list (applet);

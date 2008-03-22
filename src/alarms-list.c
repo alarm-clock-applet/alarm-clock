@@ -25,6 +25,62 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 }
 
 static void 
+alarm_object_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	Alarm *a = ALARM (object);
+	//GtkListStore *model = GTK_LIST_STORE (data);
+	
+	g_print ("Alarm #%d changed: %s\n", a->id, g_param_spec_get_name (param));
+	
+	/*g_object_notify (model, g_param_spec_get_name (param));*/
+}
+
+/*
+ * Update list of alarms
+ */
+void
+list_alarms_update (AlarmApplet *applet)
+{
+	GtkListStore *store = applet->list_alarms_store;
+	GtkTreeIter iter;
+	GList *l = NULL;
+	Alarm *a;
+	
+	g_debug ("list_alarms_update ()");
+	
+	g_assert (store);
+	
+	/*
+	 * Clear model
+	 */
+	gtk_list_store_clear (store);
+	
+	/* 
+	 * Insert alarms
+	 */
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+
+		g_signal_connect (a, "notify", 
+				G_CALLBACK (alarm_object_changed),
+				store);
+
+		gtk_list_store_append (store, &iter);
+
+		gtk_list_store_set (store, &iter, 0, a, -1);
+		/*TYPE_COLUMN, a->type,
+								ACTIVE_COLUMN, a->active,
+								TIME_COLUMN, a->time,
+								LABEL_COLUMN, a->message,
+								-1);*/
+
+		g_print ("Alarm #%d: %s\n", a->id, a->message);
+	}
+}
+
+static void 
 alarm_update_renderer (GtkTreeViewColumn *tree_column, 
 					   GtkCellRenderer *renderer,
 					   GtkTreeModel *model,
@@ -73,19 +129,6 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 	}
 }
 
-static void 
-alarm_object_changed (GObject *object, 
-					  GParamSpec *param,
-					  gpointer data)
-{
-	Alarm *a = ALARM (object);
-	//GtkListStore *model = GTK_LIST_STORE (data);
-	
-	g_print ("Alarm #%d changed: %s\n", a->id, g_param_spec_get_name (param));
-	
-	/*g_object_notify (model, g_param_spec_get_name (param));*/
-}
-
 static void
 list_alarms_dialog_response_cb (GtkDialog *dialog,
 								gint rid,
@@ -101,19 +144,118 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 static void
 add_button_cb (GtkButton *button, gpointer data)
 {
-	display_add_alarm_dialog ((AlarmApplet *)data);
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	display_add_alarm_dialog (applet);
+	
+	/*
+	 * Update list of alarms
+	 */
+	alarm_applet_update_alarms_list (applet);
+	
+	/*
+	 * Fill store with alarms
+	 */
+	list_alarms_update (applet);
+}
+
+static Alarm *
+get_selected_alarm (AlarmApplet *applet)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	Alarm *a;
+	
+	g_assert (applet);
+	g_assert (applet->list_alarms_view);
+
+	/* Fetch selection */
+	selection = gtk_tree_view_get_selection (applet->list_alarms_view);
+
+	if (!gtk_tree_selection_get_selected(selection, &model, &iter)) {
+		/* No alarms selected */
+		g_debug ("get_selected_alarm: No alarms selected");
+		return NULL;
+	}
+
+	gtk_tree_model_get (model, &iter, 0, &a, -1);
+	
+	return a;
 }
 
 static void
 edit_button_cb (GtkButton *button, gpointer data)
 {
-	g_debug ("Edit alarm");
+	AlarmApplet *applet = (AlarmApplet *)data;
+	Alarm *a = get_selected_alarm (applet);
+	
+	if (!a) {
+		/* No alarms selected */
+		return;
+	}
+	
+	// Clear any running alarms
+	alarm_clear (a);
+	
+	display_edit_alarm_dialog (applet, a);
 }
 
 static void
 delete_button_cb (GtkButton *button, gpointer data)
 {
-	g_debug ("Delete alarm");
+	AlarmApplet *applet = (AlarmApplet *)data;
+	Alarm *a = get_selected_alarm (applet);
+	
+	GtkWidget *dialog;
+	gint response;
+	
+	if (!a) {
+		/* No alarms selected */
+		return;
+	}
+	
+	// Clear any running alarms
+	alarm_clear (a);
+
+	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (applet->list_alarms_dialog),
+												 GTK_DIALOG_DESTROY_WITH_PARENT,
+												 GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+												 _("<big><b>Delete alarm '%s'?</b></big>"),
+												 a->message);
+	g_object_set (dialog, 
+				  "title", _("Delete Alarm?"),
+				  "icon-name", ALARM_ICON,
+				  NULL);
+	
+	gtk_message_dialog_format_secondary_markup (GTK_MESSAGE_DIALOG (dialog),
+												_("Are you sure you want to delete\nalarm <b>#%d</b> labeled '<b>%s</b>'?"),
+												a->id, a->message);
+	
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
+	gtk_dialog_add_buttons(GTK_DIALOG (dialog), 
+						   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+						   GTK_STOCK_DELETE, GTK_RESPONSE_ACCEPT,
+						   NULL);
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	
+	if (response == GTK_RESPONSE_ACCEPT) {
+		g_debug ("delete_button_cb: GTK_RESPONSE_ACCEPT");
+		alarm_delete (a);
+		
+		/*
+		 * Update list of alarms
+		 */
+		//alarm_applet_update_alarms_list (applet);
+		
+		/*
+		 * Fill store with alarms
+		 */
+		//list_alarms_update (applet);
+	} else {
+		g_debug ("delete_button_cb: GTK_RESPONSE_CANCEL");
+	}
 }
 
 static void
@@ -177,6 +319,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	
 	applet->list_alarms_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "list-alarms"));
 	view = GTK_TREE_VIEW (glade_xml_get_widget (ui, "list-alarms-view"));
+	applet->list_alarms_view = view;
 	
 	g_signal_connect (applet->list_alarms_dialog, "response", 
 					  G_CALLBACK (list_alarms_dialog_response_cb), applet);
@@ -199,30 +342,15 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	store = gtk_list_store_new (1, TYPE_ALARM);
 	applet->list_alarms_store = store;
 	
-	/* 
-	 * Insert alarms
+	/*
+	 * Update list of alarms
 	 */
-	for (l = applet->alarms; l; l = l->next) {
-		a = ALARM (l->data);
-		
-		g_signal_connect (a, "notify", 
-						  G_CALLBACK (alarm_object_changed),
-						  store);
-		
-		gtk_list_store_append (store, &iter);
-		
-		gtk_list_store_set (store, &iter, 0, a, -1);
-							/*TYPE_COLUMN, a->type,
-							ACTIVE_COLUMN, a->active,
-							TIME_COLUMN, a->time,
-							LABEL_COLUMN, a->message,
-							-1);*/
-		
-		g_print ("Alarm #%d: %s\n", a->id, a->message);
-	}
+	alarm_applet_update_alarms_list (applet);
 	
-	
-	
+	/*
+	 * Fill store with alarms
+	 */
+	list_alarms_update (applet);
 	
 	/* 
 	 * Create view cell renderers

@@ -16,4 +16,7 @@ typedef enum {
 void
 display_list_alarms_dialog (AlarmApplet *applet);
 
+void
+list_alarms_update (AlarmApplet *applet);
+
 #endif /*ALARMSLIST_H_*/
