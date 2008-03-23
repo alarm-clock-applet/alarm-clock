@@ -44,6 +44,33 @@ alarm_object_changed (GObject *object,
 	/*g_object_notify (model, g_param_spec_get_name (param));*/
 }
 
+typedef struct _AlarmModelChangedArg {
+	GtkListStore *store;
+	GtkTreeIter iter;
+} AlarmModelChangedArg;
+
+/*
+ * Callback for when an alarm changes
+ * Emits model-row-changed
+ */
+static void
+alarm_changed (GObject *object, 
+			   GParamSpec *param,
+			   gpointer data)
+{
+	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
+	GtkTreePath *path;
+	
+	g_debug ("alarm_changed: %s", param->name);
+	//if (param->name)
+	
+	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
+	
+	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
+	
+	gtk_tree_path_free (path);
+}
+
 /*
  * Update list of alarms (VIEW)
  */
@@ -54,6 +81,7 @@ list_alarms_update (AlarmApplet *applet)
 	GtkTreeIter iter;
 	GList *l = NULL;
 	Alarm *a;
+	AlarmModelChangedArg *arg;
 	
 	g_debug ("list_alarms_update ()");
 	
@@ -73,15 +101,17 @@ list_alarms_update (AlarmApplet *applet)
 		g_signal_connect (a, "notify", 
 				G_CALLBACK (alarm_object_changed),
 				store);
-
+		
 		gtk_list_store_append (store, &iter);
 		
 		gtk_list_store_set (store, &iter, 0, a, -1);
-		/*TYPE_COLUMN, a->type,
-								ACTIVE_COLUMN, a->active,
-								TIME_COLUMN, a->time,
-								LABEL_COLUMN, a->message,
-								-1);*/
+		
+		// TODO: arg is never freed
+		arg = g_new (AlarmModelChangedArg, 1);
+		arg->store = store;
+		arg->iter = iter;
+		
+		g_signal_connect (a, "notify", G_CALLBACK (alarm_changed), arg);
 		
 		g_print ("Alarm #%d: %s [ref=%d]\n", a->id, a->message, G_OBJECT (a)->ref_count);
 	}
@@ -148,14 +178,23 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 								gint rid,
 								AlarmApplet *applet)
 {
+	GList *l;
+	Alarm *a;
+	
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 	applet->list_alarms_dialog = NULL;
 	
 	g_object_unref (applet->list_alarms_store);
 	applet->list_alarms_store = NULL;
 	
-	g_object_unref (applet->list_alarms_view);
+/*	g_object_unref (applet->list_alarms_view);*/
 	applet->list_alarms_view = NULL;
+	
+	// Disconnect nofity handlers
+	for (l = applet->alarms; l != NULL; l = l->next) {
+		a = ALARM (l->data);
+		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
+	}
 }
 
 static void
