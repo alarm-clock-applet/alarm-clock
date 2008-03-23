@@ -738,20 +738,6 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 }
 
 void
-display_add_alarm_dialog (AlarmApplet *applet)
-{
-	Alarm *alarm;
-	AlarmSettingsDialog *dialog;
-	
-	/*
-	 * Create new alarm, will fall back to defaults.
-	 */
-	alarm = alarm_new (applet->gconf_dir, -1);
-	
-	dialog = alarm_settings_dialog_new (alarm, applet);
-}
-
-void
 display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm)
 {
 	AlarmSettingsDialog *dialog;

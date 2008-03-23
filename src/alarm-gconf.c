@@ -9,6 +9,7 @@
 
 #include "alarm-applet.h"
 #include "alarm-gconf.h"
+#include "alarm.h"
 
 GConfEnumStringPair label_type_enum_map [] = {
 	{ LABEL_TYPE_ALARM,		"alarm-time"  },
@@ -334,6 +335,92 @@ alarm_gconf_notify_bubble_change (GConfClient  *client,
 #endif
 }
 
+void
+alarm_gconf_global_change (GConfClient  *client,
+						   guint         cnxn_id,
+						   GConfEntry   *entry,
+						   AlarmApplet  *applet)
+{
+	Alarm *a;
+	GString *str;
+	GList *l;
+	gchar *dir;
+	gint id, i, len;
+	gboolean found = FALSE;
+	
+	//g_debug ("GLOBAL_change: %s", entry->key);
+	
+	/*
+	 * We're only interested in the first part of the key matching
+	 * {applet_gconf_pref_dir}/{something}
+	 * 
+	 * Here we extract {something}
+	 */
+	dir = panel_applet_get_preferences_key (PANEL_APPLET (applet->parent));
+	len = strlen (entry->key);
+	str = g_string_new ("");
+	
+	for (i = strlen(dir) + 1; i < len; i++) {
+		if (entry->key[i] == '/')
+			break;
+		
+		str = g_string_append_c (str, entry->key[i]);
+	}
+	
+	g_free (dir);
+	
+	//g_debug ("\tEXTRACTED: %s", str->str);
+	
+	// Check if the key is valid
+	id = alarm_gconf_dir_get_id (str->str);
+	
+	if (id >= 0) {
+		// Valid, probably an alarm which has been removed
+		g_debug ("GLOBAL change ON alarm #%d", id);
+		
+		// Check if the alarm exists in our alarms list
+		for (l = applet->alarms; l != NULL; l = l->next) {
+			a = ALARM (l->data);
+			if (a->id == id) {
+				// FOUND
+				found = TRUE;
+				break;
+			}
+		}
+		
+		if (found && entry->value == NULL) {
+			// DELETED ALARM
+			g_debug ("\tDELETE alarm #%d %p", id, a);
+			
+			/*
+			 * Remove from list
+			 */
+			alarm_applet_alarms_remove (applet, a);
+			
+			// Update view
+			if (applet->list_alarms_dialog)
+				list_alarms_update (applet);
+			
+		} else if (!found && entry->value != NULL) {
+			// ADDED ALARM
+			/*
+			 * Add to list
+			 */
+			a = alarm_new (applet->gconf_dir, id);
+			
+			g_debug ("\tADD alarm #%d %p", id, a);
+			
+			alarm_applet_alarms_add (applet, a);
+			
+			// Update view
+			if (applet->list_alarms_dialog)
+				list_alarms_update (applet);
+		}
+	}
+	
+	g_string_free (str, TRUE);
+}
+
 
 /*
  * }} GCONF CALLBACKS
@@ -431,6 +518,20 @@ setup_gconf (AlarmApplet *applet)
 				(GConfClientNotifyFunc) alarm_gconf_notify_bubble_change,
 				applet, NULL, NULL);
 	g_free (key);
+	
+	/*
+	 * Listen for changes to the alarms.
+	 * We want to know when an alarm is added and removed.
+	 */
+	key = panel_applet_get_preferences_key(PANEL_APPLET (applet->parent));
+	applet->listeners [10] =
+		gconf_client_notify_add (
+				client, key,
+				(GConfClientNotifyFunc) alarm_gconf_global_change,
+				applet, NULL, NULL);
+	g_free (key);
+	
+	
 }
 
 /* Load gconf values into applet.

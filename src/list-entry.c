@@ -70,7 +70,7 @@ alarm_list_entry_new_file (const gchar *uri, GnomeVFSResult *ret, gchar **mime_r
 		*ret = result;
 	
 	if (result != GNOME_VFS_OK) {
-		g_critical ("Could not open uri: %s", uri);
+		g_warning ("Could not open uri: %s", uri);
 		return NULL;
 	}
 	

@@ -20,7 +20,7 @@ G_BEGIN_DECLS
 #define KEY_COMMAND			"command"
 #define KEY_NOTIFY_BUBBLE	"notify_bubble"
 
-#define N_GCONF_PREFS	10
+#define N_GCONF_PREFS	11
 
 /* Failsafe defaults for use when the schema isn't found
  * or doesn't provide sensible defaults */

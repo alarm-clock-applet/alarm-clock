@@ -22,6 +22,13 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 	}
 	
 	g_object_set (alarm, "active", !(alarm->active), NULL);
+	
+	/*
+	 * gtk_tree_model_get () will increase the reference count 
+	 * of the alarms each time it's called. We dereference it
+	 * here so they can be properly freed later with g_object_unref()
+	 */
+	g_object_unref (alarm);
 }
 
 static void 
@@ -38,7 +45,7 @@ alarm_object_changed (GObject *object,
 }
 
 /*
- * Update list of alarms
+ * Update list of alarms (VIEW)
  */
 void
 list_alarms_update (AlarmApplet *applet)
@@ -68,15 +75,15 @@ list_alarms_update (AlarmApplet *applet)
 				store);
 
 		gtk_list_store_append (store, &iter);
-
+		
 		gtk_list_store_set (store, &iter, 0, a, -1);
 		/*TYPE_COLUMN, a->type,
 								ACTIVE_COLUMN, a->active,
 								TIME_COLUMN, a->time,
 								LABEL_COLUMN, a->message,
 								-1);*/
-
-		g_print ("Alarm #%d: %s\n", a->id, a->message);
+		
+		g_print ("Alarm #%d: %s [ref=%d]\n", a->id, a->message, G_OBJECT (a)->ref_count);
 	}
 }
 
@@ -94,8 +101,6 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 	gchar *tmp;
 	
 	gtk_tree_model_get (model, iter, 0, &a, -1);
-	
-	//g_debug ("alarm_update_render: alarm #%d, col %d", a->id, col);
 	
 	switch (col) {
 	case TYPE_COLUMN:
@@ -127,6 +132,15 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 	default:
 		break;
 	}
+	
+	/*
+	 * gtk_tree_model_get () will increase the reference count 
+	 * of the alarms each time it's called. We dereference it
+	 * here so they can be properly freed later with g_object_unref()
+	 */
+	g_object_unref (a);
+	
+	//g_debug ("alarm_update_render: alarm #%d (%p), col %d, ref=%d", a->id, a, col, G_OBJECT (a)->ref_count);
 }
 
 static void
@@ -139,22 +153,30 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 	
 	g_object_unref (applet->list_alarms_store);
 	applet->list_alarms_store = NULL;
+	
+	g_object_unref (applet->list_alarms_view);
+	applet->list_alarms_view = NULL;
 }
 
 static void
 add_button_cb (GtkButton *button, gpointer data)
 {
+	Alarm *alarm;
 	AlarmApplet *applet = (AlarmApplet *)data;
 	
-	display_add_alarm_dialog (applet);
-	
 	/*
-	 * Update list of alarms
+	 * Create new alarm, will fall back to defaults.
 	 */
-	alarm_applet_update_alarms_list (applet);
+	alarm = alarm_new (applet->gconf_dir, -1);
+
+	// Add alarm to list of alarms
+	alarm_applet_alarms_add (applet, alarm);
+	
+	// Show edit alarm dialog
+	display_edit_alarm_dialog (applet, alarm);
 	
 	/*
-	 * Fill store with alarms
+	 * Update alarms list view
 	 */
 	list_alarms_update (applet);
 }
@@ -180,6 +202,13 @@ get_selected_alarm (AlarmApplet *applet)
 	}
 
 	gtk_tree_model_get (model, &iter, 0, &a, -1);
+	
+	/*
+	 * gtk_tree_model_get () will increase the reference count 
+	 * of the alarms each time it's called. We dereference it
+	 * here so they can be properly freed later with g_object_unref()
+	 */
+	g_object_unref (a);
 	
 	return a;
 }
@@ -242,17 +271,21 @@ delete_button_cb (GtkButton *button, gpointer data)
 	
 	if (response == GTK_RESPONSE_ACCEPT) {
 		g_debug ("delete_button_cb: GTK_RESPONSE_ACCEPT");
+		
+		/*
+		 * Delete GCONF
+		 */
 		alarm_delete (a);
 		
 		/*
-		 * Update list of alarms
+		 * Remove from applet list
 		 */
-		//alarm_applet_update_alarms_list (applet);
+		alarm_applet_alarms_remove (applet, a);
 		
 		/*
 		 * Fill store with alarms
 		 */
-		//list_alarms_update (applet);
+		list_alarms_update (applet);
 	} else {
 		g_debug ("delete_button_cb: GTK_RESPONSE_CANCEL");
 	}
@@ -277,6 +310,13 @@ list_alarm_selected_cb (GtkTreeView       *view,
 	}
 	
 	gtk_tree_model_get (model, &iter, 0, &a, -1);
+	
+	/*
+	 * gtk_tree_model_get () will increase the reference count 
+	 * of the alarms each time it's called. We dereference it
+	 * here so they can be properly freed later with g_object_unref()
+	 */
+	g_object_unref (a);
 	
 	// Clear any running alarms
 	alarm_clear (a);
@@ -345,7 +385,7 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	/*
 	 * Update list of alarms
 	 */
-	alarm_applet_update_alarms_list (applet);
+	//alarm_applet_alarms_load (applet);
 	
 	/*
 	 * Fill store with alarms

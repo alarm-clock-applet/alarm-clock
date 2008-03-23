@@ -505,12 +505,8 @@ load_apps_list (AlarmApplet *applet)
 }
 
 
-/*
- * INIT {{
- */
-
 void
-alarm_applet_update_alarms_list (AlarmApplet *applet)
+alarm_applet_alarms_load (AlarmApplet *applet)
 {
 	if (applet->alarms != NULL) {
 		GList *l;
@@ -527,6 +523,39 @@ alarm_applet_update_alarms_list (AlarmApplet *applet)
 	/* Fetch list of alarms */
 	applet->alarms = alarm_get_list (applet->gconf_dir);
 }
+
+void
+alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
+{
+	applet->alarms = g_list_append (applet->alarms, alarm);
+}
+
+void
+alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
+{
+	/*
+	 * Remove from list
+	 */
+	applet->alarms = g_list_remove (applet->alarms, alarm);
+	
+	/*
+	 * Clear list store. This will decrease the refcount of our alarms by 1.
+	 */
+	if (applet->list_alarms_store)
+		gtk_list_store_clear (applet->list_alarms_store);
+	
+	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
+	
+	/*
+	 * Dereference alarm
+	 */
+	g_object_unref (alarm);
+}
+
+
+/*
+ * INIT {{
+ */
 
 static gboolean
 alarm_applet_factory (PanelApplet *panelapplet,
@@ -589,7 +618,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	/* Load alarms */
 	applet->gconf_dir = panel_applet_get_preferences_key (applet->parent);
-	alarm_applet_update_alarms_list (applet);
+	alarm_applet_alarms_load (applet);
 	
 	/* Load sounds from alarms */
 	load_sounds_list (applet);

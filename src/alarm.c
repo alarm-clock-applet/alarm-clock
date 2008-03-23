@@ -815,7 +815,7 @@ alarm_delete (Alarm *alarm)
 	key = alarm_gconf_get_dir (alarm);
 	g_debug ("alarm_delete: recursive unset on %s", key);
 	gconf_client_recursive_unset (client, key, 0, NULL);
-	gconf_client_unset (client, key, NULL);
+	gconf_client_suggest_sync (client, NULL);
 	g_free (key);
 }
 
@@ -896,19 +896,39 @@ alarm_gconf_connect (Alarm *alarm)
 {
 	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
 	gchar *dir;
+	GError *err = NULL;
 	
 //	g_debug ("gconf_connect (%p) ? %d", alarm, IS_ALARM ((gpointer)alarm));
 	
+	if (alarm->id < 0)
+		return;
+	
 	dir = alarm_gconf_get_dir (alarm);
 	
+	g_debug ("alarm_gconf_connect (%p) to dir %s", alarm, dir);
+	
 	gconf_client_add_dir (priv->gconf_client, dir, 
-						  GCONF_CLIENT_PRELOAD_RECURSIVE, NULL);
+						  GCONF_CLIENT_PRELOAD_ONELEVEL, &err);
+	
+	if (err) {
+		g_warning ("alarm_gconf_connect (%p): gconf_client_add_dir (%s) failed: %s", alarm, dir, err->message);
+		g_error_free (err);
+		err = NULL;
+	}
 	
 	priv->gconf_listener = 
 		gconf_client_notify_add (
 			priv->gconf_client, dir,
 			(GConfClientNotifyFunc) alarm_gconf_dir_changed,
-			alarm, NULL, NULL);
+			alarm, NULL, &err);
+	
+	if (err) {
+		g_warning ("alarm_gconf_connect (%p): gconf_client_notify_add (%s) failed: %s", alarm, dir, err->message);
+		g_error_free (err);
+		err = NULL;
+	}
+	
+	g_debug ("alarm_gconf_connect: Added listener %d to alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
 	
 	g_free (dir);
 }
@@ -920,7 +940,9 @@ alarm_gconf_disconnect (Alarm *alarm)
 	gchar *dir;
 	
 	if (priv->gconf_listener) {
+		g_debug ("alarm_gconf_disconnect: Removing listener %d from alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
 		gconf_client_notify_remove (priv->gconf_client, priv->gconf_listener);
+		priv->gconf_listener = 0;
 		
 		dir = alarm_gconf_get_dir (alarm);
 		gconf_client_remove_dir (priv->gconf_client, dir, NULL);
@@ -953,7 +975,7 @@ alarm_gconf_dir_changed (GConfClient *client,
 		return;
 	}
 	
-	g_debug ("alarm_gconf changed: %s", name);
+	g_debug ("alarm_gconf changed #%d %p: %s", alarm->id, alarm, name);
 	
 	switch (param->param_id) {
 	case PROP_TYPE:
@@ -1019,6 +1041,8 @@ alarm_dispose (GObject *object)
 	Alarm *alarm = ALARM (object);
 	AlarmPrivate *priv = ALARM_PRIVATE (object);
 	GObjectClass *parent = (GObjectClass *)alarm_parent_class;
+	
+	g_debug ("alarm_dispose (%p)", alarm);
 	
 	if (parent->dispose)
 		parent->dispose (object);
@@ -1239,6 +1263,28 @@ alarm_list_item_compare (gconstpointer a, gconstpointer b)
 }
 
 /*
+ * Check if a gconf directory is a valid alarm dir.
+ * 
+ * Returns >= 0 for valid alarm directory, -1 otherwise.
+ */
+gint
+alarm_gconf_dir_get_id (const gchar *dir)
+{
+	gint id;
+	
+	dir = g_path_get_basename (dir);
+	
+	if (sscanf (dir, ALARM_GCONF_DIR_PREFIX "%d", &id) <= 0 || id < 0) {
+		// INVALID
+		id = -1;
+	}
+	
+	g_free (dir);
+	
+	return id;
+}
+
+/*
  * Get list of alarms in gconf_dir
  */
 GList *
@@ -1263,16 +1309,17 @@ alarm_get_list (const gchar *gconf_dir)
 	
 	for (l = dirs; l; l = l->next) {
 		tmp = (gchar *)l->data;
-		dir = g_path_get_basename (tmp);
 		
-		if (sscanf (dir, ALARM_GCONF_DIR_PREFIX "%d", &id) > 0 && id >= 0) {
-			g_debug ("alarm_get_list: found VALID %s #%d", dir, id);
+		id = alarm_gconf_dir_get_id (tmp);
+		if (id >= 0) {
+			g_debug ("alarm_get_list: found VALID %s #%d", tmp, id);
 			
 			alarm = alarm_new (gconf_dir, id);
+			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
 			ret = g_list_append (ret, alarm);
+			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);
 		}
 		
-		g_free (dir);
 		g_free (tmp);
 	}
 	

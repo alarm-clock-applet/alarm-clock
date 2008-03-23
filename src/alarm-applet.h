@@ -38,6 +38,7 @@ void set_alarm_dialog_populate (AlarmApplet *applet);
 const gchar *get_sound_file (AlarmApplet *applet);
 void player_preview_start (AlarmApplet *applet);
 
+#include "alarm.h"
 #include "prefs.h"
 #include "alarm-gconf.h"
 #include "player.h"
@@ -166,7 +167,11 @@ void alarm_sound_file_changed (GObject *object, GParamSpec *param, gpointer data
 
 void load_apps_list (AlarmApplet *applet);
 
-void alarm_applet_update_alarms_list (AlarmApplet *applet);
+void alarm_applet_alarms_load (AlarmApplet *applet);
+
+void alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm);
+
+void alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm);
 
 G_END_DECLS
 

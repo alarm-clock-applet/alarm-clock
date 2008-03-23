@@ -131,6 +131,9 @@ alarm_gen_id (Alarm *alarm);
 gchar *
 alarm_gconf_get_dir (Alarm *alarm);
 
+gint
+alarm_gconf_dir_get_id (const gchar *dir);
+
 gchar *
 alarm_gconf_get_full_key (Alarm *alarm, const gchar *key);
 

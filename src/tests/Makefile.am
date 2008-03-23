@@ -10,7 +10,7 @@ INCLUDES =						\
 	-I$(includedir) 			\
 	-I$(top_srcdir)/src
 
-bin_PROGRAMS = test_player test_list_entry test_util test_alarm glade_view
+bin_PROGRAMS = test_player test_list_entry test_util test_alarm glade_view test_gconf_recursive
 
 test_player_SOURCES = $(top_srcdir)/src/player.c $(top_srcdir)/src/player.h test_player.c
 test_player_LDADD =				\
@@ -48,3 +48,8 @@ glade_view_SOURCES = glade_view.c
 glade_view_LDADD =				\
 	$(GLIB_LIBS)				\
 	$(LIBGLADE_LIBS)			
+	
+test_gconf_recursive_SOURCES = test_gconf_recursive.c
+test_gconf_recursive_LDADD =	\
+	$(GLIB_LIBS)				\
+	$(GCONF_LIBS)
