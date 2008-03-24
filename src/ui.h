@@ -15,13 +15,10 @@ void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent);
 
 void
-update_label (AlarmApplet *applet);
+alarm_applet_label_update (AlarmApplet *applet);
 
 void
-update_tooltip (AlarmApplet *applet);
-
-gboolean
-is_separator (GtkTreeModel *model, GtkTreeIter *iter, gpointer sep_index);
+alarm_applet_update_tooltip (AlarmApplet *applet);
 
 /*
  * Shamelessly stolen from gnome-da-capplet.c
@@ -41,16 +38,16 @@ void
 display_set_alarm_dialog (AlarmApplet *applet);
 
 gboolean
-display_notification (AlarmApplet *applet);
+alarm_applet_notification_display (AlarmApplet *applet);
 
 gboolean
 close_notification (AlarmApplet *applet);
 
 void
-ui_setup (AlarmApplet *applet);
+alarm_applet_ui_init (AlarmApplet *applet);
 
 void
-menu_setup (AlarmApplet *applet);
+alarm_applet_menu_init (AlarmApplet *applet);
 
 void
 media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent);

@@ -102,7 +102,7 @@ alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 {
 	// Enable selected
 	switch (dialog->alarm->notify_type) {
-	case NOTIFY_COMMAND:
+	case ALARM_NOTIFY_COMMAND:
 		g_object_set (dialog->notify_app_radio, "active", TRUE, NULL);
 		g_object_set (dialog->notify_app_box, "sensitive", TRUE, NULL);
 		
@@ -504,21 +504,6 @@ app_combo_changed_cb (GtkComboBox *combo,
  */
 
 static void
-player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmApplet *applet)
-{
-	if (state == MEDIA_PLAYER_STOPPED) {
-		if (player == applet->player)
-			applet->player = NULL;
-		else if (player == applet->preview_player)
-			applet->preview_player = NULL;
-		
-		g_debug ("Freeing media player %p", player);
-		
-		media_player_free (player);
-	}
-}
-
-static void
 preview_player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmSettingsDialog *dialog)
 {
 	const gchar *stock;
@@ -657,12 +642,17 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	/*
 	 * Load apps list
 	 */
-	load_apps_list (applet);
+	alarm_applet_apps_load (applet);
 	
 	/*
 	 * Populate widgets
 	 */
 	alarm_settings_update (dialog);
+	
+#ifndef HAVE_LIBNOTIFY
+	g_object_set (dialog->notify_bubble_check, "sensitive", FALSE, NULL);
+	gtk_widget_set_tooltip_text (GTK_WIDGET (dialog->notify_bubble_check), _("This feature requires libnotify to be installed"));
+#endif
 	
 	/*
 	 * glade_xml_get_widget() caches its widgets. 

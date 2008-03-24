@@ -47,6 +47,7 @@ alarm_object_changed (GObject *object,
 typedef struct _AlarmModelChangedArg {
 	GtkListStore *store;
 	GtkTreeIter iter;
+	Alarm *alarm;
 } AlarmModelChangedArg;
 
 /*
@@ -64,6 +65,22 @@ alarm_changed (GObject *object,
 	g_debug ("alarm_changed %p: %s", object, param->name);
 	
 	// TODO: Only update on the actual fields we're interested?
+	
+	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
+	
+	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
+	
+	gtk_tree_path_free (path);
+}
+
+static gboolean
+list_alarms_update_timer (gpointer data)
+{
+	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
+	GtkTreePath *path;
+	
+	if (!arg->alarm->active)
+		return FALSE;
 	
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
 	
@@ -110,12 +127,20 @@ list_alarms_update (AlarmApplet *applet)
 		// TODO: arg is never freed
 		arg = g_new (AlarmModelChangedArg, 1);
 		arg->store = store;
-		arg->iter = iter;
+		arg->iter  = iter;
+		arg->alarm = a;
 		
 		// Disconnect old handlers, if any
 		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
+		//g_source_remove_by_funcs_user_data ()
 		
+		// Notify us of changes to the alarm
 		g_signal_connect (a, "notify", G_CALLBACK (alarm_changed), arg);
+		
+		// If alarm is active, update the view every second for remaining time
+		if (a->active) {
+			g_timeout_add_seconds (1, (GSourceFunc) list_alarms_update_timer, arg);
+		}
 		
 		g_print ("Alarm #%d (%p): %s [ref=%d]\n", a->id, a, a->message, G_OBJECT (a)->ref_count);
 	}
@@ -130,7 +155,7 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 {
 	AlarmColumn col = (AlarmColumn)data;
 	Alarm *a;
-	time_t time;
+	time_t hour, min, sec, now;
 	struct tm *tm;
 	gchar *tmp;
 	
@@ -148,13 +173,27 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 		g_object_set (renderer, "active", a->active, NULL);
 		break;
 	case TIME_COLUMN:
-		if (a->type == ALARM_TYPE_TIMER) {
-			tm = gmtime (&(a->timer));
+		/* If alarm is running (active), show remaining time */
+		if (a->active) {
+			now = time (NULL);
+			sec = a->time - now;
+			
+			min = sec / 60;
+			sec -= min * 60;
+			
+			hour = min / 60;
+			min -= hour * 60;
+			
+			tmp = g_strdup_printf(_("%02d:%02d:%02d"), hour, min, sec);
 		} else {
-			tm = localtime (&(a->time));
+			if (a->type == ALARM_TYPE_TIMER) {
+				tm = gmtime (&(a->timer));
+			} else {
+				tm = localtime (&(a->time));
+			}
+			
+			tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 		}
-		
-		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 		
 		g_object_set (renderer, "text", tmp, NULL);
 		

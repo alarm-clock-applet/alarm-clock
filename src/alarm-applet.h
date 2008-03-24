@@ -29,14 +29,9 @@ typedef struct _AlarmApplet AlarmApplet;
 gchar *supported_sound_mime_types[];
 GHashTable *app_command_map;
 
-void update_label (AlarmApplet *applet);
-void timer_remove (AlarmApplet *applet);
-gboolean set_sound_file (AlarmApplet *applet, const gchar *uri);
-void timer_start (AlarmApplet *applet);
-void clear_alarm (AlarmApplet *applet);
+void alarm_applet_label_update (AlarmApplet *applet);
+void alarm_applet_clear_alarms (AlarmApplet *applet);
 void set_alarm_dialog_populate (AlarmApplet *applet);
-const gchar *get_sound_file (AlarmApplet *applet);
-void player_preview_start (AlarmApplet *applet);
 
 #include "alarm.h"
 #include "prefs.h"
@@ -52,7 +47,7 @@ void player_preview_start (AlarmApplet *applet);
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-applet.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
-#define ALARM_DEF_LABEL	 _("No alarm")
+#define ALARM_DEF_LABEL	 _("No alarms")
 
 #ifndef VERSION
 #define VERSION "0.1"
@@ -60,22 +55,9 @@ void player_preview_start (AlarmApplet *applet);
 
 typedef enum {
 	LABEL_TYPE_INVALID = 0,
-	LABEL_TYPE_ALARM,
-	LABEL_TYPE_REMAIN,
+	LABEL_TYPE_ACTIVE,
+	LABEL_TYPE_TOTAL,
 } LabelType;
-
-typedef enum {
-	NOTIFY_INVALID = 0,
-	NOTIFY_SOUND,
-	NOTIFY_COMMAND,
-} NotifyType;
-
-enum
-{
-    PIXBUF_COL,
-    TEXT_COL,
-    N_COLUMNS
-};
 
 struct _AlarmApplet {
 	PanelApplet *parent;
@@ -90,70 +72,33 @@ struct _AlarmApplet {
 	/* Alarms */
 	GList	*alarms;
 	
-	time_t 	 alarm_time;
-	gchar	*alarm_message;
-	gboolean started;
-	gboolean alarm_triggered;
-	guint	 timer_id;
+	/* Sounds & apps list */
+	GList *sounds;
+	GList *apps;
 	
-	/* Set-alarm */
-	GtkDialog *set_alarm_dialog;
-	GtkWidget *hour;
-	GtkWidget *minute;
-	GtkWidget *second;
-	GtkWidget *message;
-	
-	/* List-alarms */
+	/* List-alarms UI */
 	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
 	GHashTable *edit_alarm_dialogs;
+	
+	/* Preferences */
+	GtkDialog *preferences_dialog;
 	
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY
 	NotifyNotification *notify;
 #endif
 	
-	/* Preferences */
-	GtkDialog *preferences_dialog;
-	
 	/* Label */
 	GtkWidget *pref_label_show;
 	GtkWidget *pref_label_type_box;
-	GtkWidget *pref_label_type_alarm;
-	GtkWidget *pref_label_type_remaining;
-	
-	/* Notification */
-	GtkWidget *pref_notify_sound;
-	GtkWidget *pref_notify_sound_box;
-	GtkWidget *pref_notify_sound_stock;
-	GtkWidget *pref_notify_sound_combo;
-	GtkWidget *pref_notify_sound_loop;
-	GtkWidget *pref_notify_sound_preview;
-	
-	GtkWidget *pref_notify_app;
-	GtkWidget *pref_notify_app_box;
-	GtkWidget *pref_notify_app_combo;
-	GtkWidget *pref_notify_app_command_box;
-	GtkWidget *pref_notify_app_command_entry;
-	
-	GtkWidget *pref_notify_bubble;
+	GtkWidget *pref_label_type_active;
+	GtkWidget *pref_label_type_total;
 	
 	/* Actual preferences data */
 	gboolean show_label;
 	LabelType label_type;
-	NotifyType notify_type;
-	gboolean notify_sound_loop;
-	gchar *notify_command;
-	gboolean notify_bubble;
-	GList *sounds;
-	guint stock_sounds;	// Number of stock sounds
-	guint sound_pos;	// Position of the current selected sound in the sounds list.
-	GList *apps;
-	
-	/* MediaPlayer */
-	MediaPlayer *player;
-	MediaPlayer *preview_player;
 	
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
@@ -162,11 +107,9 @@ struct _AlarmApplet {
 static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
 //static void time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
 
-void load_sounds_list (AlarmApplet *applet);
+void alarm_applet_sounds_load (AlarmApplet *applet);
 
-void alarm_sound_file_changed (GObject *object, GParamSpec *param, gpointer data);
-
-void load_apps_list (AlarmApplet *applet);
+void alarm_applet_apps_load (AlarmApplet *applet);
 
 void alarm_applet_alarms_load (AlarmApplet *applet);
 

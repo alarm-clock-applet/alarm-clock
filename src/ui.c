@@ -4,6 +4,13 @@
 #include "ui.h"
 #include "alarms-list.h"
 
+enum
+{
+    PIXBUF_COL,
+    TEXT_COL,
+    N_COLUMNS
+};
+
 void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent)
 {
@@ -24,69 +31,50 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 	gtk_widget_destroy (dialog);
 }
 
+
+// TODO: Should display any triggered alarms / etc.
 void
-update_label (AlarmApplet *applet)
+alarm_applet_label_update (AlarmApplet *applet)
 {
+	GList *l;
+	Alarm *a;
+	guint active = 0;
 	gchar *tmp;
-	struct tm *tm;
-	guint hour, min, sec, now;
 	
-	if (applet->started) {
-		if (applet->label_type == LABEL_TYPE_REMAIN) {
-			now = time (NULL);
-			sec = applet->alarm_time - now;
+	if (applet->label_type == LABEL_TYPE_TOTAL) {
+		/* LABEL_TYPE_TOTAL */
+		tmp = g_strdup_printf (_("%d alarms"), g_list_length (applet->alarms));
+	} else {
+		/* LABEL_TYPE_ACTIVE */
+		for (l = applet->alarms; l != NULL; l = l->next) {
+			a = ALARM (l->data);
 			
-			min = sec / 60;
-			sec -= min * 60;
-			
-			hour = min / 60;
-			min -= hour * 60;
-			
-			tmp = g_strdup_printf(_("%02d:%02d:%02d"), hour, min, sec);
-			
-		} else {
-			tm = localtime (&(applet->alarm_time));
-			tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+			if (a->active)
+				active++;
 		}
 		
-		g_object_set(applet->label, "label", tmp, NULL);
-		g_free(tmp);
-	} else if (applet->alarm_triggered) {
-		g_object_set(applet->label, "label", _("Alarm!"), NULL);
-	} else {
-		g_object_set(applet->label, "label", _("No alarm"), NULL);
+		tmp = g_strdup_printf (_("%d alarms"), active);
 	}
+	
+	g_object_set(applet->label, "label", tmp, NULL);
+	g_free(tmp);
 }
 
+// TODO: Refactor for more fancy tooltip with alarm summary.
 void
-update_tooltip (AlarmApplet *applet)
+alarm_applet_update_tooltip (AlarmApplet *applet)
 {
 	gchar *tiptext;
-	struct tm *tm;
-	
-	if (applet->started || applet->alarm_triggered) {
-		tm = localtime (&(applet->alarm_time));
-	}
-	
-	if (applet->alarm_triggered) {
-		tiptext = g_strdup_printf (_("Alarm at %02d:%02d:%02d\n%s"), 
-								   tm->tm_hour, tm->tm_min, tm->tm_sec,
-								   applet->alarm_message);
-	} else if (applet->started) {
-		tiptext = g_strdup_printf (_("Alarm set to %02d:%02d:%02d\nMessage: %s"),
-								   tm->tm_hour, tm->tm_min, tm->tm_sec,
-								   applet->alarm_message);
-	} else {
-		// No alarm set or triggered
-		tiptext = g_strdup (_("Click to set alarm"));
-	}
+
+	// No alarm set or triggered
+	tiptext = g_strdup (_("Click to edit alarms"));
 	
 	gtk_widget_set_tooltip_text (GTK_WIDGET (applet->parent), tiptext);
 	
 	g_free (tiptext);
 }
 
-gboolean
+static gboolean
 is_separator (GtkTreeModel *model, GtkTreeIter *iter, gpointer sep_index)
 {
 	GtkTreePath *path;
@@ -166,89 +154,6 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 			-1);
 }
 
-void
-set_alarm_dialog_response_cb (GtkDialog *dialog,
-							  gint rid,
-							  AlarmApplet *applet)
-{
-	guint hour, minute, second;
-	gchar *message;
-	
-	g_debug ("Set-Alarm Response: %s", (rid == GTK_RESPONSE_OK) ? "OK" : "Cancel");
-	
-	if (rid == GTK_RESPONSE_OK) {
-		// Store info & start timer
-		hour    = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (applet->hour));
-		minute  = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (applet->minute));
-		second  = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (applet->second));
-		
-		g_object_get (applet->message, "text", &message, NULL);
-		
-		alarm_gconf_set_started (applet, TRUE);
-		alarm_gconf_set_alarm (applet, hour, minute, second);
-		alarm_gconf_set_message (applet, message);
-		
-		g_free (message);
-	}
-	
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-	applet->set_alarm_dialog = NULL;
-}
-
-void
-set_alarm_dialog_populate (AlarmApplet *applet)
-{
-	if (applet->set_alarm_dialog == NULL)
-		return;
-	
-	struct tm *tm;
-	
-	/* Fill fields */
-	if (applet->alarm_time != 0) {
-		tm = localtime (&(applet->alarm_time));
-		g_object_set (applet->hour, "value", (gdouble)tm->tm_hour, NULL);
-		g_object_set (applet->minute, "value", (gdouble)tm->tm_min, NULL);
-		g_object_set (applet->second, "value", (gdouble)tm->tm_sec, NULL);
-	}
-	
-	if (applet->alarm_message != NULL) {
-		g_object_set (applet->message, "text", applet->alarm_message, NULL);
-	}
-}
-
-void
-display_set_alarm_dialog (AlarmApplet *applet)
-{
-	if (applet->set_alarm_dialog != NULL) {
-		// Dialog already open.
-		gtk_window_present (GTK_WINDOW (applet->set_alarm_dialog));
-		return;
-	}
-	
-	GladeXML *ui = glade_xml_new(ALARM_UI_XML, "set-alarm", NULL);
-	GtkWidget *ok_button;
-	
-	/* Fetch widgets */
-	applet->set_alarm_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "set-alarm"));
-	applet->hour  	= glade_xml_get_widget (ui, "hour");
-	applet->minute	= glade_xml_get_widget (ui, "minute");
-	applet->second	= glade_xml_get_widget (ui, "second");
-	applet->message = glade_xml_get_widget (ui, "message");
-	ok_button = glade_xml_get_widget (ui, "ok-button");
-	
-	g_object_set (applet->set_alarm_dialog, "icon-name", ALARM_ICON, NULL);
-	
-	set_alarm_dialog_populate (applet);
-	
-	/* Set response and connect signal handlers */
-	/* TODO: Fix, this isn't working */
-	gtk_widget_grab_default (ok_button);
-	//gtk_dialog_set_default_response (applet->set_alarm_dialog, GTK_RESPONSE_OK);
-	
-	g_signal_connect (applet->set_alarm_dialog, "response", 
-					  G_CALLBACK (set_alarm_dialog_response_cb), applet);
-}
-
 
 static gboolean
 button_cb (GtkWidget *widget,
@@ -264,14 +169,11 @@ button_cb (GtkWidget *widget,
 		return FALSE;
 	}
 	
-	/* TODO: if alarm is triggered { snooze } else */
+	/* TODO: stop any triggered alarms / snooze */
+	alarm_applet_clear_alarms (applet);
 	
-	if (applet->alarm_triggered) {
-		g_debug ("Stopping alarm!");
-		clear_alarm (applet);
-	} else {
-		display_set_alarm_dialog (applet);
-	}
+	/* Show edit alarms dialog */
+	//display_list_alarms_dialog (applet);
 	
 	return TRUE;
 }
@@ -478,16 +380,17 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 	if (applet->sounds != NULL) {
 		alarm_list_entry_list_free(&(applet->sounds));
 	}
-
-	timer_remove (applet);
 	
 	if (app_command_map != NULL)
 		g_hash_table_destroy (app_command_map);
+	
+	// TODO: Free much much more...
 }
 
-/* Taken from the battery applet */
+/* Taken from the battery applet
+ * TODO: Write to use Alarm */
 gboolean
-display_notification (AlarmApplet *applet)
+alarm_applet_notification_display (AlarmApplet *applet)
 {
 #ifdef HAVE_LIBNOTIFY
 	GError *error = NULL;
@@ -507,11 +410,13 @@ display_notification (AlarmApplet *applet)
 		g_critical ("Icon not found.");
 	}
 	
+	message = "Notify not yet implemented";
+	/*
 	if (applet->alarm_message)
 		message = applet->alarm_message;
 	else
 		message = "";
-	
+	*/
 	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->icon));
 
 	/* XXX: it would be nice to pass this as a named icon */
@@ -555,7 +460,7 @@ close_notification (AlarmApplet *applet)
 }
 
 void
-ui_setup (AlarmApplet *applet)
+alarm_applet_ui_init (AlarmApplet *applet)
 {
 	GtkWidget *hbox;
 	GdkPixbuf *icon;
@@ -606,22 +511,11 @@ ui_setup (AlarmApplet *applet)
 	gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
 	gtk_widget_show_all (GTK_WIDGET (applet->parent));
 	
-	update_tooltip (applet);
+	alarm_applet_update_tooltip (applet);
 }
 
 
 
-
-
-
-static void
-menu_set_alarm_cb (BonoboUIComponent *component,
-				   gpointer data,
-				   const gchar *cname)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	display_set_alarm_dialog (applet);
-}
 
 static void
 menu_list_alarms_cb (BonoboUIComponent *component,
@@ -639,7 +533,7 @@ menu_clear_alarm_cb (BonoboUIComponent *component,
 {
 	g_debug("menu_clear_alarm");
 	
-	clear_alarm (applet);
+	alarm_applet_clear_alarms (applet);
 }
 
 static void
@@ -691,7 +585,7 @@ menu_about_cb (BonoboUIComponent *component,
  * Set up menu
  */
 void
-menu_setup (AlarmApplet *applet)
+alarm_applet_menu_init (AlarmApplet *applet)
 {
 	static const gchar *menu_xml =
 		"<popup name=\"button3\">\n"
