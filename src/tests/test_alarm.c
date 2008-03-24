@@ -316,7 +316,7 @@ test_alarm_trigger (void)
 	
 	g_object_set (alarm,
 				  "notify_type", ALARM_NOTIFY_SOUND,
-				  "sound_file", "file:///usr/share/sounds/generic.wav",
+				  "sound_file", "file:///usr/share/sounds/generic.wavz",
 				  "sound_repeat", FALSE,
 				  NULL);
 	

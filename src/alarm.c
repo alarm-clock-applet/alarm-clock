@@ -1371,7 +1371,6 @@ alarm_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
 	
 	g_free (uri);
 	g_free (msg);
-	g_error_free (err);
 }
 
 static void

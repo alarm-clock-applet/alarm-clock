@@ -14,7 +14,16 @@ typedef enum {
 
 typedef struct _MediaPlayer MediaPlayer;
 
+/*
+ * Callback for when the media player's state changes.
+ */
 typedef void (*MediaPlayerStateChangeCallback)	(MediaPlayer *player, MediaPlayerState state, gpointer data);
+
+/*
+ * Callback for when an error occurs in the media player.
+ * The error details is put in the error argument. This value
+ * should _never_ be freed in the callback!
+ */
 typedef void (*MediaPlayerErrorHandler)			(MediaPlayer *player, GError *error, gpointer data);
 
 struct _MediaPlayer {
