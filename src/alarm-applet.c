@@ -590,6 +590,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->list_alarms_dialog = NULL;
 	applet->list_alarms_store = NULL;
 	applet->preferences_dialog = NULL;
+	applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 	
 	/* Preferences (defaults). 
 	 * ...gconf_get_string can return NULL if the key is not found. We can't

@@ -563,18 +563,26 @@ preview_sound_cb (GtkButton *button,
  */
 
 
+void
+alarm_settings_dialog_close (AlarmSettingsDialog *dialog)
+{
+	g_hash_table_remove (dialog->applet->edit_alarm_dialogs, dialog->alarm->id);
+	
+	gtk_widget_destroy (GTK_WIDGET (dialog->dialog));
+	
+	if (dialog->player)
+		media_player_free (dialog->player);
+	
+	// TODO: Why does this cause a segfault?
+	//g_free (dialog);
+}
+
 static void
 alarm_settings_dialog_response_cb (GtkDialog *dialog,
 								   gint rid,
 								   AlarmSettingsDialog *settings_dialog)
 {
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-	
-	if (settings_dialog->player)
-		media_player_free (settings_dialog->player);
-	
-	// TODO: Why does this cause a segfault?
-	//g_free (settings_dialog);
+	alarm_settings_dialog_close (settings_dialog);
 }
 
 
@@ -742,5 +750,15 @@ display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm)
 {
 	AlarmSettingsDialog *dialog;
 	
+	// Check if a dialog is already open for this alarm
+	dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, alarm->id);
+	
+	if (dialog) {
+		// Already open
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
+		return;
+	}
+	
 	dialog = alarm_settings_dialog_new (alarm, applet);
+	g_hash_table_insert (applet->edit_alarm_dialogs, alarm->id, dialog);
 }

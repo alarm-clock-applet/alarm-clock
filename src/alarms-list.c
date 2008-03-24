@@ -61,8 +61,9 @@ alarm_changed (GObject *object,
 	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
 	GtkTreePath *path;
 	
-	g_debug ("alarm_changed: %s", param->name);
-	//if (param->name)
+	g_debug ("alarm_changed %p: %s", object, param->name);
+	
+	// TODO: Only update on the actual fields we're interested?
 	
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
 	
@@ -111,9 +112,12 @@ list_alarms_update (AlarmApplet *applet)
 		arg->store = store;
 		arg->iter = iter;
 		
+		// Disconnect old handlers, if any
+		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
+		
 		g_signal_connect (a, "notify", G_CALLBACK (alarm_changed), arg);
 		
-		g_print ("Alarm #%d: %s [ref=%d]\n", a->id, a->message, G_OBJECT (a)->ref_count);
+		g_print ("Alarm #%d (%p): %s [ref=%d]\n", a->id, a, a->message, G_OBJECT (a)->ref_count);
 	}
 }
 
@@ -190,7 +194,7 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 /*	g_object_unref (applet->list_alarms_view);*/
 	applet->list_alarms_view = NULL;
 	
-	// Disconnect nofity handlers
+	// Disconnect notify handlers
 	for (l = applet->alarms; l != NULL; l = l->next) {
 		a = ALARM (l->data);
 		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
@@ -315,6 +319,14 @@ delete_button_cb (GtkButton *button, gpointer data)
 		 * Delete GCONF
 		 */
 		alarm_delete (a);
+		
+		/* If there's a settings dialog open for this
+		 * alarm, destroy it.
+		 */
+		AlarmSettingsDialog *sdialog = g_hash_table_lookup (applet->edit_alarm_dialogs, a->id);
+		if (sdialog) {
+			alarm_settings_dialog_close (sdialog);
+		}
 		
 		/*
 		 * Remove from applet list

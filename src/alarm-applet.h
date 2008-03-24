@@ -107,6 +107,7 @@ struct _AlarmApplet {
 	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
+	GHashTable *edit_alarm_dialogs;
 	
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY

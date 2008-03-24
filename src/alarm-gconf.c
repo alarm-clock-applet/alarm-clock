@@ -9,6 +9,7 @@
 
 #include "alarm-applet.h"
 #include "alarm-gconf.h"
+#include "edit-alarm.h"
 #include "alarm.h"
 
 GConfEnumStringPair label_type_enum_map [] = {
@@ -391,6 +392,14 @@ alarm_gconf_global_change (GConfClient  *client,
 		if (found && entry->value == NULL) {
 			// DELETED ALARM
 			g_debug ("\tDELETE alarm #%d %p", id, a);
+			
+			/* If there's a settings dialog open for this
+			 * alarm, destroy it.
+			 */
+			AlarmSettingsDialog *sdialog = g_hash_table_lookup (applet->edit_alarm_dialogs, a->id);
+			if (sdialog) {
+				alarm_settings_dialog_close (sdialog);
+			}
 			
 			/*
 			 * Remove from list

@@ -39,4 +39,7 @@ typedef struct _AlarmSettingsDialog {
 void
 display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm);
 
+void
+alarm_settings_dialog_close (AlarmSettingsDialog *dialog);
+
 #endif /*EDITALARM_H_*/
