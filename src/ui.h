@@ -38,10 +38,10 @@ void
 display_set_alarm_dialog (AlarmApplet *applet);
 
 gboolean
-alarm_applet_notification_display (AlarmApplet *applet);
+alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm);
 
 gboolean
-close_notification (AlarmApplet *applet);
+alarm_applet_notification_close (AlarmApplet *applet);
 
 void
 alarm_applet_ui_init (AlarmApplet *applet);

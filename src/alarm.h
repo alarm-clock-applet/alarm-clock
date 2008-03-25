@@ -69,6 +69,7 @@ struct _Alarm {
 	gchar *sound_file;
 	gboolean sound_loop;
 	gchar *command;
+	gboolean notify_bubble;
 };
 
 struct _AlarmClass {
@@ -105,6 +106,7 @@ typedef enum {
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
 #define ALARM_DEFAULT_TIMER			0
+#define ALARM_DEFAULT_NOTIFY_BUBBLE	TRUE
 
 /*
  * GConf settings

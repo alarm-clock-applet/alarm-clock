@@ -36,7 +36,7 @@ alarm_applet_clear_alarms (AlarmApplet *applet)
 	// Close notification if present.
 #ifdef HAVE_LIBNOTIFY
 	if (applet->notify) {
-		close_notification (applet);
+		alarm_applet_notification_close (applet);
 	}
 #endif
 }
@@ -113,6 +113,21 @@ alarm_sound_file_changed (GObject *object,
 	
 	// Reload sounds list
 	alarm_applet_sounds_load (applet);
+}
+
+/*
+ * Callback for when an alarm is triggered
+ * We show the notification bubble here if appropriate.
+ */
+static void
+alarm_triggered (Alarm *alarm, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	if (alarm->notify_bubble) {
+		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
+		alarm_applet_notification_display (applet, alarm);
+	}
 }
 
 /*
@@ -396,6 +411,10 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	/* Connect sound_file notify callback to all alarms */
 	alarm_signal_connect_list (applet->alarms, "notify::sound-file", 
 							   G_CALLBACK (alarm_sound_file_changed), applet);
+	
+	/* Connect alarm trigger notify to all alarms */
+	alarm_signal_connect_list (applet->alarms, "alarm",
+							   G_CALLBACK (alarm_triggered), applet);
 	
 	/* Set up properties menu */
 	alarm_applet_menu_init (applet);

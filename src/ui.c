@@ -390,7 +390,7 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 /* Taken from the battery applet
  * TODO: Write to use Alarm */
 gboolean
-alarm_applet_notification_display (AlarmApplet *applet)
+alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 {
 #ifdef HAVE_LIBNOTIFY
 	GError *error = NULL;
@@ -410,13 +410,11 @@ alarm_applet_notification_display (AlarmApplet *applet)
 		g_critical ("Icon not found.");
 	}
 	
-	message = "Notify not yet implemented";
-	/*
-	if (applet->alarm_message)
-		message = applet->alarm_message;
-	else
-		message = "";
-	*/
+	if (applet->notify)
+		alarm_applet_notification_close (applet);
+	
+	message = alarm->message;
+	
 	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->icon));
 
 	/* XXX: it would be nice to pass this as a named icon */
@@ -440,7 +438,7 @@ alarm_applet_notification_display (AlarmApplet *applet)
 }
 
 gboolean
-close_notification (AlarmApplet *applet)
+alarm_applet_notification_close (AlarmApplet *applet)
 {
 #ifdef HAVE_LIBNOTIFY
 	gboolean result;

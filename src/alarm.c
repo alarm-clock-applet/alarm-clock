@@ -84,7 +84,8 @@ static enum {
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
-	PROP_COMMAND
+	PROP_COMMAND,
+	PROP_NOTIFY_BUBBLE
 } AlarmProp;
 
 #define PROP_NAME_DIR			"gconf-dir"
@@ -94,10 +95,11 @@ static enum {
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
 #define PROP_NAME_TIMER			"timer"
-#define PROP_NAME_NOTIFY_TYPE	"notify_type"
-#define PROP_NAME_SOUND_FILE	"sound_file"
-#define PROP_NAME_SOUND_LOOP	"sound_repeat"
+#define PROP_NAME_NOTIFY_TYPE	"notify-type"
+#define PROP_NAME_SOUND_FILE	"sound-file"
+#define PROP_NAME_SOUND_LOOP	"sound-repeat"
 #define PROP_NAME_COMMAND		"command"
+#define PROP_NAME_NOTIFY_BUBBLE	"notify-bubble"
 
 /* Signal indexes */
 static enum
@@ -129,6 +131,7 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
 	GParamSpec *command_param;
+	GParamSpec *notify_bubble_param;
 	
 	GObjectClass *g_object_class;
 
@@ -215,6 +218,12 @@ alarm_class_init (AlarmClass *class)
 										 ALARM_DEFAULT_COMMAND,
 										 G_PARAM_READWRITE);
 	
+	notify_bubble_param = g_param_spec_boolean (PROP_NAME_NOTIFY_BUBBLE, 
+												"notification bubble",
+												"whether the alarm should display a notification bubble when triggered",
+												ALARM_DEFAULT_NOTIFY_BUBBLE,
+												G_PARAM_READWRITE);
+	
 	
 	/* override base object methods */
 	g_object_class->set_property = alarm_set_property;
@@ -234,6 +243,7 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
 	g_object_class_install_property (g_object_class, PROP_COMMAND, command_param);
+	g_object_class_install_property (g_object_class, PROP_NOTIFY_BUBBLE, notify_bubble_param);
 	
 	g_type_class_add_private (class, sizeof (AlarmPrivate));
 	
@@ -413,6 +423,22 @@ alarm_gconf_load (Alarm *alarm)
 	} else {
 		// Not found in GConf, fall back to defaults
 		g_object_set (alarm, PROP_NAME_COMMAND, ALARM_DEFAULT_COMMAND, NULL);
+	}
+	
+	
+	/*
+	 * NOTIFY_BUBBLE
+	 */
+	key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_BUBBLE);
+	val = gconf_client_get (client, key, NULL);
+	g_free (key);
+
+	if (val) {
+		alarm->notify_bubble = gconf_value_get_bool (val);
+		gconf_value_free (val);
+	} else {
+		// Not found in GConf, fall back to defaults
+		g_object_set (alarm, PROP_NAME_NOTIFY_BUBBLE, ALARM_DEFAULT_NOTIFY_BUBBLE, NULL);
 	}
 }
 
@@ -671,6 +697,22 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		
 		break;
+	case PROP_NOTIFY_BUBBLE:
+		bool = alarm->notify_bubble;
+		alarm->notify_bubble = g_value_get_boolean (value);
+		
+		key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_BUBBLE);
+		
+		if (!gconf_client_set_bool (client, key, alarm->notify_bubble, &err)) {
+			
+			g_critical ("Could not set %s (gconf): %s", 
+						key, err->message);
+			
+			g_error_free (err);
+		}
+		
+		g_free (key);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -719,6 +761,9 @@ alarm_get_property (GObject *object,
 		break;
 	case PROP_COMMAND:
 		g_value_set_string (value, alarm->command);
+		break;
+	case PROP_NOTIFY_BUBBLE:
+		g_value_set_boolean (value, alarm->notify_bubble);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1026,6 +1071,11 @@ alarm_gconf_dir_changed (GConfClient *client,
 		str = gconf_value_get_string (entry->value);
 		if (strcmp (str, alarm->command) != 0)
 			g_object_set (alarm, name, str, NULL);
+		break;
+	case PROP_NOTIFY_BUBBLE:
+		b = gconf_value_get_bool (entry->value);
+		if (b != alarm->notify_bubble)
+			g_object_set (alarm, name, b, NULL);
 		break;
 	default:
 		g_warning ("Valid property ID %d not handled!", param->param_id);

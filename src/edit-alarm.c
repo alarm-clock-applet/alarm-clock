@@ -194,7 +194,8 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	
 	g_object_set (dialog->label_entry, "text", alarm->message, NULL);
 	g_object_set (dialog->notify_sound_loop_check, "active", alarm->sound_loop, NULL);
-	
+	g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
+	g_object_set (dialog->notify_bubble_check, "active", alarm->notify_bubble, NULL);
 	
 	alarm_settings_update_type (dialog);
 	alarm_settings_update_time (dialog);
@@ -646,9 +647,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 */
 	alarm_settings_update (dialog);
 	
-	/* Fill command entry */
-	g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
-	
+	/* Got libnotify? */
 #ifndef HAVE_LIBNOTIFY
 	g_object_set (dialog->notify_bubble_check, "sensitive", FALSE, NULL);
 	gtk_widget_set_tooltip_text (GTK_WIDGET (dialog->notify_bubble_check), _("This feature requires libnotify to be installed"));
@@ -690,6 +689,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	alarm_bind (alarm, "message", dialog->label_entry, "text");
 	alarm_bind (alarm, "sound-repeat", dialog->notify_sound_loop_check, "active");
 	alarm_bind (alarm, "command", dialog->notify_app_command_entry, "text");
+	alarm_bind (alarm, "notify-bubble", dialog->notify_bubble_check, "active");
 	
 	/*
 	 * Special widgets require special attention!
