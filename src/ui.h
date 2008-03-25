@@ -26,17 +26,6 @@ alarm_applet_update_tooltip (AlarmApplet *applet);
 void
 fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label);
 
-void
-set_alarm_dialog_response_cb (GtkDialog *dialog,
-							  gint rid,
-							  AlarmApplet *applet);
-
-void
-set_alarm_dialog_populate (AlarmApplet *applet);
-
-void
-display_set_alarm_dialog (AlarmApplet *applet);
-
 gboolean
 alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm);
 

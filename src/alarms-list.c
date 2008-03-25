@@ -50,6 +50,35 @@ typedef struct _AlarmModelChangedArg {
 	Alarm *alarm;
 } AlarmModelChangedArg;
 
+static gboolean
+list_alarms_update_timer (gpointer data)
+{
+	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
+	GtkTreePath *path;
+	
+	if (!GTK_IS_TREE_MODEL (arg->store)) {
+		// Dialog is closed, free args
+		g_free (arg);
+		return FALSE;
+	}
+	
+	if (!arg->alarm->active)
+		return FALSE;
+	
+	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
+	
+	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
+	
+	gtk_tree_path_free (path);
+}
+
+static void
+list_alarms_add_timer (AlarmModelChangedArg *arg)
+{
+	g_source_remove_by_user_data (arg);
+	g_timeout_add_seconds (1, (GSourceFunc) list_alarms_update_timer, arg);
+}
+
 /*
  * Callback for when an alarm changes
  * Emits model-row-changed
@@ -61,6 +90,7 @@ alarm_changed (GObject *object,
 {
 	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
 	GtkTreePath *path;
+	Alarm *a = ALARM (object);
 	
 	g_debug ("alarm_changed %p: %s", object, param->name);
 	
@@ -71,22 +101,11 @@ alarm_changed (GObject *object,
 	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
 	
 	gtk_tree_path_free (path);
-}
-
-static gboolean
-list_alarms_update_timer (gpointer data)
-{
-	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
-	GtkTreePath *path;
 	
-	if (!arg->alarm->active)
-		return FALSE;
-	
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
-	
-	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
-	
-	gtk_tree_path_free (path);
+	// If alarm is active, update the view every second for remaining time
+	if (strcmp (param->name, "active") == 0 && a->active) {
+		list_alarms_add_timer (arg);
+	}
 }
 
 /*
@@ -132,14 +151,13 @@ list_alarms_update (AlarmApplet *applet)
 		
 		// Disconnect old handlers, if any
 		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
-		//g_source_remove_by_funcs_user_data ()
 		
 		// Notify us of changes to the alarm
 		g_signal_connect (a, "notify", G_CALLBACK (alarm_changed), arg);
 		
 		// If alarm is active, update the view every second for remaining time
 		if (a->active) {
-			g_timeout_add_seconds (1, (GSourceFunc) list_alarms_update_timer, arg);
+			list_alarms_add_timer (arg);
 		}
 		
 		g_print ("Alarm #%d (%p): %s [ref=%d]\n", a->id, a, a->message, G_OBJECT (a)->ref_count);
@@ -487,14 +505,15 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	applet->list_alarms_store = store;
 	
 	/*
-	 * Update list of alarms
-	 */
-	//alarm_applet_alarms_load (applet);
-	
-	/*
 	 * Fill store with alarms
 	 */
 	list_alarms_update (applet);
+	
+	/*
+	 * Notify us of changes to the 'active' property of all commands
+	 * so we can start the timer.
+	 */
+	
 	
 	/* 
 	 * Create view cell renderers

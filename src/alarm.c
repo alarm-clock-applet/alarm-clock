@@ -326,7 +326,9 @@ alarm_gconf_load (Alarm *alarm)
 	g_free (key);
 	
 	if (val) {
-		alarm->active = gconf_value_get_bool (val);
+		// We g_object_set here so the timer will be started for
+		// active alarms
+		g_object_set (alarm, "active", gconf_value_get_bool (val), NULL);
 		gconf_value_free (val);
 	} else {
 		// Not found in GConf, fall back to defaults

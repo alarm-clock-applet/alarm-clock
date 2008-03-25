@@ -31,7 +31,6 @@ GHashTable *app_command_map;
 
 void alarm_applet_label_update (AlarmApplet *applet);
 void alarm_applet_clear_alarms (AlarmApplet *applet);
-void set_alarm_dialog_populate (AlarmApplet *applet);
 
 #include "alarm.h"
 #include "prefs.h"
