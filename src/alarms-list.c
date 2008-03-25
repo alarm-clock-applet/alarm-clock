@@ -245,11 +245,25 @@ add_button_cb (GtkButton *button, gpointer data)
 {
 	Alarm *alarm;
 	AlarmApplet *applet = (AlarmApplet *)data;
+	AlarmListEntry *entry;
 	
 	/*
 	 * Create new alarm, will fall back to defaults.
 	 */
 	alarm = alarm_new (applet->gconf_dir, -1);
+	
+	/*
+	 * Set first sound / app in list
+	 */
+	if (applet->sounds != NULL) {
+		entry = (AlarmListEntry *)applet->sounds->data;
+		g_object_set (alarm, "sound-file", entry->data, NULL);
+	}
+	
+	if (applet->apps != NULL) {
+		entry = (AlarmListEntry *)applet->apps->data;
+		g_object_set (alarm, "command", entry->data, NULL);
+	}
 
 	// Add alarm to list of alarms
 	alarm_applet_alarms_add (applet, alarm);

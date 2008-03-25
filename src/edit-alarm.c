@@ -161,9 +161,6 @@ alarm_settings_update_app (AlarmSettingsDialog *dialog)
 	fill_combo_box (GTK_COMBO_BOX (dialog->notify_app_combo),
 					dialog->applet->apps, _("Custom command..."));
 	
-	/* Fill command entry */
-	//g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
-	
 	// Look for the selected command
 	len = g_list_length (dialog->applet->apps);
 	for (l = dialog->applet->apps, pos = 0; l != NULL; l = l->next, pos++) {
@@ -648,6 +645,9 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 * Populate widgets
 	 */
 	alarm_settings_update (dialog);
+	
+	/* Fill command entry */
+	g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
 	
 #ifndef HAVE_LIBNOTIFY
 	g_object_set (dialog->notify_bubble_check, "sensitive", FALSE, NULL);
