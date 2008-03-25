@@ -410,9 +410,6 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 		g_critical ("Icon not found.");
 	}
 	
-	if (applet->notify)
-		alarm_applet_notification_close (applet);
-	
 	message = alarm->message;
 	
 	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->icon));
