@@ -95,11 +95,11 @@ static enum {
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
 #define PROP_NAME_TIMER			"timer"
-#define PROP_NAME_NOTIFY_TYPE	"notify-type"
-#define PROP_NAME_SOUND_FILE	"sound-file"
-#define PROP_NAME_SOUND_LOOP	"sound-repeat"
+#define PROP_NAME_NOTIFY_TYPE	"notify_type"
+#define PROP_NAME_SOUND_FILE	"sound_file"
+#define PROP_NAME_SOUND_LOOP	"sound_repeat"
 #define PROP_NAME_COMMAND		"command"
-#define PROP_NAME_NOTIFY_BUBBLE	"notify-bubble"
+#define PROP_NAME_NOTIFY_BUBBLE	"notify_bubble"
 
 /* Signal indexes */
 static enum
