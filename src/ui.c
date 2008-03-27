@@ -387,8 +387,7 @@ destroy_cb (GtkObject *object, AlarmApplet *applet)
 	// TODO: Free much much more...
 }
 
-/* Taken from the battery applet
- * TODO: Write to use Alarm */
+/* Taken from the battery applet */
 gboolean
 alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 {

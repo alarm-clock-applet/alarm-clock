@@ -385,6 +385,10 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	applet->preferences_dialog = NULL;
 	
+#ifdef HAVE_LIBNOTIFY
+	applet->notify = NULL;
+#endif
+	
 	/* Preferences (defaults). 
 	 * ...gconf_get_string can return NULL if the key is not found. We can't
 	 * assume the schema provides the default values for strings. */
