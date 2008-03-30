@@ -1,6 +1,7 @@
 #include "alarm-applet.h"
 
 #include "alarm.h"
+#include "edit-alarm.h"
 
 /*
  * DEFINTIIONS {{
@@ -352,6 +353,59 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 /*
  * }} Alarms list
  */
+
+void
+alarm_applet_destroy (AlarmApplet *applet)
+{
+	GList *l;
+	Alarm *a;
+	AlarmSettingsDialog *dialog;
+	
+	g_debug ("AlarmApplet DESTROY");
+	
+	// Destroy alarms list
+	if (applet->list_alarms_dialog) {
+		list_alarms_dialog_close (applet);
+	}
+	
+	// Destroy preferences dialog
+	if (applet->preferences_dialog) {
+		gtk_widget_destroy (applet->preferences_dialog);
+	}
+	
+	// Loop through all alarms and free like a mad man!
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		
+		// Check if a dialog is open for this alarm
+		dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, a->id);
+		
+		if (dialog) {
+			alarm_settings_dialog_close (dialog);
+			//g_free (dialog);
+		}
+		
+		g_object_unref (a);
+	}
+	
+	// Remove sounds list
+	if (applet->sounds != NULL) {
+		alarm_list_entry_list_free(&(applet->sounds));
+	}
+	
+	// Remove apps list
+	if (applet->apps) {
+		alarm_list_entry_list_free(&(applet->apps));
+	}
+	
+	if (app_command_map != NULL)
+		g_hash_table_destroy (app_command_map);
+	
+	// Free GConf dir
+	g_free (applet->gconf_dir);
+	
+	// TODO: Free more?
+}
 
 
 /*

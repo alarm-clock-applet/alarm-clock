@@ -377,14 +377,8 @@ orient_change_cb (PanelApplet *a,
 static void
 destroy_cb (GtkObject *object, AlarmApplet *applet)
 {
-	if (applet->sounds != NULL) {
-		alarm_list_entry_list_free(&(applet->sounds));
-	}
-	
-	if (app_command_map != NULL)
-		g_hash_table_destroy (app_command_map);
-	
-	// TODO: Free much much more...
+	// TODO: This is never called.
+	alarm_applet_destroy (applet);
 }
 
 /* Taken from the battery applet */

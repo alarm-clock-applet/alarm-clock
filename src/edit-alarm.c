@@ -557,7 +557,7 @@ alarm_settings_dialog_close (AlarmSettingsDialog *dialog)
 		media_player_free (dialog->player);
 	
 	// TODO: Why does this cause a segfault?
-	//g_free (dialog);
+	g_free (dialog);
 }
 
 static void

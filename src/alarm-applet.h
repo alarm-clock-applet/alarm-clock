@@ -120,6 +120,8 @@ void alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm);
 
 void alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm);
 
+void alarm_applet_destroy (AlarmApplet *applet);
+
 G_END_DECLS
 
 #endif /*ALARMAPPLET_H_*/
