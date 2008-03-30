@@ -50,6 +50,29 @@ typedef struct _AlarmModelChangedArg {
 	Alarm *alarm;
 } AlarmModelChangedArg;
 
+static void
+list_alarms_clear_args (AlarmApplet *applet)
+{
+	GList *l;
+	AlarmModelChangedArg *arg;
+	
+	/*
+	 * Free old list of arguments
+	 */
+	for (l = applet->list_alarms_args; l; l = l->next) {
+		arg = (AlarmModelChangedArg *)l->data;
+		
+		// Remove any callbacks
+		g_source_remove_by_user_data (arg);
+		
+		// Free argument
+		g_free (arg);
+	}
+	
+	g_list_free (applet->list_alarms_args);
+	applet->list_alarms_args = NULL;
+}
+
 static gboolean
 list_alarms_update_timer (gpointer data)
 {
@@ -116,7 +139,7 @@ list_alarms_update (AlarmApplet *applet)
 {
 	GtkListStore *store = applet->list_alarms_store;
 	GtkTreeIter iter;
-	GList *l = NULL;
+	GList *l = NULL, *args = NULL;
 	Alarm *a;
 	AlarmModelChangedArg *arg;
 	
@@ -143,11 +166,14 @@ list_alarms_update (AlarmApplet *applet)
 		
 		gtk_list_store_set (store, &iter, 0, a, -1);
 		
-		// TODO: arg is never freed
+		// Create arg
 		arg = g_new (AlarmModelChangedArg, 1);
 		arg->store = store;
 		arg->iter  = iter;
 		arg->alarm = a;
+		
+		// Append to argument list
+		args = g_list_append (args, arg);
 		
 		// Disconnect old handlers, if any
 		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
@@ -162,6 +188,12 @@ list_alarms_update (AlarmApplet *applet)
 		
 		g_print ("Alarm #%d (%p): %s [ref=%d]\n", a->id, a, a->message, G_OBJECT (a)->ref_count);
 	}
+	
+	/* Clear old arguments */
+	list_alarms_clear_args (applet);
+	
+	/* Update with new list of args */
+	applet->list_alarms_args = args;
 }
 
 static void 
@@ -239,23 +271,7 @@ list_alarms_dialog_response_cb (GtkDialog *dialog,
 								gint rid,
 								AlarmApplet *applet)
 {
-	GList *l;
-	Alarm *a;
-	
-	gtk_widget_destroy (GTK_WIDGET (dialog));
-	applet->list_alarms_dialog = NULL;
-	
-	g_object_unref (applet->list_alarms_store);
-	applet->list_alarms_store = NULL;
-	
-/*	g_object_unref (applet->list_alarms_view);*/
-	applet->list_alarms_view = NULL;
-	
-	// Disconnect notify handlers
-	for (l = applet->alarms; l != NULL; l = l->next) {
-		a = ALARM (l->data);
-		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
-	}
+	list_alarms_dialog_close (applet);
 }
 
 static void
@@ -446,10 +462,37 @@ list_alarm_selected_cb (GtkTreeView       *view,
 	display_edit_alarm_dialog (applet, a);
 }
 
-
+void
+list_alarms_dialog_close (AlarmApplet *applet)
+{
+	GList *l;
+	Alarm *a;
+	
+	g_assert (applet->list_alarms_dialog);
+	
+	// Destroy dialog
+	gtk_widget_destroy (GTK_WIDGET (applet->list_alarms_dialog));
+	applet->list_alarms_dialog = NULL;
+	
+	// Free list store
+	g_object_unref (applet->list_alarms_store);
+	applet->list_alarms_store = NULL;
+	
+/*	g_object_unref (applet->list_alarms_view);*/
+	applet->list_alarms_view = NULL;
+	
+	// Disconnect notify handlers
+	for (l = applet->alarms; l != NULL; l = l->next) {
+		a = ALARM (l->data);
+		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
+	}
+	
+	/* Clear old arguments */
+	list_alarms_clear_args (applet);
+}
 
 void
-display_list_alarms_dialog (AlarmApplet *applet)
+list_alarms_dialog_display (AlarmApplet *applet)
 {
 	if (applet->list_alarms_dialog != NULL) {
 		// Dialog already open.
@@ -508,12 +551,6 @@ display_list_alarms_dialog (AlarmApplet *applet)
 	 * Fill store with alarms
 	 */
 	list_alarms_update (applet);
-	
-	/*
-	 * Notify us of changes to the 'active' property of all commands
-	 * so we can start the timer.
-	 */
-	
 	
 	/* 
 	 * Create view cell renderers

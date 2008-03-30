@@ -381,6 +381,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	applet->list_alarms_dialog = NULL;
 	applet->list_alarms_store = NULL;
 	applet->list_alarms_view = NULL;
+	applet->list_alarms_args = NULL;
 	applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 	
 	applet->preferences_dialog = NULL;

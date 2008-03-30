@@ -79,6 +79,7 @@ struct _AlarmApplet {
 	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
+	GList *list_alarms_args;
 	
 	/* Open edit alarm dialogs
 	 * Hashed by ID */

@@ -517,7 +517,7 @@ menu_list_alarms_cb (BonoboUIComponent *component,
 					 const gchar *cname)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
-	display_list_alarms_dialog (applet);
+	list_alarms_dialog_display (applet);
 }
 
 static void
