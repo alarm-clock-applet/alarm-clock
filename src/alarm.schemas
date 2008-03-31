@@ -1,40 +1,11 @@
 <?xml version="1.0"?>
 <gconfschemafile>
 	<schemalist>
-    
-		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/alarm_time</key>
-	      	<owner>alarm-applet</owner>
-			<type>int</type>
-			<locale name="C">
-				<default>0</default>
-				<short>Alarm timestamp</short>
-				<long>The UNIX timestamp for the alarm.</long>
-			</locale>
-		</schema>
-		
-		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/message</key>
-	      	<owner>alarm-applet</owner>
-			<type>string</type>
-			<locale name="C">
-				<default>Alarm!</default>
-				<short>Message describing this alarm.</short>
-				<long>A short message which will be displayed when the alarm goes off.</long>
-			</locale>
-		</schema>
-		
-		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/started</key>
-	      	<owner>alarm-applet</owner>
-			<type>bool</type>
-			<locale name="C">
-				<default>false</default>
-				<short>The running state of the alarm.</short>
-				<long>If true, indicates that the alarm is started.</long>
-			</locale>
-		</schema>
-		
+	
+    	<!--
+    	Applet specific:
+    	-->
+    	
 		<schema>
 	      	<key>/schemas/apps/alarm_applet/prefs/show_label</key>
 	      	<owner>alarm-applet</owner>
@@ -55,14 +26,79 @@
 				<default>alarm-time</default>
 				<short>Type of label to display.</short>
 				<long>The type of label to display if show_label is true.
-					  Can be either "alarm-time" for showing the current alarm time or
-					  "remaining-time" for showing the time remaining until the alarm goes off.
+					  Can be either "alarm-time" for showing the current alarm time of the
+					  closest alarm (read: first one to trigger) or "remaining-time" for showing 
+					  the time remaining until the closest alarm goes off.
 				</long>
+			</locale>
+		</schema>
+    	
+    	
+    	
+    	<!--
+    	Alarm specific:
+    	-->
+    	
+    	<schema>
+	      	<key>/schemas/apps/alarm_applet/alarm/type</key>
+	      	<owner>alarm-applet</owner>
+			<type>string</type>
+			<locale name="C">
+				<default>clock</default>
+				<short>Alarm type</short>
+				<long>The type of the alarm. Either "clock" for an alarm which triggers
+					  at a specific time of day or "timer" for an alarm which triggers
+					  after a specified period of time.</long>
+			</locale>
+		</schema>
+    	
+		<schema>
+	      	<key>/schemas/apps/alarm_applet/alarm/time</key>
+	      	<owner>alarm-applet</owner>
+			<type>int</type>
+			<locale name="C">
+				<default>0</default>
+				<short>Alarm timestamp</short>
+				<long>The UNIX timestamp for the alarm.</long>
 			</locale>
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/notify_type</key>
+	      	<key>/schemas/apps/alarm_applet/alarm/timer</key>
+	      	<owner>alarm-applet</owner>
+			<type>int</type>
+			<locale name="C">
+				<default>0</default>
+				<short>Alarm timer</short>
+				<long>The timer for alarms of type "timer".</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm_applet/alarm/message</key>
+	      	<owner>alarm-applet</owner>
+			<type>string</type>
+			<locale name="C">
+				<default>Alarm!</default>
+				<short>Message describing this alarm.</short>
+				<long>A short message which will be displayed when the alarm goes off.</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm_applet/alarm/active</key>
+	      	<owner>alarm-applet</owner>
+			<type>bool</type>
+			<locale name="C">
+				<default>false</default>
+				<short>The running state of the alarm.</short>
+				<long>If true, indicates that the alarm is started.</long>
+			</locale>
+		</schema>
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm_applet/alarm/notify_type</key>
 	      	<owner>alarm-applet</owner>
 			<type>string</type>
 			<locale name="C">
@@ -77,7 +113,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/sound_file</key>
+	      	<key>/schemas/apps/alarm_applet/alarm/sound_file</key>
 	      	<owner>alarm-applet</owner>
 			<type>string</type>
 			<locale name="C">
@@ -88,7 +124,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/sound_repeat</key>
+	      	<key>/schemas/apps/alarm_applet/alarm/sound_repeat</key>
 	      	<owner>alarm-applet</owner>
 			<type>bool</type>
 			<locale name="C">
@@ -99,7 +135,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/command</key>
+	      	<key>/schemas/apps/alarm_applet/alarm/command</key>
 	      	<owner>alarm-applet</owner>
 			<type>string</type>
 			<locale name="C">
@@ -110,7 +146,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/notify_bubble</key>
+	      	<key>/schemas/apps/alarm_applet/alarm/notify_bubble</key>
 	      	<owner>alarm-applet</owner>
 			<type>bool</type>
 			<locale name="C">

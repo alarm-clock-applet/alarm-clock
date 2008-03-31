@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "player.h"
 #include "alarm.h"
@@ -24,6 +25,8 @@ static void alarm_get_property(GObject *object,
 static void alarm_constructed (GObject *object);
 
 static void alarm_dispose (GObject *object);
+
+static void alarm_gconf_associate_schemas (Alarm *alarm);
 
 static void alarm_gconf_connect (Alarm *alarm);
 
@@ -507,7 +510,6 @@ alarm_set_property (GObject *object,
 			return;
 		}
 		
-		/* TODO: Associate schemas if changed. */
 		if (!alarm->gconf_dir || strcmp (str, alarm->gconf_dir) != 0) {
 			// Changed, remove old gconf listeners
 			alarm_gconf_disconnect (alarm);
@@ -516,16 +518,21 @@ alarm_set_property (GObject *object,
 				g_free (alarm->gconf_dir);
 			alarm->gconf_dir = g_strdup (str);
 			
+			// Associate schemas
+			alarm_gconf_associate_schemas (alarm);
+			
 			alarm_gconf_connect (alarm);
 		}
 		break;
 	case PROP_ID:
 		d = g_value_get_uint (value);
 		
-		/* TODO: Associate schemas if id changed. */
 		if (d != alarm->id) {
 			alarm_gconf_disconnect (alarm);
 			alarm->id = d;
+			
+			alarm_gconf_associate_schemas (alarm);
+			
 			alarm_gconf_load (alarm);
 			alarm_gconf_connect (alarm);
 		}
@@ -938,6 +945,54 @@ alarm_timer_remove (Alarm *alarm)
  * }} ALARM signal
  */
 
+/*
+ * Taken from panel-applet.c
+ */
+static void
+alarm_gconf_associate_schemas (Alarm *alarm)
+{
+	AlarmPrivate *priv  = ALARM_PRIVATE (alarm);
+	GConfClient *client = priv->gconf_client;
+	GSList *list, *l;
+	GError *error = NULL;
+
+	list = gconf_client_all_entries (client, ALARM_GCONF_SCHEMA_DIR, &error);
+
+	g_return_if_fail (error == NULL);
+
+	for (l = list; l; l = l->next) {
+		GConfEntry *entry = l->data;
+		gchar	   *key;
+		gchar	   *tmp;
+		
+		tmp = g_path_get_basename (gconf_entry_get_key (entry));
+		
+		if (strchr (tmp, '-'))
+			g_warning ("Applet key '%s' contains a hyphen. Please "
+					   "use underscores in gconf keys\n", tmp);
+		
+		key = alarm_gconf_get_full_key (alarm, tmp);
+
+		g_free (tmp);
+		
+		g_debug ("alarm_gconf_associate_schemas: %s => %s", gconf_entry_get_key (entry), key);
+
+		gconf_engine_associate_schema (
+				client->engine, key, gconf_entry_get_key (entry), &error);
+
+		g_free (key);
+
+		gconf_entry_free (entry);
+
+		if (error) {
+			g_slist_free (list);
+			return;
+		}
+	}
+
+	g_slist_free (list);
+}
+
 static void
 alarm_gconf_connect (Alarm *alarm)
 {
@@ -1323,15 +1378,16 @@ gint
 alarm_gconf_dir_get_id (const gchar *dir)
 {
 	gint id;
+	gchar *d;
 	
-	dir = g_path_get_basename (dir);
+	d = g_path_get_basename (dir);
 	
-	if (sscanf (dir, ALARM_GCONF_DIR_PREFIX "%d", &id) <= 0 || id < 0) {
+	if (sscanf (d, ALARM_GCONF_DIR_PREFIX "%d", &id) <= 0 || id < 0) {
 		// INVALID
 		id = -1;
 	}
 	
-	g_free (dir);
+	g_free (d);
 	
 	return id;
 }

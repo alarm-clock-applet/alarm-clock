@@ -112,6 +112,7 @@ typedef enum {
  * GConf settings
  */
 #define ALARM_GCONF_DIR_PREFIX		"alarm"
+#define ALARM_GCONF_SCHEMA_DIR		"/schemas/apps/alarm_applet/alarm"
 
 /*
  * Function prototypes.
