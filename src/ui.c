@@ -375,9 +375,8 @@ orient_change_cb (PanelApplet *a,
 
 
 static void
-destroy_cb (GtkObject *object, AlarmApplet *applet)
+unrealize_cb (GtkWidget *object, AlarmApplet *applet)
 {
-	// TODO: This is never called.
 	alarm_applet_destroy (applet);
 }
 
@@ -456,8 +455,8 @@ alarm_applet_ui_init (AlarmApplet *applet)
 	g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
 					  G_CALLBACK(button_cb), applet);
 	
-	g_signal_connect (G_OBJECT(applet->parent), "destroy",
-					  G_CALLBACK(destroy_cb), applet);
+	g_signal_connect (G_OBJECT(applet->parent), "unrealize",
+					  G_CALLBACK(unrealize_cb), applet);
 	
 	g_signal_connect (G_OBJECT(applet->parent), "change-background",
 					  G_CALLBACK (applet_back_change), applet);

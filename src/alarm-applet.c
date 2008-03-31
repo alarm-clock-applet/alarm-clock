@@ -398,13 +398,16 @@ alarm_applet_destroy (AlarmApplet *applet)
 		alarm_list_entry_list_free(&(applet->apps));
 	}
 	
-	if (app_command_map != NULL)
+	if (app_command_map != NULL) {
 		g_hash_table_destroy (app_command_map);
+		app_command_map = NULL;
+	}
 	
 	// Free GConf dir
 	g_free (applet->gconf_dir);
 	
-	// TODO: Free more?
+	// Finally free the AlarmApplet struct itself
+	g_free (applet);
 }
 
 
@@ -422,27 +425,12 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	if (strcmp (iid, "OAFIID:GNOME_AlarmApplet") != 0)
 		return FALSE;
 	
-	/* Initialize applet struct */
-	applet = g_new (AlarmApplet, 1);
+	/* Initialize applet struct,
+	 * fill with zero's */
+	applet = g_new0 (AlarmApplet, 1);
 	
 	applet->parent = panelapplet;
-	
-	applet->alarms = NULL;
-	applet->sounds = NULL;
-	applet->apps = NULL;
-	
-	/* List-alarms UI */
-	applet->list_alarms_dialog = NULL;
-	applet->list_alarms_store = NULL;
-	applet->list_alarms_view = NULL;
-	applet->list_alarms_args = NULL;
 	applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
-	
-	applet->preferences_dialog = NULL;
-	
-#ifdef HAVE_LIBNOTIFY
-	applet->notify = NULL;
-#endif
 	
 	/* Preferences (defaults). 
 	 * ...gconf_get_string can return NULL if the key is not found. We can't
@@ -466,6 +454,9 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	
 	/* Load sounds from alarms */
 	alarm_applet_sounds_load (applet);
+	
+	/* Load apps for alarms */
+	alarm_applet_apps_load (applet);
 	
 	/* Connect sound_file notify callback to all alarms */
 	alarm_signal_connect_list (applet->alarms, "notify::sound-file", 

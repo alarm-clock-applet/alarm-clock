@@ -553,8 +553,13 @@ alarm_settings_dialog_close (AlarmSettingsDialog *dialog)
 	
 	gtk_widget_destroy (GTK_WIDGET (dialog->dialog));
 	
-	if (dialog->player)
-		media_player_free (dialog->player);
+	if (dialog->player) {
+		if (dialog->player->state == MEDIA_PLAYER_STOPPED) {
+			media_player_free (dialog->player);
+		} else {
+			media_player_stop (dialog->player);
+		}
+	}
 	
 	// TODO: Why does this cause a segfault?
 	g_free (dialog);
