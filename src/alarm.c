@@ -868,7 +868,7 @@ alarm_delete (Alarm *alarm)
 	// Remove configuration
 	key = alarm_gconf_get_dir (alarm);
 	g_debug ("alarm_delete: recursive unset on %s", key);
-	gconf_client_recursive_unset (client, key, 0, NULL);
+	gconf_client_recursive_unset (client, key, GCONF_UNSET_INCLUDING_SCHEMA_NAMES, NULL);
 	gconf_client_suggest_sync (client, NULL);
 	g_free (key);
 }
@@ -955,6 +955,9 @@ alarm_gconf_associate_schemas (Alarm *alarm)
 	GConfClient *client = priv->gconf_client;
 	GSList *list, *l;
 	GError *error = NULL;
+	
+	if (alarm->id < 0)
+		return;
 
 	list = gconf_client_all_entries (client, ALARM_GCONF_SCHEMA_DIR, &error);
 
@@ -975,8 +978,6 @@ alarm_gconf_associate_schemas (Alarm *alarm)
 
 		g_free (tmp);
 		
-		g_debug ("alarm_gconf_associate_schemas: %s => %s", gconf_entry_get_key (entry), key);
-
 		gconf_engine_associate_schema (
 				client->engine, key, gconf_entry_get_key (entry), &error);
 
