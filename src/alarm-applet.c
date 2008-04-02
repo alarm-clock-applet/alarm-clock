@@ -15,25 +15,22 @@ GHashTable *app_command_map = NULL;
  */
 
 /*
- * TODO: Rewrite to use Alarm
- * 
- * Should clear any running alarms.
+ * Clear any running (read: playing sound) alarms.
  */
 void
 alarm_applet_clear_alarms (AlarmApplet *applet)
 {
-	g_debug ("alarm_applet_clear_alarms: Not yet implemented");
-/*	alarm_gconf_set_started (applet, FALSE);
-	applet->alarm_triggered = FALSE;
+	GList *l;
+	Alarm *a;
 	
-	timer_remove (applet);
-	update_label (applet);
-	update_tooltip (applet);
+	g_debug ("Clearing alarms...");
 	
-	// Stop playback if present.
-	if (applet->player && applet->player->state == MEDIA_PLAYER_PLAYING)
-		media_player_stop (applet->player);
-	*/
+	// Loop through alarms and clear all of 'em
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		alarm_clear (a);
+	}
+	
 	// Close notification if present.
 #ifdef HAVE_LIBNOTIFY
 	if (applet->notify) {
@@ -116,88 +113,10 @@ alarm_sound_file_changed (GObject *object,
 	alarm_applet_sounds_load (applet);
 }
 
-/*
- * Find the soonest-to-trigger upcoming alarm
- */
-static void
-alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
-{
-	GList *l;
-	Alarm *a;
-	
-	applet->upcoming_alarm = NULL;
-	
-	/* Loop through alarms looking for all active upcoming alarms and locate
-	 * the one which will trigger sooner.
-	 */
-	
-	for (l = applet->alarms; l; l = l->next) {
-		a = ALARM (l->data);
-		
-		if (!a->active) continue;
-		
-		if (!applet->upcoming_alarm || a->time < applet->upcoming_alarm->time) {
-			// This alarm is most recent
-			applet->upcoming_alarm = a;
-		}
-	}
-}
-
-/*
- * Callback for when an alarm is activated / deactivated.
- * We use this to update our closest upcoming alarm.
- */
-static void
-alarm_active_changed (GObject *object, 
-					  GParamSpec *param,
-					  gpointer data)
-{
-	Alarm *alarm		= ALARM (object);
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	g_debug ("alarm_active_changed: #%d to %d", alarm->id, alarm->active);
-	
-	// Check if this was the upcoming alarm
-	if (!alarm->active) {
-		if (applet->upcoming_alarm == alarm) {
-			applet->upcoming_alarm = NULL;
-			
-			alarm_applet_upcoming_alarm_update (applet);
-			alarm_applet_label_update (applet);
-			
-			return;
-		}
-	}
-	
-	if (!applet->upcoming_alarm || alarm->time < applet->upcoming_alarm->time) {
-		// We're next!
-		applet->upcoming_alarm = alarm;
-		
-		alarm_applet_label_update (applet);
-		
-		return;
-	}
-}
-
-/*
- * Callback for when an alarm is triggered
- * We show the notification bubble here if appropriate.
- */
-static void
-alarm_triggered (Alarm *alarm, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	if (alarm->notify_bubble) {
-		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
-		alarm_applet_notification_display (applet, alarm);
-	}
-}
 
 /*
  * }} Sounds list
  */
-
 
 
 /*
@@ -360,6 +279,92 @@ alarm_applet_apps_load (AlarmApplet *applet)
 //	applet->apps = g_list_append (applet->apps, entry);
 }
 
+
+/*
+ * Alarm signals {{
+ */
+
+/*
+ * Find the soonest-to-trigger upcoming alarm
+ */
+static void
+alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
+{
+	GList *l;
+	Alarm *a;
+	
+	applet->upcoming_alarm = NULL;
+	
+	/* Loop through alarms looking for all active upcoming alarms and locate
+	 * the one which will trigger sooner.
+	 */
+	
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		
+		if (!a->active) continue;
+		
+		if (!applet->upcoming_alarm || a->time < applet->upcoming_alarm->time) {
+			// This alarm is most recent
+			applet->upcoming_alarm = a;
+		}
+	}
+}
+
+/*
+ * Callback for when an alarm is activated / deactivated.
+ * We use this to update our closest upcoming alarm.
+ */
+static void
+alarm_active_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	Alarm *alarm		= ALARM (object);
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	g_debug ("alarm_active_changed: #%d to %d", alarm->id, alarm->active);
+	
+	// Check if this was the upcoming alarm
+	if (!alarm->active) {
+		if (applet->upcoming_alarm == alarm) {
+			applet->upcoming_alarm = NULL;
+			
+			alarm_applet_upcoming_alarm_update (applet);
+			alarm_applet_label_update (applet);
+			
+			return;
+		}
+	}
+	
+	if (!applet->upcoming_alarm || alarm->time < applet->upcoming_alarm->time) {
+		// We're next!
+		applet->upcoming_alarm = alarm;
+		
+		alarm_applet_label_update (applet);
+		
+		return;
+	}
+}
+
+/*
+ * Callback for when an alarm is triggered
+ * We show the notification bubble here if appropriate.
+ */
+static void
+alarm_triggered (Alarm *alarm, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	if (alarm->notify_bubble) {
+		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
+		alarm_applet_notification_display (applet, alarm);
+	}
+}
+
+/*
+ * }} Alarm signals
+ */
 
 /*
  * Alarms list {{

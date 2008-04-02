@@ -629,7 +629,7 @@ alarm_applet_menu_init (AlarmApplet *applet)
 		"		   pixname=\"gtk-edit\"/>\n"
 		"   <menuitem name=\"Clear Item\" "
 		"			  verb=\"ClearAlarm\" "
-		"			_label=\"_Clear alarm\" "
+		"			_label=\"_Clear alarms\" "
 		"		   pixtype=\"stock\" "
 		"		   pixname=\"gtk-clear\"/>\n"
 		"   <separator/>\n"

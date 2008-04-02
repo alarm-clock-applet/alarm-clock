@@ -579,6 +579,9 @@ alarm_settings_dialog_response_cb (GtkDialog *dialog,
 
 /*
  * Dialog creation
+ * 
+ * TODO: A bug exists which somehow causes some widgets to become NULL
+ * 		 and thus crashes the program. Investigate further.
  */
 
 static AlarmSettingsDialog *
