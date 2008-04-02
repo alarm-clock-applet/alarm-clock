@@ -225,25 +225,12 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 	case TIME_COLUMN:
 		/* If alarm is running (active), show remaining time */
 		if (a->active) {
-			now = time (NULL);
-			sec = a->time - now;
-			
-			min = sec / 60;
-			sec -= min * 60;
-			
-			hour = min / 60;
-			min -= hour * 60;
-			
-			tmp = g_strdup_printf(_("%02d:%02d:%02d"), hour, min, sec);
+			tm = alarm_get_remain (a);
 		} else {
-			if (a->type == ALARM_TYPE_TIMER) {
-				tm = gmtime (&(a->timer));
-			} else {
-				tm = localtime (&(a->time));
-			}
-			
-			tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+			tm = alarm_get_time (a);
 		}
+		
+		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 		
 		g_object_set (renderer, "text", tmp, NULL);
 		

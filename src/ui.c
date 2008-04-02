@@ -51,26 +51,13 @@ alarm_applet_label_update (AlarmApplet *applet)
 	
 	if (applet->label_type == LABEL_TYPE_REMAIN) {
 		/* Remaining time */
-		now = time (NULL);
-		sec = a->time - now;
-		
-		min = sec / 60;
-		sec -= min * 60;
-		
-		hour = min / 60;
-		min -= hour * 60;
-		
-		tmp = g_strdup_printf(_("%02d:%02d:%02d"), hour, min, sec);
+		tm = alarm_get_remain (a);
 	} else {
 		/* Alarm time */
-		if (a->type == ALARM_TYPE_TIMER) {
-			tm = gmtime (&(a->timer));
-		} else {
-			tm = localtime (&(a->time));
-		}
-		
-		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+		tm = alarm_get_time (a);
 	}
+	
+	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 	
 	g_object_set(applet->label, "label", tmp, NULL);
 	g_free(tmp);
@@ -80,14 +67,38 @@ alarm_applet_label_update (AlarmApplet *applet)
 void
 alarm_applet_update_tooltip (AlarmApplet *applet)
 {
-	gchar *tiptext;
+	struct tm *time, *remain;
+	GList *l;
+	Alarm *a;
+	GString *tip;
+	guint count = 0;
 
-	// No alarm set or triggered
-	tiptext = g_strdup (_("Click to edit alarms"));
+	tip = g_string_new ("");
 	
-	gtk_widget_set_tooltip_text (GTK_WIDGET (applet->parent), tiptext);
+	// Find all active alarms
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		
+		if (!a->active) continue;
+		
+		count++;
+		
+		time   = alarm_get_time (a);
+		remain = alarm_get_remain (a);
+		
+		g_string_append_printf (tip, _("\n(%c) <b>%s</b> @%02d:%02d:%02d (-%02d:%02d:%02d)"), (a->type == ALARM_TYPE_TIMER) ? 'T' : 'A', a->message,
+														time->tm_hour, time->tm_min, time->tm_sec, remain->tm_hour, remain->tm_min, remain->tm_sec);
+	}
 	
-	g_free (tiptext);
+	if (count > 0) {
+		tip = g_string_prepend (tip, _("Active alarms:"));
+	} else {
+		tip = g_string_append (tip, _("No active alarms"));
+	}
+	
+	gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
+	
+	g_string_free (tip, TRUE);
 }
 
 static gboolean
@@ -471,6 +482,8 @@ alarm_applet_ui_update (AlarmApplet *applet)
 	if (applet->show_label) {
 		alarm_applet_label_update (applet);
 	}
+	
+	alarm_applet_update_tooltip (applet);
 	
 	return TRUE;
 }

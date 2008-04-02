@@ -392,6 +392,7 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 	
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
 	g_signal_connect (alarm, "notify::active", G_CALLBACK (alarm_active_changed), applet);
+	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_active_changed), applet);
 }
 
 void
@@ -543,8 +544,10 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	alarm_signal_connect_list (applet->alarms, "notify::sound-file", 
 							   G_CALLBACK (alarm_sound_file_changed), applet);
 	
-	/* Connect active notify callback to all alarms */
+	/* Connect active & time notify callback to all alarms */
 	alarm_signal_connect_list (applet->alarms, "notify::active", 
+							   G_CALLBACK (alarm_active_changed), applet);
+	alarm_signal_connect_list (applet->alarms, "notify::time", 
 							   G_CALLBACK (alarm_active_changed), applet);
 	
 	/* Connect alarm trigger notify to all alarms */

@@ -193,6 +193,12 @@ alarm_error_quark (void);
 void
 alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg);
 
+struct tm *
+alarm_get_time (Alarm *alarm);
+
+struct tm *
+alarm_get_remain (Alarm *alarm);
+
 G_END_DECLS
 
 #endif /*ALARM_H_*/

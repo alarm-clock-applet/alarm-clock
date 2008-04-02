@@ -631,6 +631,12 @@ alarm_set_property (GObject *object,
 	case PROP_TIMER:
 		alarm->timer = g_value_get_uint (value);
 		
+		// If our alarm is active we need to update the time
+		if (alarm->type == ALARM_TYPE_TIMER && alarm->active) {
+			/* If we're a TIMER, update the "time" property to now + timer */
+			g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
+		}
+		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMER);
 		
 		if (!gconf_client_set_int (client, key, alarm->timer, &err)) {
@@ -1627,4 +1633,41 @@ alarm_update_time (Alarm *alarm)
 		alarm_set_time(alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 }
+
+/*
+ * Get the alarm time.
+ */
+struct tm *
+alarm_get_time (Alarm *alarm)
+{
+	if (alarm->type == ALARM_TYPE_TIMER) {
+		return gmtime (&(alarm->timer));
+	}
+	
+	return localtime (&(alarm->time));
+}
+
+/*
+ * Get the remaining alarm time.
+ */
+struct tm *
+alarm_get_remain (Alarm *alarm)
+{
+	time_t now;
+	struct tm tm;
+	
+	now = time (NULL);
+	tm.tm_sec = alarm->time - now;
+	
+	tm.tm_min = tm.tm_sec / 60;
+	tm.tm_sec -= tm.tm_min * 60;
+
+	tm.tm_hour = tm.tm_min / 60;
+	tm.tm_min -= tm.tm_hour * 60;
+	
+	return &tm;
+}
+
+
+
 
