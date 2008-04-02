@@ -36,24 +36,40 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 void
 alarm_applet_label_update (AlarmApplet *applet)
 {
-	GList *l;
 	Alarm *a;
-	guint active = 0;
+	struct tm *tm;
+	guint hour, min, sec, now;
 	gchar *tmp;
 	
-	if (applet->label_type == LABEL_TYPE_TOTAL) {
-		/* LABEL_TYPE_TOTAL */
-		tmp = g_strdup_printf (_("%d alarms"), g_list_length (applet->alarms));
+	if (!applet->upcoming_alarm) {
+		// No upcoming alarms
+		g_object_set (applet->label, "label", ALARM_DEF_LABEL, NULL);
+		return;
+	}
+	
+	a = applet->upcoming_alarm;
+	
+	if (applet->label_type == LABEL_TYPE_REMAIN) {
+		/* Remaining time */
+		now = time (NULL);
+		sec = a->time - now;
+		
+		min = sec / 60;
+		sec -= min * 60;
+		
+		hour = min / 60;
+		min -= hour * 60;
+		
+		tmp = g_strdup_printf(_("%02d:%02d:%02d"), hour, min, sec);
 	} else {
-		/* LABEL_TYPE_ACTIVE */
-		for (l = applet->alarms; l != NULL; l = l->next) {
-			a = ALARM (l->data);
-			
-			if (a->active)
-				active++;
+		/* Alarm time */
+		if (a->type == ALARM_TYPE_TIMER) {
+			tm = gmtime (&(a->timer));
+		} else {
+			tm = localtime (&(a->time));
 		}
 		
-		tmp = g_strdup_printf (_("%d alarms"), active);
+		tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 	}
 	
 	g_object_set(applet->label, "label", tmp, NULL);
@@ -446,12 +462,26 @@ alarm_applet_notification_close (AlarmApplet *applet)
 #endif
 }
 
+/*
+ * Updates label etc
+ */
+static gboolean
+alarm_applet_ui_update (AlarmApplet *applet)
+{
+	if (applet->show_label) {
+		alarm_applet_label_update (applet);
+	}
+	
+	return TRUE;
+}
+
 void
 alarm_applet_ui_init (AlarmApplet *applet)
 {
 	GtkWidget *hbox;
 	GdkPixbuf *icon;
 	
+	/* Set up PanelApplet signals */
 	g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
 					  G_CALLBACK(button_cb), applet);
 	
@@ -486,6 +516,9 @@ alarm_applet_ui_init (AlarmApplet *applet)
 								 "visible", applet->show_label,
 								 "no-show-all", TRUE,			/* So gtk_widget_show_all() won't set visible to TRUE */
 								 NULL);
+	
+	/* Set up UI updater */
+	applet->timer_id = g_timeout_add_seconds (1, alarm_applet_ui_update, applet);
 	
 	/* Pack */
 	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);

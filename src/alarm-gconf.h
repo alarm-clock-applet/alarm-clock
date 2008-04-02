@@ -17,7 +17,7 @@ G_BEGIN_DECLS
 /* Failsafe defaults for use when the schema isn't found
  * or doesn't provide sensible defaults */
 #define DEF_SHOW_LABEL		TRUE
-#define DEF_LABEL_TYPE		LABEL_TYPE_ACTIVE
+#define DEF_LABEL_TYPE		LABEL_TYPE_TIME
 
 /* We store enums as strings */
 GConfEnumStringPair label_type_enum_map [];

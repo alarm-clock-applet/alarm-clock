@@ -540,6 +540,12 @@ alarm_set_property (GObject *object,
 	case PROP_TYPE:
 		alarm->type = g_value_get_uint (value);
 		
+		// If we changed from CLOCK to TIMER we need to update the time
+		if (alarm->type == ALARM_TYPE_TIMER && alarm->active) {
+			/* If we're a TIMER, update the "time" property to now + timer */
+			g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
+		}
+		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TYPE);
 		
 		if (!gconf_client_set_string (client, key, 
@@ -583,10 +589,10 @@ alarm_set_property (GObject *object,
 			// Start timer
 			alarm_timer_start (alarm);
 		}
-		else if (!alarm->active && alarm_timer_is_started(alarm))
+		else if (!alarm->active && alarm_timer_is_started(alarm)) {
 			// Stop timer
 			alarm_timer_remove (alarm);
-		
+		}
 		
 		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_ACTIVE);

@@ -54,8 +54,8 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 
 typedef enum {
 	LABEL_TYPE_INVALID = 0,
-	LABEL_TYPE_ACTIVE,
-	LABEL_TYPE_TOTAL,
+	LABEL_TYPE_TIME,
+	LABEL_TYPE_REMAIN,
 } LabelType;
 
 struct _AlarmApplet {
@@ -68,8 +68,11 @@ struct _AlarmApplet {
 	GtkWidget *label;	/* clock label */
 	GtkWidget *box;		/* packing box */
 	
+	guint timer_id;		/* timer ID for updating the label */
+	
 	/* Alarms */
 	GList	*alarms;
+	Alarm	*upcoming_alarm;	/* Next upcoming alarm */
 	
 	/* Sounds & apps list */
 	GList *sounds;
@@ -96,8 +99,8 @@ struct _AlarmApplet {
 	/* Label */
 	GtkWidget *pref_label_show;
 	GtkWidget *pref_label_type_box;
-	GtkWidget *pref_label_type_active;
-	GtkWidget *pref_label_type_total;
+	GtkWidget *pref_label_type_time;
+	GtkWidget *pref_label_type_remain;
 	
 	/* Actual preferences data */
 	gboolean show_label;

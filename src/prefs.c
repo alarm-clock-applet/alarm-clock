@@ -22,12 +22,12 @@ void
 pref_update_label_type (AlarmApplet *applet)
 {
 	switch (applet->label_type) {
-	case LABEL_TYPE_ACTIVE:
-		g_object_set (applet->pref_label_type_active, "active", TRUE, NULL);
+	case LABEL_TYPE_TIME:
+		g_object_set (applet->pref_label_type_time, "active", TRUE, NULL);
 		break;
 	default:
 		// LABEL_TYPE_TOTAL
-		g_object_set (applet->pref_label_type_total, "active", TRUE, NULL);
+		g_object_set (applet->pref_label_type_remain, "active", TRUE, NULL);
 		break;
 	}
 }
@@ -57,11 +57,11 @@ pref_label_type_changed_cb (GtkToggleButton *togglebutton,
 		return;
 	}
 	
-	if (strcmp (name, "active-alarms-radio") == 0) {
-		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_ACTIVE);
+	if (strcmp (name, "time-radio") == 0) {
+		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_TIME);
 		panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, kval, NULL);
 	} else {
-		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_TOTAL);
+		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_REMAIN);
 		panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, kval, NULL);
 	}
 }
@@ -81,8 +81,8 @@ preferences_dialog_display (AlarmApplet *applet)
 	applet->preferences_dialog            = GTK_DIALOG (glade_xml_get_widget (ui, "preferences"));
 	applet->pref_label_show               = glade_xml_get_widget (ui, "show-label");
 	applet->pref_label_type_box           = glade_xml_get_widget (ui, "label-type-box");
-	applet->pref_label_type_active        = glade_xml_get_widget (ui, "active-alarms-radio");
-	applet->pref_label_type_total         = glade_xml_get_widget (ui, "total-alarms-radio");
+	applet->pref_label_type_time          = glade_xml_get_widget (ui, "time-radio");
+	applet->pref_label_type_remain        = glade_xml_get_widget (ui, "remain-radio");
 	
 	// Update UI
 	pref_update_label_show (applet);
@@ -97,10 +97,10 @@ preferences_dialog_display (AlarmApplet *applet)
 	g_signal_connect (applet->pref_label_show, "toggled",
 					  G_CALLBACK (pref_label_show_changed_cb), applet);
 	
-	g_signal_connect (applet->pref_label_type_active, "toggled",
+	g_signal_connect (applet->pref_label_type_time, "toggled",
 					  G_CALLBACK (pref_label_type_changed_cb), applet);
 	
-	g_signal_connect (applet->pref_label_type_total, "toggled",
+	g_signal_connect (applet->pref_label_type_remain, "toggled",
 					  G_CALLBACK (pref_label_type_changed_cb), applet);
 	
 	// Show it all

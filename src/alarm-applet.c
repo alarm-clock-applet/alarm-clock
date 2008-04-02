@@ -117,6 +117,69 @@ alarm_sound_file_changed (GObject *object,
 }
 
 /*
+ * Find the soonest-to-trigger upcoming alarm
+ */
+static void
+alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
+{
+	GList *l;
+	Alarm *a;
+	
+	applet->upcoming_alarm = NULL;
+	
+	/* Loop through alarms looking for all active upcoming alarms and locate
+	 * the one which will trigger sooner.
+	 */
+	
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		
+		if (!a->active) continue;
+		
+		if (!applet->upcoming_alarm || a->time < applet->upcoming_alarm->time) {
+			// This alarm is most recent
+			applet->upcoming_alarm = a;
+		}
+	}
+}
+
+/*
+ * Callback for when an alarm is activated / deactivated.
+ * We use this to update our closest upcoming alarm.
+ */
+static void
+alarm_active_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	Alarm *alarm		= ALARM (object);
+	AlarmApplet *applet = (AlarmApplet *)data;
+	
+	g_debug ("alarm_active_changed: #%d to %d", alarm->id, alarm->active);
+	
+	// Check if this was the upcoming alarm
+	if (!alarm->active) {
+		if (applet->upcoming_alarm == alarm) {
+			applet->upcoming_alarm = NULL;
+			
+			alarm_applet_upcoming_alarm_update (applet);
+			alarm_applet_label_update (applet);
+			
+			return;
+		}
+	}
+	
+	if (!applet->upcoming_alarm || alarm->time < applet->upcoming_alarm->time) {
+		// We're next!
+		applet->upcoming_alarm = alarm;
+		
+		alarm_applet_label_update (applet);
+		
+		return;
+	}
+}
+
+/*
  * Callback for when an alarm is triggered
  * We show the notification bubble here if appropriate.
  */
@@ -326,6 +389,9 @@ void
 alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 {
 	applet->alarms = g_list_append (applet->alarms, alarm);
+	
+	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
+	g_signal_connect (alarm, "notify::active", G_CALLBACK (alarm_active_changed), applet);
 }
 
 void
@@ -345,6 +411,13 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
 	
 	/*
+	 * If this is the upcoming alarm, update it.
+	 */
+	if (applet->upcoming_alarm == alarm) {
+		alarm_applet_upcoming_alarm_update (applet);
+	}
+	
+	/*
 	 * Dereference alarm
 	 */
 	g_object_unref (alarm);
@@ -362,6 +435,11 @@ alarm_applet_destroy (AlarmApplet *applet)
 	AlarmSettingsDialog *dialog;
 	
 	g_debug ("AlarmApplet DESTROY");
+	
+	// Remove any timers
+	if (applet->timer_id) {
+		g_source_remove (applet->timer_id);
+	}
 	
 	// Destroy alarms list
 	if (applet->list_alarms_dialog) {
@@ -389,7 +467,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 	}
 	
 	// Remove sounds list
-	if (applet->sounds != NULL) {
+	if (applet->sounds) {
 		alarm_list_entry_list_free(&(applet->sounds));
 	}
 	
@@ -398,7 +476,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 		alarm_list_entry_list_free(&(applet->apps));
 	}
 	
-	if (app_command_map != NULL) {
+	if (app_command_map) {
 		g_hash_table_destroy (app_command_map);
 		app_command_map = NULL;
 	}
@@ -436,7 +514,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	 * ...gconf_get_string can return NULL if the key is not found. We can't
 	 * assume the schema provides the default values for strings. */
 	applet->show_label = TRUE;
-	applet->label_type = LABEL_TYPE_ACTIVE;
+	applet->label_type = LABEL_TYPE_TIME;
 	
 	/* Prepare applet */
 	panel_applet_add_preferences (applet->parent, ALARM_SCHEMA_DIR, NULL);
@@ -452,6 +530,9 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	/* Load alarms */
 	alarm_applet_alarms_load (applet);
 	
+	/* Find any upcoming active alarms */
+	alarm_applet_upcoming_alarm_update (applet);
+	
 	/* Load sounds from alarms */
 	alarm_applet_sounds_load (applet);
 	
@@ -461,6 +542,10 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	/* Connect sound_file notify callback to all alarms */
 	alarm_signal_connect_list (applet->alarms, "notify::sound-file", 
 							   G_CALLBACK (alarm_sound_file_changed), applet);
+	
+	/* Connect active notify callback to all alarms */
+	alarm_signal_connect_list (applet->alarms, "notify::active", 
+							   G_CALLBACK (alarm_active_changed), applet);
 	
 	/* Connect alarm trigger notify to all alarms */
 	alarm_signal_connect_list (applet->alarms, "alarm",

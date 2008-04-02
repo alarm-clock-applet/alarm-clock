@@ -16,8 +16,8 @@
  * LabelType enum to GConf string value map
  */
 GConfEnumStringPair label_type_enum_map [] = {
-	{ LABEL_TYPE_ACTIVE,	"active"  },
-	{ LABEL_TYPE_TOTAL,		"total"  },
+	{ LABEL_TYPE_TIME,		"alarm-time"  },
+	{ LABEL_TYPE_REMAIN,	"remaining-time"  },
 	{ 0, NULL }
 };
 

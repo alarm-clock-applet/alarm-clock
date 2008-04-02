@@ -4,7 +4,7 @@
 <glade-interface>
   <widget class="GtkDialog" id="preferences">
     <property name="width_request">290</property>
-    <property name="title" translatable="yes">Alarm Preferences</property>
+    <property name="title" translatable="yes">Alarm Applet Preferences</property>
     <property name="resizable">False</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
@@ -40,7 +40,8 @@
                       <widget class="GtkCheckButton" id="show-label">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="label" translatable="yes">Show summary _label</property>
+                        <property name="tooltip" translatable="yes">Show a label with info about upcoming alarms</property>
+                        <property name="label" translatable="yes">Show alarm _label</property>
                         <property name="use_underline">True</property>
                         <property name="response_id">0</property>
                         <property name="draw_indicator">True</property>
@@ -60,10 +61,10 @@
                             <property name="sensitive">False</property>
                             <property name="spacing">2</property>
                             <child>
-                              <widget class="GtkRadioButton" id="active-alarms-radio">
+                              <widget class="GtkRadioButton" id="time-radio">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">_Active alarms</property>
+                                <property name="label" translatable="yes">_Alarm time</property>
                                 <property name="use_underline">True</property>
                                 <property name="response_id">0</property>
                                 <property name="draw_indicator">True</property>
@@ -74,14 +75,14 @@
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkRadioButton" id="total-alarms-radio">
+                              <widget class="GtkRadioButton" id="remain-radio">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">_Total alarms</property>
+                                <property name="label" translatable="yes">_Remaining time</property>
                                 <property name="use_underline">True</property>
                                 <property name="response_id">0</property>
                                 <property name="draw_indicator">True</property>
-                                <property name="group">active-alarms-radio</property>
+                                <property name="group">time-radio</property>
                               </widget>
                               <packing>
                                 <property name="expand">False</property>
@@ -301,6 +302,47 @@
             <property name="column_spacing">6</property>
             <property name="row_spacing">6</property>
             <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">_Label:</property>
+                <property name="use_markup">True</property>
+                <property name="use_underline">True</property>
+                <property name="mnemonic_widget">label-entry</property>
+              </widget>
+              <packing>
+                <property name="x_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">_Time:</property>
+                <property name="use_markup">True</property>
+                <property name="use_underline">True</property>
+                <property name="mnemonic_widget">hour-spin</property>
+              </widget>
+              <packing>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+                <property name="x_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkEntry" id="label-entry">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <property name="activates_default">True</property>
+                <property name="text" translatable="yes">Wake up sleepy head!</property>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+              </packing>
+            </child>
+            <child>
               <widget class="GtkHBox" id="hbox3">
                 <property name="visible">True</property>
                 <child>
@@ -380,47 +422,6 @@
                 <property name="right_attach">2</property>
                 <property name="top_attach">1</property>
                 <property name="bottom_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkEntry" id="label-entry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="activates_default">True</property>
-                <property name="text" translatable="yes">Wake up sleepy head!</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">_Time:</property>
-                <property name="use_markup">True</property>
-                <property name="use_underline">True</property>
-                <property name="mnemonic_widget">hour-spin</property>
-              </widget>
-              <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-                <property name="x_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">_Label:</property>
-                <property name="use_markup">True</property>
-                <property name="use_underline">True</property>
-                <property name="mnemonic_widget">label-entry</property>
-              </widget>
-              <packing>
-                <property name="x_options"></property>
               </packing>
             </child>
           </widget>
