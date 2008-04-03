@@ -8,6 +8,8 @@
 #include <glib-object.h>
 #include <gconf/gconf-client.h>
 
+#include "player.h"
+
 G_BEGIN_DECLS
 
 /*
@@ -78,6 +80,7 @@ struct _AlarmClass {
 	/* Signals */
 	void (*alarm)(Alarm *alarm);				/* Alarm triggered! */
 	void (*error)(Alarm *alarm, GError *err);	/* An error occured */
+	void (*player_changed)(Alarm *alarm, MediaPlayerState state);		/* Media player state changed */
 };
 
 /*

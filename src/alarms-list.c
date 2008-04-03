@@ -31,19 +31,6 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 	g_object_unref (alarm);
 }
 
-static void 
-alarm_object_changed (GObject *object, 
-					  GParamSpec *param,
-					  gpointer data)
-{
-	Alarm *a = ALARM (object);
-	//GtkListStore *model = GTK_LIST_STORE (data);
-	
-	g_print ("Alarm #%d changed: %s\n", a->id, g_param_spec_get_name (param));
-	
-	/*g_object_notify (model, g_param_spec_get_name (param));*/
-}
-
 typedef struct _AlarmModelChangedArg {
 	GtkListStore *store;
 	GtkTreeIter iter;
@@ -102,6 +89,20 @@ list_alarms_add_timer (AlarmModelChangedArg *arg)
 	g_timeout_add_seconds (1, (GSourceFunc) list_alarms_update_timer, arg);
 }
 
+static void
+alarm_model_changed (AlarmModelChangedArg *arg)
+{
+	GtkTreePath *path;
+	
+	// TODO: Only update on the actual fields we're interested?
+	
+	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
+	
+	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
+	
+	gtk_tree_path_free (path);
+}
+
 /*
  * Callback for when an alarm changes
  * Emits model-row-changed
@@ -112,23 +113,24 @@ alarm_changed (GObject *object,
 			   gpointer data)
 {
 	AlarmModelChangedArg *arg = (AlarmModelChangedArg *)data;
-	GtkTreePath *path;
 	Alarm *a = ALARM (object);
 	
-	g_debug ("alarm_changed %p: %s", object, param->name);
-	
-	// TODO: Only update on the actual fields we're interested?
-	
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (arg->store), &(arg->iter));
-	
-	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
-	
-	gtk_tree_path_free (path);
+	alarm_model_changed (arg);
 	
 	// If alarm is active, update the view every second for remaining time
 	if (strcmp (param->name, "active") == 0 && a->active) {
 		list_alarms_add_timer (arg);
 	}
+}
+
+/*
+ * Callback for when the alarm player changes
+ */
+static void
+alarm_player_changed (Alarm *a, MediaPlayerState state, gpointer data)
+{
+	g_debug ("alarm_player_changed: %d", state);
+	alarm_model_changed ((AlarmModelChangedArg *)data);
 }
 
 /*
@@ -157,10 +159,6 @@ list_alarms_update (AlarmApplet *applet)
 	 */
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
-
-		g_signal_connect (a, "notify", 
-				G_CALLBACK (alarm_object_changed),
-				store);
 		
 		gtk_list_store_append (store, &iter);
 		
@@ -180,6 +178,9 @@ list_alarms_update (AlarmApplet *applet)
 		
 		// Notify us of changes to the alarm
 		g_signal_connect (a, "notify", G_CALLBACK (alarm_changed), arg);
+		
+		// Notify us of changes to the alarm player
+		g_signal_connect (a, "player_changed", G_CALLBACK (alarm_player_changed), arg);
 		
 		// If alarm is active, update the view every second for remaining time
 		if (a->active) {
@@ -238,6 +239,13 @@ alarm_update_renderer (GtkTreeViewColumn *tree_column,
 		break;
 	case LABEL_COLUMN:
 		g_object_set (renderer, "text", a->message, NULL);
+		break;
+	case PLAYING_COLUMN:
+		if (alarm_is_playing (a)) {
+			g_object_set (renderer, "icon-name", "audio-volume-high", NULL);
+		} else {
+			g_object_set (renderer, "icon-name", NULL, NULL);
+		}
 		break;
 	default:
 		break;
@@ -472,6 +480,7 @@ list_alarms_dialog_close (AlarmApplet *applet)
 	for (l = applet->alarms; l != NULL; l = l->next) {
 		a = ALARM (l->data);
 		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_changed, NULL);
+		g_signal_handlers_disconnect_matched (a, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, alarm_player_changed, NULL);
 	}
 	
 	/* Clear old arguments */
@@ -496,10 +505,12 @@ list_alarms_dialog_display (AlarmApplet *applet)
 	GtkTreeIter iter;
 	GdkPixbuf *type_alarm_icon, *type_timer_icon;
 	GtkCellRenderer *type_renderer, *active_renderer,
-					*time_renderer, *label_renderer;
+					*time_renderer, *label_renderer,
+					*playing_renderer;
 	
 	GtkTreeViewColumn *type_col, *active_col,
-					  *time_col, *label_col;
+					  *time_col, *label_col,
+					  *playing_col;
 	
 	GladeXML *ui;
 	GtkButton *add_button, *edit_button, *delete_button;
@@ -559,6 +570,7 @@ list_alarms_dialog_display (AlarmApplet *applet)
 				  "mode",  GTK_CELL_RENDERER_MODE_EDITABLE,
 				  NULL);
 	
+	playing_renderer = gtk_cell_renderer_pixbuf_new ();
 	
 	/*
 	 * Create view columns
@@ -598,6 +610,14 @@ list_alarms_dialog_display (AlarmApplet *applet)
 											alarm_update_renderer,
 											LABEL_COLUMN, NULL);
 	
+	playing_col = gtk_tree_view_column_new_with_attributes(
+						_("Playing"), playing_renderer, 
+						NULL);
+	
+	gtk_tree_view_column_set_cell_data_func (playing_col, playing_renderer,
+											 alarm_update_renderer, 
+											 PLAYING_COLUMN, NULL);
+	
 	/* 
 	 * Set up tree view 
 	 */
@@ -607,6 +627,7 @@ list_alarms_dialog_display (AlarmApplet *applet)
 	gtk_tree_view_append_column (view, active_col);
 	gtk_tree_view_append_column (view, time_col);
 	gtk_tree_view_append_column (view, label_col);
+	gtk_tree_view_append_column (view, playing_col);
 	
 	/*
 	 * Set up signal handlers

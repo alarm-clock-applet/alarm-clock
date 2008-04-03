@@ -9,6 +9,7 @@ typedef enum {
 	ACTIVE_COLUMN,
 	TIME_COLUMN,
 	LABEL_COLUMN,
+	PLAYING_COLUMN,
 	ALARMS_N_COLUMNS
 } AlarmColumn;
 

@@ -6,7 +6,6 @@
 #include <time.h>
 #include <string.h>
 
-#include "player.h"
 #include "alarm.h"
 
 G_DEFINE_TYPE (Alarm, alarm, G_TYPE_OBJECT);
@@ -44,9 +43,6 @@ static gboolean alarm_timer_is_started (Alarm *alarm);
 static void alarm_player_start (Alarm *alarm);
 static void alarm_player_stop (Alarm *alarm);
 static void alarm_command_run (Alarm *alarm);
-
-static void alarm_error (Alarm *alarm, GError *err);
-
 
 #define ALARM_PRIVATE(o) \
   (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_ALARM, AlarmPrivate))
@@ -109,14 +105,17 @@ static enum
 {
   SIGNAL_ALARM,
   SIGNAL_ERROR,
+  SIGNAL_PLAYER,
   LAST_SIGNAL
 } AlarmSignal;
 
 /* Signal identifier map */
-static guint alarm_signal[LAST_SIGNAL] = {0, 0};
+static guint alarm_signal[LAST_SIGNAL] = {0, 0, 0};
 
 /* Prototypes for signal handlers */
 static void alarm_alarm (Alarm *alarm);
+static void alarm_error (Alarm *alarm, GError *err);
+static void alarm_player_changed (Alarm *alarm, MediaPlayerState state);
 
 
 /* Initialize the Alarm class */
@@ -253,6 +252,7 @@ alarm_class_init (AlarmClass *class)
 	/* set signal handlers */
 	class->alarm = alarm_alarm;
 	class->error = alarm_error;
+	class->player_changed = alarm_player_changed;
 
 	/* install signals and default handlers */
 	alarm_signal[SIGNAL_ALARM] = g_signal_new ("alarm",		/* name */
@@ -275,6 +275,17 @@ alarm_class_init (AlarmClass *class)
 											   G_TYPE_NONE,
 											   1,
 											   G_TYPE_POINTER);
+	
+	alarm_signal[SIGNAL_PLAYER] = g_signal_new ("player_changed",		/* name */
+												TYPE_ALARM,	/* class type identifier */
+												G_SIGNAL_RUN_LAST, /* options */
+												G_STRUCT_OFFSET (AlarmClass, player_changed), /* handler offset */
+												NULL, /* accumulator function */
+												NULL, /* accumulator data */
+												g_cclosure_marshal_VOID__UINT, /* marshaller */
+												G_TYPE_NONE, /* type of return value */
+												1,
+												G_TYPE_UINT);
 }
 
 static void
@@ -816,6 +827,17 @@ alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg)
 }
 
 /*
+ * }} ERROR signal
+ */
+
+static void
+alarm_player_changed (Alarm *alarm, MediaPlayerState state)
+{
+	g_debug ("alarm_player_changed (%p, %d)", alarm, state);
+}
+
+
+/*
  * ALARM signal {{
  */
 
@@ -892,6 +914,17 @@ void
 alarm_clear (Alarm *alarm)
 {
 	alarm_player_stop (alarm);
+}
+
+/*
+ * Is the alarm playing?
+ */
+gboolean
+alarm_is_playing (Alarm *a)
+{
+	AlarmPrivate *priv = ALARM_PRIVATE (a);
+	
+	return priv->player && priv->player->state == MEDIA_PLAYER_PLAYING;
 }
 
 
@@ -1497,8 +1530,15 @@ alarm_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
 static void
 alarm_player_state_cb (MediaPlayer *player, MediaPlayerState state, gpointer data)
 {
+	static MediaPlayerState prev_state = MEDIA_PLAYER_INVALID;
+	
 	Alarm *alarm	   = ALARM (data);
 	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+	
+	if (state != prev_state) {
+		// Emit player_changed signal
+		g_signal_emit (alarm, alarm_signal[SIGNAL_PLAYER], 0, state, NULL);
+	}
 	
 	if (state == MEDIA_PLAYER_STOPPED) {
 		g_debug ("[%p] #%d Freeing media player %p", alarm, alarm->id, player);
