@@ -654,8 +654,16 @@ alarm_settings_dialog_close (AlarmSettingsDialog *dialog)
 		}
 	}
 	
-	// TODO: Why does this cause a segfault?
+	/* Remove alarm notify handlers! This would otherwise cause segfaults as
+	 * the callbacks would look for a non-existant dialog struct.
+	 */
+	g_signal_handlers_disconnect_matched (dialog->alarm, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
+	
+	// TODO: Why does this cause segfaults once the UI is reused?
+	Alarm *a = dialog->alarm;
+	g_debug ("FREE AlarmSettingsDialog %p alarm is %p", dialog, a);
 	g_free (dialog);
+	g_debug ("\talarm is %p", a);
 }
 
 static void
@@ -688,12 +696,15 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	GladeXML *ui = glade_xml_new (ALARM_UI_XML, "edit-alarm", NULL);
 	
 	/* Init */
-	dialog = g_new (AlarmSettingsDialog, 1);
+	dialog = g_new0 (AlarmSettingsDialog, 1);
 	
 	dialog->applet = applet;
 	dialog->alarm  = alarm;
 	dialog->player = NULL;
 	dialog->dialog = glade_xml_get_widget (ui, "edit-alarm");
+	
+	g_debug ("NEW AlarmSettingsDialog %p for alarm #%d", dialog, alarm->id);
+	g_debug ("\talarm is %p");
 	
 	/* Response from dialog */
 	g_signal_connect (dialog->dialog, "response", 
@@ -770,41 +781,6 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 #endif
 	
 	/*
-	 * glade_xml_get_widget() caches its widgets. 
-	 * So if g_object_destroy() got called on it, the next call to 
-	 * glade_xml_get_widget() would return a pointer to the destroyed widget.
-	 * Therefore we must call g_object_ref() on the widgets we intend to reuse.
-	 *
-	 * TODO: Is this correct? Was not necessary with other windows?
-	 * Without these the dialog bugs completely the second time it's opened.
-	 */
-	g_object_ref (dialog->dialog);
-	g_object_ref (dialog->clock_toggle);
-	g_object_ref (dialog->timer_toggle);
-	g_object_ref (dialog->label_entry);
-	g_object_ref (dialog->hour_spin);
-	g_object_ref (dialog->min_spin);
-	g_object_ref (dialog->sec_spin);
-	
-	g_object_ref (dialog->repeat_expand);
-	g_object_ref (dialog->repeat_label);
-	for (i = 0; i < 7; i++)
-		g_object_ref (dialog->repeat_check[i]);
-	
-	g_object_ref (dialog->notify_sound_radio);
-	g_object_ref (dialog->notify_sound_box);
-	g_object_ref (dialog->notify_sound_combo);
-	g_object_ref (dialog->notify_sound_preview);
-	g_object_ref (dialog->notify_sound_loop_check);
-	g_object_ref (dialog->notify_app_radio);
-	g_object_ref (dialog->notify_app_box);
-	g_object_ref (dialog->notify_app_combo);
-	g_object_ref (dialog->notify_app_command_box);
-	g_object_ref (dialog->notify_app_command_entry);
-	g_object_ref (dialog->notify_bubble_check);
-	
-	
-	/*
 	 * Bind widgets
 	 */
 	alarm_bind (alarm, "message", dialog->label_entry, "text");
@@ -857,6 +833,8 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	
 	/*g_signal_connect (dialog->notify_app_command_entry, "changed",
 					  G_CALLBACK (app_command_changed_cb), dialog);*/
+	
+	g_object_unref (ui);
 	
 	return dialog;
 }

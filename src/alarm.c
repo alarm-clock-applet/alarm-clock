@@ -1439,16 +1439,18 @@ alarm_gconf_get_full_key (Alarm *alarm, const gchar *key)
 typedef struct {
 	GObject *object;
 	const gchar *name;
+	gulong handler_id;
 } AlarmBindArg;
 
 static AlarmBindArg *
-alarm_bind_arg_new (GObject *object, const gchar *name)
+alarm_bind_arg_new (GObject *object, const gchar *name, gulong handler_id)
 {
 	AlarmBindArg *arg;
 	
 	arg = g_new (AlarmBindArg, 1);
 	arg->object = object;
 	arg->name = name;
+	arg->handler_id = handler_id;
 	
 	return arg;
 }
@@ -1497,6 +1499,20 @@ alarm_bind_update (GObject *object,
 }
 
 /*
+ * We would like to disconnect any signal handlers from the alarm
+ * when the destination object is finalized. And vice versa.
+ */
+static void
+alarm_bind_weak_notify (gpointer data, GObject *where_the_object_was)
+{
+	AlarmBindArg *arg = (AlarmBindArg *)data;
+	
+	g_signal_handler_disconnect (arg->object, arg->handler_id);
+	
+	alarm_bind_arg_free (arg);
+}
+
+/*
  * Binds both ways.
  */
 void
@@ -1505,9 +1521,10 @@ alarm_bind (Alarm *alarm,
 			GObject *dest, 
 			const gchar *dest_prop)
 {
-	AlarmBindArg *arg;
+	AlarmBindArg *arg, *obj_arg;
 	GParamSpec *param;
 	gchar *tmp;
+	gulong handler, obj_handler;
 	
 	param = g_object_class_find_property (G_OBJECT_GET_CLASS(alarm), prop);
 	g_assert (param);
@@ -1518,13 +1535,23 @@ alarm_bind (Alarm *alarm,
 	
 	// Alarm -> Object
 	tmp = g_strdup_printf("notify::%s", prop);
-	arg = alarm_bind_arg_new (dest, dest_prop);
-	g_signal_connect (alarm, tmp, G_CALLBACK (alarm_bind_update), arg);
+	arg = alarm_bind_arg_new (dest, dest_prop, 0);
+	handler = g_signal_connect (alarm, tmp, G_CALLBACK (alarm_bind_update), arg);
+	g_free(tmp);
 	
 	// Object -> Alarm
 	tmp = g_strdup_printf ("notify::%s", dest_prop);
-	arg = alarm_bind_arg_new (G_OBJECT (alarm), prop);
-	g_signal_connect (dest, tmp, G_CALLBACK (alarm_bind_update), arg);
+	obj_arg = alarm_bind_arg_new (G_OBJECT (alarm), prop, handler);
+	obj_handler = g_signal_connect (dest, tmp, G_CALLBACK (alarm_bind_update), obj_arg);
+	g_free(tmp);
+	
+	arg->handler_id = obj_handler;
+	
+	// Disconnect Object when Alarm is finalized (freed)
+	g_object_weak_ref (alarm, alarm_bind_weak_notify, arg);
+	
+	// Disconnect Alarm when Object is finalized (freed)
+	g_object_weak_ref (dest, alarm_bind_weak_notify, obj_arg);
 }
 
 static gint
