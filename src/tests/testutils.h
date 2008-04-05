@@ -1,6 +1,8 @@
 #ifndef TESTUTILS_H_
 #define TESTUTILS_H_
 
+/* TODO: These no longer work, should move to the new stuff in gtestutils.h */
+
 #define ASSERT_EQUALS(v1,v2)			g_assert (v1 == v2)
 
 #define ASSERT_STR_EQUALS(s1,s2)		g_assert (strcmp(s1,s2) == 0)

@@ -18,6 +18,11 @@ typedef struct _AlarmSettingsDialog {
 	GtkWidget *label_entry;
 	GtkWidget *hour_spin, *min_spin, *sec_spin;
 	
+	/* Repeat */
+	GtkWidget *repeat_expand;
+	GtkWidget *repeat_label;
+	GtkWidget *repeat_check[7];		/* Mon, tue, ..., sun check boxes */
+	
 	/* Notification */
 	GtkWidget *notify_sound_radio;
 	GtkWidget *notify_sound_box;

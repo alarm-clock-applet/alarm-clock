@@ -44,6 +44,21 @@ typedef enum {
 } AlarmType;
 
 typedef enum {
+	ALARM_REPEAT_NONE = 0,
+	ALARM_REPEAT_MON  = 1 << 0,
+	ALARM_REPEAT_TUE  = 1 << 1,
+	ALARM_REPEAT_WED  = 1 << 2,
+	ALARM_REPEAT_THU  = 1 << 3,
+	ALARM_REPEAT_FRI  = 1 << 4,
+	ALARM_REPEAT_SAT  = 1 << 5,
+	ALARM_REPEAT_SUN  = 1 << 6
+} AlarmRepeat;
+
+#define ALARM_REPEAT_WEEKDAYS	(ALARM_REPEAT_MON | ALARM_REPEAT_TUE | ALARM_REPEAT_WED | ALARM_REPEAT_THU | ALARM_REPEAT_FRI)
+#define ALARM_REPEAT_WEEKENDS	(ALARM_REPEAT_SAT | ALARM_REPEAT_SUN)
+#define ALARM_REPEAT_ALL		(ALARM_REPEAT_WEEKDAYS | ALARM_REPEAT_WEEKENDS)
+
+typedef enum {
 	ALARM_NOTIFY_INVALID = 0,
 	ALARM_NOTIFY_SOUND,		/* Notification by sound */
 	ALARM_NOTIFY_COMMAND,	/* Notification by command */
@@ -66,6 +81,7 @@ struct _Alarm {
 	time_t timer;			/* For storing the timer value for 
 							 * later use, as it can not be obtained
 							 * from the timestamp in the 'time' property. */
+	AlarmRepeat repeat;
 	
 	AlarmNotifyType notify_type;
 	gchar *sound_file;
@@ -109,6 +125,7 @@ typedef enum {
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
 #define ALARM_DEFAULT_TIMER			0
+#define ALARM_DEFAULT_REPEAT		ALARM_REPEAT_NONE
 #define ALARM_DEFAULT_NOTIFY_BUBBLE	TRUE
 
 /*
@@ -201,6 +218,11 @@ alarm_get_time (Alarm *alarm);
 
 struct tm *
 alarm_get_remain (Alarm *alarm);
+
+const gchar *alarm_repeat_to_string (AlarmRepeat repeat);
+AlarmRepeat alarm_repeat_from_string (const gchar *str);
+AlarmRepeat alarm_repeat_from_list (GSList *list);
+GSList *alarm_repeat_to_list (AlarmRepeat repeat);
 
 G_END_DECLS
 

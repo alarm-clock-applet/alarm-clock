@@ -64,6 +64,17 @@ static GConfEnumStringPair alarm_type_enum_map [] = {
 	{ 0, NULL }
 };
 
+static GConfEnumStringPair alarm_repeat_enum_map [] = {
+	{ ALARM_REPEAT_MON,	"mon" },
+	{ ALARM_REPEAT_TUE,	"tue" },
+	{ ALARM_REPEAT_WED,	"wed" },
+	{ ALARM_REPEAT_THU,	"thu" },
+	{ ALARM_REPEAT_FRI,	"fri" },
+	{ ALARM_REPEAT_SAT,	"sat" },
+	{ ALARM_REPEAT_SUN,	"sun" },
+	{ 0, NULL }
+};
+
 static GConfEnumStringPair alarm_notify_type_enum_map [] = {
 	{ ALARM_NOTIFY_SOUND,	"sound"  },
 	{ ALARM_NOTIFY_COMMAND,	"command" },
@@ -80,6 +91,7 @@ static enum {
 	PROP_ACTIVE,
 	PROP_MESSAGE,
 	PROP_TIMER,
+	PROP_REPEAT,
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
@@ -94,6 +106,7 @@ static enum {
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
 #define PROP_NAME_TIMER			"timer"
+#define PROP_NAME_REPEAT		"repeat"
 #define PROP_NAME_NOTIFY_TYPE	"notify_type"
 #define PROP_NAME_SOUND_FILE	"sound_file"
 #define PROP_NAME_SOUND_LOOP	"sound_repeat"
@@ -117,6 +130,21 @@ static void alarm_alarm (Alarm *alarm);
 static void alarm_error (Alarm *alarm, GError *err);
 static void alarm_player_changed (Alarm *alarm, MediaPlayerState state);
 
+/* For debugging purposes only */
+static void
+dump_list (GSList *list)
+{
+	GSList *l;
+	
+	g_print ("[ ");
+	for (l = list; l; l = l->next) {
+		g_print ("%s", (gchar *)l->data);
+		if (l->next)
+			g_print (", ");
+	}
+	g_print (" ]");
+}
+
 
 /* Initialize the Alarm class */
 static void 
@@ -129,6 +157,7 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *active_param;
 	GParamSpec *message_param;
 	GParamSpec *timer_param;
+	GParamSpec *repeat_param;
 	GParamSpec *notify_type_param;
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
@@ -194,6 +223,14 @@ alarm_class_init (AlarmClass *class)
 									 0,					/* default */
 									 G_PARAM_READWRITE);
 	
+	repeat_param = g_param_spec_uint (PROP_NAME_REPEAT,
+									  "repeat",
+									  "repeat the alarm",
+									  ALARM_REPEAT_NONE,	/* min */
+									  ALARM_REPEAT_ALL,		/* max */
+									  ALARM_DEFAULT_REPEAT,	/* default */
+									  G_PARAM_READWRITE);
+	
 	notify_type_param = g_param_spec_uint (PROP_NAME_NOTIFY_TYPE,
 										"notification type",
 										"what kind of notification should be used",
@@ -241,6 +278,7 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_ACTIVE, active_param);
 	g_object_class_install_property (g_object_class, PROP_MESSAGE, message_param);
 	g_object_class_install_property (g_object_class, PROP_TIMER, timer_param);
+	g_object_class_install_property (g_object_class, PROP_REPEAT, repeat_param);
 	g_object_class_install_property (g_object_class, PROP_NOTIFY_TYPE, notify_type_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
@@ -288,6 +326,32 @@ alarm_class_init (AlarmClass *class)
 												G_TYPE_UINT);
 }
 
+/*
+ * Utility function for extracting the strings out of a GConfValue of type
+ * GCONF_VALUE_LIST and placing them in a plan GSList of strings.
+ * 
+ * Note: You should free the GSList returned but NOT the string contents.
+ */
+static GSList *
+alarm_gconf_extract_list_string (GConfValue *val)
+{
+	GSList *list, *new_list, *l;
+	
+	g_assert (GCONF_VALUE_STRING == gconf_value_get_list_type (val));
+	
+	/* Fetch GSList of GConfValues. Extract them and put into a plain list of strings.
+	 * Note that the returned string from gconf_value_get_string() is owned by the GConfValue
+	 * and should thus NOT be freed.
+	 */
+	list = gconf_value_get_list (val);
+	new_list = NULL;
+	for (l = list; l; l = l->next) {
+		new_list = g_slist_append (new_list, (gpointer) gconf_value_get_string ((GConfValue *)l->data));
+	}
+	
+	return new_list;
+}
+
 static void
 alarm_gconf_load (Alarm *alarm)
 {
@@ -295,6 +359,7 @@ alarm_gconf_load (Alarm *alarm)
 	GConfClient *client = priv->gconf_client;
 	GConfValue *val;
 	gchar *key, *tmp;
+	GSList *list;
 	guint i;
 	
 	/*
@@ -376,6 +441,25 @@ alarm_gconf_load (Alarm *alarm)
 	} else {
 		// Not found in GConf, fall back to defaults
 		g_object_set (alarm, PROP_NAME_TIMER, ALARM_DEFAULT_TIMER, NULL);
+	}
+	
+	/*
+	 * REPEAT
+	 */
+	key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
+	val = gconf_client_get (client, key, NULL);
+	g_free (key);
+	
+	if (val) {
+		list = alarm_gconf_extract_list_string (val);
+		
+		alarm->repeat = alarm_repeat_from_list (list);
+		
+		g_slist_free (list);
+		gconf_value_free (val);
+	} else {
+		// Not found in GConf, fall back to defaults
+		g_object_set (alarm, PROP_NAME_REPEAT, ALARM_DEFAULT_REPEAT, NULL);
 	}
 	
 	/*
@@ -499,6 +583,7 @@ alarm_set_property (GObject *object,
 	guint		 d, old;
 	AlarmType 	 type, new_type;
 	gboolean	 bool;
+	GSList		*list;
 	
 	gchar *key, *tmp;
 
@@ -660,6 +745,26 @@ alarm_set_property (GObject *object,
 		
 		g_free (key);
 		break;
+	case PROP_REPEAT:
+		alarm->repeat = g_value_get_uint (value);
+		
+		key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
+		list = alarm_repeat_to_list (alarm->repeat);
+		
+		if (!gconf_client_set_list(client, key, 
+								   GCONF_VALUE_STRING, list, 
+								   &err)) {
+			
+			g_critical ("Could not set %s (gconf): %s", 
+						key, err->message);
+			
+			g_error_free (err);
+		}
+		
+		g_slist_free (list);
+		g_free (key);
+		
+		break;
 	case PROP_NOTIFY_TYPE:
 		alarm->notify_type = g_value_get_uint (value);
 		
@@ -781,6 +886,9 @@ alarm_get_property (GObject *object,
 		break;
 	case PROP_TIMER:
 		g_value_set_uint (value, alarm->timer);
+		break;
+	case PROP_REPEAT:
+		g_value_set_uint (value, alarm->repeat);
 		break;
 	case PROP_NOTIFY_TYPE:
 		g_value_set_uint (value, alarm->notify_type);
@@ -1053,7 +1161,7 @@ alarm_gconf_connect (Alarm *alarm)
 	
 	dir = alarm_gconf_get_dir (alarm);
 	
-	g_debug ("alarm_gconf_connect (%p) to dir %s", alarm, dir);
+//	g_debug ("alarm_gconf_connect (%p) to dir %s", alarm, dir);
 	
 	gconf_client_add_dir (priv->gconf_client, dir, 
 						  GCONF_CLIENT_PRELOAD_ONELEVEL, &err);
@@ -1076,7 +1184,7 @@ alarm_gconf_connect (Alarm *alarm)
 		err = NULL;
 	}
 	
-	g_debug ("alarm_gconf_connect: Added listener %d to alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
+//	g_debug ("alarm_gconf_connect: Added listener %d to alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
 	
 	g_free (dir);
 }
@@ -1114,6 +1222,7 @@ alarm_gconf_dir_changed (GConfClient *client,
 	guint i;
 	gboolean b;
 	const gchar *str;
+	GSList *list;
 	
 	name = g_path_get_basename (entry->key);
 	param = g_object_class_find_property (G_OBJECT_GET_CLASS (alarm), name);
@@ -1153,6 +1262,15 @@ alarm_gconf_dir_changed (GConfClient *client,
 		i = gconf_value_get_int (entry->value);
 		if (i != alarm->timer)
 			g_object_set (alarm, name, i, NULL);
+		break;
+	case PROP_REPEAT:
+		list = alarm_gconf_extract_list_string (entry->value);
+		
+		i = alarm_repeat_from_list (list);
+		if (i != alarm->repeat)
+			g_object_set (alarm, name, i, NULL);
+		
+		g_slist_free (list);
 		break;
 	case PROP_NOTIFY_TYPE:
 		str = gconf_value_get_string (entry->value);
@@ -1690,11 +1808,13 @@ alarm_get_time (Alarm *alarm)
 /*
  * Get the remaining alarm time.
  */
+static struct tm tm;
+
 struct tm *
 alarm_get_remain (Alarm *alarm)
 {
 	time_t now;
-	struct tm tm;
+	//struct tm tm;
 	
 	now = time (NULL);
 	tm.tm_sec = alarm->time - now;
@@ -1708,6 +1828,57 @@ alarm_get_remain (Alarm *alarm)
 	return &tm;
 }
 
+/*
+ * AlarmRepeat utilities {{
+ */
 
+const gchar *
+alarm_repeat_to_string (AlarmRepeat repeat)
+{
+	return gconf_enum_to_string (alarm_repeat_enum_map, repeat);
+}
 
+AlarmRepeat
+alarm_repeat_from_string (const gchar *str)
+{
+	AlarmRepeat ret = ALARM_REPEAT_NONE;
+	
+	if (!str)
+		return ret;
+	
+	gconf_string_to_enum (alarm_repeat_enum_map, str, (gint *)&ret);
+	
+	return ret;
+}
 
+AlarmRepeat
+alarm_repeat_from_list (GSList *list)
+{
+	GSList *l;
+	AlarmRepeat repeat = ALARM_REPEAT_NONE;
+	
+	for (l = list; l; l = l->next) {
+		repeat |= alarm_repeat_from_string ((gchar *)l->data);
+	}
+	
+	return repeat;
+}
+
+GSList *
+alarm_repeat_to_list (AlarmRepeat repeat)
+{
+	GSList *list = NULL;
+	AlarmRepeat r;
+	gint i;
+	
+	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+		if (repeat & r)
+			list = g_slist_append (list, (gpointer) alarm_repeat_to_string (r));
+	}
+	
+	return list;
+}
+
+/*
+ * }} AlarmRepeat utilities
+ */

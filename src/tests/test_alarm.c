@@ -13,6 +13,7 @@
 										  "time", &time,		\
 										  "message", &message,	\
 										  "timer", &timer,		\
+										  "repeat", &repeat,	\
 										  "notify_type", &ntype,\
 										  "sound_file", &sound_file,\
 										  "sound_repeat", &sound_repeat,\
@@ -26,6 +27,7 @@
 									 "\ttime: %d\n"				\
 									 "\tmessage: %s\n"			\
 									 "\ttimer: %d\n"			\
+									 "\trepeat: %d\n"			\
 									 "\tnotify_type: %s\n"		\
 									 "\tsound_file: %s\n"		\
 									 "\tsound_repeat: %d\n"		\
@@ -33,7 +35,7 @@
 									 "\tactive: %s\n"			\
 									 ,(alarm), gconf_dir, id,	\
 									 alarm_type_to_string (type),\
-									 time, message, timer,		\
+									 time, message, timer, repeat,		\
 									 alarm_notify_type_to_string (ntype),\
 									 sound_file, sound_repeat,	\
 									 command, (active) ? "YES" : "NO");
@@ -128,6 +130,7 @@ void test_alarm_object (void)
 	gboolean sound_repeat;
 	gchar *command;
 	gboolean active;
+	AlarmRepeat repeat;
 	
 	g_type_init();
 	
@@ -138,18 +141,26 @@ void test_alarm_object (void)
 						  "gconf-dir", GCONF_DIR,
 						  NULL);
 	
+	g_print ("\nAfter instantiate:\n");
 	DUMP_ALARM (alarm);
+	
 	
 //	g_object_set (alarm, "gconf-dir", "bar", NULL);		// Shouldn't work
 	g_object_set (alarm, "id", 0, NULL);
 	g_object_set (alarm, "type", ALARM_TYPE_TIMER, NULL);
+	g_object_set (alarm, "active", FALSE, NULL);
 	g_object_set (alarm, "time", 1234, NULL);
 	g_object_set (alarm, "message", "Wakety zooom!", NULL);
 	g_object_set (alarm, "timer", 4567, NULL);
+	g_object_set (alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, NULL);
 	g_object_set (alarm, "notify_type", ALARM_NOTIFY_COMMAND, NULL);
 	g_object_set (alarm, "sound_file", "file:///foo/bar", NULL);
 	g_object_set (alarm, "sound_repeat", FALSE, NULL);
 	g_object_set (alarm, "command", "wiggle-your-toe --arg", NULL);
+	
+	g_print ("\nAfter set():\n");
+	DUMP_ALARM (alarm);
+	sleep (5);
 	
 	/* Verify properties */
 	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
@@ -158,18 +169,25 @@ void test_alarm_object (void)
 	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
 	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
 	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
+	ASSERT_PROP_EQUALS		(alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, gint);
 	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
 	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
 	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
 	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
-	
-	DUMP_ALARM (alarm);
 	
 	g_object_unref (alarm);
 	
 	alarm = alarm_new (GCONF_DIR, 0);
 	alarm2 = alarm_new (GCONF_DIR, 7);
 	
+	g_debug ("\nAfter clean & new instance:\n");
+	
+	DUMP_ALARM (alarm);
+	DUMP_ALARM (alarm2);
+	
+	sleep (5);
+		
+	
 	/* Verify properties */
 	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
 	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
@@ -177,13 +195,13 @@ void test_alarm_object (void)
 	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
 	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
 	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
+	ASSERT_PROP_EQUALS		(alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, gint);
 	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
 	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
 	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
 	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
 	
-	DUMP_ALARM (alarm);
-	DUMP_ALARM (alarm2);
+	
 	
 	g_signal_connect (alarm, "notify", 
 					  G_CALLBACK (test_alarm_object_changed),
@@ -226,6 +244,7 @@ test_alarm_list (void)
 	gboolean sound_repeat;
 	gchar *command;
 	gboolean active;
+	AlarmRepeat repeat;
 	
 	g_print ("\nTEST ALARM LIST:\n"
 			 "==================\n");
@@ -331,6 +350,71 @@ test_alarm_trigger (void)
 	alarm_trigger (alarm2);
 }
 
+static void
+dump_list (GSList *list)
+{
+	GSList *l;
+	
+	g_print ("[ ");
+	for (l = list; l; l = l->next) {
+		g_print ("%s", (gchar *)l->data);
+		if (l->next)
+			g_print (", ");
+	}
+	g_print (" ]");
+}
+
+void
+test_alarm_repeat (void)
+{
+	AlarmRepeat r, rep;
+	const gchar *str;
+	gint i;
+	GSList *list;
+	
+	g_print ("\nTEST ALARM REPEAT:\n"
+			 "==================\n");
+	
+	// Single
+	g_print ("SINGLE:\n");
+	for (r = ALARM_REPEAT_MON, i = 1; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+		str = alarm_repeat_to_string (r);
+		g_print ("to_string(%d) = %s\n", r, str);
+		rep = alarm_repeat_from_string (str);
+		g_print ("from_string(%s) = %d\n", str, rep);
+		
+		g_assert (r == rep);
+	}
+	
+	// List
+	g_print ("\nLIST:\n");
+	
+	rep = ALARM_REPEAT_NONE;
+	list = alarm_repeat_to_list (rep);
+	g_print ("to_list(ALARM_REPEAT_NONE): %p\n", list);
+	g_assert (NULL == list);
+	
+	rep = alarm_repeat_from_list (list);
+	g_print ("from_list(NULL): %d\n", rep);
+	g_assert (ALARM_REPEAT_NONE == rep);
+	
+	rep = ALARM_REPEAT_MON | ALARM_REPEAT_WED | ALARM_REPEAT_FRI;
+	list = alarm_repeat_to_list (rep);
+	g_print ("to_list(ALARM_REPEAT_MON | ALARM_REPEAT_WED | ALARM_REPEAT_FRI = %d): ", rep);
+	dump_list (list);
+	g_print ("\n");
+	
+	r = alarm_repeat_from_list (list);
+	g_print ("from_list(");
+	dump_list(list);
+	g_print ("): %d\n", r);
+	
+	g_assert (r == rep);
+	
+	// Should free data as well but we're lazy
+	g_slist_free (list);
+}
+
 gboolean
 test_alarm_timer_disable2 (gpointer data)
 {
@@ -349,6 +433,7 @@ int main (void)
 	test_alarm_list ();
 	test_alarm_signals ();
 	test_alarm_trigger ();
+	test_alarm_repeat ();
 	test_alarm_timers ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);

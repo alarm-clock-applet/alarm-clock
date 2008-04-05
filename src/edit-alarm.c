@@ -20,6 +20,10 @@ static void
 app_combo_changed_cb (GtkComboBox *combo, AlarmSettingsDialog *dialog);
 
 
+
+#define REPEAT_LABEL	_("_Repeat alarm: %s")
+
+
 /*
  * Utility functions
  */
@@ -75,8 +79,10 @@ alarm_settings_update_type (AlarmSettingsDialog *dialog)
 {
 	if (dialog->alarm->type == ALARM_TYPE_CLOCK) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->clock_toggle), TRUE);
+		gtk_widget_set_sensitive(dialog->repeat_expand, TRUE);
 	} else {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->timer_toggle), TRUE);
+		gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
 	}
 }
 
@@ -95,6 +101,55 @@ alarm_settings_update_time (AlarmSettingsDialog *dialog)
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), tm->tm_hour);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->min_spin), tm->tm_min);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->sec_spin), tm->tm_sec);
+}
+
+static void
+alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
+{
+	AlarmRepeat r;
+	gint i;
+	gboolean check;
+	gchar *label;
+	
+	/*
+	 * Update check boxes
+	 */
+	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+		check = (dialog->alarm->repeat & r) != 0;
+		
+		// Activate the appropriate widget
+		g_object_set (dialog->repeat_check[i], "active", check, NULL);
+	}
+	
+	
+	/*
+	 * Update fancy expander label
+	 */
+	
+	if (dialog->alarm->repeat == ALARM_REPEAT_NONE) {
+		// NO REPEAT
+		label = g_strdup_printf (REPEAT_LABEL, _("None"));
+		
+	} else if (dialog->alarm->repeat == ALARM_REPEAT_WEEKDAYS) {
+		// REPEAT WEEKDAYS
+		label = g_strdup_printf (REPEAT_LABEL, _("Weekdays"));
+		
+	} else if (dialog->alarm->repeat == ALARM_REPEAT_WEEKENDS) {
+		// REPEAT WEEKENDS
+		label = g_strdup_printf (REPEAT_LABEL, _("Weekends"));
+		
+	} else if (dialog->alarm->repeat == ALARM_REPEAT_ALL) {
+		// REPEAT WEEK
+		label = g_strdup_printf (REPEAT_LABEL, _("Whole week"));
+		
+	} else {
+		// CUSTOM
+		label = g_strdup_printf (REPEAT_LABEL, _("Yes"));
+	}
+	
+	g_object_set (dialog->repeat_label, "label", label, NULL);
+	
+	g_free (label);
 }
 
 static void
@@ -199,6 +254,7 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	
 	alarm_settings_update_type (dialog);
 	alarm_settings_update_time (dialog);
+	alarm_settings_update_repeat (dialog);
 	alarm_settings_update_notify_type (dialog);
 	alarm_settings_update_sound (dialog);
 	alarm_settings_update_app (dialog);
@@ -235,6 +291,16 @@ alarm_time_changed (GObject *object,
 		return;
 	
 	alarm_settings_update_time (dialog);
+}
+
+static void
+alarm_repeat_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	alarm_settings_update_repeat (dialog);
 }
 
 static void
@@ -397,6 +463,33 @@ time_changed_cb (GtkSpinButton *spinbutton, gpointer data)
 	} else {
 		alarm_set_timer (dialog->alarm, hour, min, sec);
 	}
+}
+
+static void
+repeat_changed_cb (GtkToggleButton *togglebutton,
+				   gpointer         data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	const gchar *name;
+	AlarmRepeat rep, new_rep;
+	gboolean active;
+
+	/* The check buttons have the same name as the 3 letter
+	 * string representation of the day.
+	 */
+	name   = gtk_widget_get_name (GTK_WIDGET (togglebutton));
+	rep    = alarm_repeat_from_string (name);
+	active = gtk_toggle_button_get_active (togglebutton);
+	
+	if (active)
+		// Add rep
+		new_rep = dialog->alarm->repeat | rep;
+	else
+		// Remove rep
+		new_rep = dialog->alarm->repeat & ~rep;
+	
+	g_object_set (dialog->alarm, "repeat", new_rep, NULL);
 }
 
 static void
@@ -589,6 +682,8 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 {
 	AlarmSettingsDialog *dialog;
 	GtkWidget *clock_content, *timer_content;
+	AlarmRepeat r;
+	gint i;
 	
 	GladeXML *ui = glade_xml_new (ALARM_UI_XML, "edit-alarm", NULL);
 	
@@ -628,6 +723,19 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	dialog->hour_spin = glade_xml_get_widget (ui, "hour-spin");
 	dialog->min_spin = glade_xml_get_widget (ui, "minute-spin");
 	dialog->sec_spin = glade_xml_get_widget (ui, "second-spin");
+	
+	/*
+	 * REPEAT SETTINGS
+	 */
+	dialog->repeat_expand = glade_xml_get_widget (ui, "repeat-expand");
+	dialog->repeat_label  = glade_xml_get_widget (ui, "repeat-label");
+	
+	/* The check buttons have the same name as the 3 letter
+	 * string representation of the day.
+	 */
+	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+		dialog->repeat_check[i] = glade_xml_get_widget (ui, alarm_repeat_to_string (r));
+	}
 	
 	/*
 	 * NOTIFY SETTINGS
@@ -678,6 +786,11 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	g_object_ref (dialog->min_spin);
 	g_object_ref (dialog->sec_spin);
 	
+	g_object_ref (dialog->repeat_expand);
+	g_object_ref (dialog->repeat_label);
+	for (i = 0; i < 7; i++)
+		g_object_ref (dialog->repeat_check[i]);
+	
 	g_object_ref (dialog->notify_sound_radio);
 	g_object_ref (dialog->notify_sound_box);
 	g_object_ref (dialog->notify_sound_combo);
@@ -715,6 +828,11 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
 	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
 	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
+	
+	/* repeat */
+	g_signal_connect (alarm, "notify::repeat", G_CALLBACK (alarm_repeat_changed), dialog);
+	for (i = 0; i < 7; i++)
+		g_signal_connect (dialog->repeat_check[i], "toggled", G_CALLBACK (repeat_changed_cb), dialog);
 	
 	/* notify type */
 	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);
