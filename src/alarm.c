@@ -960,7 +960,17 @@ alarm_trigger (Alarm *alarm)
 {
 	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
 	
-	alarm_disable (alarm);
+	/*
+	 * Do we want to repeat this alarm?
+	 */
+	if (alarm_should_repeat (alarm)) {
+		g_debug ("alarm_trigger REPEATING");
+		struct tm *tm = localtime (&(alarm->time));
+		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, alarm_repeat_next_wday (alarm->repeat));
+		
+	} else {
+		alarm_disable (alarm);
+	}
 	
 	switch (alarm->notify_type) {
 	case ALARM_NOTIFY_SOUND:
@@ -1047,8 +1057,8 @@ alarm_timer_update (Alarm *alarm)
 	if (now >= alarm->time) {
 		alarm_trigger (alarm);
 		
-		// Remove callback
-		return FALSE;
+		// Remove callback only if we don't intend to repeat the alarm
+		return alarm_should_repeat (alarm);
 	} else if (alarm->time - now <= 10) {
 		g_debug ("[%p] #%d %2d...", alarm, alarm->id, (int)(alarm->time - now));
 	}
@@ -1548,7 +1558,7 @@ alarm_bind (Alarm *alarm,
 	arg->handler_id = obj_handler;
 	
 	// Disconnect Object when Alarm is finalized (freed)
-	g_object_weak_ref (alarm, alarm_bind_weak_notify, arg);
+	g_object_weak_ref (G_OBJECT (alarm), alarm_bind_weak_notify, arg);
 	
 	// Disconnect Alarm when Object is finalized (freed)
 	g_object_weak_ref (dest, alarm_bind_weak_notify, obj_arg);
@@ -1754,38 +1764,89 @@ alarm_command_run (Alarm *alarm)
 }
 
 /*
- * Set time according to hour, min, sec
+ * Calculates the distance from wday1 to wday2
+ */
+static gint
+alarm_wday_distance (wday1, wday2)
+{
+	gint d;
+	
+	d = wday2 - wday1;
+	if (d < 0)
+		d += 7;
+	
+	return d;
+}
+
+/*
+ * Set time according to hour, min, sec and wday
+ * 
+ * wday=-1 equals closest matching day (today or tomorrow depending on hour:min:sec)
+ * wday=7  equals in a week
  */
 void
-alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
+alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gint wday)
 {
 	time_t now, new;
+	gint d;
 	struct tm *tm;
 	
 	time (&now);
 	tm = localtime (&now);
 	
-	// Check if the alarm is for tomorrow
-	if (hour < tm->tm_hour ||
-		(hour == tm->tm_hour && minute < tm->tm_min) ||
-		(hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
+	g_assert (wday <= 7 && wday >= -1);
+	
+	if (wday < 0 || wday == tm->tm_wday) {
+		// Check if the alarm is for tomorrow
+		if (hour < tm->tm_hour ||
+			(hour == tm->tm_hour && minute < tm->tm_min) ||
+			(hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
+			
+			if (wday < 0) {
+				g_debug("alarm_set_time_full: Alarm is for tomorrow.");
+				tm->tm_mday++;
+			} else {
+				// wday == tm->tm_wday
+				g_debug("alarm_set_time_full: Alarm is in 1 week.");
+				tm->tm_mday += 7;
+			}
+		}
+	} else {
+		// Calculate distance from now to wday
+		if (wday == 7) {
+			g_debug("alarm_set_time_full: Alarm is in (forced) 1 week.");
+			d = 7;
+		} else {
+			g_debug ("d = wday(%d) - tm->tm_wday(%d)", wday, tm->tm_wday);
+			d = alarm_wday_distance (tm->tm_wday, wday);
+		}
 		
-		g_debug("alarm_set_time: Alarm is for tomorrow.");
-		tm->tm_mday++;
+		g_debug ("alarm_set_time_full: Alarm is in %d days.", d);
+		
+		tm->tm_mday += d;
 	}
 	
 	tm->tm_hour = hour;
-	tm->tm_min = minute;
-	tm->tm_sec = second;
+	tm->tm_min  = minute;
+	tm->tm_sec  = second;
 	
 	// DEBUG:
 	char tmp[512];
 	strftime (tmp, sizeof (tmp), "%c", tm);
-	g_debug ("alarm_set_time: Alarm will trigger at %s", tmp);
+	g_debug ("alarm_set_time_full: Alarm will trigger at %s", tmp);
 	
 	new = mktime (tm);
-	g_debug ("alarm_set_time: Setting to %d", new);
+	g_debug ("alarm_set_time_full: Setting to %d", new);
 	g_object_set (alarm, "time", new, NULL);
+}
+
+/*
+ * Set time according to hour, min, sec
+ */
+void
+alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
+{
+	alarm_set_time_full (alarm, hour, minute, second, -1);
 }
 
 /*
@@ -1904,6 +1965,80 @@ alarm_repeat_to_list (AlarmRepeat repeat)
 	}
 	
 	return list;
+}
+
+// AlarmRepeat starts on monday, whereas tm->wday starts on sunday
+guint
+alarm_repeat_to_wday (AlarmRepeat repeat)
+{
+	gint i;
+	
+	for (i = 0; i < 7; i++) {
+		if (repeat & 1 << i) {
+			i++;
+			if (i > 6)
+				i = 0;
+			return i;
+		}
+	}
+}
+
+AlarmRepeat
+alarm_repeat_from_wday (gint wday)
+{
+	wday--;
+	if (wday < 0)
+		wday = 6;
+	
+	return 1 << wday;
+}
+
+/*
+ * Get the next week day in repeat
+ */
+gint
+alarm_repeat_next_wday (AlarmRepeat repeat)
+{
+	struct tm *tm;
+	time_t now;
+	gint i, d, wday = -1;
+	
+	time (&now);
+	tm = localtime (&now);
+	
+	//i = (tm->tm_wday == 6) ? 0 : tm->tm_wday + 1;
+	//tm->tm_wday--;
+	
+	// Try finding a day in this week
+	for (i = tm->tm_wday + 1; i < 7; i++) {
+		if (repeat & 1 << i) {
+			// FOUND!
+			wday = i;
+			break;
+		}
+	}
+	
+	// If we haven't found a day in the current week, check next week
+	if (wday == -1) {
+		for (i = 0; i <= tm->tm_wday; i++) {
+			if (repeat & alarm_repeat_from_wday (i)) {
+				// FOUND!
+				wday = i;
+				break;
+			}
+		}
+	}
+	
+	if (wday == tm->tm_wday)
+		wday = 7;
+	
+	return wday;
+}
+
+gboolean
+alarm_should_repeat (Alarm *alarm)
+{
+	return alarm->type == ALARM_TYPE_CLOCK && alarm->repeat != ALARM_REPEAT_NONE;
 }
 
 /*

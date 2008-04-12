@@ -202,6 +202,9 @@ void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
 
 void
+alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gint wday);
+
+void
 alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second);
 
 void
@@ -223,6 +226,10 @@ const gchar *alarm_repeat_to_string (AlarmRepeat repeat);
 AlarmRepeat alarm_repeat_from_string (const gchar *str);
 AlarmRepeat alarm_repeat_from_list (GSList *list);
 GSList *alarm_repeat_to_list (AlarmRepeat repeat);
+guint alarm_repeat_to_wday (AlarmRepeat repeat);
+AlarmRepeat alarm_repeat_from_wday (gint wday);
+gint alarm_repeat_next_wday (AlarmRepeat repeat);
+gboolean alarm_should_repeat (Alarm *alarm);
 
 G_END_DECLS
 

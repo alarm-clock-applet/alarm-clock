@@ -160,7 +160,6 @@ void test_alarm_object (void)
 	
 	g_print ("\nAfter set():\n");
 	DUMP_ALARM (alarm);
-	sleep (5);
 	
 	/* Verify properties */
 	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
@@ -184,8 +183,6 @@ void test_alarm_object (void)
 	
 	DUMP_ALARM (alarm);
 	DUMP_ALARM (alarm2);
-	
-	sleep (5);
 		
 	
 	/* Verify properties */
@@ -413,6 +410,52 @@ test_alarm_repeat (void)
 	
 	// Should free data as well but we're lazy
 	g_slist_free (list);
+	
+	
+	g_print ("\nALARM_SET_TIME_FULL:\n");
+	g_object_set (alarm, "active", FALSE, NULL);
+	
+	struct tm *tm;
+	time_t now;
+	time (&now);
+	
+	tm = localtime (&now);
+	
+	char tmp[512];
+	strftime (tmp, sizeof (tmp), "%c", tm);
+	g_print ("\nTIME NOW IS: %s (wday=%d)\n\n", tmp, tm->tm_wday);
+	
+	g_print ("\n\tSet to future with wday=-1:\n");
+	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec+10, -1);
+	
+	g_print ("\n\tSet to past with wday=-1:\n");
+	tm = localtime (&now);
+	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec-10, -1);
+	
+	g_print ("\n\tSet to future with wday=today:\n");
+	tm = localtime (&now);
+	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec+10, tm->tm_wday);
+	
+	g_print ("\n\tSet to past with wday=today:\n");
+	tm = localtime (&now);
+	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec-10, tm->tm_wday);
+	
+	for (i = 0; i <= 7; i++) {
+		g_print ("\n\tSet to now with wday=%d\n", i);
+		tm = localtime (&now);
+		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, i);
+	}
+	
+	
+	g_print ("\nALARM_REPEAT_NEXT_WDAY:\n");
+	
+	g_print ("NONE: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_NONE));
+	g_print ("SAT: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT));
+	g_print ("SAT|FRI: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT | ALARM_REPEAT_FRI));
+	g_print ("SAT|THU|FRI: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT | ALARM_REPEAT_THU | ALARM_REPEAT_FRI));
+	g_print ("WEEKDAYS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKDAYS));
+	g_print ("WEEKENDS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKENDS));
+	g_print ("ALL: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_ALL));
 }
 
 gboolean
@@ -432,9 +475,9 @@ int main (void)
 	test_alarm_object ();
 	test_alarm_list ();
 	test_alarm_signals ();
-	test_alarm_trigger ();
+	//test_alarm_trigger ();
 	test_alarm_repeat ();
-	test_alarm_timers ();
+	//test_alarm_timers ();
 	
 	loop = g_main_loop_new (g_main_context_default(), FALSE);
 	
