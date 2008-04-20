@@ -45,13 +45,13 @@ typedef enum {
 
 typedef enum {
 	ALARM_REPEAT_NONE = 0,
-	ALARM_REPEAT_MON  = 1 << 0,
-	ALARM_REPEAT_TUE  = 1 << 1,
-	ALARM_REPEAT_WED  = 1 << 2,
-	ALARM_REPEAT_THU  = 1 << 3,
-	ALARM_REPEAT_FRI  = 1 << 4,
-	ALARM_REPEAT_SAT  = 1 << 5,
-	ALARM_REPEAT_SUN  = 1 << 6
+	ALARM_REPEAT_SUN  = 1 << 0,
+	ALARM_REPEAT_MON  = 1 << 1,
+	ALARM_REPEAT_TUE  = 1 << 2,
+	ALARM_REPEAT_WED  = 1 << 3,
+	ALARM_REPEAT_THU  = 1 << 4,
+	ALARM_REPEAT_FRI  = 1 << 5,
+	ALARM_REPEAT_SAT  = 1 << 6,
 } AlarmRepeat;
 
 #define ALARM_REPEAT_WEEKDAYS	(ALARM_REPEAT_MON | ALARM_REPEAT_TUE | ALARM_REPEAT_WED | ALARM_REPEAT_THU | ALARM_REPEAT_FRI)
@@ -228,7 +228,8 @@ AlarmRepeat alarm_repeat_from_list (GSList *list);
 GSList *alarm_repeat_to_list (AlarmRepeat repeat);
 guint alarm_repeat_to_wday (AlarmRepeat repeat);
 AlarmRepeat alarm_repeat_from_wday (gint wday);
-gint alarm_repeat_next_wday (AlarmRepeat repeat);
+gint alarm_repeat_next_wday (AlarmRepeat repeat, gint today);
+gint alarm_wday_distance (gint wday1, gint wday2);
 gboolean alarm_should_repeat (Alarm *alarm);
 
 G_END_DECLS

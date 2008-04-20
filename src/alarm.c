@@ -65,13 +65,13 @@ static GConfEnumStringPair alarm_type_enum_map [] = {
 };
 
 static GConfEnumStringPair alarm_repeat_enum_map [] = {
+	{ ALARM_REPEAT_SUN,	"sun" },
 	{ ALARM_REPEAT_MON,	"mon" },
 	{ ALARM_REPEAT_TUE,	"tue" },
 	{ ALARM_REPEAT_WED,	"wed" },
 	{ ALARM_REPEAT_THU,	"thu" },
 	{ ALARM_REPEAT_FRI,	"fri" },
 	{ ALARM_REPEAT_SAT,	"sat" },
-	{ ALARM_REPEAT_SUN,	"sun" },
 	{ 0, NULL }
 };
 
@@ -966,7 +966,7 @@ alarm_trigger (Alarm *alarm)
 	if (alarm_should_repeat (alarm)) {
 		g_debug ("alarm_trigger REPEATING");
 		struct tm *tm = localtime (&(alarm->time));
-		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, alarm_repeat_next_wday (alarm->repeat));
+		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, alarm_repeat_next_wday (alarm->repeat, tm->tm_wday));
 		
 	} else {
 		alarm_disable (alarm);
@@ -1766,8 +1766,8 @@ alarm_command_run (Alarm *alarm)
 /*
  * Calculates the distance from wday1 to wday2
  */
-static gint
-alarm_wday_distance (wday1, wday2)
+gint
+alarm_wday_distance (gint wday1, gint wday2)
 {
 	gint d;
 	
@@ -1817,7 +1817,7 @@ alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gint 
 			g_debug("alarm_set_time_full: Alarm is in (forced) 1 week.");
 			d = 7;
 		} else {
-			g_debug ("d = wday(%d) - tm->tm_wday(%d)", wday, tm->tm_wday);
+			g_debug ("d = tm->tm_wday(%d) - wday(%d)", tm->tm_wday, wday);
 			d = alarm_wday_distance (tm->tm_wday, wday);
 		}
 		
@@ -1959,7 +1959,7 @@ alarm_repeat_to_list (AlarmRepeat repeat)
 	AlarmRepeat r;
 	gint i;
 	
-	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		if (repeat & r)
 			list = g_slist_append (list, (gpointer) alarm_repeat_to_string (r));
 	}
@@ -1967,52 +1967,30 @@ alarm_repeat_to_list (AlarmRepeat repeat)
 	return list;
 }
 
-// AlarmRepeat starts on monday, whereas tm->wday starts on sunday
-guint
-alarm_repeat_to_wday (AlarmRepeat repeat)
-{
-	gint i;
-	
-	for (i = 0; i < 7; i++) {
-		if (repeat & 1 << i) {
-			i++;
-			if (i > 6)
-				i = 0;
-			return i;
-		}
-	}
-}
 
-AlarmRepeat
-alarm_repeat_from_wday (gint wday)
-{
-	wday--;
-	if (wday < 0)
-		wday = 6;
-	
-	return 1 << wday;
-}
 
 /*
  * Get the next week day in repeat
+ * 
+ * repeat = AlarmRepeat bitmap
+ * today  = The wday today, sun = 0
  */
 gint
-alarm_repeat_next_wday (AlarmRepeat repeat)
+alarm_repeat_next_wday (AlarmRepeat repeat, gint today)
 {
-	struct tm *tm;
-	time_t now;
-	gint i, d, wday = -1;
+	gint i, wday = -1;
+	AlarmRepeat rep;
 	
-	time (&now);
-	tm = localtime (&now);
-	
-	//i = (tm->tm_wday == 6) ? 0 : tm->tm_wday + 1;
-	//tm->tm_wday--;
+	//i = (today == 6) ? 0 : today + 1;
+	//today--;
 	
 	// Try finding a day in this week
-	for (i = tm->tm_wday + 1; i < 7; i++) {
-		if (repeat & 1 << i) {
+	for (i = today + 1; i < 7; i++) {
+		rep = 1 << i;
+		//g_debug ("alarm_repeat_next_wday: this week { rep=%d & %d }", repeat, rep);
+		if (repeat & rep) {
 			// FOUND!
+			//g_debug ("\tMATCH");
 			wday = i;
 			break;
 		}
@@ -2020,16 +1998,19 @@ alarm_repeat_next_wday (AlarmRepeat repeat)
 	
 	// If we haven't found a day in the current week, check next week
 	if (wday == -1) {
-		for (i = 0; i <= tm->tm_wday; i++) {
-			if (repeat & alarm_repeat_from_wday (i)) {
+		for (i = 0; i <= today; i++) {
+			rep = 1 << i;
+			//g_debug ("alarm_repeat_next_wday: next week { rep=%d & %d }", repeat, rep);
+			if (repeat & rep) {
 				// FOUND!
+				//g_debug ("\tMATCH");
 				wday = i;
 				break;
 			}
 		}
 	}
 	
-	if (wday == tm->tm_wday)
+	if (wday == today)
 		wday = 7;
 	
 	return wday;

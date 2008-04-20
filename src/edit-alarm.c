@@ -114,7 +114,7 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 	/*
 	 * Update check boxes
 	 */
-	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		check = (dialog->alarm->repeat & r) != 0;
 		
 		// Activate the appropriate widget
@@ -744,7 +744,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	/* The check buttons have the same name as the 3 letter
 	 * string representation of the day.
 	 */
-	for (r = ALARM_REPEAT_MON, i = 0; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		dialog->repeat_check[i] = glade_xml_get_widget (ui, alarm_repeat_to_string (r));
 	}
 	

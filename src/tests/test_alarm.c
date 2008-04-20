@@ -366,15 +366,18 @@ test_alarm_repeat (void)
 {
 	AlarmRepeat r, rep;
 	const gchar *str;
-	gint i;
+	gint i, wnow, wday;
 	GSList *list;
+	struct tm *tm;
+	time_t now;
+	time (&now);
 	
 	g_print ("\nTEST ALARM REPEAT:\n"
 			 "==================\n");
 	
 	// Single
 	g_print ("SINGLE:\n");
-	for (r = ALARM_REPEAT_MON, i = 1; r <= ALARM_REPEAT_SUN; r = 1 << ++i) {
+	for (r = ALARM_REPEAT_SUN, i = 1; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		str = alarm_repeat_to_string (r);
 		g_print ("to_string(%d) = %s\n", r, str);
 		rep = alarm_repeat_from_string (str);
@@ -412,12 +415,36 @@ test_alarm_repeat (void)
 	g_slist_free (list);
 	
 	
+	
+	
+	
+	
+	tm = localtime (&now);
+	wnow = tm->tm_wday;
+	
+	g_print ("\nALARM_REPEAT_NEXT_WDAY:\n");
+	
+	g_print ("NONE: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_NONE, 0));
+	
+	for (wnow = 0; wnow < 7; wnow++) {
+		g_print ("\nALARM_REPEAT_NEXT_WDAY (..., today=%d)\n", wnow);
+		
+		for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
+			str = alarm_repeat_to_string (r);
+			wday = alarm_repeat_next_wday (r, wnow);
+			g_print ("%s(%d): %d +%d\n", str, r, wday, alarm_wday_distance (wnow, wday));
+		}
+	}
+	/*g_print ("WEEKDAYS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKDAYS));
+	g_print ("WEEKENDS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKENDS));
+	g_print ("ALL: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_ALL));*/
+	
+	
+	
+	
+	
 	g_print ("\nALARM_SET_TIME_FULL:\n");
 	g_object_set (alarm, "active", FALSE, NULL);
-	
-	struct tm *tm;
-	time_t now;
-	time (&now);
 	
 	tm = localtime (&now);
 	
@@ -445,17 +472,6 @@ test_alarm_repeat (void)
 		tm = localtime (&now);
 		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, i);
 	}
-	
-	
-	g_print ("\nALARM_REPEAT_NEXT_WDAY:\n");
-	
-	g_print ("NONE: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_NONE));
-	g_print ("SAT: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT));
-	g_print ("SAT|FRI: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT | ALARM_REPEAT_FRI));
-	g_print ("SAT|THU|FRI: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_SAT | ALARM_REPEAT_THU | ALARM_REPEAT_FRI));
-	g_print ("WEEKDAYS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKDAYS));
-	g_print ("WEEKENDS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKENDS));
-	g_print ("ALL: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_ALL));
 }
 
 gboolean
