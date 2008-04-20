@@ -7,8 +7,8 @@
     	-->
     	
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/show_label</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/prefs/show_label</key>
+	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>true</default>
@@ -19,8 +19,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/label_type</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/prefs/label_type</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default>alarm-time</default>
@@ -40,8 +40,8 @@
     	-->
     	
     	<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/type</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/type</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default>clock</default>
@@ -53,8 +53,8 @@
 		</schema>
     	
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/time</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/time</key>
+	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
 				<default>0</default>
@@ -64,8 +64,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/timer</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/timer</key>
+	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
 				<default>0</default>
@@ -75,8 +75,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/message</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/message</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default>Alarm!</default>
@@ -86,8 +86,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/active</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/active</key>
+	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>false</default>
@@ -98,8 +98,21 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/notify_type</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/repeat</key>
+	      	<owner>alarm-clock</owner>
+			<type>list</type>
+			<list_type>string</list_type>
+			<locale name="C">
+				<default>[]</default>
+				<short>When to repeat the alarm.</short>
+				<long>Indicates which days to repeat the alarm. Only applicable for "clock" alarms.</long>
+			</locale>
+		</schema>
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm_clock/alarm/notify_type</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default>sound</default>
@@ -113,8 +126,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/sound_file</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/sound_file</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default></default>
@@ -124,8 +137,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/sound_repeat</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/sound_repeat</key>
+	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>TRUE</default>
@@ -135,8 +148,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/command</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/command</key>
+	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
 				<default>rhythmbox-client --play</default>
@@ -146,8 +159,8 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/alarm/notify_bubble</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/alarm/notify_bubble</key>
+	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>true</default>
@@ -158,8 +171,8 @@
 		
 		<!--
 		<schema>
-	      	<key>/schemas/apps/alarm_applet/prefs/</key>
-	      	<owner>alarm-applet</owner>
+	      	<key>/schemas/apps/alarm_clock/prefs/</key>
+	      	<owner>alarm-clock</owner>
 			<type></type>
 			<locale name="C">
 				<default></default>

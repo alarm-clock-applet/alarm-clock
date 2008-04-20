@@ -9,20 +9,20 @@ INCLUDES =						\
 	$(LIBNOTIFY_CFLAGS)			\
 	-I$(includedir) 			
 
-bin_PROGRAMS = alarm-applet
+bin_PROGRAMS = alarm-clock-applet
 
-alarm_applet_SOURCES = alarm-applet.c alarm-applet.h \
-					   player.c player.h			 \
-					   util.c util.h				 \
-					   list-entry.c list-entry.h	 \
-					   alarm-gconf.c alarm-gconf.h	 \
-					   ui.c ui.h					 \
-					   prefs.c prefs.h				 \
-					   alarms-list.c				 \
-					   edit-alarm.c					 \
-					   alarm.c
+alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
+							 player.c player.h				\
+						     util.c util.h					\
+						     list-entry.c list-entry.h		\
+						     alarm-gconf.c alarm-gconf.h	\
+						     ui.c ui.h						\
+						     prefs.c prefs.h				\
+						     alarms-list.c					\
+						     edit-alarm.c					\
+						     alarm.c
 
-alarm_applet_LDADD =			\
+alarm_clock_applet_LDADD =		\
 	$(GLIB_LIBS)				\
 	$(GNOME_LIBS2_LIBS)			\
 	$(GNOME_APPLETS_LIBS)		\
@@ -31,14 +31,14 @@ alarm_applet_LDADD =			\
 	$(LIBNOTIFY_LIBS)
 
 serverdir       = $(libdir)/bonobo/servers
-server_in_files = GNOME_AlarmApplet.server.in
+server_in_files = AlarmClock.server.in
 server_DATA     = $(server_in_files:.server.in=.server)
 
 $(server_DATA): $(server_in_files)
 	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
 
 uidir = $(gladedir)
-ui_DATA = ui/alarm-applet.glade
+ui_DATA = ui/alarm-clock.glade
 
 icons =	\
 	icons/alarm-clock.svg		\
@@ -95,7 +95,7 @@ uninstall-icons:
 	done
 
 schemasdir   = @GCONF_SCHEMA_FILE_DIR@
-schemas_in_files = alarm.schemas.in
+schemas_in_files = alarm-clock.schemas.in
 schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
 
 CLEANFILES = $(server_DATA)

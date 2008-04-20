@@ -9,7 +9,7 @@ PKG_NAME="Alarm Clock"
 (test -f $srcdir/configure.ac \
   && test -f $srcdir/src/alarm-applet.c) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
-    echo " top-level alarm-applet directory"
+    echo " top-level alarm-clock directory"
     exit 1
 }
 

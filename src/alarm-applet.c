@@ -506,7 +506,7 @@ alarm_applet_factory (PanelApplet *panelapplet,
 {
 	AlarmApplet *applet;
 	
-	if (strcmp (iid, "OAFIID:GNOME_AlarmApplet") != 0)
+	if (strcmp (iid, "OAFIID:AlarmClock") != 0)
 		return FALSE;
 	
 	/* Initialize applet struct,
@@ -568,9 +568,9 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	return TRUE;
 }
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:GNOME_AlarmApplet_Factory",
+PANEL_APPLET_BONOBO_FACTORY ("OAFIID:AlarmClock_Factory",
                              PANEL_TYPE_APPLET,
-                             "alarm_applet",
+                             "alarm_clock",
                              VERSION,
                              alarm_applet_factory,
                              NULL);

@@ -29,8 +29,8 @@ Installation
 
 Unpackage with:
 
-tar zxvf alarm-applet-<VERSION>.tar.gz'
-cd alarm-applet-<VERSION>
+tar zxvf alarm-clock-<VERSION>.tar.gz
+cd alarm-clock-<VERSION>
 
 
 Compile with the usual:
