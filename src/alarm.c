@@ -748,6 +748,8 @@ alarm_set_property (GObject *object,
 	case PROP_REPEAT:
 		alarm->repeat = g_value_get_uint (value);
 		
+		alarm_update_time (alarm);
+		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
 		list = alarm_repeat_to_list (alarm->repeat);
 		
@@ -966,8 +968,7 @@ alarm_trigger (Alarm *alarm)
 	if (alarm_should_repeat (alarm)) {
 		g_debug ("alarm_trigger REPEATING");
 		struct tm *tm = localtime (&(alarm->time));
-		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, alarm_repeat_next_wday (alarm->repeat, tm->tm_wday));
-		
+		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, FALSE);
 	} else {
 		alarm_disable (alarm);
 	}
@@ -1778,40 +1779,86 @@ alarm_wday_distance (gint wday1, gint wday2)
 	return d;
 }
 
+static gboolean
+alarm_time_is_future (struct tm *tm, guint hour, guint minute, guint second)
+{
+	return (hour > tm->tm_hour ||
+			(hour == tm->tm_hour && minute > tm->tm_min) ||
+			(hour == tm->tm_hour && minute == tm->tm_min && second > tm->tm_sec));
+}
+
 /*
- * Set time according to hour, min, sec and wday
- * 
- * wday=-1 equals closest matching day (today or tomorrow depending on hour:min:sec)
- * wday=7  equals in a week
+ * Set time according to hour, min, sec and alarm->repeat
  */
 void
-alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gint wday)
+alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gboolean include_today)
 {
 	time_t now, new;
-	gint d;
+	gint i, d, wday;
+	AlarmRepeat rep;
 	struct tm *tm;
+	
+	g_debug ("alarm_set_time_full (%d, %d, %d, %d)", hour, minute, second, include_today);
 	
 	time (&now);
 	tm = localtime (&now);
 	
-	g_assert (wday <= 7 && wday >= -1);
+	//i = (today == 6) ? 0 : today + 1;
+	//today--;
 	
-	if (wday < 0 || wday == tm->tm_wday) {
+	if (alarm->repeat == ALARM_REPEAT_NONE) {
 		// Check if the alarm is for tomorrow
-		if (hour < tm->tm_hour ||
-			(hour == tm->tm_hour && minute < tm->tm_min) ||
-			(hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
+		if (!alarm_time_is_future (tm, hour, minute, second)) {
 			
-			if (wday < 0) {
+			//if (wday < 0) {
 				g_debug("alarm_set_time_full: Alarm is for tomorrow.");
 				tm->tm_mday++;
-			} else {
+			/*} else {
 				// wday == tm->tm_wday
 				g_debug("alarm_set_time_full: Alarm is in 1 week.");
 				tm->tm_mday += 7;
-			}
+			}*/
 		}
 	} else {
+		// REPEAT SET: Find the closest repeat day
+		wday = -1;
+		
+		i = tm->tm_wday;
+		if (!include_today)
+			i++;
+		
+		// Try finding a day in this week
+		for (; i < 7; i++) {
+			rep = 1 << i;
+			if (alarm->repeat & rep) {
+				if (i == tm->tm_wday && !alarm_time_is_future (tm, hour, minute, second)) continue;
+				
+				// FOUND!
+				//g_debug ("\tMATCH");
+				wday = i;
+				break;
+			}
+		}
+		
+		// If we haven't found a day in the current week, check next week
+		if (wday == -1) {
+			for (i = 0; i <= tm->tm_wday; i++) {
+				rep = 1 << i;
+				if (alarm->repeat & rep/* && alarm_time_is_future (tm, hour, minute, second)*/) {
+					// FOUND!
+					//g_debug ("\tMATCH");
+					wday = i;
+					break;
+				}
+			}
+		}
+		
+		g_debug ("Closest WDAY = %d", wday);
+		
+		if (wday == tm->tm_wday && (!include_today || !alarm_time_is_future (tm, hour, minute, second)))
+			wday = 7;
+		
+		
 		// Calculate distance from now to wday
 		if (wday == 7) {
 			g_debug("alarm_set_time_full: Alarm is in (forced) 1 week.");
@@ -1842,11 +1889,15 @@ alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gint 
 
 /*
  * Set time according to hour, min, sec
+ * 
+ * Will update according to the repeat property.
  */
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
 {
-	alarm_set_time_full (alarm, hour, minute, second, -1);
+	g_debug ("alarm_set_time (%d, %d, %d)", hour, minute, second);
+	
+	alarm_set_time_full (alarm, hour, minute, second, TRUE);
 }
 
 /*
@@ -1867,17 +1918,9 @@ alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second)
 void
 alarm_update_time (Alarm *alarm)
 {
-	time_t now;
 	struct tm *tm;
-	
-	time (&now);
-	
-	if (now > alarm->time) {
-		g_debug ("update_time: %d > %d", now, alarm->time);
-		tm = localtime (&(alarm->time));
-		g_debug ("update_time: %d > %d", now, alarm->time);
-		alarm_set_time(alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
-	}
+	tm = localtime (&(alarm->time));
+	alarm_set_time (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
 }
 
 /*
@@ -1965,55 +2008,6 @@ alarm_repeat_to_list (AlarmRepeat repeat)
 	}
 	
 	return list;
-}
-
-
-
-/*
- * Get the next week day in repeat
- * 
- * repeat = AlarmRepeat bitmap
- * today  = The wday today, sun = 0
- */
-gint
-alarm_repeat_next_wday (AlarmRepeat repeat, gint today)
-{
-	gint i, wday = -1;
-	AlarmRepeat rep;
-	
-	//i = (today == 6) ? 0 : today + 1;
-	//today--;
-	
-	// Try finding a day in this week
-	for (i = today + 1; i < 7; i++) {
-		rep = 1 << i;
-		//g_debug ("alarm_repeat_next_wday: this week { rep=%d & %d }", repeat, rep);
-		if (repeat & rep) {
-			// FOUND!
-			//g_debug ("\tMATCH");
-			wday = i;
-			break;
-		}
-	}
-	
-	// If we haven't found a day in the current week, check next week
-	if (wday == -1) {
-		for (i = 0; i <= today; i++) {
-			rep = 1 << i;
-			//g_debug ("alarm_repeat_next_wday: next week { rep=%d & %d }", repeat, rep);
-			if (repeat & rep) {
-				// FOUND!
-				//g_debug ("\tMATCH");
-				wday = i;
-				break;
-			}
-		}
-	}
-	
-	if (wday == today)
-		wday = 7;
-	
-	return wday;
 }
 
 gboolean

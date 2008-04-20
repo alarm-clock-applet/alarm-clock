@@ -21,7 +21,7 @@ app_combo_changed_cb (GtkComboBox *combo, AlarmSettingsDialog *dialog);
 
 
 
-#define REPEAT_LABEL	_("_Repeat alarm: %s")
+#define REPEAT_LABEL	_("<b>T_rigger alarm:</b> %s")
 
 
 /*
@@ -128,7 +128,7 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 	
 	if (dialog->alarm->repeat == ALARM_REPEAT_NONE) {
 		// NO REPEAT
-		label = g_strdup_printf (REPEAT_LABEL, _("None"));
+		label = g_strdup_printf (REPEAT_LABEL, _("Once"));
 		
 	} else if (dialog->alarm->repeat == ALARM_REPEAT_WEEKDAYS) {
 		// REPEAT WEEKDAYS
@@ -140,11 +140,11 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 		
 	} else if (dialog->alarm->repeat == ALARM_REPEAT_ALL) {
 		// REPEAT WEEK
-		label = g_strdup_printf (REPEAT_LABEL, _("Whole week"));
+		label = g_strdup_printf (REPEAT_LABEL, _("Every day"));
 		
 	} else {
 		// CUSTOM
-		label = g_strdup_printf (REPEAT_LABEL, _("Yes"));
+		label = g_strdup_printf (REPEAT_LABEL, _("Custom"));
 	}
 	
 	g_object_set (dialog->repeat_label, "label", label, NULL);

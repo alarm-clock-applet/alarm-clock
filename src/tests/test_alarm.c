@@ -413,65 +413,6 @@ test_alarm_repeat (void)
 	
 	// Should free data as well but we're lazy
 	g_slist_free (list);
-	
-	
-	
-	
-	
-	
-	tm = localtime (&now);
-	wnow = tm->tm_wday;
-	
-	g_print ("\nALARM_REPEAT_NEXT_WDAY:\n");
-	
-	g_print ("NONE: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_NONE, 0));
-	
-	for (wnow = 0; wnow < 7; wnow++) {
-		g_print ("\nALARM_REPEAT_NEXT_WDAY (..., today=%d)\n", wnow);
-		
-		for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
-			str = alarm_repeat_to_string (r);
-			wday = alarm_repeat_next_wday (r, wnow);
-			g_print ("%s(%d): %d +%d\n", str, r, wday, alarm_wday_distance (wnow, wday));
-		}
-	}
-	/*g_print ("WEEKDAYS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKDAYS));
-	g_print ("WEEKENDS: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_WEEKENDS));
-	g_print ("ALL: %d\n", alarm_repeat_next_wday (ALARM_REPEAT_ALL));*/
-	
-	
-	
-	
-	
-	g_print ("\nALARM_SET_TIME_FULL:\n");
-	g_object_set (alarm, "active", FALSE, NULL);
-	
-	tm = localtime (&now);
-	
-	char tmp[512];
-	strftime (tmp, sizeof (tmp), "%c", tm);
-	g_print ("\nTIME NOW IS: %s (wday=%d)\n\n", tmp, tm->tm_wday);
-	
-	g_print ("\n\tSet to future with wday=-1:\n");
-	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec+10, -1);
-	
-	g_print ("\n\tSet to past with wday=-1:\n");
-	tm = localtime (&now);
-	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec-10, -1);
-	
-	g_print ("\n\tSet to future with wday=today:\n");
-	tm = localtime (&now);
-	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec+10, tm->tm_wday);
-	
-	g_print ("\n\tSet to past with wday=today:\n");
-	tm = localtime (&now);
-	alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec-10, tm->tm_wday);
-	
-	for (i = 0; i <= 7; i++) {
-		g_print ("\n\tSet to now with wday=%d\n", i);
-		tm = localtime (&now);
-		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, i);
-	}
 }
 
 gboolean
