@@ -43,7 +43,7 @@ PKG_PROG_PKG_CONFIG([0.19])
 GNOME_COMPILE_WARNINGS
 
 dnl ***************************************************************************
-dnl *** Use pkg-config to check for dependancies                            ***
+dnl *** Use pkg-config to check for dependencies                            ***
 dnl ***************************************************************************
 
 dnl -- check for glib/gobject (required) --------------------------------------

@@ -1518,7 +1518,15 @@ alarm_bind_weak_notify (gpointer data, GObject *where_the_object_was)
 {
 	AlarmBindArg *arg = (AlarmBindArg *)data;
 	
-	g_signal_handler_disconnect (arg->object, arg->handler_id);
+	g_assert (arg);
+	g_assert (arg->object);
+	g_assert (arg->handler_id);
+	
+	if (G_IS_OBJECT (arg->object)) {
+		if (g_signal_handler_is_connected (arg->object, arg->handler_id)) {
+			g_signal_handler_disconnect (arg->object, arg->handler_id);
+		}
+	}
 	
 	alarm_bind_arg_free (arg);
 }
