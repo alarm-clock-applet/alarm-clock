@@ -40,7 +40,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #include "list-entry.h"
 #include "ui.h"
 
-#define ALARM_NAME		 "Alarm Clock Applet"
+#define ALARM_NAME		 "Alarm Clock"
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_applet/prefs"

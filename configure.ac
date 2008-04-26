@@ -1,10 +1,10 @@
 dnl ***************************************************************************
-dnl *** configure.ac for ALARM-APPLET                                       ***
+dnl *** configure.ac for ALARM-CLOCK                                        ***
 dnl ***************************************************************************
 
-AC_INIT([GNOME Alarm Applet], [0.1.2],
+AC_INIT([Alarm Clock], [0.1.2],
 		[Johannes H. Jensen <joh@deworks.net>],
-		[alarm-applet])
+		[alarm-clock])
 		
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -13,7 +13,7 @@ AC_CONFIG_MACRO_DIR(m4)
 AM_MAINTAINER_MODE
 
 dnl ***************************************************************************
-dnl *** Minimum library versions for ALARM-APPLET                           ***
+dnl *** Minimum library versions for ALARM-CLOCK                            ***
 dnl ***************************************************************************
 
 GLIB_REQUIRED=2.13.0
@@ -131,7 +131,7 @@ iconsdir="${datadir}/icons"
 AC_SUBST(iconsdir)
 pixmapsdir="${datadir}/pixmaps"
 AC_SUBST(pixmapsdir)
-pkgdatadir="${datadir}/alarm-applet"
+pkgdatadir="${datadir}/alarm-clock"
 AC_SUBST(pkgdatadir)
 gladedir="${pkgdatadir}/glade"
 AC_SUBST(gladedir)
