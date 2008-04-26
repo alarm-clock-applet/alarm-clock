@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="GNOME Alarm Applet"
+PKG_NAME="Alarm Clock"
 
 (test -f $srcdir/configure.ac \
   && test -f $srcdir/src/alarm-applet.c) || {
