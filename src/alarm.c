@@ -725,9 +725,6 @@ alarm_set_property (GObject *object,
 		
 		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
 		if (alarm->active && !alarm_timer_is_started(alarm)) {
-			// Update timestamp
-			alarm_update_timestamp (alarm);
-			
 			// Start timer
 			alarm_timer_start (alarm);
 		}
@@ -1035,17 +1032,29 @@ alarm_trigger (Alarm *alarm)
 
 /*
  * Convenience functions for enabling/disabling the alarm.
+ * 
+ * Will update timestamp if needed.
  */
+void
+alarm_set_enabled (Alarm *alarm, gboolean enabled)
+{
+	if (enabled) {
+		alarm_update_timestamp (alarm);
+	}
+	
+	g_object_set (alarm, "active", enabled, NULL);
+}
+
 void
 alarm_enable (Alarm *alarm)
 {
-	g_object_set (alarm, "active", TRUE, NULL);
+	alarm_set_enabled (alarm, TRUE);
 }
 
 void
 alarm_disable (Alarm *alarm)
 {
-	g_object_set (alarm, "active", FALSE, NULL);
+	alarm_set_enabled (alarm, FALSE);
 }
 
 /*
@@ -1068,6 +1077,27 @@ alarm_delete (Alarm *alarm)
 	gconf_client_recursive_unset (client, key, GCONF_UNSET_INCLUDING_SCHEMA_NAMES, NULL);
 	gconf_client_suggest_sync (client, NULL);
 	g_free (key);
+}
+
+/*
+ * Snooze the alarm.
+ */
+void
+alarm_snooze (Alarm *alarm)
+{
+	// SNOOZE
+	alarm_clear (alarm);
+	
+	if (alarm->snooze == 0) return;
+	
+	g_debug ("alarm_snooze SNOOZING FOR %d minutes", alarm->snooze);
+	
+	time_t now = time (NULL);
+	
+	g_object_set (alarm, 
+				  "timestamp", now + alarm->snooze * 60,
+				  "active", TRUE,
+				  NULL);
 }
 
 /*

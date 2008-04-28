@@ -15,6 +15,31 @@ GHashTable *app_command_map = NULL;
  */
 
 /*
+ * Snooze any running (read: playing sound) alarms.
+ */
+void
+alarm_applet_snooze_alarms (AlarmApplet *applet)
+{
+	GList *l;
+	Alarm *a;
+	
+	g_debug ("Clearing alarms...");
+	
+	// Loop through alarms and snooze all of 'em
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		alarm_snooze (a);
+	}
+	
+	// Close notification if present.
+#ifdef HAVE_LIBNOTIFY
+	if (applet->notify) {
+		alarm_applet_notification_close (applet);
+	}
+#endif
+}
+
+/*
  * Clear any running (read: playing sound) alarms.
  */
 void
@@ -37,17 +62,6 @@ alarm_applet_clear_alarms (AlarmApplet *applet)
 		alarm_applet_notification_close (applet);
 	}
 #endif
-}
-
-/*
- * TODO: Write me
- * 
- * Should snooze any running snoozable alarms
- */
-void
-alarm_applet_snooze_alarms (AlarmApplet *applet)
-{
-	g_debug ("alarm_applet_snooze_alarms: Not yet implemented");
 }
 
 
@@ -337,7 +351,7 @@ alarm_active_changed (GObject *object,
 		}
 	}
 	
-	if (!applet->upcoming_alarm || alarm->timestamp < applet->upcoming_alarm->time) {
+	if (!applet->upcoming_alarm || alarm->timestamp < applet->upcoming_alarm->timestamp) {
 		// We're next!
 		applet->upcoming_alarm = alarm;
 		

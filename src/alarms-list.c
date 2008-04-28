@@ -15,7 +15,7 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 	
 	g_debug ("list_alarms_toggled %s: #%d", path, alarm->id);
 	
-	g_object_set (alarm, "active", !(alarm->active), NULL);
+	alarm_set_enabled (alarm, !(alarm->active));
 	
 	/*
 	 * gtk_tree_model_get () will increase the reference count 

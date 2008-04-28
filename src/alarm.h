@@ -187,6 +187,9 @@ void
 alarm_trigger (Alarm *alarm);
 
 void
+alarm_set_enabled (Alarm *alarm, gboolean enabled);
+
+void
 alarm_enable (Alarm *alarm);
 
 void

@@ -380,8 +380,9 @@ test_alarm_timers (AlarmFixture *fix,
 				  "type", ALARM_TYPE_CLOCK,
 				  "notify_type", ALARM_NOTIFY_COMMAND,
 				  "command", "echo CMDALARM",
-				  "active", TRUE,
 				  NULL);
+	
+	alarm_enable (alarm);
 	
 	state = 0;
 	g_timeout_add (6000, stop_loop, loop);	// Stop loop after 6 secs
