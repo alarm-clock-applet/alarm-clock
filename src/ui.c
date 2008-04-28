@@ -539,7 +539,7 @@ alarm_applet_ui_init (AlarmApplet *applet)
 								 NULL);
 	
 	/* Set up UI updater */
-	applet->timer_id = g_timeout_add_seconds (1, alarm_applet_ui_update, applet);
+	applet->timer_id = g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
 	
 	/* Pack */
 	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);

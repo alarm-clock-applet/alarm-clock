@@ -304,7 +304,7 @@ alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
 		
 		if (!a->active) continue;
 		
-		if (!applet->upcoming_alarm || a->time < applet->upcoming_alarm->time) {
+		if (!applet->upcoming_alarm || a->timestamp < applet->upcoming_alarm->time) {
 			// This alarm is most recent
 			applet->upcoming_alarm = a;
 		}
@@ -337,7 +337,7 @@ alarm_active_changed (GObject *object,
 		}
 	}
 	
-	if (!applet->upcoming_alarm || alarm->time < applet->upcoming_alarm->time) {
+	if (!applet->upcoming_alarm || alarm->timestamp < applet->upcoming_alarm->time) {
 		// We're next!
 		applet->upcoming_alarm = alarm;
 		
@@ -456,7 +456,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 	
 	// Destroy preferences dialog
 	if (applet->preferences_dialog) {
-		gtk_widget_destroy (applet->preferences_dialog);
+		gtk_widget_destroy (GTK_WIDGET (applet->preferences_dialog));
 	}
 	
 	// Loop through all alarms and free like a mad man!
@@ -464,7 +464,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 		a = ALARM (l->data);
 		
 		// Check if a dialog is open for this alarm
-		dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, a->id);
+		dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
 		
 		if (dialog) {
 			alarm_settings_dialog_close (dialog);

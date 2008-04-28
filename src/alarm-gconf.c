@@ -139,7 +139,7 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			/* If there's a settings dialog open for this
 			 * alarm, destroy it.
 			 */
-			AlarmSettingsDialog *sdialog = g_hash_table_lookup (applet->edit_alarm_dialogs, a->id);
+			AlarmSettingsDialog *sdialog = g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
 			if (sdialog) {
 				alarm_settings_dialog_close (sdialog);
 			}

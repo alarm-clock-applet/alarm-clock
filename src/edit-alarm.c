@@ -91,12 +91,7 @@ alarm_settings_update_time (AlarmSettingsDialog *dialog)
 {
 	struct tm *tm;
 	
-	if (dialog->alarm->type == ALARM_TYPE_CLOCK) {
-		tm = localtime(&(dialog->alarm->time));
-	} else {
-		// TIMER
-		tm = gmtime (&(dialog->alarm->timer));
-	}
+	tm = alarm_get_time(dialog->alarm);
 	
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), tm->tm_hour);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->min_spin), tm->tm_min);
@@ -477,11 +472,7 @@ time_changed_cb (GtkSpinButton *spinbutton, gpointer data)
 	min = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->min_spin));
 	sec = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->sec_spin));
 	
-	if (dialog->alarm->type == ALARM_TYPE_CLOCK) {
-		alarm_set_time (dialog->alarm, hour, min, sec);
-	} else {
-		alarm_set_timer (dialog->alarm, hour, min, sec);
-	}
+	alarm_set_time (dialog->alarm, hour, min, sec);
 }
 
 static void

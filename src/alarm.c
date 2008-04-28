@@ -687,6 +687,11 @@ alarm_set_property (GObject *object,
 	case PROP_TIME:
 		alarm->time = g_value_get_uint (value);
 		
+		if (alarm->active) {
+			// Update timestamp
+			alarm_update_timestamp (alarm);
+		}
+		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIME);
 		
 		if (!gconf_client_set_int (client, key, alarm->time, &err)) {
