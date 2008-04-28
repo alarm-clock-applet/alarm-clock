@@ -153,6 +153,14 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 }
 
 static void
+alarm_settings_update_snooze (AlarmSettingsDialog *dialog)
+{
+	g_object_set (dialog->snooze_spin, "value", (gdouble)dialog->alarm->snooze, NULL);
+	
+	//if (dialog->alarm->snooze > 0)
+}
+
+static void
 alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 {
 	// Enable selected
@@ -255,6 +263,7 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	alarm_settings_update_type (dialog);
 	alarm_settings_update_time (dialog);
 	alarm_settings_update_repeat (dialog);
+	alarm_settings_update_snooze (dialog);
 	alarm_settings_update_notify_type (dialog);
 	alarm_settings_update_sound (dialog);
 	alarm_settings_update_app (dialog);
@@ -301,6 +310,16 @@ alarm_repeat_changed (GObject *object,
 	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
 	
 	alarm_settings_update_repeat (dialog);
+}
+
+static void
+alarm_snooze_changed (GObject *object, 
+					  GParamSpec *param,
+					  gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	alarm_settings_update_snooze (dialog);
 }
 
 static void
@@ -689,7 +708,7 @@ static AlarmSettingsDialog *
 alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 {
 	AlarmSettingsDialog *dialog;
-	GtkWidget *clock_content, *timer_content;
+	GtkWidget *clock_content, *timer_content, *snooze_label;
 	AlarmRepeat r;
 	gint i;
 	
@@ -747,6 +766,15 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		dialog->repeat_check[i] = glade_xml_get_widget (ui, alarm_repeat_to_string (r));
 	}
+	
+	/*
+	 * SNOOZE SETTINGS
+	 */
+	dialog->snooze_check = glade_xml_get_widget (ui, "snooze-check");
+	dialog->snooze_spin  = glade_xml_get_widget (ui, "snooze-spin");
+	
+	snooze_label = gtk_bin_get_child (GTK_BIN (dialog->snooze_check));
+	g_object_set (G_OBJECT (snooze_label), "use-markup", TRUE, NULL);
 	
 	/*
 	 * NOTIFY SETTINGS
@@ -809,6 +837,9 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	g_signal_connect (alarm, "notify::repeat", G_CALLBACK (alarm_repeat_changed), dialog);
 	for (i = 0; i < 7; i++)
 		g_signal_connect (dialog->repeat_check[i], "toggled", G_CALLBACK (repeat_changed_cb), dialog);
+	
+	/* snooze */
+	g_signal_connect (alarm, "notify::snooze", G_CALLBACK (alarm_snooze_changed), dialog);
 	
 	/* notify type */
 	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);

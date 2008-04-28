@@ -1,452 +1,516 @@
 #include "alarm.h"
-#include "testutils.h"
 #include <time.h>
 #include <glib.h>
 #include <string.h>
 
-#define GCONF_DIR "/apps/alarm-applet"
+#define GCONF_DIR "/apps/alarm-clock"
 
-#define DUMP_ALARM(alarm)	g_object_get ((alarm), 				\
-										  "gconf-dir", &gconf_dir, 	\
-										  "id", &id,			\
-										  "type", &type,		\
-										  "time", &time,		\
-										  "message", &message,	\
-										  "timer", &timer,		\
-										  "repeat", &repeat,	\
-										  "notify_type", &ntype,\
-										  "sound_file", &sound_file,\
-										  "sound_repeat", &sound_repeat,\
-										  "command", &command,	\
-										  "active", &active,	\
-										  NULL);				\
-							g_print ("\nAlarm %p:\n"			\
-									 "\tgconf-dir: %s\n"		\
-									 "\tid: %d\n"				\
-									 "\ttype: %s\n"				\
-									 "\ttime: %d\n"				\
-									 "\tmessage: %s\n"			\
-									 "\ttimer: %d\n"			\
-									 "\trepeat: %d\n"			\
-									 "\tnotify_type: %s\n"		\
-									 "\tsound_file: %s\n"		\
-									 "\tsound_repeat: %d\n"		\
-									 "\tcommand: %s\n"			\
-									 "\tactive: %s\n"			\
-									 ,(alarm), gconf_dir, id,	\
-									 alarm_type_to_string (type),\
-									 time, message, timer, repeat,		\
-									 alarm_notify_type_to_string (ntype),\
-									 sound_file, sound_repeat,	\
-									 command, (active) ? "YES" : "NO");
+/* Fixture */
+typedef struct {
+	Alarm *alarm;
+} AlarmFixture;
 
+static int state = 0;
+
+
+
+/*
+ * TEST FIXTURE setup
+ * 
+ * Called before each test case
+ */
+static void
+alarm_fixture_setup (AlarmFixture *fix,
+					 gconstpointer test_data)
+{
+	fix->alarm = alarm_new (GCONF_DIR, 0);
+	
+	g_assert (fix->alarm != NULL);
+}
+
+/*
+ * TEST FIXTURE teardown
+ * 
+ * Called after each test case
+ */
+static void
+alarm_fixture_teardown (AlarmFixture *fix,
+						gconstpointer test_data)
+{
+	g_assert (fix->alarm != NULL);
+	
+	alarm_delete (fix->alarm);
+	g_object_unref (fix->alarm);
+}
 										  
-void test_alarm_type (void)
-{
-	g_print ("TEST ALARM TYPE:\n"
-			 "================\n");
-	
-	g_print ("alarm_type_to_string:\n"
-			 "\tALARM_TYPE_INVALID: %s\n"
-			 "\tALARM_TYPE_CLOCK: %s\n"
-			 "\tALARM_TYPE_TIMER: %s\n",
-			 alarm_type_to_string (ALARM_TYPE_INVALID),
-			 alarm_type_to_string (ALARM_TYPE_CLOCK),
-			 alarm_type_to_string (ALARM_TYPE_TIMER));
-	
-	g_assert(alarm_type_to_string (ALARM_TYPE_INVALID) == NULL);
-	g_assert(strcmp (alarm_type_to_string (ALARM_TYPE_CLOCK), "clock") == 0);
-	g_assert(strcmp (alarm_type_to_string (ALARM_TYPE_TIMER), "timer") == 0);
-	
-	g_print ("alarm_type_from_string:\n"
-			 "\tinvalid: %d\n"
-			 "\tclock: %d\n"
-			 "\ttimer: %d\n",
-			 alarm_type_from_string ("invalid"),
-			 alarm_type_from_string ("clock"),
-			 alarm_type_from_string ("timer"));
-	
-	g_assert (alarm_type_from_string ("invalid") == ALARM_TYPE_INVALID);
-	g_assert (alarm_type_from_string ("clock") == ALARM_TYPE_CLOCK);
-	g_assert (alarm_type_from_string ("timer") == ALARM_TYPE_TIMER);
-}
 
-void test_alarm_notify_type (void)
-{
-	g_print ("\nTEST ALARM NOTIFY TYPE:\n"
-			 "======================\n");
-	
-	g_print ("alarm_notify_type_to_string:\n"
-			 "\tALARM_NOTIFY_INVALID: %s\n"
-			 "\tALARM_NOTIFY_SOUND: %s\n"
-			 "\tALARM_NOTIFY_COMMAND: %s\n",
-			 alarm_notify_type_to_string (ALARM_NOTIFY_INVALID),
-			 alarm_notify_type_to_string (ALARM_NOTIFY_SOUND),
-			 alarm_notify_type_to_string (ALARM_NOTIFY_COMMAND));
-	
-	g_assert(alarm_notify_type_to_string (ALARM_NOTIFY_INVALID) == NULL);
-	g_assert(strcmp (alarm_notify_type_to_string (ALARM_NOTIFY_SOUND), "sound") == 0);
-	g_assert(strcmp (alarm_notify_type_to_string (ALARM_NOTIFY_COMMAND), "command") == 0);
-	
-	g_print ("alarm_notify_type_from_string:\n"
-			 "\tinvalid: %d\n"
-			 "\tsound: %d\n"
-			 "\tcommand: %d\n",
-			 alarm_notify_type_from_string ("invalid"),
-			 alarm_notify_type_from_string ("sound"),
-			 alarm_notify_type_from_string ("command"));
-	
-	g_assert (alarm_notify_type_from_string ("invalid") == ALARM_NOTIFY_INVALID);
-	g_assert (alarm_notify_type_from_string ("sound") == ALARM_NOTIFY_SOUND);
-	g_assert (alarm_notify_type_from_string ("command") == ALARM_NOTIFY_COMMAND);
-}
 
-Alarm *alarm, *alarm2;
 
-void 
-test_alarm_object_changed (GObject *object, 
-						   GParamSpec *param,
-						   gpointer data)
+/*
+ * TEST: Alarm properties
+ * 
+ * 1. Will set properties and verify them
+ * 2. Will try to load properties from GConf and verify them
+ */
+static void
+test_alarm_props (AlarmFixture *fix,
+				  gconstpointer test_data)
 {
-	g_print ("Alarm Object %p changed: %s\n", object, g_param_spec_get_name (param));
-}
-
-void
-test_alarm_object_sound_repeat_changed (GObject *object, 
-									    GParamSpec *param,
-									    gpointer data)
-{
-	g_print ("Alarm Object::sound_repeat changed\n");
-}
-
-void test_alarm_object (void)
-{
-	gchar *gconf_dir;
-	guint id, time, timer;
-	AlarmType type;
-	gchar *message;
-	AlarmNotifyType ntype;
-	gchar *sound_file;
-	gboolean sound_repeat;
-	gchar *command;
-	gboolean active;
-	AlarmRepeat repeat;
-	
-	g_type_init();
-	
-	g_print ("\nTEST ALARM OBJECT:\n"
-			 "==================\n");
-	
-	alarm = g_object_new (TYPE_ALARM, 
-						  "gconf-dir", GCONF_DIR,
-						  NULL);
-	
-	g_print ("\nAfter instantiate:\n");
-	DUMP_ALARM (alarm);
-	
+	Alarm *alarm = fix->alarm;
 	
 //	g_object_set (alarm, "gconf-dir", "bar", NULL);		// Shouldn't work
-	g_object_set (alarm, "id", 0, NULL);
-	g_object_set (alarm, "type", ALARM_TYPE_TIMER, NULL);
-	g_object_set (alarm, "active", FALSE, NULL);
-	g_object_set (alarm, "time", 1234, NULL);
-	g_object_set (alarm, "message", "Wakety zooom!", NULL);
-	g_object_set (alarm, "timer", 4567, NULL);
-	g_object_set (alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, NULL);
-	g_object_set (alarm, "notify_type", ALARM_NOTIFY_COMMAND, NULL);
-	g_object_set (alarm, "sound_file", "file:///foo/bar", NULL);
-	g_object_set (alarm, "sound_repeat", FALSE, NULL);
-	g_object_set (alarm, "command", "wiggle-your-toe --arg", NULL);
-	
-	g_print ("\nAfter set():\n");
-	DUMP_ALARM (alarm);
-	
-	/* Verify properties */
-	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
-	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
-	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
-	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
-	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
-	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
-	ASSERT_PROP_EQUALS		(alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, gint);
-	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
-	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
-	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
-	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
-	
-	g_object_unref (alarm);
-	
-	alarm = alarm_new (GCONF_DIR, 0);
-	alarm2 = alarm_new (GCONF_DIR, 7);
-	
-	g_debug ("\nAfter clean & new instance:\n");
-	
-	DUMP_ALARM (alarm);
-	DUMP_ALARM (alarm2);
-		
+	g_object_set (alarm, 
+				  "id", 0,
+				  "type", ALARM_TYPE_TIMER,
+				  "time", 1234,
+				  "timestamp", 5678,
+				  "active", FALSE,
+				  "message", "Wakety zooom!",
+				  "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED,
+				  "snooze", 12,
+				  "notify_type", ALARM_NOTIFY_COMMAND,
+				  "sound_file", "file:///foo/bar",
+				  "sound_repeat", FALSE, 
+				  "command", "wiggle-your-toe --arg",
+				  "notify_bubble", TRUE, 
+				  NULL);
 	
 	/* Verify properties */
-	ASSERT_PROP_STR_EQUALS	(alarm, "gconf-dir", GCONF_DIR);
-	ASSERT_PROP_EQUALS		(alarm, "id", 0, gint);
-	ASSERT_PROP_EQUALS		(alarm, "type", ALARM_TYPE_TIMER, gint);
-	ASSERT_PROP_EQUALS		(alarm, "time", 1234, gint);
-	ASSERT_PROP_STR_EQUALS	(alarm, "message", "Wakety zooom!");
-	ASSERT_PROP_EQUALS		(alarm, "timer", 4567, gint);
-	ASSERT_PROP_EQUALS		(alarm, "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED, gint);
-	ASSERT_PROP_EQUALS		(alarm, "notify_type", ALARM_NOTIFY_COMMAND, gint);
-	ASSERT_PROP_STR_EQUALS	(alarm, "sound_file", "file:///foo/bar");
-	ASSERT_PROP_EQUALS		(alarm, "sound_repeat", FALSE, gboolean);
-	ASSERT_PROP_STR_EQUALS	(alarm, "command", "wiggle-your-toe --arg");
+	g_assert_cmpstr (alarm->gconf_dir, ==, GCONF_DIR);
+	g_assert_cmpint (alarm->id, ==, 0);
+	g_assert_cmpint (alarm->type, ==, ALARM_TYPE_TIMER);
+	g_assert_cmpint (alarm->time, ==, 1234);
+	g_assert_cmpint (alarm->timestamp, ==, 5678);
+	g_assert_cmpint (alarm->active, ==, FALSE);
+	g_assert_cmpstr (alarm->message, ==, "Wakety zooom!");
+	g_assert_cmpint (alarm->repeat, ==, ALARM_REPEAT_MON | ALARM_REPEAT_WED);
+	g_assert_cmpint (alarm->snooze, ==, 12);
+	g_assert_cmpint (alarm->notify_type, ==, ALARM_NOTIFY_COMMAND);
+	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
+	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
+	g_assert_cmpstr (alarm->command, ==, "wiggle-your-toe --arg");
+	g_assert_cmpint (alarm->notify_bubble, ==, TRUE);
 	
+	/* Unref alarm */
+	g_object_unref (fix->alarm);
 	
+	/* Load settings from GConf */
+	fix->alarm = alarm = alarm_new (GCONF_DIR, 0);
 	
-	g_signal_connect (alarm, "notify", 
-					  G_CALLBACK (test_alarm_object_changed),
-					  NULL);
-	
-	g_signal_connect (alarm, "notify::sound-repeat",
-					  G_CALLBACK (test_alarm_object_sound_repeat_changed),
-					  NULL);
-	
-	g_signal_connect (alarm2, "notify", 
-					  G_CALLBACK (test_alarm_object_changed),
-					  NULL);
-	
-	g_print ("\nBINDING alarm%d/command to alarm%d/message...\n", alarm->id, alarm2->id);
-	alarm_bind (alarm, "command", G_OBJECT (alarm2), "message");
+	/* Verify properties */
+	g_assert_cmpstr (alarm->gconf_dir, ==, GCONF_DIR);
+	g_assert_cmpint (alarm->id, ==, 0);
+	g_assert_cmpint (alarm->type, ==, ALARM_TYPE_TIMER);
+	g_assert_cmpint (alarm->time, ==, 1234);
+	g_assert_cmpint (alarm->timestamp, ==, 5678);
+	g_assert_cmpint (alarm->active, ==, FALSE);
+	g_assert_cmpstr (alarm->message, ==, "Wakety zooom!");
+	g_assert_cmpint (alarm->repeat, ==, ALARM_REPEAT_MON | ALARM_REPEAT_WED);
+	g_assert_cmpint (alarm->snooze, ==, 12);
+	g_assert_cmpint (alarm->notify_type, ==, ALARM_NOTIFY_COMMAND);
+	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
+	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
+	g_assert_cmpstr (alarm->command, ==, "wiggle-your-toe --arg");
+	g_assert_cmpint (alarm->notify_bubble, ==, TRUE);
 }
 
-gboolean
-test_alarm_set (gpointer data)
+
+
+/*
+ * TEST: AlarmType
+ */
+static void 
+test_alarm_type (AlarmFixture *fix,
+				 gconstpointer test_data)
 {
-	Alarm *alarm = ALARM (data);
+	// alarm_type_to_string ()
+	g_assert        (alarm_type_to_string (ALARM_TYPE_INVALID) ==  NULL);
+	g_assert_cmpstr (alarm_type_to_string (ALARM_TYPE_CLOCK),  ==, "clock");
+	g_assert_cmpstr (alarm_type_to_string (ALARM_TYPE_TIMER),  ==, "timer");
 	
-	g_print ("set sound_repeat\n");
-	g_object_set (alarm, "sound_repeat", TRUE, NULL);
+	// alarm_type_from_string ()
+	g_assert_cmpint (alarm_type_from_string ("invalid"), ==, ALARM_TYPE_INVALID);
+	g_assert_cmpint (alarm_type_from_string ("clock"),   ==, ALARM_TYPE_CLOCK);
+	g_assert_cmpint (alarm_type_from_string ("timer"),   ==, ALARM_TYPE_TIMER);
 }
 
-void
-test_alarm_list (void)
+
+
+/*
+ * TEST: AlarmNotifyType
+ */
+static void 
+test_alarm_notify_type (AlarmFixture *fix,
+						gconstpointer test_data)
+{
+	// alarm_notify_type_to_string ()
+	g_assert		(alarm_notify_type_to_string (ALARM_NOTIFY_INVALID)  ==  NULL);
+	g_assert_cmpstr (alarm_notify_type_to_string (ALARM_NOTIFY_SOUND),   ==, "sound");
+	g_assert_cmpstr (alarm_notify_type_to_string (ALARM_NOTIFY_COMMAND), ==, "command");
+	
+	// alarm_notify_type_from_string ()
+	g_assert_cmpint (alarm_notify_type_from_string ("invalid"), ==, ALARM_NOTIFY_INVALID);
+	g_assert_cmpint (alarm_notify_type_from_string ("sound"),   ==, ALARM_NOTIFY_SOUND);
+	g_assert_cmpint (alarm_notify_type_from_string ("command"), ==, ALARM_NOTIFY_COMMAND);
+}
+
+
+
+/*
+ * TEST: Alarm list
+ */
+static void
+test_alarm_list (AlarmFixture *fix,
+				 gconstpointer test_data)
 {
 	GList *list = NULL, *l;
 	guint i = 0;
-	Alarm *a;
+	Alarm *a, *a1, *a2, *a3;
 	
-	gchar *gconf_dir;
-	guint id, time, timer;
-	AlarmType type;
-	gchar *message;
-	AlarmNotifyType ntype;
-	gchar *sound_file;
-	gboolean sound_repeat;
-	gchar *command;
-	gboolean active;
-	AlarmRepeat repeat;
+	// Initialize with some dummy alarms
+	a = alarm_new (GCONF_DIR, 3);   g_object_unref (a);
+	a = alarm_new (GCONF_DIR, 5);   g_object_unref (a);
+	a = alarm_new (GCONF_DIR, 8);   g_object_unref (a);
+	a = alarm_new (GCONF_DIR, 123); g_object_unref (a);
 	
-	g_print ("\nTEST ALARM LIST:\n"
-			 "==================\n");
-	
+	// Get list
 	list = alarm_get_list (GCONF_DIR);
 	
 	for (l = list; l; l = l->next, i++) {
-		g_print ("List entry #%d:", i);
+		int eq;
+		switch (i) {
+		case 0:
+			eq = 3;
+			break;
+		case 1:
+			eq = 5;
+			break;
+		case 2:
+			eq = 8;
+			break;
+		case 3:
+			eq = 123;
+			break;
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+		
 		a = ALARM (l->data);
-		DUMP_ALARM (a);
+		g_assert_cmpint (a->id, ==, eq);
+		
+		alarm_delete (a);
 		g_object_unref (a);
 	}
+	
+	g_list_free (list);
 }
 
-void
+
+
+/*
+ * Alarm signal handler
+ */
+static void
 test_alarm_signal_alarm (Alarm *a, gchar *data)
 {
-	g_print ("ALARM on %p! Data: %s\n", a, data);
+	//g_print ("ALARM on %p! Data: %s\n", a, data);
+	g_assert_cmpstr (data, ==, "the data");
+	
+	state = 1;
 }
 
-void
+/*
+ * Error signal handler
+ */
+static void
 test_alarm_signal_error (Alarm *a, GError *err, gchar *data)
 {
-	g_print ("ERROR on %p! Message: %s, Code: %d, Data: %s", a, err->message, err->code, data);
+	//g_print ("ERROR on %p! Message: %s, Code: %d, Data: %s", a, err->message, err->code, data);
+	g_assert_cmpint (a->id, ==, 0);
+	g_assert_cmpstr (err->message, ==, "Something bad happened");
+	g_assert_cmpint (err->code, ==, 123);
+	g_assert_cmpstr (data, ==, "the error data");
+	
+	state = 2;
 }
 
-void
-test_alarm_signals (void)
+
+
+/*
+ * TEST: Alarm signals
+ * 
+ * 1. Test "alarm" signal
+ * 2. Test "error" signal
+ */
+static void
+test_alarm_signals (AlarmFixture *fix,
+					gconstpointer test_data)
 {
-	g_print ("\nTEST ALARM SIGNALS:\n"
-			 "==================\n");
+	Alarm *alarm = fix->alarm;
+	state = 0;
 	
-	/* Test alarm signals */
+	g_object_set (alarm, 
+				  "notify_type", ALARM_NOTIFY_COMMAND, 
+				  "command", "echo",
+				  NULL);
+	
+	// Test alarm signals
 	g_signal_connect (alarm, "alarm",
 					  G_CALLBACK (test_alarm_signal_alarm),
 					  "the data");
 	
 	alarm_trigger (alarm);
 	
-	/* Test error signals */
+	g_assert_cmpint (state, ==, 1);
+	
+	
+	
+	// Test error signals
 	g_signal_connect (alarm, "error", G_CALLBACK (test_alarm_signal_error),
 					  "the error data");
 	
 	alarm_error_trigger (alarm, 123, "Something bad happened");
+	
+	g_assert_cmpint (state, ==, 2);
 }
 
-void
-test_alarm_timers (void)
-{
-	/* Test alarm */
-	gint now = time(NULL);
-	
-	/*g_object_unref (alarm);
-	g_object_unref (alarm2);
-	
-	alarm = alarm_new ("/apps/alarm-applet", 0);
-	alarm2 = alarm_new ("/apps/alarm-applet", 1);*/
-	
-	g_print ("\nTEST ALARM TIMERS:\n"
-			 "==================\n");
-	
-	alarm_disable (alarm);
-	alarm_disable (alarm2);
-	
-	g_print ("test_alarm_timer: Setting alarm #%d (%p) to 5 seconds from now.\n", alarm->id, alarm);
-	
-	g_object_set (alarm,
-				  "type", ALARM_TYPE_CLOCK,
-				  "time", now + 5,
-				  "active", TRUE,
-				  NULL);
-	
-	g_print ("test_alarm_timer: Setting alarm #%d (%p) TIMER to 10 seconds.\n", alarm2->id, alarm2);
 
-	g_object_set (alarm2, 
-				  "type", ALARM_TYPE_TIMER,
-				  "timer", 10,
-				  NULL);
-	
-	alarm_enable(alarm2);
+
+/*
+ * Callback function for stopping the GMainLoop
+ */
+static gboolean
+stop_loop (GMainLoop *loop)
+{
+	g_main_loop_quit (loop);
+	return FALSE;
 }
 
-void
-test_alarm_trigger (void)
+
+
+/*
+ * TEST: Notify types
+ * 
+ * 1. Test SOUND notification
+ * 2. Test COMMAND notification
+ */
+static void
+test_alarm_notify (AlarmFixture *fix,
+					gconstpointer test_data)
 {
-	g_print ("\nTEST ALARM TRIGGER:\n"
-			 "==================\n");
+	Alarm *alarm = fix->alarm;
+	GMainLoop *loop	= g_main_loop_new (g_main_context_default(), FALSE);
 	
+	//
+	// Test SOUND notification
+	//
 	g_object_set (alarm,
 				  "notify_type", ALARM_NOTIFY_SOUND,
-				  "sound_file", "file:///usr/share/sounds/generic.wavz",
+				  "sound_file", "file:///usr/share/sounds/generic.wav",
 				  "sound_repeat", FALSE,
 				  NULL);
 	
 	alarm_trigger (alarm);
 	
 	
-	g_object_set (alarm2,
+	//
+	// Test COMMAND notification
+	//
+	g_object_set (alarm,
 				  "notify_type", ALARM_NOTIFY_COMMAND,
 				  "command", "ls -a",
 				  NULL);
 	
-	alarm_trigger (alarm2);
-}
-
-static void
-dump_list (GSList *list)
-{
-	GSList *l;
+	alarm_trigger (alarm);
 	
-	g_print ("[ ");
-	for (l = list; l; l = l->next) {
-		g_print ("%s", (gchar *)l->data);
-		if (l->next)
-			g_print (", ");
-	}
-	g_print (" ]");
+	// We need to run the main loop for a couple of seconds
+	// so the player error/state callbacks get the alarm
+	// instance while it's still alive.
+	g_timeout_add (2000, stop_loop, loop);	// Stop loop after 2 secs
+	g_main_loop_run (loop);
 }
 
-void
-test_alarm_repeat (void)
+
+
+/*
+ * Callback for alarm signal. 
+ * Will set state to the current timestamp.
+ */
+static void
+test_alarm_timers_alarm (Alarm *a, gchar *data)
+{
+	g_debug ("test_alarm_timers_ALARM");
+	state = time (NULL);
+}
+
+
+
+/*
+ * TEST: Alarm timers
+ * 
+ * 1. Test alarm CLOCK setting time to 5 seconds from now.
+ * 2. Test alarm TIMER setting time to 3 seconds.
+ */
+static void
+test_alarm_timers (AlarmFixture *fix,
+				   gconstpointer test_data)
+{
+	Alarm *alarm	= fix->alarm;
+	time_t now 		= time(NULL);
+	struct tm *tm;
+	GMainLoop *loop	= g_main_loop_new (g_main_context_default(), FALSE);
+	
+	
+	// Alarm signal handler
+	g_signal_connect (alarm, "alarm",
+					  G_CALLBACK (test_alarm_timers_alarm),
+					  "the data");
+	
+	// 
+	// Test CLOCK 5sec from now
+	//
+	
+	now = time (NULL);
+	tm = localtime (&now);
+	//g_debug ("TEST SET %d => %d:%d:%d", now, tm->tm_hour, tm->tm_min, tm->tm_sec + 5);
+	alarm_set_time (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec + 5);
+	
+	g_object_set (alarm,
+				  "type", ALARM_TYPE_CLOCK,
+				  "notify_type", ALARM_NOTIFY_COMMAND,
+				  "command", "echo CMDALARM",
+				  "active", TRUE,
+				  NULL);
+	
+	state = 0;
+	g_timeout_add (6000, stop_loop, loop);	// Stop loop after 6 secs
+	g_main_loop_run (loop);
+	
+	g_assert_cmpint (state - now, ==, 5);
+	
+	
+	
+	// 
+	// Test TIMER 3sec
+	//
+	g_object_set (alarm, 
+				  "type", ALARM_TYPE_TIMER,
+				  "time", 3,
+				  NULL);
+	
+	alarm_enable (alarm);
+	
+	state = 0;
+	now = time (NULL);
+	g_timeout_add (4000, stop_loop, loop);	// Stop loop after 4 secs
+	g_main_loop_run (loop);
+	
+	g_assert_cmpint (state - now, ==, 3);
+}
+
+
+
+/*
+ * TEST: AlarmRepeat
+ */
+static void
+test_alarm_repeat (AlarmFixture *fix,
+				   gconstpointer test_data)
 {
 	AlarmRepeat r, rep;
 	const gchar *str;
 	gint i, wnow, wday;
-	GSList *list;
+	GSList *list, *l;
 	struct tm *tm;
 	time_t now;
 	time (&now);
 	
-	g_print ("\nTEST ALARM REPEAT:\n"
-			 "==================\n");
-	
-	// Single
+	//
+	// Test single repeats to string and back again
+	//
 	g_print ("SINGLE:\n");
 	for (r = ALARM_REPEAT_SUN, i = 1; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		str = alarm_repeat_to_string (r);
-		g_print ("to_string(%d) = %s\n", r, str);
 		rep = alarm_repeat_from_string (str);
-		g_print ("from_string(%s) = %d\n", str, rep);
 		
-		g_assert (r == rep);
+		g_assert_cmpint (r, ==, rep);
 	}
 	
-	// List
-	g_print ("\nLIST:\n");
 	
+	// 
+	// Test repeat to list
+	//
+	
+	// NONE
 	rep = ALARM_REPEAT_NONE;
 	list = alarm_repeat_to_list (rep);
-	g_print ("to_list(ALARM_REPEAT_NONE): %p\n", list);
 	g_assert (NULL == list);
 	
 	rep = alarm_repeat_from_list (list);
-	g_print ("from_list(NULL): %d\n", rep);
-	g_assert (ALARM_REPEAT_NONE == rep);
+	g_assert_cmpint (rep, ==, ALARM_REPEAT_NONE);
 	
+	// MULTIPLE
 	rep = ALARM_REPEAT_MON | ALARM_REPEAT_WED | ALARM_REPEAT_FRI;
 	list = alarm_repeat_to_list (rep);
-	g_print ("to_list(ALARM_REPEAT_MON | ALARM_REPEAT_WED | ALARM_REPEAT_FRI = %d): ", rep);
-	dump_list (list);
-	g_print ("\n");
+	
+	GString *s = g_string_new ("");
+	for (l = list; l; l = l->next) {
+		s = g_string_append (s, (gchar *)l->data);
+	}
+	g_assert_cmpstr (s->str, ==, "monwedfri");
+	g_string_free (s, TRUE);
+	
 	
 	r = alarm_repeat_from_list (list);
-	g_print ("from_list(");
-	dump_list(list);
-	g_print ("): %d\n", r);
-	
-	g_assert (r == rep);
+	g_assert_cmpint (r, ==, rep);
 	
 	// Should free data as well but we're lazy
 	g_slist_free (list);
 }
 
-gboolean
-test_alarm_timer_disable2 (gpointer data)
+/*
+ * TEST: alarm_bind
+ */
+static void
+test_alarm_bind (AlarmFixture *fix,
+				 gconstpointer test_data)
 {
-	alarm_disable(alarm2);
+	Alarm *alarm  = fix->alarm;
+	Alarm *alarm2 = alarm_new (GCONF_DIR, 1);
 	
-	return FALSE;
+	alarm_bind (alarm, "command", G_OBJECT (alarm2), "message");
+	
+	g_object_set (alarm, "command", "wickid!", NULL);
+	
+	g_assert_cmpstr (alarm->command, ==, alarm2->message);
+	
+	alarm_delete (alarm2);
+	g_object_unref (alarm2);
 }
 
-int main (void)
+
+
+/*
+ * Run them tests!
+ */
+int main (int argc, char **argv)
 {
-	GMainLoop *loop;
+	g_type_init();
+	g_test_init(&argc, &argv, NULL);
 	
-	test_alarm_type ();
-	test_alarm_notify_type ();
-	test_alarm_object ();
-	test_alarm_list ();
-	test_alarm_signals ();
-	//test_alarm_trigger ();
-	test_alarm_repeat ();
-	//test_alarm_timers ();
+	// Alarm primitives
+	g_test_add ("/alarm/type",		  AlarmFixture, 0, NULL, test_alarm_type, NULL);
+	g_test_add ("/alarm/nofity_type", AlarmFixture, 0, NULL, test_alarm_notify_type, NULL);
+	g_test_add ("/alarm/list",		  AlarmFixture, 0, NULL, test_alarm_list, NULL);
+	g_test_add ("/alarm/repeat",	  AlarmFixture, 0, NULL, test_alarm_repeat, NULL);
 	
-	loop = g_main_loop_new (g_main_context_default(), FALSE);
+	// Full system tests
+	g_test_add ("/alarm/props",  AlarmFixture, 0, alarm_fixture_setup, test_alarm_props, alarm_fixture_teardown);
+	g_test_add ("/alarm/signal", AlarmFixture, 0, alarm_fixture_setup, test_alarm_signals, alarm_fixture_teardown);
+	g_test_add ("/alarm/notify", AlarmFixture, 0, alarm_fixture_setup, test_alarm_notify, alarm_fixture_teardown);
+	g_test_add ("/alarm/bind",	 AlarmFixture, 0, alarm_fixture_setup, test_alarm_bind, alarm_fixture_teardown);
+	g_test_add ("/alarm/timers", AlarmFixture, 0, alarm_fixture_setup, test_alarm_timers, alarm_fixture_teardown);
 	
-//	g_timeout_add_seconds (5, test_alarm_set, alarm);
-	
-	// Remove alarm from alarm2 after 10 seconds
-	//g_timeout_add_seconds (10, test_alarm_timer_disable2, NULL);
-	
-	g_main_loop_run (loop);
-	
-	g_object_unref (alarm);
-	g_object_unref (alarm2);
-	
-	return 0;
+	return g_test_run ();
 }

@@ -75,13 +75,12 @@ struct _Alarm {
 	
 	/* GConf mapped values */
 	AlarmType type;
-	time_t time;
+	time_t time;			/* Time for alarm */
+	time_t timestamp;		/* UNIX timestamp (local time) for running alarms */
 	gboolean active;
 	gchar *message;
-	time_t timer;			/* For storing the timer value for 
-							 * later use, as it can not be obtained
-							 * from the timestamp in the 'time' property. */
 	AlarmRepeat repeat;
+	gint snooze;
 	
 	AlarmNotifyType notify_type;
 	gchar *sound_file;
@@ -117,15 +116,16 @@ typedef enum {
  * sensible defaults.
  */
 #define ALARM_DEFAULT_TYPE			ALARM_TYPE_CLOCK
-#define ALARM_DEFAULT_TIME			(time (NULL) + 60 * 5)
+#define ALARM_DEFAULT_TIME			0
+#define ALARM_DEFAULT_TIMESTAMP		0
 #define ALARM_DEFAULT_ACTIVE		FALSE
 #define ALARM_DEFAULT_MESSAGE		"Alarm!"
+#define ALARM_DEFAULT_REPEAT		ALARM_REPEAT_NONE
+#define ALARM_DEFAULT_SNOOZE		0
 #define ALARM_DEFAULT_NOTIFY_TYPE	ALARM_NOTIFY_SOUND
 #define ALARM_DEFAULT_SOUND_FILE	""				// Should default to first in stock sound list
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
-#define ALARM_DEFAULT_TIMER			0
-#define ALARM_DEFAULT_REPEAT		ALARM_REPEAT_NONE
 #define ALARM_DEFAULT_NOTIFY_BUBBLE	TRUE
 
 /*
@@ -202,13 +202,10 @@ void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
 
 void
-alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gboolean include_today);
+alarm_update_timestamp (Alarm *alarm);
 
 void
-alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second);
-
-void
-alarm_update_time (Alarm *alarm);
+alarm_update_timestamp_full (Alarm *alarm, gboolean include_today);
 
 GQuark
 alarm_error_quark (void);

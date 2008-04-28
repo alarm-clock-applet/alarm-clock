@@ -51,9 +51,11 @@
 					  after a specified period of time.</long>
 			</locale>
 		</schema>
-    	
+		
+		
+		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/time</key>
+	      	<key>/schemas/apps/alarm_clock/alarm/timestamp</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
@@ -63,16 +65,18 @@
 			</locale>
 		</schema>
 		
+    	
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/timer</key>
+	      	<key>/schemas/apps/alarm_clock/alarm/time</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
 				<default>0</default>
-				<short>Alarm timer</short>
-				<long>The timer for alarms of type "timer".</long>
+				<short>Alarm time</short>
+				<long>The time (GMT) for the alarm.</long>
 			</locale>
 		</schema>
+		
 		
 		<schema>
 	      	<key>/schemas/apps/alarm_clock/alarm/message</key>
@@ -106,6 +110,18 @@
 				<default>[]</default>
 				<short>When to repeat the alarm.</short>
 				<long>Indicates which days to repeat the alarm. Only applicable for "clock" alarms.</long>
+			</locale>
+		</schema>
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm_clock/alarm/snooze</key>
+	      	<owner>alarm-clock</owner>
+			<type>int</type>
+			<locale name="C">
+				<default>0</default>
+				<short>Enable snoozing of alarm.</short>
+				<long>If non-zero, indicates that the alarm can be snoozed for the selected minutes.</long>
 			</locale>
 		</schema>
 		

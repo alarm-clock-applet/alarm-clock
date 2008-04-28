@@ -356,6 +356,8 @@ alarm_triggered (Alarm *alarm, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
 	
+	g_debug ("Alarm triggered: #%d", alarm->id);
+	
 	if (alarm->notify_bubble) {
 		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
 		alarm_applet_notification_display (applet, alarm);

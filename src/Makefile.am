@@ -1,3 +1,7 @@
+include $(top_srcdir)/Makefile.decl
+
+SUBDIRS = . tests
+
 INCLUDES =						\
 	-I.							\
 	-I$(srcdir) 				\
@@ -128,9 +132,9 @@ uninstall-local: uninstall-schemas uninstall-icons uninstall-data
 
 #@INTLTOOL_SERVER_RULE@
 
-EXTRA_DIST = $(server_in_files)	\
-		     $(schemas_DATA)	\
-		     $(icons)			\
-		     $(ui_DATA)			\
-		     tests/*.c			\
-		     tests/Makefile.am	
+EXTRA_DIST += $(server_in_files)	\
+			  $(schemas_DATA)		\
+		      $(icons)				\
+		      $(ui_DATA)			\
+		      tests/*.c				\
+		      tests/Makefile.am	

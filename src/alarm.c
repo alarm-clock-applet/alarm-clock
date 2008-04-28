@@ -88,10 +88,11 @@ static enum {
 	PROP_ID,
 	PROP_TYPE,
 	PROP_TIME,
+	PROP_TIMESTAMP,
 	PROP_ACTIVE,
 	PROP_MESSAGE,
-	PROP_TIMER,
 	PROP_REPEAT,
+	PROP_SNOOZE,
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
@@ -103,10 +104,11 @@ static enum {
 #define PROP_NAME_ID			"id"
 #define PROP_NAME_TYPE			"type"
 #define PROP_NAME_TIME			"time"
+#define PROP_NAME_TIMESTAMP		"timestamp"
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
-#define PROP_NAME_TIMER			"timer"
 #define PROP_NAME_REPEAT		"repeat"
+#define PROP_NAME_SNOOZE		"snooze"
 #define PROP_NAME_NOTIFY_TYPE	"notify_type"
 #define PROP_NAME_SOUND_FILE	"sound_file"
 #define PROP_NAME_SOUND_LOOP	"sound_repeat"
@@ -154,10 +156,11 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *id_param;
 	GParamSpec *type_param;
 	GParamSpec *time_param;
+	GParamSpec *timestamp_param;
 	GParamSpec *active_param;
 	GParamSpec *message_param;
-	GParamSpec *timer_param;
 	GParamSpec *repeat_param;
+	GParamSpec *snooze_param;
 	GParamSpec *notify_type_param;
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
@@ -198,10 +201,18 @@ alarm_class_init (AlarmClass *class)
 	time_param = g_param_spec_uint (PROP_NAME_TIME,
 									 "alarm time",
 									 "time when the alarm should trigger",
-									 0,					/* min */
-									 UINT_MAX,			/* max */
-									 0,					/* default */
+									 0,						/* min */
+									 UINT_MAX,				/* max */
+									 ALARM_DEFAULT_TIME,	/* default */
 									 G_PARAM_READWRITE);
+	
+	timestamp_param = g_param_spec_uint (PROP_NAME_TIMESTAMP,
+										 "alarm timestamp",
+										 "UNIX timestamp when the alarm should trigger",
+										 0,						/* min */
+										 UINT_MAX,				/* max */
+										 ALARM_DEFAULT_TIME,	/* default */
+										 G_PARAM_READWRITE);
 	
 	active_param = g_param_spec_boolean (PROP_NAME_ACTIVE, 
 										 "active alarm",
@@ -215,20 +226,20 @@ alarm_class_init (AlarmClass *class)
 										 ALARM_DEFAULT_MESSAGE,
 										 G_PARAM_READWRITE);
 	
-	timer_param = g_param_spec_uint (PROP_NAME_TIMER,
-									 "alarm timer",
-									 "storage for the timer alarm type",
-									 0,					/* min */
-									 UINT_MAX,			/* max */
-									 0,					/* default */
-									 G_PARAM_READWRITE);
-	
 	repeat_param = g_param_spec_uint (PROP_NAME_REPEAT,
 									  "repeat",
 									  "repeat the alarm",
 									  ALARM_REPEAT_NONE,	/* min */
 									  ALARM_REPEAT_ALL,		/* max */
 									  ALARM_DEFAULT_REPEAT,	/* default */
+									  G_PARAM_READWRITE);
+	
+	snooze_param = g_param_spec_uint (PROP_NAME_SNOOZE,
+									  "snooze",
+									  "enable snoozing of the alarm",
+									  0,					/* min */
+									  UINT_MAX,				/* max */
+									  ALARM_DEFAULT_SNOOZE,	/* default */
 									  G_PARAM_READWRITE);
 	
 	notify_type_param = g_param_spec_uint (PROP_NAME_NOTIFY_TYPE,
@@ -275,10 +286,11 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_ID, id_param);
 	g_object_class_install_property (g_object_class, PROP_TYPE, type_param);
 	g_object_class_install_property (g_object_class, PROP_TIME, time_param);
+	g_object_class_install_property (g_object_class, PROP_TIMESTAMP, timestamp_param);
 	g_object_class_install_property (g_object_class, PROP_ACTIVE, active_param);
 	g_object_class_install_property (g_object_class, PROP_MESSAGE, message_param);
-	g_object_class_install_property (g_object_class, PROP_TIMER, timer_param);
 	g_object_class_install_property (g_object_class, PROP_REPEAT, repeat_param);
+	g_object_class_install_property (g_object_class, PROP_SNOOZE, snooze_param);
 	g_object_class_install_property (g_object_class, PROP_NOTIFY_TYPE, notify_type_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
@@ -398,6 +410,21 @@ alarm_gconf_load (Alarm *alarm)
 	}
 	
 	/*
+	 * TIMESTAMP
+	 */
+	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMESTAMP);
+	val = gconf_client_get (client, key, NULL);
+	g_free (key);
+	
+	if (val) {
+		alarm->timestamp = (time_t)gconf_value_get_int (val);
+		gconf_value_free (val);
+	} else {
+		// Not found in GConf, fall back to defaults
+		g_object_set (alarm, PROP_NAME_TIMESTAMP, ALARM_DEFAULT_TIMESTAMP, NULL);
+	}
+	
+	/*
 	 * ACTIVE
 	 */
 	key = alarm_gconf_get_full_key (alarm, PROP_NAME_ACTIVE);
@@ -429,21 +456,6 @@ alarm_gconf_load (Alarm *alarm)
 	}
 	
 	/*
-	 * TIMER (storage for timer alarm type)
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMER);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-	
-	if (val) {
-		alarm->timer = (time_t)gconf_value_get_int (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_TIMER, ALARM_DEFAULT_TIMER, NULL);
-	}
-	
-	/*
 	 * REPEAT
 	 */
 	key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
@@ -460,6 +472,21 @@ alarm_gconf_load (Alarm *alarm)
 	} else {
 		// Not found in GConf, fall back to defaults
 		g_object_set (alarm, PROP_NAME_REPEAT, ALARM_DEFAULT_REPEAT, NULL);
+	}
+	
+	/*
+	 * SNOOZE
+	 */
+	key = alarm_gconf_get_full_key (alarm, PROP_NAME_SNOOZE);
+	val = gconf_client_get (client, key, NULL);
+	g_free (key);
+	
+	if (val) {
+		alarm->snooze = gconf_value_get_int (val);
+		gconf_value_free (val);
+	} else {
+		// Not found in GConf, fall back to defaults
+		g_object_set (alarm, PROP_NAME_SNOOZE, ALARM_DEFAULT_SNOOZE, NULL);
 	}
 	
 	/*
@@ -590,6 +617,8 @@ alarm_set_property (GObject *object,
 	alarm = ALARM (object);
 	client = priv->gconf_client;
 	
+	g_debug ("set_property %s", pspec->name);
+	
 	switch (prop_id) {
 	case PROP_DIR:
 		str = g_value_get_string (value);
@@ -638,8 +667,7 @@ alarm_set_property (GObject *object,
 		
 		// If we changed from CLOCK to TIMER we need to update the time
 		if (alarm->type == ALARM_TYPE_TIMER && alarm->active) {
-			/* If we're a TIMER, update the "time" property to now + timer */
-			g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
+			alarm_update_timestamp (alarm);
 		}
 		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TYPE);
@@ -671,16 +699,29 @@ alarm_set_property (GObject *object,
 		
 		g_free (key);
 		break;
+	case PROP_TIMESTAMP:
+		alarm->timestamp = g_value_get_uint (value);
+		
+		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMESTAMP);
+		
+		if (!gconf_client_set_int (client, key, alarm->timestamp, &err)) {
+			
+			g_critical ("Could not set %s (gconf): %s", 
+						key, err->message);
+			
+			g_error_free (err);
+		}
+		
+		g_free (key);
+		break;
 	case PROP_ACTIVE:
 		bool = alarm->active;
 		alarm->active = g_value_get_boolean (value);
 		
 		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
 		if (alarm->active && !alarm_timer_is_started(alarm)) {
-			if (alarm->type == ALARM_TYPE_TIMER) {
-				/* If we're a TIMER, update the "time" property to now + timer */
-				g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
-			}
+			// Update timestamp
+			alarm_update_timestamp (alarm);
 			
 			// Start timer
 			alarm_timer_start (alarm);
@@ -724,31 +765,12 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		
 		break;
-	case PROP_TIMER:
-		alarm->timer = g_value_get_uint (value);
-		
-		// If our alarm is active we need to update the time
-		if (alarm->type == ALARM_TYPE_TIMER && alarm->active) {
-			/* If we're a TIMER, update the "time" property to now + timer */
-			g_object_set (alarm, "time", time(NULL) + alarm->timer, NULL);
-		}
-		
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMER);
-		
-		if (!gconf_client_set_int (client, key, alarm->timer, &err)) {
-			
-			g_critical ("Could not set %s (gconf): %s", 
-						key, err->message);
-			
-			g_error_free (err);
-		}
-		
-		g_free (key);
-		break;
 	case PROP_REPEAT:
 		alarm->repeat = g_value_get_uint (value);
 		
-		alarm_update_time (alarm);
+		if (alarm->active) {
+			alarm_update_timestamp (alarm);
+		}
 		
 		key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
 		list = alarm_repeat_to_list (alarm->repeat);
@@ -766,6 +788,21 @@ alarm_set_property (GObject *object,
 		g_slist_free (list);
 		g_free (key);
 		
+		break;
+	case PROP_SNOOZE:
+		alarm->snooze = g_value_get_uint (value);
+		
+		key = alarm_gconf_get_full_key (alarm, PROP_NAME_SNOOZE);
+		
+		if (!gconf_client_set_int (client, key, alarm->snooze, &err)) {
+			
+			g_critical ("Could not set %s (gconf): %s", 
+						key, err->message);
+			
+			g_error_free (err);
+		}
+		
+		g_free (key);
 		break;
 	case PROP_NOTIFY_TYPE:
 		alarm->notify_type = g_value_get_uint (value);
@@ -880,17 +917,20 @@ alarm_get_property (GObject *object,
 	case PROP_TIME:
 		g_value_set_uint (value, alarm->time);
 		break;
+	case PROP_TIMESTAMP:
+		g_value_set_uint (value, alarm->timestamp);
+		break;
 	case PROP_ACTIVE:
 		g_value_set_boolean (value, alarm->active);
 		break;
 	case PROP_MESSAGE:
 		g_value_set_string (value, alarm->message);
 		break;
-	case PROP_TIMER:
-		g_value_set_uint (value, alarm->timer);
-		break;
 	case PROP_REPEAT:
 		g_value_set_uint (value, alarm->repeat);
+		break;
+	case PROP_SNOOZE:
+		g_value_set_uint (value, alarm->snooze);
 		break;
 	case PROP_NOTIFY_TYPE:
 		g_value_set_uint (value, alarm->notify_type);
@@ -925,7 +965,7 @@ alarm_error_quark (void)
 static void
 alarm_error (Alarm *alarm, GError *err)
 {
-	g_warning("[%p] #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
+	g_debug ("[%p] #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
 }
 
 void
@@ -967,8 +1007,7 @@ alarm_trigger (Alarm *alarm)
 	 */
 	if (alarm_should_repeat (alarm)) {
 		g_debug ("alarm_trigger REPEATING");
-		struct tm *tm = localtime (&(alarm->time));
-		alarm_set_time_full (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, FALSE);
+		alarm_update_timestamp_full (alarm, FALSE);
 	} else {
 		alarm_disable (alarm);
 	}
@@ -1055,13 +1094,13 @@ alarm_timer_update (Alarm *alarm)
 	
 	time (&now);
 	
-	if (now >= alarm->time) {
+	if (now >= alarm->timestamp) {
 		alarm_trigger (alarm);
 		
 		// Remove callback only if we don't intend to repeat the alarm
 		return alarm_should_repeat (alarm);
-	} else if (alarm->time - now <= 10) {
-		g_debug ("[%p] #%d %2d...", alarm, alarm->id, (int)(alarm->time - now));
+	} else if (alarm->timestamp - now <= 10) {
+		g_debug ("[%p] #%d %2d...", alarm, alarm->id, (int)(alarm->timestamp - now));
 	}
 	
 	// Keep callback
@@ -1207,7 +1246,7 @@ alarm_gconf_disconnect (Alarm *alarm)
 	gchar *dir;
 	
 	if (priv->gconf_listener) {
-		g_debug ("alarm_gconf_disconnect: Removing listener %d from alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
+		//g_debug ("alarm_gconf_disconnect: Removing listener %d from alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
 		gconf_client_notify_remove (priv->gconf_client, priv->gconf_listener);
 		priv->gconf_listener = 0;
 		
@@ -1257,6 +1296,11 @@ alarm_gconf_dir_changed (GConfClient *client,
 		if (i != alarm->time)
 			g_object_set (alarm, name, i, NULL);
 		break;
+	case PROP_TIMESTAMP:
+		i = gconf_value_get_int (entry->value);
+		if (i != alarm->timestamp)
+			g_object_set (alarm, name, i, NULL);
+		break;
 	case PROP_ACTIVE:
 		b = gconf_value_get_bool (entry->value);
 		if (b != alarm->active) {
@@ -1269,11 +1313,6 @@ alarm_gconf_dir_changed (GConfClient *client,
 		if (strcmp (str, alarm->message) != 0)
 			g_object_set (alarm, name, str, NULL);
 		break;
-	case PROP_TIMER:
-		i = gconf_value_get_int (entry->value);
-		if (i != alarm->timer)
-			g_object_set (alarm, name, i, NULL);
-		break;
 	case PROP_REPEAT:
 		list = alarm_gconf_extract_list_string (entry->value);
 		
@@ -1282,6 +1321,11 @@ alarm_gconf_dir_changed (GConfClient *client,
 			g_object_set (alarm, name, i, NULL);
 		
 		g_slist_free (list);
+		break;
+	case PROP_SNOOZE:
+		i = gconf_value_get_int (entry->value);
+		if (i != alarm->snooze)
+			g_object_set (alarm, name, i, NULL);
 		break;
 	case PROP_NOTIFY_TYPE:
 		str = gconf_value_get_string (entry->value);
@@ -1576,7 +1620,10 @@ alarm_bind (Alarm *alarm,
 static gint
 alarm_list_item_compare (gconstpointer a, gconstpointer b)
 {
-	return strcmp ((const gchar *)a, (const gchar *)b);
+	Alarm *a1 = ALARM (a);
+	Alarm *a2 = ALARM (b);
+	
+	return a1->id - a2->id;
 }
 
 /*
@@ -1623,8 +1670,6 @@ alarm_get_list (const gchar *gconf_dir)
 	if (!dirs)
 		return NULL;
 	
-	dirs = g_slist_sort (dirs, alarm_list_item_compare);
-	
 	for (l = dirs; l; l = l->next) {
 		tmp = (gchar *)l->data;
 		
@@ -1634,7 +1679,7 @@ alarm_get_list (const gchar *gconf_dir)
 			
 			alarm = alarm_new (gconf_dir, id);
 			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
-			ret = g_list_append (ret, alarm);
+			ret = g_list_insert_sorted (ret, alarm, alarm_list_item_compare);
 			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);
 		}
 		
@@ -1772,6 +1817,22 @@ alarm_command_run (Alarm *alarm)
 	}
 }
 
+
+
+
+
+
+/*
+ * Set time according to hour, min, sec
+ */
+void
+alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
+{
+	g_debug ("alarm_set_time (%d:%d:%d)", hour, minute, second);
+	
+	g_object_set (alarm, "time", second + minute * 60 + hour * 60 * 60, NULL);
+}
+
 /*
  * Calculates the distance from wday1 to wday2
  */
@@ -1795,11 +1856,12 @@ alarm_time_is_future (struct tm *tm, guint hour, guint minute, guint second)
 			(hour == tm->tm_hour && minute == tm->tm_min && second > tm->tm_sec));
 }
 
+
 /*
  * Set time according to hour, min, sec and alarm->repeat
  */
-void
-alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gboolean include_today)
+static void
+alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gboolean include_today)
 {
 	time_t now, new;
 	gint i, d, wday;
@@ -1892,43 +1954,36 @@ alarm_set_time_full (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	
 	new = mktime (tm);
 	g_debug ("alarm_set_time_full: Setting to %d", new);
-	g_object_set (alarm, "time", new, NULL);
+	g_object_set (alarm, "timestamp", new, NULL);
 }
 
 /*
- * Set time according to hour, min, sec
+ * Update the alarm timestamp to point to the nearest future
+ * hour/min/sec according to the time value.
+ */
+void
+alarm_update_timestamp_full (Alarm *alarm, gboolean include_today)
+{
+	if (alarm->type == ALARM_TYPE_CLOCK) {
+		struct tm *tm = alarm_get_time (alarm);
+		g_debug ("update_timestamp_full: %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		alarm_set_timestamp (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, include_today);
+	} else {
+		/* ALARM_TYPE_TIMER */
+		g_object_set (alarm, "timestamp", time(NULL) + alarm->time, NULL);
+	}
+}
+
+/*
+ * Update the alarm timestamp to point to the nearest future
+ * hour/min/sec according to the time value.
  * 
- * Will update according to the repeat property.
+ * Equivalent to alarm_update_timestamp_full (alarm, TRUE)
  */
 void
-alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
+alarm_update_timestamp (Alarm *alarm)
 {
-	g_debug ("alarm_set_time (%d, %d, %d)", hour, minute, second);
-	
-	alarm_set_time_full (alarm, hour, minute, second, TRUE);
-}
-
-/*
- * Set timer according to hour, min, sec
- */
-void
-alarm_set_timer (Alarm *alarm, guint hour, guint minute, guint second)
-{
-	time_t timer = second + minute * 60 + hour * 60 * 60;
-	
-	g_object_set (alarm, "timer", timer, NULL);
-}
-
-/*
- * Update the alarm time to point to the nearest future
- * hour/min/sec according to the previous timestamp.
- */
-void
-alarm_update_time (Alarm *alarm)
-{
-	struct tm *tm;
-	tm = localtime (&(alarm->time));
-	alarm_set_time (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
+	alarm_update_timestamp_full (alarm, TRUE);
 }
 
 /*
@@ -1937,11 +1992,7 @@ alarm_update_time (Alarm *alarm)
 struct tm *
 alarm_get_time (Alarm *alarm)
 {
-	if (alarm->type == ALARM_TYPE_TIMER) {
-		return gmtime (&(alarm->timer));
-	}
-	
-	return localtime (&(alarm->time));
+	return gmtime (&(alarm->time));
 }
 
 /*
@@ -1956,7 +2007,7 @@ alarm_get_remain (Alarm *alarm)
 	//struct tm tm;
 	
 	now = time (NULL);
-	tm.tm_sec = alarm->time - now;
+	tm.tm_sec = alarm->timestamp - now;
 	
 	tm.tm_min = tm.tm_sec / 60;
 	tm.tm_sec -= tm.tm_min * 60;

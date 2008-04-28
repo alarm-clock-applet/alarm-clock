@@ -15,12 +15,6 @@ list_alarms_toggled_cb  (GtkCellRendererToggle *cell_renderer,
 	
 	g_debug ("list_alarms_toggled %s: #%d", path, alarm->id);
 	
-	if (!alarm->active && alarm->type == ALARM_TYPE_CLOCK) {
-		// Update time
-		g_debug ("\tUpdate TIME!");
-		alarm_update_time (alarm);
-	}
-	
 	g_object_set (alarm, "active", !(alarm->active), NULL);
 	
 	/*

@@ -96,7 +96,8 @@ alarm_applet_update_tooltip (AlarmApplet *applet)
 		tip = g_string_append (tip, _("No active alarms"));
 	}
 	
-	tip = g_string_append (tip, _("\nClick to clear all triggered alarms"));
+	tip = g_string_append (tip, _("\n\nClick to clear all triggered alarms"));
+	tip = g_string_append (tip, _("\nDouble click to edit alarms"));
 	
 	gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
 	
@@ -198,8 +199,13 @@ button_cb (GtkWidget *widget,
 		return FALSE;
 	}
 	
-	/* TODO: stop any triggered alarms / snooze */
-	alarm_applet_clear_alarms (applet);
+	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
+		/* Double click: Open list alarms */
+		list_alarms_dialog_display (applet);
+	} else {
+		/* TODO: snooze */
+		alarm_applet_clear_alarms (applet);
+	}
 	
 	/* Show edit alarms dialog */
 	//display_list_alarms_dialog (applet);
