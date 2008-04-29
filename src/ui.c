@@ -1,4 +1,6 @@
 #include <time.h>
+#include <string.h>
+#include <libnotify/notify.h>
 
 #include "alarm-applet.h"
 #include "ui.h"
@@ -414,6 +416,27 @@ unrealize_cb (GtkWidget *object, AlarmApplet *applet)
 	alarm_applet_destroy (applet);
 }
 
+#ifdef HAVE_LIBNOTIFY
+static void
+alarm_applet_notification_action_cb (NotifyNotification *notify,
+									 gchar *action,
+									 gpointer data)
+{
+	Alarm *alarm = ALARM (data);
+	
+	g_debug ("NOTIFY ACTION: %s", action);
+	
+	if (strcmp (action, "clear") == 0) {
+		g_debug ("NOTIFY CLEAR #%d", alarm->id);
+		alarm_clear (alarm);
+	} else {
+		// "snooze"
+		g_debug ("NOTIFY SNOOZE #%d", alarm->id);
+		alarm_snooze (alarm);
+	}
+}
+#endif
+
 /* Taken from the battery applet */
 gboolean
 alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
@@ -427,23 +450,16 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 	
 	if (!notify_is_initted () && !notify_init (_("Alarm Applet")))
 		return FALSE;
-
-  	/*icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 ALARM_ICON,
-									 48,
-									 GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
-	
-	if (icon == NULL) {
-		g_critical ("Icon not found.");
-	}*/
 	
 	message = alarm->message;
 	
 	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
-
-	/* XXX: it would be nice to pass this as a named icon */
-	//notify_notification_set_icon_from_pixbuf (applet->notify, icon);
-	//gdk_pixbuf_unref (icon);
+	
+	notify_notification_add_action (applet->notify, "clear", "Clear", alarm_applet_notification_action_cb, alarm, NULL);
+	
+	if (alarm->snooze) {
+		notify_notification_add_action (applet->notify, "snooze", "Snooze", alarm_applet_notification_action_cb, alarm, NULL);
+	}
 
 	result = notify_notification_show (applet->notify, &error);
 	
@@ -452,8 +468,6 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 	   g_warning (error->message);
 	   g_error_free (error);
 	}
-
-	//g_object_unref (G_OBJECT (n));
 
 	return result;
 #else
