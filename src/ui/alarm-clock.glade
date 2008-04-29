@@ -148,7 +148,8 @@
         <property name="visible">True</property>
         <child>
           <widget class="GtkHBox" id="list-alarms-box">
-            <property name="width_request">320</property>
+            <property name="width_request">360</property>
+            <property name="height_request">150</property>
             <property name="visible">True</property>
             <property name="border_width">5</property>
             <property name="spacing">6</property>

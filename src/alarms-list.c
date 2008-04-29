@@ -628,6 +628,7 @@ list_alarms_dialog_display (AlarmApplet *applet)
 	 */
 	g_signal_connect (view, "row-activated", G_CALLBACK (list_alarm_selected_cb), applet);
 	
+	// TODO: Calculate a good initial size for the window
 	
 	//gtk_container_add (GTK_CONTAINER (list_alarms_box), GTK_WIDGET (view));
 	//gtk_box_pack_start_defaults (GTK_BOX (list_alarms_scrol), GTK_WIDGET (view));
