@@ -558,7 +558,6 @@
             <child>
               <widget class="GtkCheckButton" id="snooze-check">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="label" translatable="yes">Snoo_ze for:</property>
                 <property name="use_underline">True</property>

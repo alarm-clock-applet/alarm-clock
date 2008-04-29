@@ -152,7 +152,7 @@ alarm_settings_update_snooze (AlarmSettingsDialog *dialog)
 {
 	g_object_set (dialog->snooze_spin, "value", (gdouble)dialog->alarm->snooze, NULL);
 	
-	//if (dialog->alarm->snooze > 0)
+	g_object_set (dialog->snooze_check, "active", dialog->alarm->snooze > 0, NULL);
 }
 
 static void
@@ -503,6 +503,26 @@ repeat_changed_cb (GtkToggleButton *togglebutton,
 }
 
 static void
+snooze_changed_cb (GtkSpinButton *spinbutton, gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	g_object_set (dialog->alarm, "snooze", (gint)gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->snooze_spin)), NULL);
+}
+
+static void
+snooze_check_changed_cb (GtkToggleButton *togglebutton, gpointer data)
+{
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
+	
+	if (gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze == 0) {
+		g_object_set (dialog->alarm, "snooze", 5, NULL);
+	} else if (!gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze > 0) {
+		g_object_set (dialog->alarm, "snooze", 0, NULL);
+	}
+}
+
+static void
 notify_type_changed_cb (GtkToggleButton *togglebutton,
 						AlarmSettingsDialog *dialog)
 {
@@ -831,6 +851,9 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	
 	/* snooze */
 	g_signal_connect (alarm, "notify::snooze", G_CALLBACK (alarm_snooze_changed), dialog);
+	
+	g_signal_connect (dialog->snooze_spin, "value-changed", G_CALLBACK (snooze_changed_cb), dialog);
+	g_signal_connect (dialog->snooze_check, "toggled", G_CALLBACK (snooze_check_changed_cb), dialog);
 	
 	/* notify type */
 	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);

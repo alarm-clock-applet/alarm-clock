@@ -23,7 +23,7 @@ alarm_applet_snooze_alarms (AlarmApplet *applet)
 	GList *l;
 	Alarm *a;
 	
-	g_debug ("Clearing alarms...");
+	g_debug ("Snoozing alarms...");
 	
 	// Loop through alarms and snooze all of 'em
 	for (l = applet->alarms; l; l = l->next) {

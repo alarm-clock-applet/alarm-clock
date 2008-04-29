@@ -96,7 +96,7 @@ alarm_applet_update_tooltip (AlarmApplet *applet)
 		tip = g_string_append (tip, _("No active alarms"));
 	}
 	
-	tip = g_string_append (tip, _("\n\nClick to clear all triggered alarms"));
+	tip = g_string_append (tip, _("\n\nClick to snooze alarms"));
 	tip = g_string_append (tip, _("\nDouble click to edit alarms"));
 	
 	gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
@@ -203,8 +203,7 @@ button_cb (GtkWidget *widget,
 		/* Double click: Open list alarms */
 		list_alarms_dialog_display (applet);
 	} else {
-		/* TODO: snooze */
-		alarm_applet_clear_alarms (applet);
+		alarm_applet_snooze_alarms (applet);
 	}
 	
 	/* Show edit alarms dialog */
@@ -421,29 +420,30 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 {
 #ifdef HAVE_LIBNOTIFY
 	GError *error = NULL;
-	GdkPixbuf *icon;
+	//GdkPixbuf *icon;
 	gboolean result;
 	const gchar *message;
+	const gchar *icon = (alarm->type == ALARM_TYPE_CLOCK) ? ALARM_ICON : TIMER_ICON;
 	
 	if (!notify_is_initted () && !notify_init (_("Alarm Applet")))
 		return FALSE;
 
-  	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
+  	/*icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
 									 ALARM_ICON,
 									 48,
 									 GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
 	
 	if (icon == NULL) {
 		g_critical ("Icon not found.");
-	}
+	}*/
 	
 	message = alarm->message;
 	
-	applet->notify = notify_notification_new (_("Alarm!"), message, /* "battery" */ NULL, GTK_WIDGET (applet->icon));
+	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
 
 	/* XXX: it would be nice to pass this as a named icon */
-	notify_notification_set_icon_from_pixbuf (applet->notify, icon);
-	gdk_pixbuf_unref (icon);
+	//notify_notification_set_icon_from_pixbuf (applet->notify, icon);
+	//gdk_pixbuf_unref (icon);
 
 	result = notify_notification_show (applet->notify, &error);
 	

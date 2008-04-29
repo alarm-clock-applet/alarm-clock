@@ -1086,9 +1086,12 @@ void
 alarm_snooze (Alarm *alarm)
 {
 	// SNOOZE
-	alarm_clear (alarm);
+	if (alarm->snooze == 0) {
+		alarm_clear (alarm);
+		return;
+	}
 	
-	if (alarm->snooze == 0) return;
+	if (!alarm_is_playing (alarm)) return;
 	
 	g_debug ("alarm_snooze SNOOZING FOR %d minutes", alarm->snooze);
 	
@@ -1098,6 +1101,8 @@ alarm_snooze (Alarm *alarm)
 				  "timestamp", now + alarm->snooze * 60,
 				  "active", TRUE,
 				  NULL);
+	
+	alarm_clear (alarm);
 }
 
 /*
