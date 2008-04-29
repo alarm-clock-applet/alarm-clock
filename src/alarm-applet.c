@@ -318,7 +318,7 @@ alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
 		
 		if (!a->active) continue;
 		
-		if (!applet->upcoming_alarm || a->timestamp < applet->upcoming_alarm->time) {
+		if (!applet->upcoming_alarm || a->timestamp < applet->upcoming_alarm->timestamp) {
 			// This alarm is most recent
 			applet->upcoming_alarm = a;
 		}
