@@ -43,6 +43,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_NAME		 "Alarm Clock"
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
+#define SNOOZE_ICON		 "alarm-snooze"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_clock/prefs"
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-clock.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR

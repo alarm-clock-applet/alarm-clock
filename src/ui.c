@@ -653,13 +653,17 @@ menu_about_cb (BonoboUIComponent *component,
 void
 alarm_applet_menu_init (AlarmApplet *applet)
 {
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default(), SNOOZE_ICON, 16, 0);
+	
+	g_debug ("ICON: %s", gtk_icon_info_get_filename (info));
+	
 	static const gchar *menu_xml =
 		"<popup name=\"button3\">\n"
 		"   <menuitem name=\"Snooze Item\" "
 		"			  verb=\"SnoozeAlarm\" "
 		"			_label=\"_Snooze alarms\" "
-		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-clear\"/>\n"
+		"		   pixtype=\"filename\" "
+		"		   pixname=\"%s\"/>\n"
 		"   <menuitem name=\"Clear Item\" "
 		"			  verb=\"ClearAlarm\" "
 		"			_label=\"_Clear alarms\" "
@@ -692,10 +696,15 @@ alarm_applet_menu_init (AlarmApplet *applet)
 			BONOBO_UI_VERB_END
 	};
 	
+	gchar *xml = g_strdup_printf (menu_xml, gtk_icon_info_get_filename (info));
+	
 	panel_applet_setup_menu (PANEL_APPLET (applet->parent),
-	                         menu_xml,
+	                         xml,
 	                         menu_verbs,
 	                         applet);
+	
+	g_free (xml);
+	gtk_icon_info_free (info);
 }
 
 

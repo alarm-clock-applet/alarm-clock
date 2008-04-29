@@ -60,7 +60,11 @@ icons =	\
 	icons/alarm-timer.32.png	\
 	icons/alarm-timer.36.png	\
 	icons/alarm-timer.48.png	\
-	icons/alarm-timer.64.png	
+	icons/alarm-timer.64.png	\
+	icons/alarm-snooze.16.png	\
+	icons/alarm-snooze.22.png	\
+	icons/alarm-snooze.24.png	\
+	icons/alarm-snooze.32.png	
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 
