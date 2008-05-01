@@ -22,9 +22,9 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 						     alarm-gconf.c alarm-gconf.h	\
 						     ui.c ui.h						\
 						     prefs.c prefs.h				\
-						     alarms-list.c					\
-						     edit-alarm.c					\
-						     alarm.c
+						     alarms-list.c alarms-list.h	\
+						     edit-alarm.c edit-alarm.h		\
+						     alarm.c alarm.h
 
 alarm_clock_applet_LDADD =		\
 	$(GLIB_LIBS)				\
@@ -142,6 +142,4 @@ uninstall-local: uninstall-schemas uninstall-icons uninstall-data
 EXTRA_DIST += $(server_in_files)	\
 			  $(schemas_DATA)		\
 		      $(icons)				\
-		      $(ui_DATA)			\
-		      tests/*.c				\
-		      tests/Makefile.am	
+		      $(ui_DATA)			

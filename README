@@ -38,3 +38,11 @@ Compile with the usual:
 ./configure --prefix=/usr
 make
 make install
+
+
+Note: It's important that you install into /usr so the BONOBO .server file is
+	  placed under a directory which gnome-panel can recognize.
+	  
+	  If you would like to install to another prefix, you need to move
+	  AlarmClock.server to the bonobo server directory afterwards (usually
+	  /usr/lib/bonobo/servers).

@@ -14,8 +14,7 @@ INCLUDES =						\
 
 noinst_PROGRAMS = $(TEST_PROGS)
 
-TEST_PROGS += test_alarm
-#test_player test_list_entry test_util test_alarm glade_view test_gconf_recursive
+TEST_PROGS += test_alarm test_player test_list_entry test_util test_alarm glade_view test_gconf_recursive
 
 test_player_SOURCES = $(top_srcdir)/src/player.c $(top_srcdir)/src/player.h test_player.c
 test_player_LDADD =				\

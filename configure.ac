@@ -2,7 +2,7 @@ dnl ***************************************************************************
 dnl *** configure.ac for ALARM-CLOCK                                        ***
 dnl ***************************************************************************
 
-AC_INIT([Alarm Clock], [0.1.2],
+AC_INIT([Alarm Clock], [0.2],
 		[Johannes H. Jensen <joh@deworks.net>],
 		[alarm-clock])
 		
@@ -31,8 +31,6 @@ LIBNOTIFY_REQUIRED=0.3.2
 dnl LIBXML_REQUIRED=2.5.0
 
 dnl ***************************************************************************
-
-GNOME_INIT
 
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -152,3 +150,16 @@ AC_CONFIG_FILES([Makefile
 				 src/Makefile
 				 src/tests/Makefile])
 AC_OUTPUT
+
+dnl ***************************************************************************
+dnl *** Show summary                                                        ***
+dnl ***************************************************************************
+
+echo
+echo "*************************************************"
+echo
+echo "Configure summary:"
+echo "  Notifications (libnotify): $HAVE_LIBNOTIFY"
+echo 
+echo "*************************************************"
+echo
