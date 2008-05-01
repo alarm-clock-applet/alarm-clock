@@ -539,7 +539,7 @@ snooze_check_changed_cb (GtkToggleButton *togglebutton, gpointer data)
 	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
 	
 	if (gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze == 0) {
-		g_object_set (dialog->alarm, "snooze", 5, NULL);
+		g_object_set (dialog->alarm, "snooze", ALARM_DEF_SNOOZE, NULL);
 	} else if (!gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze > 0) {
 		g_object_set (dialog->alarm, "snooze", 0, NULL);
 	}

@@ -71,6 +71,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-clock.glade"
 #define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
 #define ALARM_DEF_LABEL	 _("No alarms")
+#define ALARM_DEF_SNOOZE 9
 
 #ifndef VERSION
 #define VERSION "0.1"
