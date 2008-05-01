@@ -1,0 +1,703 @@
+------------------------------------------------------------
+revno: 102
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Thu 2008-05-01 17:39:45 +0200
+message:
+  Added copyright information at the top of each source file.
+------------------------------------------------------------
+revno: 101
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Thu 2008-05-01 17:18:57 +0200
+message:
+  At last the 0.2 release!
+------------------------------------------------------------
+revno: 100
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Thu 2008-05-01 16:33:59 +0200
+message:
+  New snooze icon. Thanks to Lasse Gullvåg Sætre!
+  Panel icon now reflects the type of the upcoming alarm.
+------------------------------------------------------------
+revno: 99
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 23:27:55 +0200
+message:
+  Snooze icon added in code.
+------------------------------------------------------------
+revno: 98
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 17:56:15 +0200
+message:
+  list-alarms resizing.
+------------------------------------------------------------
+revno: 97
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 17:36:35 +0200
+message:
+  Clear & snooze actions added to Notification.
+------------------------------------------------------------
+revno: 96
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 17:04:35 +0200
+message:
+  Snooze working.
+  Notification now displaying the proper icon according to the alarm type.
+------------------------------------------------------------
+revno: 95
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 09:31:05 +0200
+message:
+  Fixed a bug where the upcoming alarm would not get properly selected.
+------------------------------------------------------------
+revno: 94
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 01:01:57 +0200
+message:
+  Snooze working. Only the snooze UI elements remaining.
+------------------------------------------------------------
+revno: 93
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Tue 2008-04-29 00:08:12 +0200
+message:
+  Transition to "time". Seems to be working nicely now.
+------------------------------------------------------------
+revno: 92
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Mon 2008-04-28 23:50:12 +0200
+message:
+  Makefile.decl for GTest setup.
+------------------------------------------------------------
+revno: 91
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Mon 2008-04-28 23:47:42 +0200
+message:
+  Refactoring alarm so both clock/timers store their time in the "time" property.
+  Replacing the "time" property with "timestamp" which enables us to update it for snoozing without affecting clock/timer settings.
+  tests/test_alarm completely rewritten to use the new GTest API.
+------------------------------------------------------------
+revno: 90
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Wed 2008-04-23 19:41:30 +0200
+message:
+  Fixed a bug where alarm_bind_weak_ref() would try to disconnect a signal handler from a finalized object.
+------------------------------------------------------------
+revno: 89
+committer: joh
+branch nick: alarm-clock
+timestamp: Mon 2008-04-21 01:25:57 +0200
+message:
+  "More renaming to Alarm Clock.\nSchema for repeat property added."
+------------------------------------------------------------
+revno: 88
+committer: Johannes H. Jensen <joh@deworks.net>
+branch nick: alarm-clock
+timestamp: Sun 2008-04-27 00:06:53 +0200
+message:
+  Renaming to Alarm Clock
+    ------------------------------------------------------------
+    revno: 87.1.1
+    committer: Johannes H. Jensen <joh@deworks.net>
+    branch nick: alarm-clock
+    timestamp: Sun 2008-04-27 00:03:15 +0200
+    message:
+      Renaming to Alarm Clock
+------------------------------------------------------------
+revno: 87
+committer: joh
+timestamp: Sun 2008-04-20 20:09:36 +0000
+message:
+  Fixed repeat alarm system. Should work as expected now.
+------------------------------------------------------------
+revno: 86
+committer: joh
+timestamp: Sun 2008-04-20 16:08:07 +0000
+message:
+  Fixed a bug with AlarmRepeat where the repeat timestamp was wrongly calculated.
+  Week now starts on SUN=0 and ends on SAT=6 to be more compatible with mktime.
+------------------------------------------------------------
+revno: 85
+committer: joh
+timestamp: Sat 2008-04-12 15:35:19 +0000
+message:
+  Alarm repetition implemented!
+  Usability problem: What should happen if user changes repeat settings while the alarm repetition is running?
+------------------------------------------------------------
+revno: 84
+committer: joh
+timestamp: Sat 2008-04-05 21:38:02 +0000
+message:
+  Fixed THE bug where the applet would segfault if the AlarmSettingsDialog was freed when the dialog was closed. This was due to the fact that the previous signal handlers (notify on alarm) were never disconnected and were passed the old dialog struct when the alarm was changed. This is now fixed both in the dialog and alarm_bind()
+------------------------------------------------------------
+revno: 83
+committer: joh
+timestamp: Sat 2008-04-05 00:16:40 +0000
+message:
+  alarm.c: Alarm "repeat" property implemented.
+  edit-alarm.c: Interface updated to handle the new "repeat" property.
+------------------------------------------------------------
+revno: 82
+committer: joh
+timestamp: Thu 2008-04-03 10:56:54 +0000
+message:
+  alarm.c: Added the "player_changed" signal.
+  alarms-list.c: Added an icon to indicate that the alarm is playing a sound.
+  ui.c: Added a more descriptive tooltip.
+------------------------------------------------------------
+revno: 81
+committer: joh
+timestamp: Wed 2008-04-02 23:40:04 +0000
+message:
+  alarm_applet_clear_alarms() implemented.
+------------------------------------------------------------
+revno: 80
+committer: joh
+timestamp: Wed 2008-04-02 23:18:40 +0000
+message:
+  alarm.c: Fixed a bug where the alarm time would not get updated on TIMER alarms if the alarm was already active when the timer property got updated.
+  
+  alarm-applet: Added tooltips to applet.
+------------------------------------------------------------
+revno: 79
+committer: joh
+timestamp: Wed 2008-04-02 22:15:07 +0000
+message:
+  alarm.c: Fixed a bug where the "time" field would not get updated if an alarm is active and the type changes from clock to timer.
+  
+  Added upcoming alarm feature to the alarm label.
+------------------------------------------------------------
+revno: 78
+committer: joh
+timestamp: Mon 2008-03-31 22:48:00 +0000
+message:
+  Fixed a bug where associated schemas would prevent an alarm from getting deleted.
+------------------------------------------------------------
+revno: 77
+committer: joh
+timestamp: Mon 2008-03-31 22:33:09 +0000
+message:
+  Schemas now applied properly to applet & alarms.
+------------------------------------------------------------
+revno: 76
+committer: joh
+timestamp: Mon 2008-03-31 21:28:16 +0000
+message:
+  Applet is now properly destroyed when it is removed from the panel.
+  The apps list is now successfully loaded at startup.
+  AlarmApplet struct is now allocated and filled with 0's instead of assigning each field to NULL.
+------------------------------------------------------------
+revno: 75
+committer: joh
+timestamp: Sun 2008-03-30 22:21:49 +0000
+message:
+  Added a destroy function for alarm_applet.
+  Unfortunately this is never called because I can't figure out which signal is emmited when the applet is removed from the panel.
+------------------------------------------------------------
+revno: 74
+committer: joh
+timestamp: Sun 2008-03-30 21:43:48 +0000
+message:
+  alarm-list: Callback args are now free'd properly
+------------------------------------------------------------
+revno: 73
+committer: joh
+timestamp: Thu 2008-03-27 18:51:51 +0000
+message:
+  Fixed a bug which caused a segfault where alarm_clear() would try to free a non-existing notify object.
+  Minor cleanups.
+------------------------------------------------------------
+revno: 72
+committer: joh
+timestamp: Tue 2008-03-25 15:50:17 +0000
+message:
+  alarms-list.c: Fixed a bug where the timer callback would not get removed when the list alarms dialog closes.
+  alarm.c: Fixed a bug where the alarm timer would not get started if the alarm was active in gconf.
+------------------------------------------------------------
+revno: 71
+committer: joh
+timestamp: Tue 2008-03-25 15:27:13 +0000
+message:
+  Fixed a bug where the notification bubble object would be tried freed when it doesn't exist.
+------------------------------------------------------------
+revno: 70
+committer: joh
+timestamp: Tue 2008-03-25 15:23:09 +0000
+message:
+  Renamed all GConf-mapped properties to have underscores (_) instead of dashes (-) to confirm to GConf policies.
+------------------------------------------------------------
+revno: 69
+committer: joh
+timestamp: Tue 2008-03-25 15:19:05 +0000
+message:
+  Notification bubble implemented.
+------------------------------------------------------------
+revno: 68
+committer: joh
+timestamp: Tue 2008-03-25 14:54:16 +0000
+message:
+  Adding an alarm now assigns the sound-file and command properties to the first one found in the stock sounds / apps list.
+------------------------------------------------------------
+revno: 67
+committer: joh
+timestamp: Mon 2008-03-24 23:31:22 +0000
+message:
+  Fixed a bug where a double g_error_free() would occur.
+------------------------------------------------------------
+revno: 66
+committer: joh
+timestamp: Mon 2008-03-24 23:14:43 +0000
+message:
+  MAJOR code cleanup.
+  - Removed all old stuff
+  - Replaced various (non-working) functions with stubs.
+------------------------------------------------------------
+revno: 65
+committer: joh
+timestamp: Mon 2008-03-24 00:19:22 +0000
+message:
+  Will now close any open AlarmSettingsDialog if the referenced alarm is deleted.
+  Will now present an already open AlarmSettingsDialog instead of creating a new one.
+  list_alarms_update(): Fixed a bug where the alarm_changed notify handler would not get disconnected.
+------------------------------------------------------------
+revno: 64
+committer: joh
+timestamp: Sun 2008-03-23 23:16:32 +0000
+message:
+  alarm-applet.glade: Set a desired width of the GtkScrolledWindow which contains the alarms list.
+  alarms-list.c: Added notification handler for all alarms which then notifies of model change.
+------------------------------------------------------------
+revno: 63
+committer: joh
+timestamp: Sun 2008-03-23 21:55:18 +0000
+message:
+  Alarm add & delete redesigned.
+  - Delete now works properly.
+  - External add & deletes now supported.
+  - Alarm references controlled properly.
+------------------------------------------------------------
+revno: 62
+committer: joh
+timestamp: Sat 2008-03-22 15:42:04 +0000
+message:
+  Add alarm now updates list of alarms.
+  Delete alarm does not yet update the list properly.
+------------------------------------------------------------
+revno: 61
+committer: joh
+timestamp: Thu 2008-03-20 18:22:36 +0000
+message:
+  App/command notification implemented & tested.
+------------------------------------------------------------
+revno: 60
+committer: joh
+timestamp: Wed 2008-03-12 20:28:28 +0000
+message:
+  Sound notification now implemented in GUI.
+  alarm.c: Added alarm_clear() for stopping an active MediaPlayer.
+------------------------------------------------------------
+revno: 59
+committer: joh
+timestamp: Wed 2008-03-12 01:44:18 +0000
+message:
+  Getting closer.
+  In progress: Stock sounds & sounds combo box.
+------------------------------------------------------------
+revno: 58
+committer: joh
+timestamp: Wed 2008-03-12 01:40:16 +0000
+message:
+  Missing libgnomeui header inclusion which resulted in segfaults on gnome_icon_lookup on 64bit systems.
+------------------------------------------------------------
+revno: 57
+committer: joh
+timestamp: Tue 2008-03-11 20:34:02 +0000
+message:
+  (no message)
+------------------------------------------------------------
+revno: 56
+committer: joh
+timestamp: Mon 2008-02-25 23:02:57 +0000
+message:
+  Sometimes segfaults on alarm_time(r)_changed.
+  - Typically when multiple settings dialogs have been created / destroyed.
+------------------------------------------------------------
+revno: 55
+committer: joh
+timestamp: Mon 2008-02-25 21:46:50 +0000
+message:
+  First part of the add alarm dialog in a working state.
+------------------------------------------------------------
+revno: 54
+committer: joh
+timestamp: Mon 2008-02-18 21:54:24 +0000
+message:
+  Better 16x16 icon.
+  GLADE updated to include scrollarea and treeview.
+------------------------------------------------------------
+revno: 53
+committer: joh
+timestamp: Mon 2008-02-18 20:22:07 +0000
+message:
+  New timer icon!
+------------------------------------------------------------
+revno: 52
+committer: joh
+timestamp: Mon 2008-02-18 00:21:39 +0000
+message:
+  List-alarms dialog response implemented.
+  The activate check box now only updates the alarm time if it's of type CLOCK. Setting the "active" property of a TIMER will update this automatically. 
+  - Is this what we want? What about the cases when there was a timer running while the computer shut down?
+------------------------------------------------------------
+revno: 51
+committer: joh
+timestamp: Sun 2008-02-17 23:03:22 +0000
+message:
+  2 utility functions added to Alarm:
+  - alarm_set_time() for generating a timestamp in the future given hour, min, sec.
+  - alarm_update_time() which updates the current time to one in the future according to the hour, min and secs in the previous one.
+------------------------------------------------------------
+revno: 50
+committer: joh
+timestamp: Sun 2008-02-17 22:07:44 +0000
+message:
+  Mockup timer icon added.
+  Alarm list dialog in the making.
+------------------------------------------------------------
+revno: 49
+committer: joh
+timestamp: Mon 2008-01-28 05:23:26 +0000
+message:
+  Edit-alarm dialog in the making.
+  glade_view tool for quickly viewing glade files.
+------------------------------------------------------------
+revno: 48
+committer: joh
+timestamp: Mon 2008-01-28 03:48:15 +0000
+message:
+  Code commenting.
+------------------------------------------------------------
+revno: 47
+committer: joh
+timestamp: Mon 2008-01-28 03:47:35 +0000
+message:
+  Fixed a bug where the show_label setting would not take affect on startup.
+------------------------------------------------------------
+revno: 46
+committer: joh
+timestamp: Wed 2008-01-23 19:21:12 +0000
+message:
+  Test utilities added.
+  Alarm type TIMER will update the "time" property when activated to the current time + the value of the "timer" property.
+------------------------------------------------------------
+revno: 45
+committer: joh
+timestamp: Tue 2008-01-22 14:07:32 +0000
+message:
+  Added the "timer" property for storing the settings of the timer alarm type.
+------------------------------------------------------------
+revno: 44
+committer: joh
+timestamp: Sun 2008-01-13 23:34:25 +0000
+message:
+  Command notification implemented & tested.
+------------------------------------------------------------
+revno: 43
+committer: joh
+timestamp: Sun 2008-01-13 23:28:23 +0000
+message:
+  Error signal implemented & tested.
+  Sound notification implemented & tested.
+------------------------------------------------------------
+revno: 42
+committer: joh
+timestamp: Sat 2008-01-12 23:17:35 +0000
+message:
+  Alarm timer implemented & tested.
+------------------------------------------------------------
+revno: 41
+committer: joh
+timestamp: Fri 2008-01-11 19:54:31 +0000
+message:
+  "alarm" signal implemented and tested.
+------------------------------------------------------------
+revno: 40
+committer: joh
+timestamp: Sat 2008-01-05 01:52:42 +0000
+message:
+  alarm_get_list implemented.
+------------------------------------------------------------
+revno: 39
+committer: joh
+timestamp: Sat 2008-01-05 00:53:58 +0000
+message:
+  Alarm class not fully functional.
+------------------------------------------------------------
+revno: 38
+committer: joh
+timestamp: Wed 2008-01-02 02:54:38 +0000
+message:
+  configure.ac: Added GConf library version check
+  alarm.[ch]: New alarm API - supports multiple alarms.
+------------------------------------------------------------
+revno: 37
+committer: joh
+timestamp: Thu 2007-12-27 05:57:32 +0000
+message:
+  (no message)
+------------------------------------------------------------
+revno: 36
+committer: joh
+timestamp: Thu 2007-12-27 05:23:43 +0000
+message:
+  Support different panel orientations and sizes.
+------------------------------------------------------------
+revno: 35
+committer: joh
+timestamp: Wed 2007-12-26 23:33:20 +0000
+message:
+  New icons! Thanks to Lasse Gullvåg Sætre.
+------------------------------------------------------------
+revno: 34
+committer: joh
+timestamp: Wed 2007-12-26 15:26:58 +0000
+message:
+  0.1.1 bugfix release
+------------------------------------------------------------
+revno: 33
+committer: joh
+timestamp: Wed 2007-12-26 14:48:05 +0000
+message:
+  Preferences Dialog:
+  	- Add tooltip which explains why the notification bubble check-box is disabled when libnotify isn't present.
+------------------------------------------------------------
+revno: 32
+committer: joh
+timestamp: Wed 2007-12-26 14:44:32 +0000
+message:
+  More robust handling of GConf settings.
+  Provide more sensible GConf defaults.
+------------------------------------------------------------
+revno: 31
+committer: joh
+timestamp: Wed 2007-12-26 03:33:01 +0000
+message:
+  - Added a more robust system for handling gconf keys. This fixes a bug which causes the applet to crash if the schema isn't installed.
+  - Fixed a bug where the command entry would be unsensitive even if a custom command is set in gconf.
+  - Set window icons to the dialogs in alarm-applet.glade
+------------------------------------------------------------
+revno: 30
+committer: joh
+timestamp: Mon 2007-12-24 02:32:47 +0000
+message:
+  Add About dialog.
+------------------------------------------------------------
+revno: 29
+committer: joh
+timestamp: Mon 2007-12-24 01:29:20 +0000
+message:
+  make dist work
+------------------------------------------------------------
+revno: 28
+committer: joh
+timestamp: Mon 2007-12-24 00:41:02 +0000
+message:
+  Add tooltip.
+------------------------------------------------------------
+revno: 27
+committer: joh
+timestamp: Mon 2007-12-24 00:18:18 +0000
+message:
+  Add support for notification bubbles with libnotify.
+------------------------------------------------------------
+revno: 26
+committer: joh
+timestamp: Fri 2007-12-21 19:41:57 +0000
+message:
+  prefs.c:
+  	- Added hard-coded command-map for apps. Should ideally be in some XML file.
+  	- Added app-detection to the app-combo
+------------------------------------------------------------
+revno: 25
+committer: joh
+timestamp: Fri 2007-12-21 10:24:14 +0000
+message:
+  ui.c: Add support for panel background.
+------------------------------------------------------------
+revno: 24
+committer: joh
+timestamp: Fri 2007-12-21 10:14:08 +0000
+message:
+  Some more code migration.
+------------------------------------------------------------
+revno: 23
+committer: joh
+timestamp: Fri 2007-12-21 10:03:02 +0000
+message:
+  UI and Preferences code moved to ui.c and prefs.c
+------------------------------------------------------------
+revno: 22
+committer: joh
+timestamp: Sat 2007-12-15 01:12:05 +0000
+message:
+  alarm-applet.c: GConf abstracted to alarm-gconf.c
+------------------------------------------------------------
+revno: 21
+committer: joh
+timestamp: Fri 2007-12-14 22:29:29 +0000
+message:
+  alarm-applet.c: Use list-entry.o
+------------------------------------------------------------
+revno: 20
+committer: joh
+timestamp: Fri 2007-12-14 14:28:48 +0000
+message:
+  Utilities and AlarmListEntry moved to separate modules.
+  alarm-applet.c: Use util.o
+------------------------------------------------------------
+revno: 19
+committer: joh
+timestamp: Fri 2007-12-07 17:14:10 +0000
+message:
+  (no message)
+------------------------------------------------------------
+revno: 18
+committer: joh
+timestamp: Fri 2007-12-07 17:13:55 +0000
+message:
+  Move tests to src/tests
+------------------------------------------------------------
+revno: 17
+committer: joh
+timestamp: Wed 2007-12-05 02:47:29 +0000
+message:
+  alarm-applet.c:
+  	- Modified to use MediaPlayer.
+  	- ( More modularization coming up )
+------------------------------------------------------------
+revno: 16
+committer: joh
+timestamp: Wed 2007-12-05 02:05:18 +0000
+message:
+  Linking per-binary added.
+------------------------------------------------------------
+revno: 15
+committer: joh
+timestamp: Wed 2007-12-05 02:01:56 +0000
+message:
+  Updated to compile test_player
+------------------------------------------------------------
+revno: 14
+committer: joh
+timestamp: Wed 2007-12-05 02:00:46 +0000
+message:
+  Simple test program for the media player.
+------------------------------------------------------------
+revno: 13
+committer: joh
+timestamp: Wed 2007-12-05 02:00:25 +0000
+message:
+  Media player abstraction!
+------------------------------------------------------------
+revno: 12
+committer: joh
+timestamp: Mon 2007-12-03 00:18:51 +0000
+message:
+  Added a test app-list. Should parse from gnome-default-applications.xml in the future.
+  	- Fixed a bug due to Glade adding an empty text renderer to the app-combo.
+------------------------------------------------------------
+revno: 11
+committer: joh
+timestamp: Sun 2007-12-02 00:11:52 +0000
+message:
+  svn:ignore updated.
+------------------------------------------------------------
+revno: 10
+committer: joh
+timestamp: Sun 2007-12-02 00:10:16 +0000
+message:
+  Extra icon sizes.
+------------------------------------------------------------
+revno: 9
+committer: joh
+timestamp: Sun 2007-12-02 00:09:56 +0000
+message:
+  icons:
+  	- SVG size updated to contain the entire icon.
+  alarm-applet.c:
+  	- Removed redundant GtkIconTheme pointer.
+------------------------------------------------------------
+revno: 8
+committer: joh
+timestamp: Sat 2007-12-01 19:34:30 +0000
+message:
+  alarm-applet.c:
+  	- destroy_cb bug fixed: Invalid signal handler for "destroy" signal. Was casting the GtkObject to AlarmApplet. DUH!
+------------------------------------------------------------
+revno: 7
+committer: joh
+timestamp: Sat 2007-12-01 18:38:11 +0000
+message:
+  Makefile.am:
+  	- Icons added for installation.
+  
+  alarm-clock.c:
+  	- Checks for valid gconf settings added to gconf callbacks.
+  	- BUG: Crashes on destroy_cb()
+------------------------------------------------------------
+revno: 6
+committer: joh
+timestamp: Thu 2007-11-29 22:52:57 +0000
+message:
+  Working autotoolized.
+------------------------------------------------------------
+revno: 5
+committer: joh
+timestamp: Thu 2007-11-29 22:44:37 +0000
+message:
+  Code reorganization.
+------------------------------------------------------------
+revno: 4
+committer: joh
+timestamp: Wed 2007-11-28 22:40:19 +0000
+message:
+  Autoconfig stuff, not working yet.
+------------------------------------------------------------
+revno: 3
+committer: joh
+timestamp: Wed 2007-11-28 18:23:45 +0000
+message:
+  svn:ignores
+------------------------------------------------------------
+revno: 2
+committer: joh
+timestamp: Wed 2007-11-28 18:19:58 +0000
+message:
+  alarm-applet.h:
+  	- Use /usr/share/sounds for standard sounds directory.
+------------------------------------------------------------
+revno: 1
+committer: joh
+timestamp: Tue 2007-11-27 20:21:04 +0000
+message:
+  Initial import.
+  - Timer works, timestamp based.
+  - GConf works, although second notification often is redundant.
+  - Different labels works.
+  - Notification by sound works.
+  - Custom sounds works.
+  - TODO:
+  	- Notification by commands
+  	- Standard application list (Rhythmbox, etc.)
+  	- Notification bubble (libnotify)
