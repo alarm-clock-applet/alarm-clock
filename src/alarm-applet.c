@@ -370,9 +370,9 @@ alarm_active_changed (GObject *object,
 			alarm_applet_upcoming_alarm_update (applet);
 			alarm_applet_label_update (applet);
 			alarm_applet_icon_update (applet);
-			
-			return;
 		}
+		
+		return;
 	}
 	
 	if (!applet->upcoming_alarm || alarm->timestamp < applet->upcoming_alarm->timestamp) {
