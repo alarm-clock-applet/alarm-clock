@@ -259,12 +259,19 @@ applet_back_change (PanelApplet			*a,
 }
 
 /* Taken from gnome-panel/button-widget.c */
-static void
-load_icon (AlarmApplet *applet)
+void
+alarm_applet_icon_update (AlarmApplet *applet)
 {
+	static const gchar *prev_icon = ALARM_ICON;
+	
 	GtkWidget *w;
 	GdkPixbuf *icon;
 	gint	  size, pbsize;
+	const gchar *icon_name = ALARM_ICON;
+	
+	if (applet->upcoming_alarm && applet->upcoming_alarm->type == ALARM_TYPE_TIMER) {
+		icon_name = TIMER_ICON;
+	}
 	
 	w = GTK_WIDGET (applet->parent);
 	
@@ -296,7 +303,7 @@ load_icon (AlarmApplet *applet)
 		else
 			pbsize = gdk_pixbuf_get_width (icon);
 		
-		if (pbsize == size) {
+		if (prev_icon == icon_name && pbsize == size) {
 			// Do nothing
 			//g_debug ("load_icon: Existing size the same.");
 			return;
@@ -306,7 +313,7 @@ load_icon (AlarmApplet *applet)
 	g_debug ("Resizing icon to %dx%d...", size, size);
 	
 	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 ALARM_ICON,
+									 icon_name,
 									 size,
 									 0, NULL);
 	
@@ -319,6 +326,8 @@ load_icon (AlarmApplet *applet)
 	
 	if (icon)
 		g_object_unref (icon);
+	
+	prev_icon = icon_name;
 }
 
 static void
@@ -326,7 +335,7 @@ change_size_cb (GtkWidget 	  *widget,
 				GtkAllocation *alloc,
 				AlarmApplet	  *applet) 
 {	
-	load_icon (applet);
+	alarm_applet_icon_update (applet);
 }
 
 
@@ -543,7 +552,7 @@ alarm_applet_ui_init (AlarmApplet *applet)
 	
 	/* Set up icon and label */
 	applet->icon = gtk_image_new ();
-	load_icon (applet);
+	alarm_applet_icon_update (applet);
 	
 	applet->label = g_object_new(GTK_TYPE_LABEL,
 								 "label", ALARM_DEF_LABEL,
@@ -553,6 +562,7 @@ alarm_applet_ui_init (AlarmApplet *applet)
 								 NULL);
 	
 	/* Set up UI updater */
+	alarm_applet_ui_update (applet);
 	applet->timer_id = g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
 	
 	/* Pack */

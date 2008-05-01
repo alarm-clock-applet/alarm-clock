@@ -20,6 +20,9 @@ alarm_applet_label_update (AlarmApplet *applet);
 void
 alarm_applet_update_tooltip (AlarmApplet *applet);
 
+void
+alarm_applet_icon_update (AlarmApplet *applet);
+
 /*
  * Shamelessly stolen from gnome-da-capplet.c
  */
