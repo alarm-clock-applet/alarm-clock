@@ -1,0 +1,51 @@
+=head1 NAME
+
+alarm-clock-applet - Alarm Clock applet for GNOME 
+
+=head1 SYNOPSIS
+
+alarm-clock-applet
+
+=head1 DESCRIPTION
+
+Alarm Clock is a fully-featured alarm clock appelt for the GNOME panel.
+It's easy to use yet powerful with support for multiple repeatable alarms, 
+as well as snoozing and a flexible notification system.
+
+Two types of alarms are supported: Alarm Clocks and Timers.
+
+Notification is done by either playing a sound or launching an application.
+
+Please see http://alarm-clock.pseudoberries.com/ for more information.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+Show help message
+
+=item B<--version>
+
+Displays information about the currently installed version and exists.
+
+=head1 BUGS
+
+Please report bugs at https://bugs.launchpad.net/alarm-clock/
+
+=head1 AUTHORS
+
+B<Alarm Clock> was written by Johannes H. Jensen <joh@pseudoberries.com>.
+
+=head1 COPYRIGHT
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'.
+
+=cut

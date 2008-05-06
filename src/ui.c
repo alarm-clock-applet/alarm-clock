@@ -23,7 +23,9 @@
 
 #include <time.h>
 #include <string.h>
+#ifdef HAVE_LIBNOTIFY
 #include <libnotify/notify.h>
+#endif
 
 #include "alarm-applet.h"
 #include "ui.h"
@@ -487,6 +489,7 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 	
 	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
 	
+	notify_notification_set_timeout (applet->notify, NOTIFY_EXPIRES_NEVER);
 	notify_notification_add_action (applet->notify, "clear", "Clear", alarm_applet_notification_action_cb, alarm, NULL);
 	
 	if (alarm->snooze) {
