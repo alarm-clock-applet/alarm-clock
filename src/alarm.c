@@ -74,6 +74,7 @@ struct _AlarmPrivate
 	guint gconf_listener;
 	guint timer_id;
 	MediaPlayer *player;
+	guint player_timer_id;
 };
 
 
@@ -1817,6 +1818,18 @@ alarm_player_state_cb (MediaPlayer *player, MediaPlayerState state, gpointer dat
 	}
 }
 
+static gboolean
+alarm_player_timeout (gpointer data)
+{
+	Alarm *alarm = ALARM (data);
+	
+	g_debug ("[%p] #%d player_timeout", alarm, alarm->id);
+	
+	alarm_player_stop (alarm);
+	
+	return FALSE;
+}
+
 
 /**
  * Play sound via gstreamer
@@ -1838,6 +1851,11 @@ alarm_player_start (Alarm *alarm)
 	media_player_start (priv->player);
 	
 	g_debug ("[%p] #%d player_start...", alarm, alarm->id);
+	
+	/*
+	 * Add stop timeout
+	 */
+	priv->player_timer_id = g_timeout_add_seconds(ALARM_SOUND_TIMEOUT, alarm_player_timeout, alarm);
 }
 
 /**
@@ -1850,6 +1868,11 @@ alarm_player_stop (Alarm *alarm)
 	
 	if (priv->player != NULL) {
 		media_player_stop (priv->player);
+		
+		if (priv->player_timer_id > 0) {
+			g_source_remove (priv->player_timer_id);
+			priv->player_timer_id = 0;
+		}
 	}
 }
 

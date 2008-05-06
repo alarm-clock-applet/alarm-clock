@@ -154,6 +154,12 @@ typedef enum {
 #define ALARM_GCONF_SCHEMA_DIR		"/schemas/apps/alarm_clock/alarm"
 
 /*
+ * Player backoff timeout.
+ * We will stop the player automatically after 20 minutes.
+ */
+#define ALARM_SOUND_TIMEOUT			(60 * 20);
+
+/*
  * Function prototypes.
  */
 
