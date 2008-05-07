@@ -157,7 +157,7 @@ typedef enum {
  * Player backoff timeout.
  * We will stop the player automatically after 20 minutes.
  */
-#define ALARM_SOUND_TIMEOUT			(60 * 20);
+#define ALARM_SOUND_TIMEOUT			(60 * 20)
 
 /*
  * Function prototypes.
