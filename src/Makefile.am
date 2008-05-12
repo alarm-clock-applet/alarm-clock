@@ -1,6 +1,6 @@
 include $(top_srcdir)/Makefile.decl
 
-
+SUBDIRS = . tests
 
 INCLUDES =						\
 	-I.							\
