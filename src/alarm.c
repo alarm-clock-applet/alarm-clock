@@ -1434,6 +1434,8 @@ alarm_dispose (GObject *object)
 		parent->dispose (object);
 	
 	alarm_gconf_disconnect (alarm);
+	alarm_timer_remove(alarm);
+	alarm_clear (alarm);
 }
 
 /*

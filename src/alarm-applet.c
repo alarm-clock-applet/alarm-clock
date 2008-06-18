@@ -438,6 +438,8 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
 	g_signal_connect (alarm, "notify::active", G_CALLBACK (alarm_active_changed), applet);
 	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_active_changed), applet);
+	
+	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_triggered), applet);
 }
 
 void
@@ -462,6 +464,11 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 	if (applet->upcoming_alarm == alarm) {
 		alarm_applet_upcoming_alarm_update (applet);
 	}
+	
+	/*
+	 * Remove any signal handlers for this alarm instance.
+	 */
+	g_signal_handlers_disconnect_matched (alarm, 0, 0, 0, NULL, NULL, NULL);
 	
 	/*
 	 * Dereference alarm
