@@ -1,7 +1,7 @@
 /*
  * alarm-applet.h -- Alarm Clock applet bootstrap
  * 
- * Copyright (C) 2007-2008 Johannes H. Jensen <joh@deworks.net>
+ * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  * 
  * Authors:
- * 		Johannes H. Jensen <joh@deworks.net>
+ * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
 
 #ifndef ALARMAPPLET_H_

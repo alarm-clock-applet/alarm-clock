@@ -2,8 +2,8 @@ dnl ***************************************************************************
 dnl *** configure.ac for ALARM-CLOCK                                        ***
 dnl ***************************************************************************
 
-AC_INIT([Alarm Clock], [0.2.2],
-		[Johannes H. Jensen <joh@deworks.net>],
+AC_INIT([Alarm Clock], [0.2.3],
+		[Johannes H. Jensen <joh@pseudoberries.com>],
 		[alarm-clock])
 		
 AM_CONFIG_HEADER(config.h)
