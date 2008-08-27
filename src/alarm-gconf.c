@@ -119,7 +119,7 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 	 * 
 	 * Here we extract {something}
 	 */
-	dir = applet->gconf_dir;
+	dir = ALARM_GCONF_DIR;
 	len = strlen (entry->key);
 	str = g_string_new ("");
 	
@@ -175,7 +175,7 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			/*
 			 * Add to list
 			 */
-			a = alarm_new (applet->gconf_dir, id);
+			a = alarm_new (ALARM_GCONF_DIR, id);
 			
 			g_debug ("\tADD alarm #%d %p", id, a);
 			
@@ -226,14 +226,11 @@ alarm_applet_gconf_init (AlarmApplet *applet)
 	 * Listen for changes to the alarms.
 	 * We want to know when an alarm is added and removed.
 	 */
-	key = panel_applet_get_preferences_key(PANEL_APPLET (applet->parent));
 	applet->listeners [2] =
 		gconf_client_notify_add (
-				client, key,
+				client, ALARM_GCONF_DIR,
 				(GConfClientNotifyFunc) alarm_applet_gconf_global_change,
 				applet, NULL, NULL);
-	g_free (key);
-	
 	
 }
 

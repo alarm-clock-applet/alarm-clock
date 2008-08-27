@@ -296,7 +296,7 @@ add_button_cb (GtkButton *button, gpointer data)
 	/*
 	 * Create new alarm, will fall back to defaults.
 	 */
-	alarm = alarm_new (applet->gconf_dir, -1);
+	alarm = alarm_new (ALARM_GCONF_DIR, -1);
 	
 	/*
 	 * Set first sound / app in list

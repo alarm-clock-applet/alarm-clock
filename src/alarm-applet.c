@@ -427,7 +427,7 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 	}
 	
 	/* Fetch list of alarms */
-	applet->alarms = alarm_get_list (applet->gconf_dir);
+	applet->alarms = alarm_get_list (ALARM_GCONF_DIR);
 }
 
 void
