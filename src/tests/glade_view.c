@@ -47,14 +47,9 @@ int main (int argc, char **argv)
 		return 1;
 	}
 	
-	GtkWidget *checkbox = glade_xml_get_widget(ui, "repeat-check");
+	GtkWidget *checkbox = glade_xml_get_widget(ui, "snooze-check");
 	/* you can't do this from glade */
 	GtkWidget *checkbox_label = gtk_bin_get_child (GTK_BIN (checkbox));
-	g_object_set (G_OBJECT (checkbox_label), "use_markup", TRUE, NULL);
-	
-	checkbox = glade_xml_get_widget(ui, "snooze-check");
-	/* you can't do this from glade */
-	checkbox_label = gtk_bin_get_child (GTK_BIN (checkbox));
 	g_object_set (G_OBJECT (checkbox_label), "use_markup", TRUE, NULL);
 	
 	gtk_main();
