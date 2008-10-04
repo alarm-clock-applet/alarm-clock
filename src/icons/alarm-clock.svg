@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
-   xmlns:ns="http://creativecommons.org/ns#"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -14,16 +13,23 @@
    height="22"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    inkscape:export-filename="/home/joh/workspace/alarm-applet/src/icons/alarm-clock.64.png"
    inkscape:export-xdpi="261.82001"
    inkscape:export-ydpi="261.82001"
-   sodipodi:docname="alarm22x22.svg"
+   sodipodi:docname="alarm-clock.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    sodipodi:docbase="/home/joh/Pictures">
   <defs
      id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 11 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="22 : 11 : 1"
+       inkscape:persp3d-origin="11 : 7.3333333 : 1"
+       id="perspective35" />
     <linearGradient
        id="linearGradient14243">
       <stop
@@ -98,10 +104,11 @@
      height="24px"
      inkscape:snap-bbox="true"
      inkscape:snap-guide="true"
-     inkscape:window-width="1680"
-     inkscape:window-height="1022"
-     inkscape:window-x="1680"
-     inkscape:window-y="28">
+     inkscape:window-width="1024"
+     inkscape:window-height="698"
+     inkscape:window-x="0"
+     inkscape:window-y="47"
+     showgrid="false">
     <inkscape:grid
        type="xygrid"
        id="grid2293" />
@@ -109,12 +116,12 @@
   <metadata
      id="metadata7">
     <rdf:RDF>
-      <ns:Work
+      <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </ns:Work>
+      </cc:Work>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
@@ -170,11 +177,6 @@
        inkscape:export-filename="/home/lasse/Bilder/alarm-applet/path14231.png"
        inkscape:export-xdpi="98.18"
        inkscape:export-ydpi="98.18" />
-    <path
-       style="opacity:0.26530612;fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 21.051798,0.6490485 C 22.051798,0.6490485 22.047682,0.4239611 22.797682,1.1739611 C 23.547682,1.9239611 23.499371,1.9750874 23.499371,2.9750874 C 23.499371,3.9750874 23.129138,4.5 23.129138,4.5 C 23.129138,4.5 22.584944,3.7361359 22.084944,2.9861359 C 21.584944,2.2361359 21.084944,1.9861359 21.084944,1.9861359 L 19.814148,0.9529903 C 19.814148,0.9529903 20.051798,0.6490485 21.051798,0.6490485 z"
-       id="path14223"
-       sodipodi:nodetypes="czzczccz" />
     <path
        style="fill:#ea8686;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 2.4545455,2.5656566 C 3.7272727,1.2929293 5,2.5656566 5,2.5656566 C 3.9857955,2.8937816 2.8636363,4.0656566 2.4545455,5.1111111 C 2.4545455,5.1111111 1.1818182,3.8383838 2.4545455,2.5656566 z"
