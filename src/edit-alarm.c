@@ -189,6 +189,12 @@ alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 		
 		// Disable others
 		g_object_set (dialog->notify_sound_box, "sensitive", FALSE, NULL);
+		
+		if (dialog->player && dialog->player->state == MEDIA_PLAYER_PLAYING) {
+			// Stop preview player
+			media_player_stop (dialog->player);
+		}
+		
 		break;
 	default:
 		// NOTIFY_SOUND
