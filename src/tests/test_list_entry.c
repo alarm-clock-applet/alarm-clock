@@ -52,7 +52,7 @@ int main (void)
 	alarm_list_entry_free(entry);
 	
 	// Test alarm list entry from file
-	entry = alarm_list_entry_new_file("file:///usr/share/sounds/login.wav", &result, &mime);
+	entry = alarm_list_entry_new_file("file:///usr/share/sounds/question.wav", &result, &mime);
 	entry_dump (entry);
 	g_print ("VFSResult: %s, MIME: %s\n", gnome_vfs_result_to_string(result), mime);
 	alarm_list_entry_free (entry);

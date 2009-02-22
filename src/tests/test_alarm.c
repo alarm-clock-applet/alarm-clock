@@ -26,7 +26,7 @@
 #include <glib.h>
 #include <string.h>
 
-#define GCONF_DIR "/apps/alarm-clock"
+#define GCONF_DIR "/apps/alarm-clock/test"
 
 /* Fixture */
 typedef struct {
@@ -330,7 +330,7 @@ test_alarm_notify (AlarmFixture *fix,
 	//
 	g_object_set (alarm,
 				  "notify_type", ALARM_NOTIFY_SOUND,
-				  "sound_file", "file:///usr/share/sounds/generic.wav",
+				  "sound_file", "file:///usr/share/sounds/question.wav",
 				  "sound_repeat", FALSE,
 				  NULL);
 	

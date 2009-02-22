@@ -12,9 +12,9 @@ INCLUDES =						\
 	-I$(includedir) 			\
 	-I$(top_srcdir)/src
 
-check_PROGRAMS = $(TEST_PROGS)
+check_PROGRAMS = $(TEST_PROGS) test_player test_list_entry test_util glade_view test_gconf_recursive
 
-TEST_PROGS += test_alarm test_player test_list_entry test_util test_alarm glade_view test_gconf_recursive
+TEST_PROGS += test_alarm
 
 test_player_SOURCES = $(top_srcdir)/src/player.c $(top_srcdir)/src/player.h test_player.c
 test_player_LDADD =				\
