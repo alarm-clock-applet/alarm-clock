@@ -13,7 +13,7 @@ INCLUDES =						\
 	$(LIBNOTIFY_CFLAGS)			\
 	-I$(includedir) 			
 
-bin_PROGRAMS = alarm-clock-applet
+libexec_PROGRAMS = alarm-clock-applet
 
 alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 							 player.c player.h				\
@@ -39,7 +39,7 @@ server_in_files = AlarmClock.server.in
 server_DATA     = $(server_in_files:.server.in=.server)
 
 $(server_DATA): $(server_in_files)
-	sed -e "s|\@BINDIR\@|$(bindir)|" $< > $@
+	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
 
 uidir = $(gladedir)
 ui_DATA = ui/alarm-clock.glade
