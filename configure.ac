@@ -125,13 +125,13 @@ AC_SUBST(ACLOCAL_AMFLAGS)
 dnl ***************************************************************************
 dnl *** Set install directories                                             ***
 dnl ***************************************************************************
-iconsdir="${datadir}/icons"
+iconsdir='${datadir}/icons'
 AC_SUBST(iconsdir)
-pixmapsdir="${datadir}/pixmaps"
+pixmapsdir='${datadir}/pixmaps'
 AC_SUBST(pixmapsdir)
-gladedir="${pkgdatadir}/glade"
+gladedir='${pkgdatadir}/glade'
 AC_SUBST(gladedir)
-soundsdir="${datadir}/sounds"
+soundsdir='${datadir}/sounds'
 AC_SUBST(soundsdir)
 
 AC_DEFINE_DIR(GNOME_ICONDIR, "${iconsdir}", [Gnome Icon Directory])
