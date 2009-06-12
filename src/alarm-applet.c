@@ -252,6 +252,7 @@ alarm_applet_apps_load (AlarmApplet *applet)
 	// from gnome-control-center
 	filename = g_build_filename (DATADIR,
 								 "gnome-control-center",
+								 "default-apps",
 					 			 "gnome-default-applications.xml",
 					 			 NULL);
 	

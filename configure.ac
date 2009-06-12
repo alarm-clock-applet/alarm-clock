@@ -2,9 +2,9 @@ dnl ***************************************************************************
 dnl *** configure.ac for ALARM-CLOCK                                        ***
 dnl ***************************************************************************
 
-AC_INIT([Alarm Clock], [0.2.5],
+AC_INIT([Alarm Clock], [0.2.6],
 		[Johannes H. Jensen <joh@pseudoberries.com>],
-		[alarm-clock])
+		[alarm-clock-applet])
 		
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -129,8 +129,6 @@ iconsdir="${datadir}/icons"
 AC_SUBST(iconsdir)
 pixmapsdir="${datadir}/pixmaps"
 AC_SUBST(pixmapsdir)
-pkgdatadir="${datadir}/alarm-clock"
-AC_SUBST(pkgdatadir)
 gladedir="${pkgdatadir}/glade"
 AC_SUBST(gladedir)
 soundsdir="${datadir}/sounds"
