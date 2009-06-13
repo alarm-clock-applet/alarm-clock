@@ -2,6 +2,10 @@ include $(top_srcdir)/Makefile.decl
 
 SUBDIRS = . tests
 
+iconsdir = $(datadir)/icons
+soundsdir= $(datadir)/sounds
+gladedir = $(pkgdatadir)/glade
+
 INCLUDES =						\
 	-I.							\
 	-I$(srcdir) 				\
@@ -12,6 +16,11 @@ INCLUDES =						\
 	$(GLIB_CFLAGS)				\
 	$(LIBNOTIFY_CFLAGS)			\
 	-I$(includedir) 			
+
+AM_CFLAGS =								\
+	-DALARM_DATADIR="\"$(datadir)\""	\
+	-DALARM_GLADEDIR="\"$(gladedir)\""	\
+	-DALARM_SOUNDSDIR="\"$(soundsdir)\""
 
 libexec_PROGRAMS = alarm-clock-applet
 

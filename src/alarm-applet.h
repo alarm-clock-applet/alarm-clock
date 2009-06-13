@@ -1,8 +1,8 @@
 /*
  * alarm-applet.h -- Alarm Clock applet bootstrap
- * 
+ *
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * Authors:
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
@@ -69,8 +69,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define SNOOZE_ICON		 "alarm-snooze"
 #define ALARM_GCONF_DIR	 "/apps/alarm-clock"
 #define ALARM_SCHEMA_DIR "/schemas/apps/alarm_clock/prefs"
-#define ALARM_UI_XML	 GNOME_GLADEDIR "/alarm-clock.glade"
-#define ALARM_SOUNDS_DIR GNOME_SOUNDSDIR
+#define ALARM_UI_XML	 ALARM_GLADEDIR "/alarm-clock.glade"
 #define ALARM_DEF_LABEL	 _("No alarms")
 #define ALARM_DEF_SNOOZE 9
 
@@ -88,50 +87,50 @@ struct _AlarmApplet {
 	PanelApplet *parent;
 	PanelAppletOrient orient;
 	gchar *gconf_dir;
-	
+
 	/* Panel UI */
 	GtkWidget *icon;	/* alarm icon */
 	GtkWidget *label;	/* clock label */
 	GtkWidget *box;		/* packing box */
-	
+
 	guint timer_id;		/* timer ID for updating the label */
-	
+
 	/* Alarms */
 	GList	*alarms;
 	Alarm	*upcoming_alarm;	/* Next upcoming alarm */
-	
+
 	/* Sounds & apps list */
 	GList *sounds;
 	GList *apps;
-	
+
 	/* List-alarms UI */
 	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
 	GList *list_alarms_args;
-	
+
 	/* Open edit alarm dialogs
 	 * Hashed by ID */
 	GHashTable *edit_alarm_dialogs;
-	
+
 	/* Preferences */
 	GtkDialog *preferences_dialog;
-	
+
 	/* Notification */
 #ifdef HAVE_LIBNOTIFY
 	NotifyNotification *notify;
 #endif
-	
+
 	/* Label */
 	GtkWidget *pref_label_show;
 	GtkWidget *pref_label_type_box;
 	GtkWidget *pref_label_type_time;
 	GtkWidget *pref_label_type_remain;
-	
+
 	/* Actual preferences data */
 	gboolean show_label;
 	LabelType label_type;
-	
+
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
 };
