@@ -114,39 +114,26 @@ uninstall-icons:
 		rm -f $(DESTDIR)$(iconsdir)/hicolor/$$SIZE/apps/$$FILE; \
 	done
 
-schemasdir   = @GCONF_SCHEMA_FILE_DIR@
-schemas_in_files = alarm-clock.schemas.in
-schemas_DATA = $(schemas_in_files:.schemas.in=.schemas)
+schemadir = $(GCONF_SCHEMA_FILE_DIR)
+schema_in_files = alarm-clock.schemas.in
+schema_DATA = $(schema_in_files:.schemas.in=.schemas)
 
 CLEANFILES = $(server_DATA)
 
-# don't do this when building packages
-install-schemas: $(schemas_DATA)
-	if test -z "$(DESTDIR)"; then \
-		GCONF_CONFIG_SOURCE=`$(GCONFTOOL) --get-default-source` \
-		$(GCONFTOOL) --makefile-install-rule \
-		$(schemas_DATA); \
-		killall -SIGTERM gconfd-2; \
-	fi
-
-uninstall-schemas: $(schemas_DATA)
-	if test -z "$(DESTDIR)"; then \
-		GCONF_CONFIG_SOURCE=`$(GCONFTOOL) --get-default-source` \
-		$(GCONFTOOL) --makefile-uninstall-rule \
-		$(schemas_DATA); \
-		killall -SIGTERM gconfd-2; \
-	fi
-
-uninstall-data:
-	rm -rf $(pkgdatadir)
-
-install-data-local: install-schemas install-icons
-
-uninstall-local: uninstall-schemas uninstall-icons uninstall-data
-
 #@INTLTOOL_SCHEMAS_RULE@
-
 #@INTLTOOL_SERVER_RULE@
+
+if GCONF_SCHEMAS_INSTALL
+install-schema:
+	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(top_builddir)/src/$(schema_DATA)
+
+install-data-local: install-schema install-icons
+uninstall-local: uninstall-schema uninstall-icons uninstall-data
+else
+install-data-local: install-icons
+uninstall-local: uninstall-icons uninstall-data
+endif
+
 
 EXTRA_DIST += $(server_in_files)	\
 			  $(schemas_DATA)		\
