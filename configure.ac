@@ -7,14 +7,22 @@ AC_INIT([Alarm Clock], [0.2.6],
 		[alarm-clock-applet])
 		
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR(m4)
 
+AM_INIT_AUTOMAKE([1.9 foreign])
 AM_MAINTAINER_MODE
 
-# ***************************************************************************
-# *** Minimum library versions for ALARM-CLOCK                            ***
-# ***************************************************************************
+PKG_PROG_PKG_CONFIG
+AC_PROG_CC
+AC_PROG_INSTALL
+#IT_PROG_INTLTOOL([0.40.0])
+
+GNOME_COMMON_INIT
+GNOME_DEBUG_CHECK
+GNOME_COMPILE_WARNINGS([maximum])
+GNOME_MAINTAINER_MODE_DEFINES
+
+#AM_GLIB_GNU_GETTEXT
 
 GLIB_REQUIRED=2.13.0
 GTK_REQUIRED=2.11.0
@@ -30,64 +38,19 @@ LIBNOTIFY_REQUIRED=0.3.2
 
 # LIBXML_REQUIRED=2.5.0
 
-# ***************************************************************************
+PKG_CHECK_MODULES([ALARM_CLOCK],
+  [glib-2.0 >= $GLIB_REQUIRED
+   gtk+-2.0 >= $GTK_REQUIRED
+   gnome-vfs-2.0 >= $GNOME_VFS_REQUIRED
+   gconf-2.0 >= $GCONF_REQUIRED
+   libglade-2.0 >= $LIBGLADE_REQUIRED
+   gstreamer-0.10 >= $GST_REQUIRED
+   libpanelapplet-2.0 >= $LIBPANEL_REQUIRED
+   gnome-icon-theme >= $GNOME_ICON_THEME_REQUIRED
+   libgnome-2.0 >= $LIBGNOME_REQUIRED
+   libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED])
 
-AC_PROG_CC
-AC_PROG_INSTALL
-
-#IT_PROG_INTLTOOL([0.40.0])
-PKG_PROG_PKG_CONFIG([0.19])
-
-GNOME_COMPILE_WARNINGS
-
-# ***************************************************************************
-# *** Use pkg-config to check for dependencies                            ***
-# ***************************************************************************
-
-# -- check for glib/gobject (required) --------------------------------------
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 >= $GLIB_REQUIRED)
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
-
-# -- Check for GTK+ 2.0 (required) ------------------------------------------
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
-
-# -- check for gnome-vfs (required) -----------------------------------------
-PKG_CHECK_MODULES(GNOME_VFS, [gnome-vfs-2.0 >= $GNOME_VFS_REQUIRED])
-AC_SUBST(GNOME_VFS_CFLAGS)
-AC_SUBST(GNOME_VFS_LIBS)
-
-# -- check for gconf (required) -----------------------------------------
-PKG_CHECK_MODULES(GCONF, [gconf-2.0 >= $GCONF_REQUIRED])
-AC_SUBST(GCONF_CFLAGS)
-AC_SUBST(GCONF_LIBS)
-
-# -- check for libglade (required) ------------------------------------------
-PKG_CHECK_MODULES(LIBGLADE, libglade-2.0 >= $LIBGLADE_REQUIRED)
-AC_SUBST(LIBGLADE_CFLAGS)
-AC_SUBST(LIBGLADE_LIBS)
-
-# -- check for gstreamer (required) ------------------------------------------
-PKG_CHECK_MODULES(GST, gstreamer-0.10 >= $GST_REQUIRED)
-AC_SUBST(GST_CFLAGS)
-AC_SUBST(GST_LIBS)
-
-# -- check for libpanelapplet (required) ------------------------------------
-PKG_CHECK_MODULES(GNOME_APPLETS, libpanelapplet-2.0 >= $LIBPANEL_REQUIRED)
-AC_SUBST(GNOME_APPLETS_CFLAGS)
-AC_SUBST(GNOME_APPLETS_LIBS)
-
-# -- Check for gnome-icon-theme (required) ----------------------------------
-PKG_CHECK_MODULES(GIT, gnome-icon-theme >= $GNOME_ICON_THEME_REQUIRED)
-
-# -- check for libgnome (required) ------------------------------------------
-PKG_CHECK_MODULES(GNOME_LIBS2, libgnome-2.0 >= $LIBGNOME_REQUIRED libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED)
-AC_SUBST(GNOME_LIBS2_CFLAGS)
-AC_SUBST(GNOME_LIBS2_LIBS)
-
-# -- check for libnotify (optional) -----------------------------------------
+# Check for libnotify (optional)
 LIBNOTIFY_CFLAGS=
 LIBNOTIFY_LIBS=
 PKG_CHECK_MODULES(LIBNOTIFY, libnotify >= $LIBNOTIFY_REQUIRED,
@@ -100,39 +63,26 @@ fi
 AC_SUBST(LIBNOTIFY_CFLAGS)
 AC_SUBST(LIBNOTIFY_LIBS)
 
-# ***************************************************************************
-# *** find paths to installed binaries                                    ***
-# ***************************************************************************
-
-# -- gconftool-2 ------------------------------------------------------------
+# GConf
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
+
 if test x"$GCONFTOOL" = xno; then
   AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
 fi
 
-
-# ***************************************************************************
-# *** GConf                                                               ***
-# ***************************************************************************
 AM_GCONF_SOURCE_2
 
-# ***************************************************************************
-# *** Honour aclocal flags                                                ***
-# ***************************************************************************
-ACLOCAL_AMFLAGS="\${ACLOCAL_FLAGS}"
-AC_SUBST(ACLOCAL_AMFLAGS)
 
 # ****************************
 
 AC_CONFIG_FILES([Makefile
 				 src/Makefile
+				 src/ui/Makefile
+				 src/icons/Makefile
 				 src/tests/Makefile])
 AC_OUTPUT
 
 # ****************************
-
-
-
 
 echo "
 *************************************************

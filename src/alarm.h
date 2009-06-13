@@ -1,8 +1,8 @@
 /*
  * alarm.h -- Core alarm functionality
- * 
+ *
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * Authors:
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
@@ -88,10 +88,10 @@ typedef struct _AlarmClass AlarmClass;
 
 struct _Alarm {
 	GObject parent;
-	
+
 	gchar *gconf_dir;		/* GConf directory */
 	gint id;				/* Alarm ID */
-	
+
 	/* GConf mapped values */
 	AlarmType type;
 	time_t time;			/* Time for alarm */
@@ -100,7 +100,7 @@ struct _Alarm {
 	gchar *message;
 	AlarmRepeat repeat;
 	gint snooze;
-	
+
 	AlarmNotifyType notify_type;
 	gchar *sound_file;
 	gboolean sound_loop;
@@ -110,7 +110,7 @@ struct _Alarm {
 
 struct _AlarmClass {
 	GObjectClass parent;
-	
+
 	/* Signals */
 	void (*alarm)(Alarm *alarm);				/* Alarm triggered! */
 	void (*error)(Alarm *alarm, GError *err);	/* An error occured */
@@ -129,9 +129,9 @@ typedef enum {
 } AlarmErrorCode;
 
 
-/* 
- * Failsafe defaults for the GConf-mapped properties for 
- * use when the schema isn't found or doesn't provide 
+/*
+ * Failsafe defaults for the GConf-mapped properties for
+ * use when the schema isn't found or doesn't provide
  * sensible defaults.
  */
 #define ALARM_DEFAULT_TYPE			ALARM_TYPE_CLOCK
@@ -164,7 +164,7 @@ typedef enum {
  */
 
 /* used by ALARM_TYPE */
-GType 
+GType
 alarm_get_type (void);
 
 Alarm *
@@ -189,14 +189,14 @@ alarm_gconf_get_full_key (Alarm *alarm, const gchar *key);
 const gchar *
 alarm_type_to_string (AlarmType type);
 
-AlarmType 
+AlarmType
 alarm_type_from_string (const gchar *type);
 
 
 const gchar *
 alarm_notify_type_to_string (AlarmNotifyType type);
 
-AlarmNotifyType 
+AlarmNotifyType
 alarm_notify_type_from_string (const gchar *type);
 
 GList *
@@ -225,6 +225,9 @@ alarm_disable (Alarm *alarm);
 
 void
 alarm_delete (Alarm *alarm);
+
+void
+alarm_snooze (Alarm *alarm);
 
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
