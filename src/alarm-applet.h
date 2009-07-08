@@ -41,10 +41,6 @@
 #include <panel-applet.h>
 #include <panel-applet-gconf.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 G_BEGIN_DECLS
 
 typedef struct _AlarmApplet AlarmApplet;

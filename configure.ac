@@ -6,7 +6,7 @@ AC_INIT([Alarm Clock], [0.2.6],
 		[Johannes H. Jensen <joh@pseudoberries.com>],
 		[alarm-clock-applet])
 		
-AM_CONFIG_HEADER(config.h)
+#AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR(m4)
 
 AM_INIT_AUTOMAKE([1.9 foreign])
