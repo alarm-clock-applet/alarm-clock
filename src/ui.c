@@ -126,7 +126,7 @@ alarm_applet_update_tooltip (AlarmApplet *applet)
 	tip = g_string_append (tip, _("\n\nClick to snooze alarms"));
 	tip = g_string_append (tip, _("\nDouble click to edit alarms"));
 	
-	gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
+	//gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
 	
 	g_string_free (tip, TRUE);
 }
@@ -213,9 +213,9 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 
 
 static gboolean
-button_cb (GtkWidget *widget,
-						GdkEventButton *event,
-						gpointer data)
+button_cb (GtkStatusIcon  *status_icon,
+           GdkEventButton *event,
+           gpointer       data)   
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
 	
@@ -239,216 +239,6 @@ button_cb (GtkWidget *widget,
 	return TRUE;
 }
 
-/* Taken from the GeyesApplet */
-static void
-applet_back_change (PanelApplet			*a,
-					PanelAppletBackgroundType	type,
-					GdkColor			*color,
-					GdkPixmap			*pixmap,
-					AlarmApplet			*applet) 
-{
-        /* taken from the TrashApplet */
-        GtkRcStyle *rc_style;
-        GtkStyle *style;
-
-        /* reset style */
-        gtk_widget_set_style (GTK_WIDGET (applet->parent), NULL);
-        rc_style = gtk_rc_style_new ();
-        gtk_widget_modify_style (GTK_WIDGET (applet->parent), rc_style);
-        gtk_rc_style_unref (rc_style);
-
-        switch (type) {
-                case PANEL_COLOR_BACKGROUND:
-                        gtk_widget_modify_bg (GTK_WIDGET (applet->parent),
-                                        GTK_STATE_NORMAL, color);
-                        break;
-
-                case PANEL_PIXMAP_BACKGROUND:
-                        style = gtk_style_copy (GTK_WIDGET (
-                        		applet->parent)->style);
-                        if (style->bg_pixmap[GTK_STATE_NORMAL])
-                                g_object_unref
-                                        (style->bg_pixmap[GTK_STATE_NORMAL]);
-                        style->bg_pixmap[GTK_STATE_NORMAL] = g_object_ref
-                                (pixmap);
-                        gtk_widget_set_style (GTK_WIDGET (applet->parent),
-                                        style);
-                        g_object_unref (style);
-                        break;
-
-                case PANEL_NO_BACKGROUND:
-                default:
-                        break;
-        }
-
-}
-
-/* Taken from gnome-panel/button-widget.c */
-void
-alarm_applet_icon_update (AlarmApplet *applet)
-{
-	static const gchar *prev_icon = ALARM_ICON;
-	
-	GtkWidget *w;
-	GdkPixbuf *icon;
-	gint	  size, pbsize;
-	const gchar *icon_name = ALARM_ICON;
-	
-	if (applet->upcoming_alarm && applet->upcoming_alarm->type == ALARM_TYPE_TIMER) {
-		icon_name = TIMER_ICON;
-	}
-	
-	w = GTK_WIDGET (applet->parent);
-	
-	if (panel_applet_get_orient (applet->parent) == PANEL_APPLET_ORIENT_UP ||
-		panel_applet_get_orient (applet->parent) == PANEL_APPLET_ORIENT_DOWN)
-		size = w->allocation.height;
-	else
-		size = w->allocation.width;
-	
-	if (size < 22)
-		size = 16;
-	else if (size < 24)
-		size = 22;
-	else if (size < 32)
-		size = 24;
-	else if (size < 48)
-		size = 32;
-	else if (size < 64)
-		size = 48;
-	else
-		size = 64;
-
-	// Reload icon only if the size is different.}
-	icon = gtk_image_get_pixbuf (GTK_IMAGE (applet->icon));
-	
-	if (icon) {
-		if (IS_HORIZONTAL (applet->parent))
-			pbsize = gdk_pixbuf_get_height (icon);
-		else
-			pbsize = gdk_pixbuf_get_width (icon);
-		
-		if (prev_icon == icon_name && pbsize == size) {
-			// Do nothing
-			//g_debug ("load_icon: Existing size the same.");
-			return;
-		}
-	}
-	
-	g_debug ("Resizing icon to %dx%d...", size, size);
-	
-	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 icon_name,
-									 size,
-									 0, NULL);
-	
-	if (icon == NULL) {
-		g_critical ("Icon not found.");
-		return;
-	}
-	
-	g_object_set (applet->icon, "pixbuf", icon, NULL);
-	
-	if (icon)
-		g_object_unref (icon);
-	
-	prev_icon = icon_name;
-}
-
-static void
-change_size_cb (GtkWidget 	  *widget,
-				GtkAllocation *alloc,
-				AlarmApplet	  *applet) 
-{	
-	alarm_applet_icon_update (applet);
-}
-
-
-
-static void
-update_orient (AlarmApplet *applet)
-{
-	const gchar *text;
-	int          min_width;
-	gdouble      new_angle;
-	gdouble      angle;
-	gint		 width;
-	GtkWidget	*box;
-	
-	if (IS_HORIZONTAL (applet->parent) && ORIENT_IS_HORIZONTAL (applet->orient)) {
-		// Nothing to do, both old and new orientation is horizontal.
-		return;
-	}
-	
-	/* Do we need to repack? */
-	if (IS_HORIZONTAL (applet->parent) != ORIENT_IS_HORIZONTAL (applet->orient)) {
-		g_debug ("update_orient: REPACK");
-		
-		// Add new
-		if (IS_HORIZONTAL (applet->parent))
-			box = gtk_hbox_new(FALSE, 6);
-		else
-			box = gtk_vbox_new(FALSE, 6);
-		
-		/* Keep children */
-		g_object_ref (applet->icon);
-		g_object_ref (applet->label);
-		
-		/* Remove old */
-		gtk_container_remove (GTK_CONTAINER (applet->box), applet->icon);
-		gtk_container_remove (GTK_CONTAINER (applet->box), applet->label);
-		gtk_container_remove (GTK_CONTAINER (applet->parent), applet->box);
-		
-		/* Pack */
-		gtk_box_pack_start_defaults(GTK_BOX (box), applet->icon);
-		gtk_box_pack_start_defaults(GTK_BOX (box), applet->label);
-		
-		applet->box = box;
-		
-		/* Add to container and show */
-		gtk_container_add (GTK_CONTAINER (applet->parent), box);
-		gtk_widget_show_all (GTK_WIDGET (applet->parent));
-	}
-	
-	switch (panel_applet_get_orient (applet->parent)) {
-	case PANEL_APPLET_ORIENT_LEFT:
-		new_angle = 270;
-		break;
-	case PANEL_APPLET_ORIENT_RIGHT:
-		new_angle = 90;
-		break;
-	default:
-		new_angle = 0;
-		break;
-	}
-	
-	
-	angle = gtk_label_get_angle (GTK_LABEL (applet->label));
-	if (angle != new_angle) {
-		//unfix_size (cd);
-		gtk_label_set_angle (GTK_LABEL (applet->label), new_angle);
-	}
-}
-
-static void
-orient_change_cb (PanelApplet *a,
-					  PanelAppletOrient orient,
-					  AlarmApplet *applet)
-{
-	g_debug ("applet_orient_change");
-	
-	update_orient (applet);
-	
-	// Store new orientation
-	applet->orient = panel_applet_get_orient (applet->parent);
-}
-
-
-static void
-unrealize_cb (GtkWidget *object, AlarmApplet *applet)
-{
-	alarm_applet_destroy (applet);
-}
 
 #ifdef HAVE_LIBNOTIFY
 static void
@@ -545,14 +335,51 @@ alarm_applet_ui_update (AlarmApplet *applet)
 	return TRUE;
 }
 
+
+
+
+
+
 void
 alarm_applet_ui_init (AlarmApplet *applet)
 {
 	GtkWidget *hbox;
 	GdkPixbuf *icon;
+    
+    GError* error = NULL;
+    char *filename;
+
+    /* Load UI with GtkBuilder */
+    filename = alarm_applet_get_data_path ("alarm-clock.ui");
+
+    g_assert(filename != NULL);
+    
+    applet->ui = gtk_builder_new();
+    
+    if (!gtk_builder_add_from_file (applet->ui, filename, &error))
+    {
+        g_critical(_("Couldn't load the interface '%s'. %s"), filename, error->message);
+        g_error_free (error);
+        return;
+    }
+
+    g_free (filename);
+
+    /* Initialize status icon */
+    alarm_applet_status_init(applet);
+    
+    /* Connect signals */
+    gtk_builder_connect_signals (applet->ui, applet);
+    
+
+	
+	
+	//g_object_set(applet->status_icon, "blinking", TRUE, NULL);
+
+	return;
 	
 	/* Set up PanelApplet signals */
-	g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
+	/*g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
 					  G_CALLBACK(button_cb), applet);
 	
 	g_signal_connect (G_OBJECT(applet->parent), "unrealize",
@@ -566,26 +393,27 @@ alarm_applet_ui_init (AlarmApplet *applet)
 	
 	g_signal_connect (G_OBJECT(applet->parent), "size-allocate",
 					  G_CALLBACK (change_size_cb), applet);
+	*/
 	
 	/* Set up container box */
-	if (IS_HORIZONTAL (applet->parent))
+	/*if (IS_HORIZONTAL (applet->parent))
 		applet->box = gtk_hbox_new(FALSE, 6);
 	else
 		applet->box = gtk_vbox_new(FALSE, 6);
-	
+	*/
 	/* Store orientation for future reference */
-	applet->orient = panel_applet_get_orient (applet->parent);
+	//applet->orient = panel_applet_get_orient (applet->parent);
 	
 	/* Set up icon and label */
-	applet->icon = gtk_image_new ();
-	alarm_applet_icon_update (applet);
+	//applet->icon = gtk_image_new ();
+	//alarm_applet_icon_update (applet);
 	
-	applet->label = g_object_new(GTK_TYPE_LABEL,
+	/*applet->label = g_object_new(GTK_TYPE_LABEL,
 								 "label", ALARM_DEF_LABEL,
 								 "use-markup", TRUE,
 								 "visible", applet->show_label,
 								 "no-show-all", TRUE,			/* So gtk_widget_show_all() won't set visible to TRUE */
-								 NULL);
+	/*							 NULL);*/
 	
 	/* Set up UI updater */
 	alarm_applet_ui_update (applet);
@@ -599,151 +427,106 @@ alarm_applet_ui_init (AlarmApplet *applet)
 	update_orient (applet);
 	
 	/* Add to container and show */
-	gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
-	gtk_widget_show_all (GTK_WIDGET (applet->parent));
+	//gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
+	//gtk_widget_show_all (GTK_WIDGET (applet->parent));
 	
 	alarm_applet_update_tooltip (applet);
 }
 
-
-
-
-
-static void
-menu_snooze_alarm_cb (BonoboUIComponent *component,
-					 AlarmApplet *applet,
-					 const gchar *cname)
+/*
+ * Initialize status icon
+ */
+void
+alarm_applet_status_init (AlarmApplet *applet)
 {
-	g_debug("menu_snooze_alarm");
-	
+    applet->status_menu = GTK_WIDGET (gtk_builder_get_object (applet->ui, "status_menu"));
+}
+
+/*
+ * Menu callbacks:
+ */
+
+G_MODULE_EXPORT void
+alarm_applet_status_popup (GtkStatusIcon  *status_icon,
+                           guint           button,
+                           guint           activate_time,
+                           gpointer        user_data)
+{
+    AlarmApplet *applet = (AlarmApplet *)user_data;
+
+    gtk_menu_popup (GTK_MENU (applet->status_menu),
+                    NULL,
+                    NULL,
+                    gtk_status_icon_position_menu,
+                    status_icon,
+                    button,
+                    activate_time);
+}
+
+G_MODULE_EXPORT void
+status_menu_snooze_cb (GtkMenuItem *menuitem,
+                       gpointer     user_data)
+{
+    AlarmApplet *applet = (AlarmApplet *)user_data;
+    
 	alarm_applet_snooze_alarms (applet);
 }
 
-static void
-menu_clear_alarm_cb (BonoboUIComponent *component,
-					 AlarmApplet *applet,
-					 const gchar *cname)
+G_MODULE_EXPORT void
+status_menu_clear_cb (GtkMenuItem *menuitem,
+                      gpointer     user_data)
 {
-	g_debug("menu_clear_alarm");
-	
+    AlarmApplet *applet = (AlarmApplet *)user_data;
+    
 	alarm_applet_clear_alarms (applet);
 }
 
-static void
-menu_list_alarms_cb (BonoboUIComponent *component,
-					 gpointer data,
-					 const gchar *cname)
+
+G_MODULE_EXPORT void
+status_menu_edit_cb (GtkMenuItem *menuitem,
+                     gpointer     user_data)
 {
-	AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmApplet *applet = (AlarmApplet *)user_data;
 	list_alarms_dialog_display (applet);
 }
 
-static void
-menu_preferences_cb (BonoboUIComponent *component,
-					 AlarmApplet *applet,
-					 const gchar *cname)
+
+G_MODULE_EXPORT void
+status_menu_prefs_cb (GtkMenuItem *menuitem,
+                      gpointer     user_data)
 {
-	/* Construct the preferences dialog and show it here */
-	g_debug("preferences_dialog");
+    AlarmApplet *applet = (AlarmApplet *)user_data;
 	
 	preferences_dialog_display (applet);
 }
 
-static void
-menu_about_cb (BonoboUIComponent *component,
-			   AlarmApplet *applet,
-			   const gchar *cname)
+G_MODULE_EXPORT void
+status_menu_about_cb (GtkMenuItem *menuitem,
+                      gpointer     user_data)
 {
-	/* Construct the about dialog and show it here */
-	g_debug("about_dialog");
-	
-	static const gchar *const authors[] = {
-            "Johannes H. Jensen <joh@pseudoberries.com>",
-            NULL
-    };
-    static const gchar *const documenters[] = {
-            "Johannes H. Jensen <joh@pseudoberries.com>",
-            NULL
-    };
-    static const gchar *const artists[] = {
-            "Lasse Gulvåg Sætre <lassegs@gmail.com>",
-            NULL
-    };
+    AlarmApplet *applet = (AlarmApplet *)user_data;
+    
+    gboolean visible;	
+    GtkAboutDialog *dialog = GTK_ABOUT_DIALOG (
+        gtk_builder_get_object (applet->ui, "about-dialog"));
+    
+    g_object_get (dialog, "visible", &visible, NULL);
 
-    gtk_show_about_dialog (NULL,
-    					   "program-name",	ALARM_NAME,
-    					   "title", 		_("About " ALARM_NAME),
-                           "version",       VERSION,
-                           "copyright",     "\xC2\xA9 2007 Johannes H. Jensen",
-                           "website",		"http://alarm-clock.pseudoberries.com/",
-                           "authors",       authors,
-                           "documenters",   documenters,
-                           "artists",       artists, 
-                           "logo-icon-name",ALARM_ICON,
-                           NULL);
+    if (!visible) {
+        // Set properties and show
+        g_object_set (G_OBJECT (dialog),
+                      "program-name", ALARM_NAME,
+                      "title", _("About " ALARM_NAME),
+                      "version", VERSION,
+                      NULL);
+
+        gtk_dialog_run (dialog);
+        
+    } else {
+        // Already visible, present it
+        gtk_window_present (GTK_WINDOW (dialog));
+    }
 }
-
-/*
- * Set up menu
- */
-void
-alarm_applet_menu_init (AlarmApplet *applet)
-{
-	GtkIconInfo *info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default(), SNOOZE_ICON, 16, 0);
-	
-	g_debug ("ICON: %s", gtk_icon_info_get_filename (info));
-	
-	static const gchar *menu_xml =
-		"<popup name=\"button3\">\n"
-		"   <menuitem name=\"Snooze Item\" "
-		"			  verb=\"SnoozeAlarm\" "
-		"			_label=\"_Snooze alarms\" "
-		"		   pixtype=\"filename\" "
-		"		   pixname=\"%s\"/>\n"
-		"   <menuitem name=\"Clear Item\" "
-		"			  verb=\"ClearAlarm\" "
-		"			_label=\"_Clear alarms\" "
-		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-clear\"/>\n"
-		"   <separator/>\n"
-		"   <menuitem name=\"List Alarms\" "
-		"			  verb=\"ListAlarms\" "
-		"			_label=\"_Edit Alarms\" "
-		"		   pixtype=\"stock\" "
-		"		   pixname=\"gtk-edit\"/>\n"
-		"   <menuitem name=\"Preferences Item\" "
-		"             verb=\"Preferences\" "
-		"           _label=\"_Preferences...\"\n"
-		"          pixtype=\"stock\" "
-		"          pixname=\"gtk-properties\"/>\n"
-		"   <menuitem name=\"About Item\" "
-		"             verb=\"About\" "
-		"           _label=\"_About...\"\n"
-		"          pixtype=\"stock\" "
-		"          pixname=\"gtk-about\"/>\n"
-		"</popup>\n";
-	
-	static const BonoboUIVerb menu_verbs [] = {
-			BONOBO_UI_VERB ("SnoozeAlarm", menu_snooze_alarm_cb),
-			BONOBO_UI_VERB ("ClearAlarm", menu_clear_alarm_cb),
-			BONOBO_UI_VERB ("ListAlarms", menu_list_alarms_cb),
-			BONOBO_UI_VERB ("Preferences", menu_preferences_cb),
-			BONOBO_UI_VERB ("About", menu_about_cb),
-			BONOBO_UI_VERB_END
-	};
-	
-	gchar *xml = g_strdup_printf (menu_xml, gtk_icon_info_get_filename (info));
-	
-	panel_applet_setup_menu (PANEL_APPLET (applet->parent),
-	                         xml,
-	                         menu_verbs,
-	                         applet);
-	
-	g_free (xml);
-	gtk_icon_info_free (info);
-}
-
-
 
 /*
  * An error callback for MediaPlayers

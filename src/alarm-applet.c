@@ -369,8 +369,8 @@ alarm_active_changed (GObject *object,
 			applet->upcoming_alarm = NULL;
 
 			alarm_applet_upcoming_alarm_update (applet);
-			alarm_applet_label_update (applet);
-			alarm_applet_icon_update (applet);
+            //alarm_applet_label_update (applet);
+			//alarm_applet_icon_update (applet);
 		}
 
 		return;
@@ -380,7 +380,7 @@ alarm_active_changed (GObject *object,
 		// We're next!
 		applet->upcoming_alarm = alarm;
 
-		alarm_applet_label_update (applet);
+		//alarm_applet_label_update (applet);
 
 		return;
 	}
@@ -536,7 +536,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 	}
 
 	// Free GConf dir
-	g_free (applet->gconf_dir);
+	//g_free (applet->gconf_dir);
 
 	// Finally free the AlarmApplet struct itself
 	g_free (applet);
@@ -547,21 +547,14 @@ alarm_applet_destroy (AlarmApplet *applet)
  * INIT {{
  */
 
-static gboolean
-alarm_applet_factory (PanelApplet *panelapplet,
-					  const gchar *iid,
-					  gpointer data)
+static AlarmApplet*
+alarm_applet_init()
 {
 	AlarmApplet *applet;
-
-	if (strcmp (iid, "OAFIID:AlarmClock") != 0)
-		return FALSE;
-
-	/* Initialize applet struct,
-	 * fill with zero's */
+	
+	/* Initialize applet struct */
 	applet = g_new0 (AlarmApplet, 1);
-
-	applet->parent = panelapplet;
+    
 	applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 
 	/* Preferences (defaults).
@@ -569,11 +562,6 @@ alarm_applet_factory (PanelApplet *panelapplet,
 	 * assume the schema provides the default values for strings. */
 	applet->show_label = TRUE;
 	applet->label_type = LABEL_TYPE_TIME;
-
-	/* Prepare applet */
-	panel_applet_add_preferences (applet->parent, ALARM_SCHEMA_DIR, NULL);
-	panel_applet_set_flags (PANEL_APPLET (panelapplet), PANEL_APPLET_EXPAND_MINOR);
-	applet->gconf_dir = panel_applet_get_preferences_key (applet->parent);
 
 	/* Set up gconf handlers */
 	alarm_applet_gconf_init (applet);
@@ -608,21 +596,33 @@ alarm_applet_factory (PanelApplet *panelapplet,
 							   G_CALLBACK (alarm_triggered), applet);
 
 	/* Set up properties menu */
-	alarm_applet_menu_init (applet);
+	//alarm_applet_menu_init (applet);
 
-	/* Set up applet */
+	/* Set up applet UI */
 	alarm_applet_ui_init (applet);
 
-	return TRUE;
+	return applet;
 }
 
-PANEL_APPLET_BONOBO_FACTORY ("OAFIID:AlarmClock_Factory",
-                             PANEL_TYPE_APPLET,
-                             "alarm_clock",
-                             VERSION,
-                             alarm_applet_factory,
-                             NULL);
+int
+main (int argc, char *argv[])
+{
+	AlarmApplet *applet;
 
+    /* Terminate on critical errors */
+    g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
+
+	/* Initialize GTK+ */
+	gtk_init (&argc, &argv);
+
+	/* Initialize applet */
+	applet = alarm_applet_init ();
+	
+	/* Start main loop */
+	gtk_main ();
+	
+	return 0;
+}
 
 /*
  * }} INIT

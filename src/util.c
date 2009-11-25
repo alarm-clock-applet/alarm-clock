@@ -121,3 +121,33 @@ is_executable_valid (gchar *executable)
     return FALSE;
 }
 
+
+/*
+ * Get full path to a data file
+ */
+char *
+alarm_applet_get_data_path (const char *name)
+{
+    char *filename;
+
+#ifdef ALARM_CLOCK_RUN_IN_SOURCE_TREE
+    /* Try the file in the source tree first */
+    filename = g_build_filename ("..", "data", name, NULL);
+    if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
+    {
+        g_free (filename);
+        /* Try the local file */
+        filename = g_build_filename (PKGDATADIR, name, NULL);
+
+        if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
+        {
+            g_free (filename);
+            return NULL;
+        }
+    }
+#else
+    filename = g_build_filename (PKGDATADIR, name, NULL);
+#endif
+
+    return filename;
+}

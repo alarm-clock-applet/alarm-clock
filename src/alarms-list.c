@@ -529,25 +529,25 @@ list_alarms_dialog_display (AlarmApplet *applet)
 					  *time_col, *label_col,
 					  *playing_col;
 	
-	GladeXML *ui;
+	GtkBuilder *builder;
 	GtkButton *add_button, *edit_button, *delete_button;
 	
 	/* 
 	 * Fetch widgets
 	 */
-	ui = glade_xml_new (ALARM_UI_XML, "list-alarms", NULL);
+    builder = applet->ui;
 	
-	applet->list_alarms_dialog = GTK_DIALOG (glade_xml_get_widget (ui, "list-alarms"));
-	view = GTK_TREE_VIEW (glade_xml_get_widget (ui, "list-alarms-view"));
+	applet->list_alarms_dialog = GTK_DIALOG (gtk_builder_get_object (builder, "list-alarms"));
+	view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "list-alarms-view"));
 	applet->list_alarms_view = view;
 	
 	g_signal_connect (applet->list_alarms_dialog, "response", 
 					  G_CALLBACK (list_alarms_dialog_response_cb), applet);
 	
 	// Buttons
-	add_button = GTK_BUTTON (glade_xml_get_widget (ui, "add-button"));
-	edit_button = GTK_BUTTON (glade_xml_get_widget (ui, "edit-button"));
-	delete_button = GTK_BUTTON (glade_xml_get_widget (ui, "delete-button"));
+	add_button = GTK_BUTTON (gtk_builder_get_object (builder, "add-button"));
+	edit_button = GTK_BUTTON (gtk_builder_get_object (builder, "edit-button"));
+	delete_button = GTK_BUTTON (gtk_builder_get_object (builder, "delete-button"));
 	
 	g_signal_connect (add_button, "clicked",
 					  G_CALLBACK (add_button_cb), applet);

@@ -22,7 +22,6 @@
  */
 
 #include <time.h>
-#include <panel-applet-gconf.h>
 
 #include "alarm-applet.h"
 #include "alarm-gconf.h"
@@ -41,7 +40,7 @@ GConfEnumStringPair label_type_enum_map [] = {
 /*
  * GCONF CALLBACKS {{
  */
-
+/*
 void
 alarm_applet_gconf_show_label_changed (GConfClient  *client,
 									   guint         cnxn_id,
@@ -89,7 +88,7 @@ alarm_applet_gconf_label_type_changed (GConfClient  *client,
 		pref_update_label_type (applet);
 	}
 }
-
+*/
 
 /*
  * Triggered on global changes to our gconf preference dir.
@@ -205,8 +204,10 @@ alarm_applet_gconf_init (AlarmApplet *applet)
 	gchar       *key;
 
 	client = gconf_client_get_default ();
+
+    
 	
-	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
+	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
 	applet->listeners [0] =
 		gconf_client_notify_add (
 				client, key,
@@ -221,7 +222,7 @@ alarm_applet_gconf_init (AlarmApplet *applet)
 				(GConfClientNotifyFunc) alarm_applet_gconf_label_type_changed,
 				applet, NULL, NULL);
 	g_free (key);
-	
+	*/
 	/*
 	 * Listen for changes to the alarms.
 	 * We want to know when an alarm is added and removed.
@@ -251,7 +252,7 @@ alarm_applet_gconf_load (AlarmApplet *applet)
 	client = gconf_client_get_default ();
 	
 	// SHOW_LABEL:
-	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
+	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
 	value = gconf_client_get (client, key, NULL);
 	if (value == NULL) {
 		// Schema defaults not found
@@ -271,5 +272,5 @@ alarm_applet_gconf_load (AlarmApplet *applet)
 		applet->label_type = DEF_LABEL_TYPE;
 		panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, gconf_enum_to_string (label_type_enum_map, DEF_LABEL_TYPE), NULL);
 	}
-	g_free(tmp);
+	g_free(tmp);*/
 }

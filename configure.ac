@@ -25,14 +25,12 @@ GNOME_MAINTAINER_MODE_DEFINES
 #AM_GLIB_GNU_GETTEXT
 
 GLIB_REQUIRED=2.13.0
-GTK_REQUIRED=2.11.0
+GTK_REQUIRED=2.12.0
 GNOME_VFS_REQUIRED=2.15.4
 GCONF_REQUIRED=2.8.0
-LIBGLADE_REQUIRED=2.4.0
 GST_REQUIRED=0.10.2
 LIBGNOME_REQUIRED=2.8.0
 LIBGNOMEUI_REQUIRED=2.8.0
-LIBPANEL_REQUIRED=2.13.4
 GNOME_ICON_THEME_REQUIRED=2.15.91
 LIBNOTIFY_REQUIRED=0.3.2
 
@@ -41,11 +39,10 @@ LIBNOTIFY_REQUIRED=0.3.2
 PKG_CHECK_MODULES([ALARM_CLOCK],
   [glib-2.0 >= $GLIB_REQUIRED
    gtk+-2.0 >= $GTK_REQUIRED
+   gmodule-2.0
    gnome-vfs-2.0 >= $GNOME_VFS_REQUIRED
    gconf-2.0 >= $GCONF_REQUIRED
-   libglade-2.0 >= $LIBGLADE_REQUIRED
    gstreamer-0.10 >= $GST_REQUIRED
-   libpanelapplet-2.0 >= $LIBPANEL_REQUIRED
    gnome-icon-theme >= $GNOME_ICON_THEME_REQUIRED
    libgnome-2.0 >= $LIBGNOME_REQUIRED
    libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED])
@@ -72,14 +69,28 @@ fi
 
 AM_GCONF_SOURCE_2
 
+# Run in source tree
+AC_ARG_ENABLE(run-in-source-tree,
+              AC_HELP_STRING([--disable-run-in-source-tree],[disable search for UI files and plugins in local directory ]),
+        [case "${enableval}" in
+        yes) ENABLE_RUN_IN_SOURCE_TREE=yes ;;
+        no)  ENABLE_RUN_IN_SOURCE_TREE=no ;;
+        *) AC_MSG_ERROR(bad value ${enableval} for --disable-run-in-source-tree) ;;
+        esac],
+[ENABLE_RUN_IN_SOURCE_TREE=yes]) # Default value
+if test x$ENABLE_RUN_IN_SOURCE_TREE = xyes; then
+        AC_DEFINE(ALARM_CLOCK_RUN_IN_SOURCE_TREE, 1, [enable search for UI files and plugins in local directory])
+fi
+
+
 
 # ****************************
 
 AC_CONFIG_FILES([Makefile
 				 src/Makefile
-				 src/ui/Makefile
-				 src/icons/Makefile
-				 src/tests/Makefile])
+				 src/tests/Makefile
+				 data/Makefile
+				 data/icons/Makefile])
 AC_OUTPUT
 
 # ****************************

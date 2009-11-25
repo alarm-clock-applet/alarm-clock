@@ -31,15 +31,14 @@
 
 #include <gtk/gtk.h>
 #include <gnome.h>
-#include <glade/glade.h>
 #include <gdk/gdkkeysyms.h>
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>
 #include <libgnomevfs/gnome-vfs.h>
 #include <libgnomevfs/gnome-vfs-application-registry.h>
 
-#include <panel-applet.h>
-#include <panel-applet-gconf.h>
+//#include <panel-applet.h>
+//#include <panel-applet-gconf.h>
 
 G_BEGIN_DECLS
 
@@ -64,8 +63,6 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define TIMER_ICON		 "alarm-timer"
 #define SNOOZE_ICON		 "alarm-snooze"
 #define ALARM_GCONF_DIR	 "/apps/alarm-clock"
-#define ALARM_SCHEMA_DIR "/schemas/apps/alarm_clock/prefs"
-#define ALARM_UI_XML	 ALARM_GLADEDIR "/alarm-clock.glade"
 #define ALARM_DEF_LABEL	 _("No alarms")
 #define ALARM_DEF_SNOOZE 9
 
@@ -80,9 +77,12 @@ typedef enum {
 } LabelType;
 
 struct _AlarmApplet {
-	PanelApplet *parent;
-	PanelAppletOrient orient;
-	gchar *gconf_dir;
+    /* User Interface */
+    GtkBuilder *ui;
+
+	/* Status Icon */
+	GtkStatusIcon *status_icon;
+    GtkWidget *status_menu;
 
 	/* Panel UI */
 	GtkWidget *icon;	/* alarm icon */

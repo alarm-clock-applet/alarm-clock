@@ -3,36 +3,20 @@
 	<schemalist>
 	
     	<!--
-    	Applet specific:
+    	Global preferences:
     	-->
     	
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/prefs/show_label</key>
+	      	<key>/schemas/apps/alarm-clock/show-notification</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>true</default>
-				<short>Show a label on the applet or not.</short>
-				<long>Whether the applet should have a label on the right side
-					  of the icon, indicating its state.</long>
+				<short>Show a notification when an alarm is triggered</short>
+				<long>Whether to show a notification bubble when an alarm is triggered.
+				      This requires libnotify support.</long>
 			</locale>
 		</schema>
-		
-		<schema>
-	      	<key>/schemas/apps/alarm_clock/prefs/label_type</key>
-	      	<owner>alarm-clock</owner>
-			<type>string</type>
-			<locale name="C">
-				<default>alarm-time</default>
-				<short>Type of label to display.</short>
-				<long>The type of label to display if show_label is true.
-					  Can be either "alarm-time" for showing the current alarm time of the
-					  closest alarm (read: first one to trigger) or "remaining-time" for showing 
-					  the time remaining until the closest alarm goes off.
-				</long>
-			</locale>
-		</schema>
-    	
     	
     	
     	<!--
@@ -40,7 +24,7 @@
     	-->
     	
     	<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/type</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/type</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
@@ -55,7 +39,7 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/timestamp</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/timestamp</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
@@ -67,7 +51,7 @@
 		
     	
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/time</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/time</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
@@ -79,7 +63,7 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/message</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/message</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
@@ -90,7 +74,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/active</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/active</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
@@ -102,7 +86,7 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/repeat</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/repeat</key>
 	      	<owner>alarm-clock</owner>
 			<type>list</type>
 			<list_type>string</list_type>
@@ -115,7 +99,7 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/snooze</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/snooze</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
 			<locale name="C">
@@ -127,7 +111,7 @@
 		
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/notify_type</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/notify_type</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
@@ -142,7 +126,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/sound_file</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/sound_file</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
@@ -153,7 +137,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/sound_repeat</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/sound_repeat</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
@@ -164,7 +148,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/command</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/command</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
 			<locale name="C">
@@ -175,7 +159,7 @@
 		</schema>
 		
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/alarm/notify_bubble</key>
+	      	<key>/schemas/apps/alarm-clock/alarm/notify_bubble</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
@@ -187,7 +171,7 @@
 		
 		<!--
 		<schema>
-	      	<key>/schemas/apps/alarm_clock/prefs/</key>
+	      	<key>/schemas/apps/alarm-clock/prefs/</key>
 	      	<owner>alarm-clock</owner>
 			<type></type>
 			<locale name="C">

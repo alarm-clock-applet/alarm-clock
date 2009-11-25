@@ -25,7 +25,7 @@
 #define ALARM_GCONF_H_
 
 #include <time.h>
-#include <panel-applet-gconf.h>
+//#include <panel-applet-gconf.h>
 
 #include "alarm-applet.h"
 

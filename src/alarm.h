@@ -24,6 +24,7 @@
 #ifndef ALARM_H_
 #define ALARM_H_
 
+#include <glib.h>
 #include <glib-object.h>
 #include <gconf/gconf-client.h>
 
@@ -151,7 +152,7 @@ typedef enum {
  * GConf settings
  */
 #define ALARM_GCONF_DIR_PREFIX		"alarm"
-#define ALARM_GCONF_SCHEMA_DIR		"/schemas/apps/alarm_clock/alarm"
+#define ALARM_GCONF_SCHEMA_DIR		"/schemas/apps/alarm-clock/alarm"
 
 /*
  * Player backoff timeout.

@@ -48,4 +48,8 @@ command_run (const gchar *command);
 gboolean
 is_executable_valid (gchar *executable);
 
+/* Get full path of a data file */
+char *
+alarm_applet_get_data_path (const char *name);
+
 #endif /*UTIL_H_*/

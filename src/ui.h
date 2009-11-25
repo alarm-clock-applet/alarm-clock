@@ -30,8 +30,8 @@
 #include <libnotify/notify.h>
 #endif
 
-#define ORIENT_IS_HORIZONTAL(o)		((o) == PANEL_APPLET_ORIENT_UP || (o) == PANEL_APPLET_ORIENT_DOWN)
-#define IS_HORIZONTAL(papplet)		(ORIENT_IS_HORIZONTAL (panel_applet_get_orient (papplet)))
+//#define ORIENT_IS_HORIZONTAL(o)		((o) == PANEL_APPLET_ORIENT_UP || (o) == PANEL_APPLET_ORIENT_DOWN)
+//#define IS_HORIZONTAL(papplet)		(ORIENT_IS_HORIZONTAL (panel_applet_get_orient (papplet)))
 
 
 void

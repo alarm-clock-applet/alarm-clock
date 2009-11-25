@@ -751,8 +751,8 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	GtkWidget *clock_content, *timer_content, *snooze_label;
 	AlarmRepeat r;
 	gint i;
-	
-	GladeXML *ui = glade_xml_new (ALARM_UI_XML, "edit-alarm", NULL);
+
+    GtkBuilder *builder = applet->ui;
 	
 	/* Init */
 	dialog = g_new0 (AlarmSettingsDialog, 1);
@@ -760,7 +760,7 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	dialog->applet = applet;
 	dialog->alarm  = alarm;
 	dialog->player = NULL;
-	dialog->dialog = glade_xml_get_widget (ui, "edit-alarm");
+	dialog->dialog = GTK_WIDGET (gtk_builder_get_object (builder, "edit-alarm"));
 	
 	g_debug ("NEW AlarmSettingsDialog %p for alarm #%d", dialog, alarm->id);
 	g_debug ("\talarm is %p");
@@ -772,10 +772,10 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	/*
 	 * TYPE TOGGLE BUTTONS
 	 */
-	dialog->clock_toggle = glade_xml_get_widget (ui, "toggle-clock");
+	dialog->clock_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-clock"));
 	clock_content = create_img_label ("Alarm Clock", "alarm-clock");
 	
-	dialog->timer_toggle = glade_xml_get_widget (ui, "toggle-timer");
+	dialog->timer_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-timer"));
 	timer_content = create_img_label ("Timer", "alarm-timer");
 	
 	gtk_container_add (GTK_CONTAINER (dialog->clock_toggle), clock_content);
@@ -787,31 +787,31 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	/*
 	 * GENERAL SETTINGS
 	 */
-	dialog->label_entry = glade_xml_get_widget (ui, "label-entry");
+	dialog->label_entry = GTK_WIDGET (gtk_builder_get_object (builder, "label-entry"));
 	gtk_widget_grab_focus (dialog->label_entry);
 	
-	dialog->hour_spin = glade_xml_get_widget (ui, "hour-spin");
-	dialog->min_spin = glade_xml_get_widget (ui, "minute-spin");
-	dialog->sec_spin = glade_xml_get_widget (ui, "second-spin");
+	dialog->hour_spin = GTK_WIDGET (gtk_builder_get_object (builder, "hour-spin"));
+	dialog->min_spin = GTK_WIDGET (gtk_builder_get_object (builder, "minute-spin"));
+	dialog->sec_spin = GTK_WIDGET (gtk_builder_get_object (builder, "second-spin"));
 	
 	/*
 	 * REPEAT SETTINGS
 	 */
-	dialog->repeat_expand = glade_xml_get_widget (ui, "repeat-expand");
-	dialog->repeat_label  = glade_xml_get_widget (ui, "repeat-label");
+	dialog->repeat_expand = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-expand"));
+	dialog->repeat_label  = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-label"));
 	
 	/* The check buttons have the same name as the 3 letter
 	 * string representation of the day.
 	 */
 	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
-		dialog->repeat_check[i] = glade_xml_get_widget (ui, alarm_repeat_to_string (r));
+		dialog->repeat_check[i] = GTK_WIDGET (gtk_builder_get_object (builder, alarm_repeat_to_string (r)));
 	}
 	
 	/*
 	 * SNOOZE SETTINGS
 	 */
-	dialog->snooze_check = glade_xml_get_widget (ui, "snooze-check");
-	dialog->snooze_spin  = glade_xml_get_widget (ui, "snooze-spin");
+	dialog->snooze_check = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-check"));
+	dialog->snooze_spin  = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-spin"));
 	
 	snooze_label = gtk_bin_get_child (GTK_BIN (dialog->snooze_check));
 	g_object_set (G_OBJECT (snooze_label), "use-markup", TRUE, NULL);
@@ -819,17 +819,17 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	/*
 	 * NOTIFY SETTINGS
 	 */
-	dialog->notify_sound_radio       = glade_xml_get_widget (ui, "sound-radio");
-	dialog->notify_sound_box         = glade_xml_get_widget (ui, "sound-box");
-	dialog->notify_sound_combo       = glade_xml_get_widget (ui, "sound-combo");
-	dialog->notify_sound_preview     = glade_xml_get_widget (ui, "sound-play");
-	dialog->notify_sound_loop_check  = glade_xml_get_widget (ui, "sound-loop-check");
-	dialog->notify_app_radio         = glade_xml_get_widget (ui, "app-radio");
-	dialog->notify_app_box           = glade_xml_get_widget (ui, "app-box");
-	dialog->notify_app_combo         = glade_xml_get_widget (ui, "app-combo");
-	dialog->notify_app_command_box   = glade_xml_get_widget (ui, "app-command-box");
-	dialog->notify_app_command_entry = glade_xml_get_widget (ui, "app-command-entry");
-	dialog->notify_bubble_check      = glade_xml_get_widget (ui, "notify-bubble-check");
+	dialog->notify_sound_radio       = GTK_WIDGET (gtk_builder_get_object (builder, "sound-radio"));
+	dialog->notify_sound_box         = GTK_WIDGET (gtk_builder_get_object (builder, "sound-box"));
+	dialog->notify_sound_combo       = GTK_WIDGET (gtk_builder_get_object (builder, "sound-combo"));
+	dialog->notify_sound_preview     = GTK_WIDGET (gtk_builder_get_object (builder, "sound-play"));
+	dialog->notify_sound_loop_check  = GTK_WIDGET (gtk_builder_get_object (builder, "sound-loop-check"));
+	dialog->notify_app_radio         = GTK_WIDGET (gtk_builder_get_object (builder, "app-radio"));
+	dialog->notify_app_box           = GTK_WIDGET (gtk_builder_get_object (builder, "app-box"));
+	dialog->notify_app_combo         = GTK_WIDGET (gtk_builder_get_object (builder, "app-combo"));
+	dialog->notify_app_command_box   = GTK_WIDGET (gtk_builder_get_object (builder, "app-command-box"));
+	dialog->notify_app_command_entry = GTK_WIDGET (gtk_builder_get_object (builder, "app-command-entry"));
+	dialog->notify_bubble_check      = GTK_WIDGET (gtk_builder_get_object (builder, "notify-bubble-check"));
 	
 	
 	/*
@@ -907,8 +907,6 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	
 	/*g_signal_connect (dialog->notify_app_command_entry, "changed",
 					  G_CALLBACK (app_command_changed_cb), dialog);*/
-	
-	g_object_unref (ui);
 	
 	return dialog;
 }

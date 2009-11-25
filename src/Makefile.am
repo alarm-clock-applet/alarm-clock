@@ -3,14 +3,14 @@ include $(top_srcdir)/Makefile.decl
 soundsdir= $(datadir)/sounds
 gladedir = $(pkgdatadir)/glade
 
-SUBDIRS = icons ui tests
+SUBDIRS = tests
 
 
 #
 # alarm-clock-applet binary
 #
 
-libexec_PROGRAMS = alarm-clock-applet
+bin_PROGRAMS = alarm-clock-applet
 
 alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 							 player.c player.h				\
@@ -24,6 +24,8 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 						     alarm.c alarm.h
 
 alarm_clock_applet_CFLAGS =				\
+    -DDATADIR="\"$(datadir)\""	        \
+    -DPKGDATADIR="\"$(pkgdatadir)\""    \
 	-DALARM_DATADIR="\"$(datadir)\""	\
 	-DALARM_GLADEDIR="\"$(gladedir)\""	\
 	-DALARM_SOUNDSDIR="\"$(soundsdir)\""\
