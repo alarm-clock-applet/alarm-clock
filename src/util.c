@@ -133,6 +133,7 @@ alarm_applet_get_data_path (const char *name)
 #ifdef ALARM_CLOCK_RUN_IN_SOURCE_TREE
     /* Try the file in the source tree first */
     filename = g_build_filename ("..", "data", name, NULL);
+    g_debug("filename: %s", filename);
     if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
     {
         g_free (filename);

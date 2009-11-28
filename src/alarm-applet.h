@@ -84,11 +84,6 @@ struct _AlarmApplet {
 	GtkStatusIcon *status_icon;
     GtkWidget *status_menu;
 
-	/* Panel UI */
-	GtkWidget *icon;	/* alarm icon */
-	GtkWidget *label;	/* clock label */
-	GtkWidget *box;		/* packing box */
-
 	guint timer_id;		/* timer ID for updating the label */
 
 	/* Alarms */
@@ -104,6 +99,9 @@ struct _AlarmApplet {
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
 	GList *list_alarms_args;
+
+    /* Alarm settings dialog */
+    //AlarmSettingsDialog *settings_dialog;
 
 	/* Open edit alarm dialogs
 	 * Hashed by ID */

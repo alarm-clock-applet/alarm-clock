@@ -38,6 +38,35 @@ enum
     N_COLUMNS
 };
 
+/*
+ * Load a user interface by name
+ */
+GtkBuilder *
+alarm_applet_ui_load (const char *name, AlarmApplet *applet)
+{
+    GtkBuilder *builder = NULL;
+    GError *error = NULL;
+    char *filename;
+   
+    filename = alarm_applet_get_data_path (name);
+
+    g_assert(filename != NULL);
+    
+    builder = gtk_builder_new();
+    
+    if (gtk_builder_add_from_file (builder, filename, &error)) {
+        /* Connect signals */
+        gtk_builder_connect_signals (builder, applet);
+    } else {
+        g_critical(_("Couldn't load the interface '%s'. %s"), filename, error->message);
+        g_error_free (error);
+    }
+
+    g_free (filename);
+
+    return builder;
+}
+
 void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent)
 {
@@ -70,7 +99,7 @@ alarm_applet_label_update (AlarmApplet *applet)
 	
 	if (!applet->upcoming_alarm) {
 		// No upcoming alarms
-		g_object_set (applet->label, "label", ALARM_DEF_LABEL, NULL);
+//		g_object_set (applet->label, "label", ALARM_DEF_LABEL, NULL);
 		return;
 	}
 	
@@ -86,7 +115,7 @@ alarm_applet_label_update (AlarmApplet *applet)
 	
 	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
 	
-	g_object_set(applet->label, "label", tmp, NULL);
+//	g_object_set(applet->label, "label", tmp, NULL);
 	g_free(tmp);
 }
 
@@ -277,7 +306,7 @@ alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
 	
 	message = alarm->message;
 	
-	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
+//	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
 	
 	notify_notification_set_timeout (applet->notify, NOTIFY_EXPIRES_NEVER);
 	notify_notification_add_action (applet->notify, "clear", "Clear", alarm_applet_notification_action_cb, alarm, NULL);
@@ -350,26 +379,16 @@ alarm_applet_ui_init (AlarmApplet *applet)
     char *filename;
 
     /* Load UI with GtkBuilder */
-    filename = alarm_applet_get_data_path ("alarm-clock.ui");
-
-    g_assert(filename != NULL);
+    applet->ui = alarm_applet_ui_load ("alarm-clock.ui", applet);
     
-    applet->ui = gtk_builder_new();
-    
-    if (!gtk_builder_add_from_file (applet->ui, filename, &error))
-    {
-        g_critical(_("Couldn't load the interface '%s'. %s"), filename, error->message);
-        g_error_free (error);
-        return;
-    }
-
-    g_free (filename);
-
     /* Initialize status icon */
     alarm_applet_status_init(applet);
+
+    /* Initialize alarm settings dialog */
+    
     
     /* Connect signals */
-    gtk_builder_connect_signals (applet->ui, applet);
+    //gtk_builder_connect_signals (applet->ui, applet);
     
 
 	
@@ -416,21 +435,21 @@ alarm_applet_ui_init (AlarmApplet *applet)
 	/*							 NULL);*/
 	
 	/* Set up UI updater */
-	alarm_applet_ui_update (applet);
-	applet->timer_id = g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
+//	alarm_applet_ui_update (applet);
+//	applet->timer_id = g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
 	
 	/* Pack */
-	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);
-	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->label);
+//	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);
+//	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->label);
 	
 	/* Update orientation */
-	update_orient (applet);
+//	update_orient (applet);
 	
 	/* Add to container and show */
 	//gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
 	//gtk_widget_show_all (GTK_WIDGET (applet->parent));
 	
-	alarm_applet_update_tooltip (applet);
+//	alarm_applet_update_tooltip (applet);
 }
 
 /*
@@ -439,7 +458,10 @@ alarm_applet_ui_init (AlarmApplet *applet)
 void
 alarm_applet_status_init (AlarmApplet *applet)
 {
+    applet->status_icon = GTK_STATUS_ICON (gtk_builder_get_object (applet->ui, "status_icon"));
     applet->status_menu = GTK_WIDGET (gtk_builder_get_object (applet->ui, "status_menu"));
+
+    gtk_status_icon_set_visible (applet->status_icon, TRUE);
 }
 
 /*

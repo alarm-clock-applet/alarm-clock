@@ -773,16 +773,16 @@ alarm_settings_dialog_new (Alarm *alarm, AlarmApplet *applet)
 	 * TYPE TOGGLE BUTTONS
 	 */
 	dialog->clock_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-clock"));
-	clock_content = create_img_label ("Alarm Clock", "alarm-clock");
+//	clock_content = create_img_label ("Alarm Clock", "alarm-clock");
 	
 	dialog->timer_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-timer"));
-	timer_content = create_img_label ("Timer", "alarm-timer");
+//	timer_content = create_img_label ("Timer", "alarm-timer");
 	
-	gtk_container_add (GTK_CONTAINER (dialog->clock_toggle), clock_content);
-	gtk_widget_show_all (GTK_WIDGET (dialog->clock_toggle));
+//	gtk_container_add (GTK_CONTAINER (dialog->clock_toggle), clock_content);
+//	gtk_widget_show_all (GTK_WIDGET (dialog->clock_toggle));
 	
-	gtk_container_add (GTK_CONTAINER (dialog->timer_toggle), timer_content);
-	gtk_widget_show_all (GTK_WIDGET (dialog->timer_toggle));
+//	gtk_container_add (GTK_CONTAINER (dialog->timer_toggle), timer_content);
+//	gtk_widget_show_all (GTK_WIDGET (dialog->timer_toggle));
 	
 	/*
 	 * GENERAL SETTINGS
@@ -927,4 +927,5 @@ display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm)
 	
 	dialog = alarm_settings_dialog_new (alarm, applet);
 	g_hash_table_insert (applet->edit_alarm_dialogs, alarm->id, dialog);
+    gtk_widget_show_all (dialog->dialog);
 }

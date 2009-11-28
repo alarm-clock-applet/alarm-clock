@@ -560,8 +560,8 @@ alarm_applet_init()
 	/* Preferences (defaults).
 	 * ...gconf_get_string can return NULL if the key is not found. We can't
 	 * assume the schema provides the default values for strings. */
-	applet->show_label = TRUE;
-	applet->label_type = LABEL_TYPE_TIME;
+	//applet->show_label = TRUE;
+	//applet->label_type = LABEL_TYPE_TIME;
 
 	/* Set up gconf handlers */
 	alarm_applet_gconf_init (applet);
