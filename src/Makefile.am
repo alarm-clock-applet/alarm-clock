@@ -23,33 +23,16 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 						     edit-alarm.c edit-alarm.h		\
 						     alarm.c alarm.h
 
-alarm_clock_applet_CFLAGS =				\
-    -DDATADIR="\"$(datadir)\""	        \
-    -DPKGDATADIR="\"$(pkgdatadir)\""    \
-	-DALARM_DATADIR="\"$(datadir)\""	\
-	-DALARM_GLADEDIR="\"$(gladedir)\""	\
-	-DALARM_SOUNDSDIR="\"$(soundsdir)\""\
-	$(ALARM_CLOCK_CFLAGS)				\
-	$(LIBNOTIFY_CFLAGS)					\
-	$(WARN_CFLAGS)						\
-	$(AM_CFLAGS)
+alarm_clock_applet_CFLAGS =	                        \
+	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
+	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
+	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
+	@GNOME_CFLAGS@ @LIBNOTIFY_CFLAGS@               \
+	@WARN_CFLAGS@ $(AM_CFLAGS)
 
 alarm_clock_applet_LDADD =		\
-	$(ALARM_CLOCK_LIBS)			\
-	$(LIBNOTIFY_LIBS)
-
-
-#
-# Bonobo server file
-#
-serverdir       = $(libdir)/bonobo/servers
-server_in_files = AlarmClock.server.in
-server_DATA     = $(server_in_files:.server.in=.server)
-
-$(server_DATA): $(server_in_files)
-	sed -e "s|\@LIBEXECDIR\@|$(libexecdir)|" $< > $@
-
-
+	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
+	@GNOME_LIBS@ @LIBNOTIFY_LIBS@
 
 
 #

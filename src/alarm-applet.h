@@ -101,7 +101,7 @@ struct _AlarmApplet {
 	GList *list_alarms_args;
 
     /* Alarm settings dialog */
-    //AlarmSettingsDialog *settings_dialog;
+    AlarmSettingsDialog *settings_dialog;
 
 	/* Open edit alarm dialogs
 	 * Hashed by ID */

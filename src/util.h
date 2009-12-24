@@ -27,6 +27,8 @@
 #include <time.h>
 #include <glib.h>
 
+#include <config.h>
+
 /**
  * Calculates the alarm timestamp given hour, min and secs.
  */

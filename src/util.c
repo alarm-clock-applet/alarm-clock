@@ -138,7 +138,7 @@ alarm_applet_get_data_path (const char *name)
     {
         g_free (filename);
         /* Try the local file */
-        filename = g_build_filename (PKGDATADIR, name, NULL);
+        filename = g_build_filename (ALARM_CLOCK_PKGDATADIR, name, NULL);
 
         if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
         {
@@ -147,7 +147,7 @@ alarm_applet_get_data_path (const char *name)
         }
     }
 #else
-    filename = g_build_filename (PKGDATADIR, name, NULL);
+    filename = g_build_filename (ALARM_CLOCK_PKGDATADIR, name, NULL);
 #endif
 
     return filename;

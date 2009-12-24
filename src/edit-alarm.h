@@ -24,11 +24,14 @@
 #ifndef EDITALARM_H_
 #define EDITALARM_H_
 
-#include "alarm-applet.h"
 #include "alarm.h"
 #include "player.h"
 
-typedef struct _AlarmSettingsDialog {
+typedef struct _AlarmSettingsDialog AlarmSettingsDialog;
+
+#include "alarm-applet.h"
+
+struct _AlarmSettingsDialog {
 	
 	AlarmApplet *applet;
 	Alarm *alarm;
@@ -65,8 +68,14 @@ typedef struct _AlarmSettingsDialog {
 	GtkWidget *notify_app_command_entry;
 	
 	GtkWidget *notify_bubble_check;
-	
-} AlarmSettingsDialog;
+
+};
+
+AlarmSettingsDialog *
+alarm_settings_dialog_new (AlarmApplet *applet);
+
+void
+alarm_settings_dialog_show (AlarmSettingsDialog *dialog, Alarm *alarm);
 
 void
 display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm);

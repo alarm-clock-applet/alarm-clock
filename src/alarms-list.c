@@ -315,7 +315,8 @@ add_button_cb (GtkButton *button, gpointer data)
 	alarm_applet_alarms_add (applet, alarm);
 	
 	// Show edit alarm dialog
-	display_edit_alarm_dialog (applet, alarm);
+	//display_edit_alarm_dialog (applet, alarm);
+    alarm_settings_dialog_show (applet->settings_dialog, alarm);
 	
 	/*
 	 * Update alarms list view
@@ -368,8 +369,9 @@ edit_button_cb (GtkButton *button, gpointer data)
 	
 	// Clear any running alarms
 	alarm_clear (a);
-	
-	display_edit_alarm_dialog (applet, a);
+
+    //display_edit_alarm_dialog (applet, a);
+    alarm_settings_dialog_show (applet->settings_dialog, a);
 }
 
 static void
@@ -470,8 +472,9 @@ list_alarm_selected_cb (GtkTreeView       *view,
 	
 	// Clear any running alarms
 	alarm_clear (a);
-	
-	display_edit_alarm_dialog (applet, a);
+
+    alarm_settings_dialog_show (applet->settings_dialog, a);
+//	display_edit_alarm_dialog (applet, a);
 }
 
 void

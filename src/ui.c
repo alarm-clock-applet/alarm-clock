@@ -385,6 +385,7 @@ alarm_applet_ui_init (AlarmApplet *applet)
     alarm_applet_status_init(applet);
 
     /* Initialize alarm settings dialog */
+    applet->settings_dialog = alarm_settings_dialog_new (applet);
     
     
     /* Connect signals */

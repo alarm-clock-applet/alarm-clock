@@ -1586,21 +1586,21 @@ alarm_bind_update (GObject *object,
 				   GParamSpec *pspec,
 				   gpointer data)
 {
-	//Alarm *alarm;
+	Alarm *alarm;
 	AlarmBindArg *arg = (AlarmBindArg *)data;
 	gpointer d;
 	
 	/*
 	 * Determine which argument is the alarm
 	 */
-	/*if (IS_ALARM (object)) {
-		 alarm = ALARM (object);
+	if (IS_ALARM (object)) {
+		alarm = ALARM (object);
 	} else {
 		alarm = ALARM (arg->object);
 	}
 	
 	g_debug ("alarm_bind_update #%d(%p) [%s] -> %p [%s]", alarm->id, alarm, pspec->name, arg->object, arg->name);
-	*/
+	
 	g_object_get (object, pspec->name, &d, NULL);
 	
 	// Block other signal handler

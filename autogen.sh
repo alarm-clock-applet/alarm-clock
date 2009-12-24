@@ -15,10 +15,9 @@ PKG_NAME="Alarm Clock"
 
 
 which gnome-autogen.sh || {
-    echo "You need to install gnome-common from the GNOME CVS"
+    echo "You need to install gnome-common"
     exit 1
 }
-REQUIRED_AUTOMAKE_VERSION=1.8 \
 USE_GNOME2_MACROS=1 \
 USE_COMMON_DOC_BUILD=yes \
 . gnome-autogen.sh

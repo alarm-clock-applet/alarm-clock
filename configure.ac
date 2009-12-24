@@ -2,20 +2,41 @@
 # *** configure.ac for ALARM-CLOCK                                        ***
 # ***************************************************************************
 
-AC_INIT([Alarm Clock], [0.2.6],
+m4_define([alarm_clock_major_version], [0])
+m4_define([alarm_clock_minor_version], [2])
+m4_define([alarm_clock_micro_version], [6])
+
+m4_define([alarm_clock_version],
+          [alarm_clock_major_version.alarm_clock_minor_version.alarm_clock_micro_version])
+          
+AC_INIT([alarm-clock], [alarm_clock_version],
 		[Johannes H. Jensen <joh@pseudoberries.com>],
 		[alarm-clock-applet])
 		
-#AM_CONFIG_HEADER(config.h)
-AC_CONFIG_MACRO_DIR(m4)
+AC_CONFIG_SRCDIR([src])
+AC_CONFIG_HEADERS([config.h])
 
 AM_INIT_AUTOMAKE([1.9 foreign])
-AM_MAINTAINER_MODE
+AM_MAINTAINER_MODE([enable])
+
+
+# Substitute variables
+ALARM_CLOCK_MAJOR_VERSION=alarm_clock_major_version
+ALARM_CLOCK_MINOR_VERSION=alarm_clock_minor_version
+ALARM_CLOCK_MICRO_VERSION=alarm_clock_micro_version
+AC_SUBST(ALARM_CLOCK_MAJOR_VERSION)
+AC_SUBST(ALARM_CLOCK_MINOR_VERSION)
+AC_SUBST(ALARM_CLOCK_MICRO_VERSION)
+
 
 PKG_PROG_PKG_CONFIG
 AC_PROG_CC
 AC_PROG_INSTALL
 #IT_PROG_INTLTOOL([0.40.0])
+
+# *****
+# GNOME
+# *****
 
 GNOME_COMMON_INIT
 GNOME_DEBUG_CHECK
@@ -24,65 +45,63 @@ GNOME_MAINTAINER_MODE_DEFINES
 
 #AM_GLIB_GNU_GETTEXT
 
-GLIB_REQUIRED=2.13.0
+
+# ***************************
+# Check for required packages
+# ***************************
+
+GLIB_REQUIRED=2.16.0
 GTK_REQUIRED=2.12.0
-GNOME_VFS_REQUIRED=2.15.4
-GCONF_REQUIRED=2.8.0
-GST_REQUIRED=0.10.2
-LIBGNOME_REQUIRED=2.8.0
-LIBGNOMEUI_REQUIRED=2.8.0
-GNOME_ICON_THEME_REQUIRED=2.15.91
-LIBNOTIFY_REQUIRED=0.3.2
+
+PKG_CHECK_MODULES(BASE, [glib-2.0 >= $GLIB_REQUIRED gmodule-2.0])
+PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= $GTK_REQUIRED])
+PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10])
+PKG_CHECK_MODULES(GNOME, 
+  [gconf-2.0
+   gnome-vfs-2.0
+   gnome-icon-theme
+   libgnome-2.0
+   libgnomeui-2.0])
 
 # LIBXML_REQUIRED=2.5.0
 
-PKG_CHECK_MODULES([ALARM_CLOCK],
-  [glib-2.0 >= $GLIB_REQUIRED
-   gtk+-2.0 >= $GTK_REQUIRED
-   gmodule-2.0
-   gnome-vfs-2.0 >= $GNOME_VFS_REQUIRED
-   gconf-2.0 >= $GCONF_REQUIRED
-   gstreamer-0.10 >= $GST_REQUIRED
-   gnome-icon-theme >= $GNOME_ICON_THEME_REQUIRED
-   libgnome-2.0 >= $LIBGNOME_REQUIRED
-   libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED])
-
 # Check for libnotify (optional)
-LIBNOTIFY_CFLAGS=
-LIBNOTIFY_LIBS=
-PKG_CHECK_MODULES(LIBNOTIFY, libnotify >= $LIBNOTIFY_REQUIRED,
-		  HAVE_LIBNOTIFY="yes", HAVE_LIBNOTIFY="no")
+AC_ARG_WITH(libnotify,
+  AC_HELP_STRING([--without-libnotify],
+                 [disable the use of libnotify]),,
+  with_libnotify=auto)
 
-if test "x$HAVE_LIBNOTIFY" = "xyes"; then
+have_libnotify="no"
+if test "x$with_libnotify" != "xno"; then
+  PKG_CHECK_MODULES(LIBNOTIFY, [libnotify],
+    have_libnotify="yes", have_libnotify="no")
+  
+  if test "x$have_libnotify" = "xyes"; then
 	AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify available])
+  fi
 fi
 
-AC_SUBST(LIBNOTIFY_CFLAGS)
-AC_SUBST(LIBNOTIFY_LIBS)
+#AC_SUBST(LIBNOTIFY_CFLAGS)
+#AC_SUBST(LIBNOTIFY_LIBS)
 
-# GConf
+# Check for gconftool
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
 
 if test x"$GCONFTOOL" = xno; then
-  AC_MSG_ERROR([gconftool-2 executable not found in your path - should be installed with GConf])
+  AC_MSG_ERROR([gconftool-2 executable not found in your path - is gconf installed?])
 fi
 
 AM_GCONF_SOURCE_2
 
-# Run in source tree
+# Run in source tree?
 AC_ARG_ENABLE(run-in-source-tree,
-              AC_HELP_STRING([--disable-run-in-source-tree],[disable search for UI files and plugins in local directory ]),
-        [case "${enableval}" in
-        yes) ENABLE_RUN_IN_SOURCE_TREE=yes ;;
-        no)  ENABLE_RUN_IN_SOURCE_TREE=no ;;
-        *) AC_MSG_ERROR(bad value ${enableval} for --disable-run-in-source-tree) ;;
-        esac],
-[ENABLE_RUN_IN_SOURCE_TREE=yes]) # Default value
-if test x$ENABLE_RUN_IN_SOURCE_TREE = xyes; then
-        AC_DEFINE(ALARM_CLOCK_RUN_IN_SOURCE_TREE, 1, [enable search for UI files and plugins in local directory])
+  AC_HELP_STRING([--disable-run-in-source-tree],
+                 [disable search for UI files and plugins in local directory]),,
+  enable_run_in_source_tree=yes)
+  
+if test x$enable_run_in_source_tree = xyes; then
+  AC_DEFINE(ALARM_CLOCK_RUN_IN_SOURCE_TREE, 1, [enable search for UI files and plugins in local directory])
 fi
-
-
 
 # ****************************
 
@@ -104,7 +123,7 @@ Configure summary:
     prefix:                 ${prefix}
     source code location:   ${srcdir}
 	
-    Notifications (libnotify): $HAVE_LIBNOTIFY
+    Notifications (libnotify): $have_libnotify
 
 *************************************************
 "

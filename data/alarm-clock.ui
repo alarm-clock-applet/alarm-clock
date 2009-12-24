@@ -248,10 +248,9 @@
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
-    <signal name="destroy_event" handler="gtk_widget_hide"/>
-    <signal name="close" handler="gtk_widget_hide"/>
-    <signal name="response" handler="gtk_widget_hide"/>
-    <signal name="delete_event" handler="gtk_widget_hide"/>
+    <signal name="destroy_event" handler="gtk_true"/>
+    <signal name="response" handler="alarm_settings_dialog_response"/>
+    <signal name="delete_event" handler="gtk_true"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>
@@ -268,6 +267,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <signal name="toggled" handler="alarm_settings_changed_type"/>
                 <child>
                   <object class="GtkHBox" id="hbox1">
                     <property name="visible">True</property>
@@ -306,6 +306,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <signal name="toggled" handler="alarm_settings_changed_type"/>
                 <child>
                   <object class="GtkHBox" id="hbox4">
                     <property name="visible">True</property>
@@ -363,6 +364,7 @@
                     <property name="adjustment">adjustment4</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
+                    <signal name="value_changed" handler="alarm_settings_changed_time"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -388,6 +390,7 @@
                     <property name="adjustment">adjustment3</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
+                    <signal name="value_changed" handler="alarm_settings_changed_time"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -413,6 +416,7 @@
                     <property name="adjustment">adjustment2</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
+                    <signal name="value_changed" handler="alarm_settings_changed_time"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -442,6 +446,7 @@
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                 <property name="activates_default">True</property>
                 <property name="text" translatable="yes">Wake up sleepy head!</property>
+                <signal name="changed" handler="alarm_settings_changed_label"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -503,6 +508,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">0</property>
@@ -516,6 +522,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -529,6 +536,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">2</property>
@@ -542,6 +550,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">3</property>
@@ -555,6 +564,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">4</property>
@@ -568,6 +578,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">5</property>
@@ -581,6 +592,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="alarm_settings_changed_repeat"/>
                       </object>
                       <packing>
                         <property name="position">6</property>
@@ -615,6 +627,7 @@
                 <property name="receives_default">False</property>
                 <property name="use_underline">True</property>
                 <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="alarm_settings_changed_snooze_check"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -629,6 +642,7 @@
                 <property name="adjustment">adjustment1</property>
                 <property name="climb_rate">1</property>
                 <property name="numeric">True</property>
+                <signal name="value_changed" handler="alarm_settings_changed_snooze"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -681,6 +695,7 @@
                     <property name="receives_default">False</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="alarm_settings_changed_notify_type"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -702,6 +717,7 @@
                             <child>
                               <object class="GtkComboBox" id="sound-combo">
                                 <property name="visible">True</property>
+                                <signal name="changed" handler="alarm_settings_changed_sound"/>
                               </object>
                               <packing>
                                 <property name="position">0</property>
@@ -714,6 +730,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="use_stock">True</property>
+                                <signal name="clicked" handler="alarm_settings_sound_preview"/>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -734,6 +751,7 @@
                             <property name="receives_default">False</property>
                             <property name="use_underline">True</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="alarm_settings_changed_sound_repeat"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -759,6 +777,7 @@
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">sound-radio</property>
+                    <signal name="toggled" handler="alarm_settings_changed_notify_type"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -778,6 +797,7 @@
                         <child>
                           <object class="GtkComboBox" id="app-combo">
                             <property name="visible">True</property>
+                            <signal name="changed" handler="alarm_settings_changed_app"/>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -805,6 +825,7 @@
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can_focus">True</property>
+                                <signal name="changed" handler="alarm_settings_changed_command"/>
                               </object>
                               <packing>
                                 <property name="position">1</property>
@@ -834,6 +855,7 @@
                     <property name="receives_default">False</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="alarm_settings_changed_notify_bubble"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

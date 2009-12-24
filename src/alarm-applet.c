@@ -109,7 +109,7 @@ alarm_applet_sounds_load (AlarmApplet *applet)
 		alarm_list_entry_list_free (&(applet->sounds));
 
 	// Load stock sounds
-	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_SOUNDSDIR,
+	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_CLOCK_DATADIR "/sounds",
 												supported_sound_mime_types);
 
 	// Load custom sounds from alarms
@@ -250,7 +250,7 @@ alarm_applet_apps_load (AlarmApplet *applet)
 
 	// We'll get the default media players from g-d-a.xml
 	// from gnome-control-center
-	filename = g_build_filename (ALARM_DATADIR,
+	filename = g_build_filename (ALARM_CLOCK_DATADIR,
 								 "gnome-control-center",
 								 "default-apps",
 					 			 "gnome-default-applications.xml",
@@ -555,7 +555,7 @@ alarm_applet_init()
 	/* Initialize applet struct */
 	applet = g_new0 (AlarmApplet, 1);
     
-	applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
+	//applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 
 	/* Preferences (defaults).
 	 * ...gconf_get_string can return NULL if the key is not found. We can't
