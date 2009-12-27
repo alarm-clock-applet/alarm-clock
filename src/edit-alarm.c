@@ -745,7 +745,7 @@ alarm_settings_changed_sound_repeat (GtkToggleButton *togglebutton, gpointer dat
 
     g_assert (dialog->alarm != NULL);
 
-    g_object_set (dialog->alarm, "sound-repeat", gtk_toggle_button_get_active (togglebutton));
+    g_object_set (dialog->alarm, "sound-repeat", gtk_toggle_button_get_active (togglebutton), NULL);
 }
 
 void
@@ -800,9 +800,14 @@ alarm_settings_changed_command (GtkEditable *editable, gpointer data)
 
     g_assert (dialog->alarm != NULL);
 
-    g_object_set (dialog->alarm, "command", gtk_entry_get_text (GTK_ENTRY (editable)));
+    g_object_set (dialog->alarm, "command", gtk_entry_get_text (GTK_ENTRY (editable)), NULL);
 }
 
+void
+alarm_settings_changed_notify_bubble (GtkToggleButton *togglebutton, gpointer data)
+{
+	// Do nothing
+}
 
 /*
  * Preview player {{
