@@ -97,6 +97,8 @@ list_alarms_update_timer (gpointer data)
 	gtk_tree_model_row_changed (GTK_TREE_MODEL (arg->store), path, &(arg->iter));
 	
 	gtk_tree_path_free (path);
+
+    return TRUE;
 }
 
 static void
