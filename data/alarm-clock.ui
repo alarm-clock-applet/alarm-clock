@@ -1014,7 +1014,7 @@
     <property name="has_separator">False</property>
     <property name="program_name">Alarm Clock</property>
     <property name="version">0.0.0</property>
-    <property name="copyright" translatable="yes">&#xA9; 2007 Johannes H. Jensen</property>
+    <property name="copyright" translatable="yes">&#xA9; 2007-2010 Johannes H. Jensen</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">http://alarm-clock.pseudoberries.com/</property>
     <property name="website_label" translatable="yes">alarm-clock.pseudoberries.com</property>
