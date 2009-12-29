@@ -30,7 +30,7 @@
 #include <libxml/parser.h>
 
 #include <gtk/gtk.h>
-#include <gnome.h>
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>

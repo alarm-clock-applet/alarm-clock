@@ -59,9 +59,7 @@ PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10])
 PKG_CHECK_MODULES(GNOME, 
   [gconf-2.0
    gio-2.0
-   gnome-icon-theme
-   libgnome-2.0
-   libgnomeui-2.0])
+   gnome-icon-theme])
 
 # LIBXML_REQUIRED=2.5.0
 
