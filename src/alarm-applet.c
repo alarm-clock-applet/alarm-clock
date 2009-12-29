@@ -109,7 +109,7 @@ alarm_applet_sounds_load (AlarmApplet *applet)
 		alarm_list_entry_list_free (&(applet->sounds));
 
 	// Load stock sounds
-	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_CLOCK_DATADIR "/sounds",
+	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_CLOCK_DATADIR "/sounds/gnome/default/alerts/",
 												supported_sound_mime_types);
 
 	// Load custom sounds from alarms

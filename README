@@ -12,7 +12,6 @@ You need at least:
     gnome-panel-2.13.4
     glib-2.13.0
     gtk-2.11.0
-    gnome-vfs-2.15.4
     gconf-2.8.0
     libglade-2.4.0
     gstreamer-0.10.2

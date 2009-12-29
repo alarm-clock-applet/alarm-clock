@@ -22,6 +22,7 @@
  */
 
 #include <glib.h>
+#include <glib-object.h>
 
 #include "list-entry.h"
 
@@ -38,9 +39,11 @@ int main (void)
 {
 	AlarmListEntry *entry = NULL;
 	GList *list = NULL, *l;
-	GnomeVFSResult result;
+	GError *result;
 	gchar *mime;
 	guint i;
+
+	g_type_init();
 	
 	// Test alarm list entry alloc
 	entry = alarm_list_entry_new ("Name", "Some data", "Icon");
@@ -52,14 +55,14 @@ int main (void)
 	alarm_list_entry_free(entry);
 	
 	// Test alarm list entry from file
-	entry = alarm_list_entry_new_file("file:///usr/share/sounds/question.wav", &result, &mime);
+	entry = alarm_list_entry_new_file("file:///usr/share/sounds/gnome/default/alerts/glass.ogg", &mime, &result);
 	entry_dump (entry);
-	g_print ("VFSResult: %s, MIME: %s\n", gnome_vfs_result_to_string(result), mime);
+//	g_print ("VFSResult: %s, MIME: %s\n", gnome_vfs_result_to_string(result), mime);
 	alarm_list_entry_free (entry);
 	g_free (mime);
 	
 	// Test alarm list
-	list = alarm_list_entry_list_new ("file:///usr/share/sounds/", NULL);
+	list = alarm_list_entry_list_new ("file:///usr/share/sounds/gnome/default/alerts/", NULL);
 	
 	g_print ("\nGot %d entries: \n---\n", g_list_length(list));
 	for (l = list, i = 0; l; l = l->next, i++) {

@@ -58,7 +58,7 @@ PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= $GTK_REQUIRED])
 PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10])
 PKG_CHECK_MODULES(GNOME, 
   [gconf-2.0
-   gnome-vfs-2.0
+   gio-2.0
    gnome-icon-theme
    libgnome-2.0
    libgnomeui-2.0])

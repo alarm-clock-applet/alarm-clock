@@ -26,7 +26,6 @@
 
 #include <string.h>
 #include <glib.h>
-#include <libgnomevfs/gnome-vfs.h>
 
 #include "util.h"
 
@@ -46,7 +45,7 @@ void
 alarm_list_entry_free (AlarmListEntry *e);
 
 AlarmListEntry *
-alarm_list_entry_new_file (const gchar *uri, GnomeVFSResult *ret, gchar **mime_ret);
+alarm_list_entry_new_file (const gchar *uri, gchar **mime_ret, GError **error);
 
 GList *
 alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[]);

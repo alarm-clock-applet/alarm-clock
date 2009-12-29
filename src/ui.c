@@ -33,7 +33,7 @@
 
 enum
 {
-    PIXBUF_COL,
+    GICON_COL,
     TEXT_COL,
     N_COLUMNS
 };
@@ -183,20 +183,14 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 	GtkTreeModel *model;
 	GtkCellRenderer *renderer;
 	GtkTreeIter iter;
-	GdkPixbuf *pixbuf = NULL;
-	GtkIconTheme *theme;
 	AlarmListEntry *entry;
 	
 	g_debug ("fill_combo_box... %d", g_list_length (list));
 
-//	if (theme == NULL) {
-	theme = gtk_icon_theme_get_default ();
-//	}
-
 	gtk_combo_box_set_row_separator_func (combo_box, is_separator,
 					  GINT_TO_POINTER (g_list_length (list)), NULL);
 
-	model = GTK_TREE_MODEL (gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING));
+	model = GTK_TREE_MODEL (gtk_list_store_new (2, G_TYPE_ICON, G_TYPE_STRING));
 	gtk_combo_box_set_model (combo_box, model);
 	
 	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));
@@ -207,7 +201,7 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 	gtk_cell_renderer_set_fixed_size (renderer, -1, 22);
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
-					"pixbuf", PIXBUF_COL,
+					"gicon", GICON_COL,
 					NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
@@ -217,25 +211,25 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 					NULL);
 
 	for (l = list; l != NULL; l = g_list_next (l)) {
+		GIcon *icon;
+		
 		entry = (AlarmListEntry *) l->data;
-		
-		pixbuf = gtk_icon_theme_load_icon (theme, entry->icon, 22, 0, NULL);
-		
+		icon = g_icon_new_for_string (entry->icon, NULL);
+
 		gtk_list_store_append (GTK_LIST_STORE (model), &iter);
 		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-					PIXBUF_COL, pixbuf,
-					TEXT_COL, entry->name,
-					-1);
-		
-		if (pixbuf)
-			g_object_unref (pixbuf);
+							GICON_COL, icon,
+							TEXT_COL, entry->name,
+							-1);
+
+		g_object_unref (icon);
 	}
 
 	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter, -1);
 	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
 	gtk_list_store_set (GTK_LIST_STORE (model), &iter,
-			PIXBUF_COL, NULL,
+			GICON_COL, NULL,
 			TEXT_COL, custom_label,
 			-1);
 }

@@ -34,8 +34,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>
-#include <libgnomevfs/gnome-vfs.h>
-#include <libgnomevfs/gnome-vfs-application-registry.h>
 
 //#include <panel-applet.h>
 //#include <panel-applet-gconf.h>

@@ -24,11 +24,8 @@ test_list_entry_SOURCES = $(top_srcdir)/src/list-entry.c	\
 						  $(top_srcdir)/src/list-entry.h	\
 						  $(top_srcdir)/src/util.c			\
 						  test_list_entry.c
-
-test_list_entry_LDADD =			\
-	$(GLIB_LIBS)				\
-	$(GNOME_LIBS2_LIBS)			\
-	$(GNOME_APPLETS_LIBS)		
+test_list_entry_CFLAGS = @GTK_CFLAGS@
+test_list_entry_LDADD = @GTK_LIBS@
 
 test_util_SOURCES = $(top_srcdir)/src/util.c $(top_srcdir)/src/util.h test_util.c
 

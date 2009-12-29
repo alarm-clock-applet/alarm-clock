@@ -24,8 +24,6 @@
 #include <string.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <libgnomevfs/gnome-vfs.h>
-#include <libgnomeui/libgnomeui.h>
 
 #include "list-entry.h"
 #include "util.h"
@@ -64,47 +62,36 @@ alarm_list_entry_free (AlarmListEntry *e)
 }
 
 AlarmListEntry *
-alarm_list_entry_new_file (const gchar *uri, GnomeVFSResult *ret, gchar **mime_ret)
+alarm_list_entry_new_file (const gchar *uri, gchar **mime_ret, GError **error)
 {
 	AlarmListEntry *entry;
-	GnomeVFSResult result;
-	GnomeVFSFileInfo *info;
-	GtkIconTheme *theme = NULL;
+	GError *new_error = NULL;
+	GFileInfo *info;
+	GFile *file;
 	
-	if (!gnome_vfs_initialized())
-		gnome_vfs_init();
+	file = g_file_new_for_uri (uri);
+	info = g_file_query_info (file, "standard::content-type,standard::icon",
+							  G_FILE_QUERY_INFO_NONE, NULL, &new_error);
 	
-	if (gtk_init_check (NULL, NULL))
-		theme = gtk_icon_theme_get_default ();
-	else
-		g_warning ("gtk_init_check failed, icon lookup disabled.");
-		
-	info = gnome_vfs_file_info_new ();
-	
-	result = gnome_vfs_get_file_info (uri, info, 
-				GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS);
-	
-	if (ret != NULL)
-		*ret = result;
-	
-	if (result != GNOME_VFS_OK) {
+	if (new_error != NULL) {
 		g_warning ("Could not open uri: %s", uri);
+		if (error)
+			*error = new_error;
+		else
+			g_error_free (new_error);
 		return NULL;
 	}
 	
 	entry = g_new (AlarmListEntry, 1);
 	entry->data = g_strdup (uri);
-	entry->name = to_basename (info->name);
-	
-	if (theme != NULL)
-		entry->icon = gnome_icon_lookup(theme, NULL,
-								 		entry->data, NULL, info,
-								 		info->mime_type, 0, 0);
+	entry->name = g_file_get_basename (file);
+	entry->icon = g_icon_to_string (g_file_info_get_icon (info));
 	
 	if (mime_ret != NULL)
-		*mime_ret = g_strdup (info->mime_type);
+		*mime_ret = g_strdup (g_file_info_get_content_type (info));
 	
-	gnome_vfs_file_info_unref (info);
+	g_object_unref (info);
+	g_object_unref (file);
 	
 	return entry;
 }
@@ -112,32 +99,26 @@ alarm_list_entry_new_file (const gchar *uri, GnomeVFSResult *ret, gchar **mime_r
 GList *
 alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
 {
-	GnomeVFSResult result;
-	GnomeVFSFileInfoOptions options;
-	GnomeVFSFileInfo *info;
+	GError *error = NULL;
+	GFile *dir;
+	GFileEnumerator *result;
+	GFileInfo *info;
 	
-	GtkIconTheme *theme;
-	
-	GList *list, *l, *flist;
+	GList *flist;
 	AlarmListEntry *entry;
 	const gchar *mime;
 	gboolean valid;
 	gint i;
 	
-	if (!gnome_vfs_initialized())
-		gnome_vfs_init();
+	dir = g_file_new_for_uri (dir_uri);
+	result = g_file_enumerate_children (dir,
+										"standard::type,standard::content-type,"
+										"standard::icon,standard::name",
+										G_FILE_QUERY_INFO_NONE, NULL, &error);
 	
-	if (gtk_init_check (NULL, NULL))
-		theme = gtk_icon_theme_get_default ();
-	else
-		g_warning ("gtk_init_check failed, icon lookup disabled.");
-	
-	options = GNOME_VFS_FILE_INFO_GET_MIME_TYPE | GNOME_VFS_FILE_INFO_FOLLOW_LINKS;
-	
-	result = gnome_vfs_directory_list_load (&list, dir_uri, options);
-	
-	if (result != GNOME_VFS_OK) {
+	if (error) {
 		g_critical ("Could not open directory: %s", dir_uri);
+		g_error_free (error);
 		return NULL;
 	}
 	
@@ -145,11 +126,10 @@ alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
 	
 	flist = NULL;
 	
-	for (l = list; l; l = l->next) {
-		info = l->data;
-		//g_debug ("-- %s", info->name);
-		if (info->type == GNOME_VFS_FILE_TYPE_REGULAR) {
-			mime = gnome_vfs_file_info_get_mime_type(info);
+	while ((info = g_file_enumerator_next_file (result, NULL, NULL))) {
+		//g_debug ("-- %s", g_file_info_get_name (info));
+		if (g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR) {
+			mime = g_file_info_get_content_type (info);
 			//g_debug (" [ regular file: MIME: %s ]", mime);
 			
 			valid = TRUE;
@@ -167,14 +147,9 @@ alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
 			
 			if (valid) {
 				entry = g_new (AlarmListEntry, 1);
-				entry->data = g_strdup_printf ("%s/%s", dir_uri, info->name);
-				entry->name = to_basename (info->name);
-				
-				entry->icon = NULL;
-				if (theme != NULL)
-					entry->icon = gnome_icon_lookup(theme, NULL,
-													entry->data, NULL, info,
-													mime, 0, 0);
+				entry->name = g_strdup (g_file_info_get_name (info));
+				entry->data = g_strdup_printf ("%s/%s", dir_uri, entry->name);
+				entry->icon = g_icon_to_string (g_file_info_get_icon (info));
 				
 				//g_debug ("Icon found: %s", entry->icon);
 				flist = g_list_append (flist, entry);
@@ -182,7 +157,7 @@ alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[])
 		}
 	}
 	
-	gnome_vfs_file_info_list_free (list);
+	g_file_enumerator_close (result, NULL, NULL);
 	
 	return flist;
 }
