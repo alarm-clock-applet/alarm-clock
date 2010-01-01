@@ -330,7 +330,7 @@ test_alarm_notify (AlarmFixture *fix,
 	//
 	g_object_set (alarm,
 				  "notify_type", ALARM_NOTIFY_SOUND,
-				  "sound_file", "file:///usr/share/sounds/question.wav",
+				  "sound_file", "file:///usr/share/sounds/gnome/default/alerts/sonar.ogg",
 				  "sound_repeat", FALSE,
 				  NULL);
 	
@@ -488,7 +488,26 @@ test_alarm_repeat (AlarmFixture *fix,
 	
 	r = alarm_repeat_from_list (list);
 	g_assert_cmpint (r, ==, rep);
-	
+
+
+    //
+    // Test repeat to pretty
+    //
+    str = alarm_repeat_to_pretty (ALARM_REPEAT_WEEKDAYS);
+    g_assert_cmpstr (str, ==, _("Weekdays"));
+    g_free (str);
+
+    str = alarm_repeat_to_pretty (ALARM_REPEAT_ALL);
+    g_assert_cmpstr (str, ==, _("Every day"));
+    g_free (str);
+
+    str = alarm_repeat_to_pretty (ALARM_REPEAT_MON | ALARM_REPEAT_WED | ALARM_REPEAT_FRI);
+    g_assert_cmpstr (str, ==, _("Mon, Wed, Fri"));
+    g_free (str);
+
+    
+
+    
 	// Should free data as well but we're lazy
 	g_slist_free (list);
 }

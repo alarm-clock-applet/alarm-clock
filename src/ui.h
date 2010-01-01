@@ -25,6 +25,7 @@
 #define UI_H_
 
 #include "alarm-applet.h"
+#include "alarm-list-window.h"
 #include "edit-alarm.h"
 
 #ifdef HAVE_LIBNOTIFY

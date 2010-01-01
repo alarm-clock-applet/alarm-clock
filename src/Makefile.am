@@ -19,7 +19,7 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 						     alarm-gconf.c alarm-gconf.h	\
 						     ui.c ui.h						\
 						     prefs.c prefs.h				\
-						     alarms-list.c alarms-list.h	\
+						     alarm-list-window.c alarm-list-window.h	\
 						     edit-alarm.c edit-alarm.h		\
 						     alarm.c alarm.h
 

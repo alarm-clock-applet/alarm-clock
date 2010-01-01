@@ -397,10 +397,10 @@ alarm_triggered (Alarm *alarm, gpointer data)
 
 	g_debug ("Alarm triggered: #%d", alarm->id);
 
-	if (alarm->notify_bubble) {
+	/*if (alarm->notify_bubble) {
 		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
 		alarm_applet_notification_display (applet, alarm);
-	}
+	}*/
 }
 
 /*
@@ -418,22 +418,22 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 	if (applet->alarms != NULL) {
 		GList *l;
 
-		/* Free old alarm objects */
+		// Free old alarm objects
 		for (l = applet->alarms; l != NULL; l = l->next) {
 			g_object_unref (ALARM (l->data));
 		}
 
-		/* Free list */
+		// Free list
 		g_list_free (applet->alarms);
 	}
 
-	/* Fetch list of alarms */
+	// Fetch list of alarms
 	applet->alarms = alarm_get_list (ALARM_GCONF_DIR);
 }
 
 void
 alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
-{
+{    
 	applet->alarms = g_list_append (applet->alarms, alarm);
 
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
@@ -441,6 +441,9 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_active_changed), applet);
 
 	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_triggered), applet);
+
+    // Update alarm list window model
+    alarm_list_window_alarm_add (applet->list_window, alarm);
 }
 
 void
@@ -454,8 +457,8 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 	/*
 	 * Clear list store. This will decrease the refcount of our alarms by 1.
 	 */
-	if (applet->list_alarms_store)
-		gtk_list_store_clear (applet->list_alarms_store);
+	//if (applet->list_alarms_store)
+	//	gtk_list_store_clear (applet->list_alarms_store);
 
 	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
 
@@ -471,6 +474,9 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 	 */
 	g_signal_handlers_disconnect_matched (alarm, 0, 0, 0, NULL, NULL, NULL);
 
+    // Update alarm list window model
+    alarm_list_window_alarm_remove (applet->list_window, alarm);
+    
 	/*
 	 * Dereference alarm
 	 */
@@ -495,10 +501,10 @@ alarm_applet_destroy (AlarmApplet *applet)
 		g_source_remove (applet->timer_id);
 	}
 
-	// Destroy alarms list
-	if (applet->list_alarms_dialog) {
-		list_alarms_dialog_close (applet);
-	}
+	// TODO: Destroy alarms list
+//	if (applet->list_alarms_dialog) {
+//		list_alarms_dialog_close (applet);
+//	}
 
 	// Destroy preferences dialog
 	if (applet->preferences_dialog) {

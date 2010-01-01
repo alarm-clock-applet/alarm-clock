@@ -74,7 +74,7 @@ alarm_list_entry_new_file (const gchar *uri, gchar **mime_ret, GError **error)
 							  G_FILE_QUERY_INFO_NONE, NULL, &new_error);
 	
 	if (new_error != NULL) {
-		g_warning ("Could not open uri: %s", uri);
+		//g_warning ("Could not open uri: %s", uri);
 		if (error)
 			*error = new_error;
 		else

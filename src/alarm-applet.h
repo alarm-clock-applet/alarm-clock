@@ -93,10 +93,11 @@ struct _AlarmApplet {
 	GList *apps;
 
 	/* List-alarms UI */
-	GtkDialog *list_alarms_dialog;
+	AlarmListWindow *list_window;
+/*	GtkDialog *list_alarms_dialog;
 	GtkListStore *list_alarms_store;
 	GtkTreeView *list_alarms_view;
-	GList *list_alarms_args;
+	GList *list_alarms_args;*/
 
     /* Alarm settings dialog */
     AlarmSettingsDialog *settings_dialog;

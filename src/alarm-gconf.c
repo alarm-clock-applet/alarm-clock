@@ -137,8 +137,8 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 	if (id >= 0) {
 		// Valid, probably an alarm which has been removed
 		g_debug ("GLOBAL change ON alarm #%d", id);
-		
-		// Check if the alarm exists in our alarms list
+        
+        // Check if the alarm exists in our alarms list
 		for (l = applet->alarms; l != NULL; l = l->next) {
 			a = ALARM (l->data);
 			if (a->id == id) {
@@ -165,10 +165,6 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			 */
 			alarm_applet_alarms_remove (applet, a);
 			
-			// Update view
-			if (applet->list_alarms_dialog)
-				list_alarms_update (applet);
-			
 		} else if (!found && entry->value != NULL) {
 			// ADDED ALARM
 			/*
@@ -179,11 +175,10 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			g_debug ("\tADD alarm #%d %p", id, a);
 			
 			alarm_applet_alarms_add (applet, a);
-			
-			// Update view
-			if (applet->list_alarms_dialog)
-				list_alarms_update (applet);
-		}
+            
+		} else if (found) {
+            alarm_list_window_alarm_update (applet->list_window, a);
+        }
 	}
 	
 	g_string_free (str, TRUE);

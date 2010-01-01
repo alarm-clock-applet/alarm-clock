@@ -745,6 +745,9 @@ alarm_set_property (GObject *object,
 		
 		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
 		if (alarm->active && !alarm_timer_is_started(alarm)) {
+            // Update timestamp
+            alarm_update_timestamp (alarm);
+            
 			// Start timer
 			alarm_timer_start (alarm);
 		}
@@ -1185,7 +1188,7 @@ static gboolean
 alarm_timer_is_started (Alarm *alarm)
 {
 	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
-		
+    
 	return priv->timer_id > 0;
 }
 
@@ -2157,6 +2160,58 @@ gboolean
 alarm_should_repeat (Alarm *alarm)
 {
 	return alarm->type == ALARM_TYPE_CLOCK && alarm->repeat != ALARM_REPEAT_NONE;
+}
+
+/*
+ * Create a pretty string representation of AlarmRepeat
+ *
+ * The return value must be freed afterwards
+ */
+gchar *
+alarm_repeat_to_pretty (AlarmRepeat repeat)
+{
+    gchar *str;
+
+    GString *s;
+    struct tm tm;
+    gchar tmp[20];
+    AlarmRepeat r;
+    gint i;
+
+    switch (repeat) {
+        case ALARM_REPEAT_NONE:
+            str = g_strdup (_("Once"));
+            break;
+        case ALARM_REPEAT_WEEKDAYS:
+            str = g_strdup (_("Weekdays"));
+            break;
+        case ALARM_REPEAT_WEEKENDS:
+            str = g_strdup (_("Weekends"));
+            break;
+        case ALARM_REPEAT_ALL:
+            str = g_strdup (_("Every day"));
+            break;
+        default:
+            // Custom repeat, create a list of weekdays
+            s = g_string_new ("");
+	
+	        for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
+		        if (repeat & r) {
+                    tm.tm_wday = i;
+                    strftime (tmp, sizeof(tmp), "%a", &tm);
+                    g_string_append_printf (s, "%s, ", tmp);
+                }
+	        }
+
+            g_string_truncate (s, s->len - 2);
+            
+            str = s->str;
+            
+            g_string_free (s, FALSE);
+            break;
+    }
+
+    return str;
 }
 
 /*

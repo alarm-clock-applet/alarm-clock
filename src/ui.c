@@ -29,7 +29,6 @@
 
 #include "alarm-applet.h"
 #include "ui.h"
-#include "alarms-list.h"
 
 enum
 {
@@ -251,7 +250,7 @@ button_cb (GtkStatusIcon  *status_icon,
 	
 	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
 		/* Double click: Open list alarms */
-		list_alarms_dialog_display (applet);
+        alarm_list_window_show (applet->list_window);
 	} else {
 		alarm_applet_snooze_alarms (applet);
 	}
@@ -378,6 +377,9 @@ alarm_applet_ui_init (AlarmApplet *applet)
     /* Initialize status icon */
     alarm_applet_status_init(applet);
 
+	/* Initialize alarm list window */
+	applet->list_window = alarm_list_window_new (applet);
+
     /* Initialize alarm settings dialog */
     applet->settings_dialog = alarm_settings_dialog_new (applet);
     
@@ -464,6 +466,19 @@ alarm_applet_status_init (AlarmApplet *applet)
  */
 
 G_MODULE_EXPORT void
+alarm_applet_status_activate (GtkStatusIcon *status_icon,
+							  gpointer       user_data)
+{
+	AlarmApplet *applet = (AlarmApplet *)user_data;
+
+	g_debug("alarm_applet_status_activate()");
+
+	// TODO: Snooze alarms if any
+	
+	alarm_list_window_toggle (applet->list_window);
+}
+
+G_MODULE_EXPORT void
 alarm_applet_status_popup (GtkStatusIcon  *status_icon,
                            guint           button,
                            guint           activate_time,
@@ -504,7 +519,7 @@ status_menu_edit_cb (GtkMenuItem *menuitem,
                      gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
-	list_alarms_dialog_display (applet);
+	alarm_list_window_show (applet->list_window);
 }
 
 
