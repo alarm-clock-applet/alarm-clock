@@ -182,9 +182,10 @@ media_player_bus_cb (GstBus     *bus,
 				return FALSE;
 			}
 			
-			// Loop
-			gst_element_set_state (player->player, GST_STATE_READY);
-			gst_element_set_state (player->player, GST_STATE_PLAYING);
+			// Loop, seek to start
+            gst_element_seek_simple (player->player, GST_FORMAT_TIME,
+                GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
+                0);
 			
 			media_player_set_state (player, MEDIA_PLAYER_PLAYING);
 		}
