@@ -81,12 +81,11 @@ struct _AlarmApplet {
 	/* Status Icon */
 	GtkStatusIcon *status_icon;
     GtkWidget *status_menu;
-
-	guint timer_id;		/* timer ID for updating the label */
-
+    
 	/* Alarms */
 	GList	*alarms;
-	Alarm	*upcoming_alarm;	/* Next upcoming alarm */
+	Alarm	*upcoming_alarm;	// Next upcoming alarm
+    guint   n_triggered;        // Number of triggered alarms
 
 	/* Sounds & apps list */
 	GList *sounds;
@@ -108,11 +107,6 @@ struct _AlarmApplet {
 
 	/* Preferences */
 	GtkDialog *preferences_dialog;
-
-	/* Notification */
-#ifdef HAVE_LIBNOTIFY
-	NotifyNotification *notify;
-#endif
 
 	/* Label */
 	GtkWidget *pref_label_show;
@@ -140,6 +134,14 @@ void alarm_applet_alarms_load (AlarmApplet *applet);
 void alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm);
 
 void alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm);
+
+guint alarm_applet_alarms_snooze (AlarmApplet *applet);
+
+guint alarm_applet_alarms_stop (AlarmApplet *applet);
+
+void alarm_applet_alarm_snooze (AlarmApplet *applet, Alarm *alarm);
+
+void alarm_applet_alarm_stop (AlarmApplet *applet, Alarm *alarm);
 
 void alarm_applet_destroy (AlarmApplet *applet);
 

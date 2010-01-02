@@ -7,13 +7,13 @@
     	-->
     	
 		<schema>
-	      	<key>/schemas/apps/alarm-clock/show-notification</key>
+	      	<key>/schemas/apps/alarm-clock/show_notification</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
 			<locale name="C">
 				<default>true</default>
 				<short>Show a notification when an alarm is triggered</short>
-				<long>Whether to show a notification bubble when an alarm is triggered.
+				<long>Whether to show a notification message when an alarm is triggered.
 				      This requires libnotify support.</long>
 			</locale>
 		</schema>
@@ -155,17 +155,6 @@
 				<default>rhythmbox-client --play</default>
 				<short>Command to run on alarm.</short>
 				<long>The command to run for the "command" notification type.</long>
-			</locale>
-		</schema>
-		
-		<schema>
-	      	<key>/schemas/apps/alarm-clock/alarm/notify_bubble</key>
-	      	<owner>alarm-clock</owner>
-			<type>bool</type>
-			<locale name="C">
-				<default>true</default>
-				<short>Show notification bubble on alarm.</short>
-				<long>Check to show a notification bubble on alarm (with libnotify).</long>
 			</locale>
 		</schema>
 		

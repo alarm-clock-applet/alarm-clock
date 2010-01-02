@@ -23,9 +23,7 @@
 
 #include <time.h>
 #include <string.h>
-#ifdef HAVE_LIBNOTIFY
 #include <libnotify/notify.h>
-#endif
 
 #include "alarm-applet.h"
 #include "ui.h"
@@ -84,38 +82,6 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
-}
-
-
-// TODO: Should display any triggered alarms / etc.
-void
-alarm_applet_label_update (AlarmApplet *applet)
-{
-	Alarm *a;
-	struct tm *tm;
-	guint hour, min, sec, now;
-	gchar *tmp;
-	
-	if (!applet->upcoming_alarm) {
-		// No upcoming alarms
-//		g_object_set (applet->label, "label", ALARM_DEF_LABEL, NULL);
-		return;
-	}
-	
-	a = applet->upcoming_alarm;
-	
-	if (applet->label_type == LABEL_TYPE_REMAIN) {
-		/* Remaining time */
-		tm = alarm_get_remain (a);
-	} else {
-		/* Alarm time */
-		tm = alarm_get_time (a);
-	}
-	
-	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
-	
-//	g_object_set(applet->label, "label", tmp, NULL);
-	g_free(tmp);
 }
 
 // TODO: Refactor for more fancy tooltip with alarm summary.
@@ -252,7 +218,7 @@ button_cb (GtkStatusIcon  *status_icon,
 		/* Double click: Open list alarms */
         alarm_list_window_show (applet->list_window);
 	} else {
-		alarm_applet_snooze_alarms (applet);
+		alarm_applet_alarms_snooze (applet);
 	}
 	
 	/* Show edit alarms dialog */
@@ -261,85 +227,28 @@ button_cb (GtkStatusIcon  *status_icon,
 	return TRUE;
 }
 
+/**
+ * Show a notification
+ */
+void
+alarm_applet_notification_show (AlarmApplet *applet,
+                                const gchar *summary,
+                                const gchar *body,
+                                const gchar *icon)
 
-#ifdef HAVE_LIBNOTIFY
-static void
-alarm_applet_notification_action_cb (NotifyNotification *notify,
-									 gchar *action,
-									 gpointer data)
 {
-	Alarm *alarm = ALARM (data);
-	
-	g_debug ("NOTIFY ACTION: %s", action);
-	
-	if (strcmp (action, "clear") == 0) {
-		g_debug ("NOTIFY CLEAR #%d", alarm->id);
-		alarm_clear (alarm);
-	} else {
-		// "snooze"
-		g_debug ("NOTIFY SNOOZE #%d", alarm->id);
-		alarm_snooze (alarm);
-	}
-}
-#endif
+    NotifyNotification *n;
+    GError *error = NULL;
 
-/* Taken from the battery applet */
-gboolean
-alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm)
-{
-#ifdef HAVE_LIBNOTIFY
-	GError *error = NULL;
-	//GdkPixbuf *icon;
-	gboolean result;
-	const gchar *message;
-	const gchar *icon = (alarm->type == ALARM_TYPE_CLOCK) ? ALARM_ICON : TIMER_ICON;
-	
-	if (!notify_is_initted () && !notify_init (_("Alarm Applet")))
-		return FALSE;
-	
-	message = alarm->message;
-	
-//	applet->notify = notify_notification_new (_("Alarm!"), message, icon, GTK_WIDGET (applet->icon));
-	
-	notify_notification_set_timeout (applet->notify, NOTIFY_EXPIRES_NEVER);
-	notify_notification_add_action (applet->notify, "clear", "Clear", alarm_applet_notification_action_cb, alarm, NULL);
-	
-	if (alarm->snooze) {
-		notify_notification_add_action (applet->notify, "snooze", "Snooze", alarm_applet_notification_action_cb, alarm, NULL);
+    n = notify_notification_new_with_status_icon (summary, body, icon,
+                                                  applet->status_icon);
+    
+    if (!notify_notification_show (n, &error)) {
+        g_warning ("Failed to send notification: %s", error->message);
+		g_error_free (error);
 	}
 
-	result = notify_notification_show (applet->notify, &error);
-	
-	if (error)
-	{
-	   g_warning (error->message);
-	   g_error_free (error);
-	}
-
-	return result;
-#else
-	return FALSE;
-#endif
-}
-
-gboolean
-alarm_applet_notification_close (AlarmApplet *applet)
-{
-#ifdef HAVE_LIBNOTIFY
-	gboolean result;
-	GError *error = NULL;
-	
-	result = notify_notification_close (applet->notify, &error);
-	
-	if (error)
-	{
-	   g_warning (error->message);
-	   g_error_free (error);
-	}
-	
-	g_object_unref (applet->notify);
-	applet->notify = NULL;
-#endif
+	g_object_unref(G_OBJECT(n));
 }
 
 /*
@@ -349,7 +258,7 @@ static gboolean
 alarm_applet_ui_update (AlarmApplet *applet)
 {
 	if (applet->show_label) {
-		alarm_applet_label_update (applet);
+//		alarm_applet_label_update (applet);
 	}
 	
 	alarm_applet_update_tooltip (applet);
@@ -376,6 +285,11 @@ alarm_applet_ui_init (AlarmApplet *applet)
     
     /* Initialize status icon */
     alarm_applet_status_init(applet);
+
+    /* Initialize libnotify */
+    if (!notify_init (PACKAGE_NAME)) {
+        g_critical ("Could not intialize libnotify!");
+    }
 
 	/* Initialize alarm list window */
 	applet->list_window = alarm_list_window_new (applet);
@@ -462,7 +376,16 @@ alarm_applet_status_init (AlarmApplet *applet)
 }
 
 /*
- * Menu callbacks:
+ * Update the status icon
+ */
+void
+alarm_applet_status_update (AlarmApplet *applet)
+{
+    gtk_status_icon_set_blinking (applet->status_icon, applet->n_triggered > 0);
+}
+
+/*
+ * Status icon callbacks:
  */
 
 G_MODULE_EXPORT void
@@ -474,8 +397,10 @@ alarm_applet_status_activate (GtkStatusIcon *status_icon,
 	g_debug("alarm_applet_status_activate()");
 
 	// TODO: Snooze alarms if any
-	
-	alarm_list_window_toggle (applet->list_window);
+	if (alarm_applet_alarms_snooze (applet) == 0) {
+        // No alarms snoozed, show window
+    	alarm_list_window_toggle (applet->list_window);
+    }
 }
 
 G_MODULE_EXPORT void
@@ -495,22 +420,26 @@ alarm_applet_status_popup (GtkStatusIcon  *status_icon,
                     activate_time);
 }
 
+/*
+ * Menu callbacks:
+ */
+
 G_MODULE_EXPORT void
 status_menu_snooze_cb (GtkMenuItem *menuitem,
                        gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
     
-	alarm_applet_snooze_alarms (applet);
+	alarm_applet_alarms_snooze (applet);
 }
 
 G_MODULE_EXPORT void
-status_menu_clear_cb (GtkMenuItem *menuitem,
+status_menu_stop_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
     
-	alarm_applet_clear_alarms (applet);
+	alarm_applet_alarms_stop (applet);
 }
 
 

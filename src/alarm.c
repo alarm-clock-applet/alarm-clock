@@ -106,6 +106,7 @@ static enum {
 	PROP_ALARM_0,
 	PROP_DIR,
 	PROP_ID,
+    PROP_TRIGGERED,
 	PROP_TYPE,
 	PROP_TIME,
 	PROP_TIMESTAMP,
@@ -116,12 +117,12 @@ static enum {
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
-	PROP_COMMAND,
-	PROP_NOTIFY_BUBBLE
+	PROP_COMMAND
 } AlarmProp;
 
 #define PROP_NAME_DIR			"gconf-dir"
 #define PROP_NAME_ID			"id"
+#define PROP_NAME_TRIGGERED     "triggered"
 #define PROP_NAME_TYPE			"type"
 #define PROP_NAME_TIME			"time"
 #define PROP_NAME_TIMESTAMP		"timestamp"
@@ -133,22 +134,23 @@ static enum {
 #define PROP_NAME_SOUND_FILE	"sound-file"
 #define PROP_NAME_SOUND_LOOP	"sound-repeat"
 #define PROP_NAME_COMMAND		"command"
-#define PROP_NAME_NOTIFY_BUBBLE	"notify-bubble"
 
 /* Signal indexes */
 static enum
 {
-  SIGNAL_ALARM,
-  SIGNAL_ERROR,
-  SIGNAL_PLAYER,
-  LAST_SIGNAL
+    SIGNAL_ALARM,
+    SIGNAL_CLEARED,
+    SIGNAL_ERROR,
+    SIGNAL_PLAYER,
+    LAST_SIGNAL
 } AlarmSignal;
 
 /* Signal identifier map */
-static guint alarm_signal[LAST_SIGNAL] = {0, 0, 0};
+static guint alarm_signal[LAST_SIGNAL] = {0, 0, 0, 0};
 
 /* Prototypes for signal handlers */
 static void alarm_alarm (Alarm *alarm);
+static void alarm_cleared (Alarm *alarm);
 static void alarm_error (Alarm *alarm, GError *err);
 static void alarm_player_changed (Alarm *alarm, MediaPlayerState state);
 
@@ -174,6 +176,7 @@ alarm_class_init (AlarmClass *class)
 {
 	GParamSpec *dir_param;
 	GParamSpec *id_param;
+    GParamSpec *triggered_param;
 	GParamSpec *type_param;
 	GParamSpec *time_param;
 	GParamSpec *timestamp_param;
@@ -185,7 +188,6 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
 	GParamSpec *command_param;
-	GParamSpec *notify_bubble_param;
 	
 	GObjectClass *g_object_class;
 
@@ -208,7 +210,13 @@ alarm_class_init (AlarmClass *class)
 								  UINT_MAX,	/* max */
 								  0,		/* default */
 								  G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
-	
+
+    triggered_param = g_param_spec_boolean (PROP_NAME_TRIGGERED,
+							                "alarm triggered",
+							                "triggered flag of the alarm",
+                                            FALSE,
+							                G_PARAM_READABLE);
+
 	type_param = g_param_spec_uint (PROP_NAME_TYPE,
 									"alarm type",
 									"type of the alarm",
@@ -286,14 +294,7 @@ alarm_class_init (AlarmClass *class)
 										 "command",
 										 "command to run",
 										 ALARM_DEFAULT_COMMAND,
-										 G_PARAM_READWRITE);
-	
-	notify_bubble_param = g_param_spec_boolean (PROP_NAME_NOTIFY_BUBBLE, 
-												"notification bubble",
-												"whether the alarm should display a notification bubble when triggered",
-												ALARM_DEFAULT_NOTIFY_BUBBLE,
-												G_PARAM_READWRITE);
-	
+										 G_PARAM_READWRITE);	
 	
 	/* override base object methods */
 	g_object_class->set_property = alarm_set_property;
@@ -304,6 +305,7 @@ alarm_class_init (AlarmClass *class)
 	/* install properties */
 	g_object_class_install_property (g_object_class, PROP_DIR, dir_param);
 	g_object_class_install_property (g_object_class, PROP_ID, id_param);
+    g_object_class_install_property (g_object_class, PROP_TRIGGERED, triggered_param);
 	g_object_class_install_property (g_object_class, PROP_TYPE, type_param);
 	g_object_class_install_property (g_object_class, PROP_TIME, time_param);
 	g_object_class_install_property (g_object_class, PROP_TIMESTAMP, timestamp_param);
@@ -315,26 +317,36 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
 	g_object_class_install_property (g_object_class, PROP_COMMAND, command_param);
-	g_object_class_install_property (g_object_class, PROP_NOTIFY_BUBBLE, notify_bubble_param);
 	
 	g_type_class_add_private (class, sizeof (AlarmPrivate));
 	
 	/* set signal handlers */
 	class->alarm = alarm_alarm;
+    class->cleared = alarm_cleared;
 	class->error = alarm_error;
 	class->player_changed = alarm_player_changed;
 
 	/* install signals and default handlers */
 	alarm_signal[SIGNAL_ALARM] = g_signal_new ("alarm",		/* name */
 											   TYPE_ALARM,	/* class type identifier */
-											   G_SIGNAL_RUN_LAST, /* options */
+											   G_SIGNAL_RUN_FIRST, /* options */
 											   G_STRUCT_OFFSET (AlarmClass, alarm), /* handler offset */
 											   NULL, /* accumulator function */
 											   NULL, /* accumulator data */
 											   g_cclosure_marshal_VOID__VOID, /* marshaller */
 											   G_TYPE_NONE, /* type of return value */
 											   0);
-	
+
+    alarm_signal[SIGNAL_CLEARED] = g_signal_new ("cleared",
+                                                 TYPE_ALARM,
+											     G_SIGNAL_RUN_FIRST,
+											     G_STRUCT_OFFSET (AlarmClass, cleared),
+											     NULL,
+											     NULL,
+											     g_cclosure_marshal_VOID__VOID,
+											     G_TYPE_NONE,
+											     0);
+    
 	alarm_signal[SIGNAL_ERROR] = g_signal_new ("error",
 											   TYPE_ALARM,
 											   G_SIGNAL_RUN_LAST,
@@ -571,22 +583,6 @@ alarm_gconf_load (Alarm *alarm)
 		// Not found in GConf, fall back to defaults
 		g_object_set (alarm, PROP_NAME_COMMAND, ALARM_DEFAULT_COMMAND, NULL);
 	}
-	
-	
-	/*
-	 * NOTIFY_BUBBLE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_BUBBLE);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		alarm->notify_bubble = gconf_value_get_bool (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_NOTIFY_BUBBLE, ALARM_DEFAULT_NOTIFY_BUBBLE, NULL);
-	}
 }
 
 static void
@@ -627,9 +623,8 @@ alarm_set_property (GObject *object,
 	GError 		*err = NULL;
 	
 	const gchar	*str;
-	guint		 d, old;
-	AlarmType 	 type, new_type;
-	gboolean	 bool;
+	guint		 d;
+	gboolean	 b;
 	GSList		*list;
 	
 	gchar *key, *tmp;
@@ -682,6 +677,17 @@ alarm_set_property (GObject *object,
 			alarm_gconf_connect (alarm);
 		}
 		break;
+    case PROP_TRIGGERED:
+        // TODO: Should we map this to a GConf value?
+        //       The only case where this might be useful is where the program
+        //       is restarted while having a triggered alarm so that we could
+        //       re-trigger it when the program starts again...
+        b = g_value_get_boolean (value);
+        
+        if (b != alarm->triggered) {
+            alarm->triggered = b;
+        }
+        
 	case PROP_TYPE:
 		alarm->type = g_value_get_uint (value);
 		
@@ -740,14 +746,11 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		break;
 	case PROP_ACTIVE:
-		bool = alarm->active;
+		b = alarm->active;
 		alarm->active = g_value_get_boolean (value);
 		
-		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, bool, alarm->active);
+		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, b, alarm->active);
 		if (alarm->active && !alarm_timer_is_started(alarm)) {
-            // Update timestamp
-            alarm_update_timestamp (alarm);
-            
 			// Start timer
 			alarm_timer_start (alarm);
 		}
@@ -898,22 +901,6 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		
 		break;
-	case PROP_NOTIFY_BUBBLE:
-		bool = alarm->notify_bubble;
-		alarm->notify_bubble = g_value_get_boolean (value);
-		
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_BUBBLE);
-		
-		if (!gconf_client_set_bool (client, key, alarm->notify_bubble, &err)) {
-			
-			g_critical ("Could not set %s (gconf): %s", 
-						key, err->message);
-			
-			g_error_free (err);
-		}
-		
-		g_free (key);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -936,6 +923,9 @@ alarm_get_property (GObject *object,
 	case PROP_ID:
 		g_value_set_uint (value, alarm->id);
 		break;
+    case PROP_TRIGGERED:
+        g_value_set_boolean (value, alarm->triggered);
+        break;
 	case PROP_TYPE:
 		g_value_set_uint (value, alarm->type);
 		break;
@@ -968,9 +958,6 @@ alarm_get_property (GObject *object,
 		break;
 	case PROP_COMMAND:
 		g_value_set_string (value, alarm->command);
-		break;
-	case PROP_NOTIFY_BUBBLE:
-		g_value_set_boolean (value, alarm->notify_bubble);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1020,16 +1007,14 @@ static void
 alarm_alarm (Alarm *alarm)
 {
 	g_debug ("[%p] #%d: alarm_alarm", alarm, alarm->id);
-}
 
-void
-alarm_trigger (Alarm *alarm)
-{
-	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
+    // Clear first, if needed
+    alarm_clear (alarm);
+    
+    // Update triggered flag
+    alarm->triggered = TRUE;
 	
-	/*
-	 * Do we want to repeat this alarm?
-	 */
+	// Do we want to repeat this alarm?
 	if (alarm_should_repeat (alarm)) {
 		g_debug ("alarm_trigger REPEATING");
 		alarm_update_timestamp_full (alarm, FALSE);
@@ -1051,6 +1036,12 @@ alarm_trigger (Alarm *alarm)
 	default:
 		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", alarm->notify_type);
 	}
+}
+
+void
+alarm_trigger (Alarm *alarm)
+{
+	g_signal_emit (alarm, alarm_signal[SIGNAL_ALARM], 0, NULL);
 }
 
 /*
@@ -1114,27 +1105,47 @@ alarm_snooze (Alarm *alarm)
 		return;
 	}
 	
-	if (!alarm_is_playing (alarm)) return;
+	if (!alarm->triggered) return;
 	
 	g_debug ("alarm_snooze SNOOZING FOR %d minutes", alarm->snooze);
-	
-	time_t now = time (NULL);
+    
+	alarm_clear (alarm);	
+
+    time_t now = time (NULL);
 	
 	g_object_set (alarm, 
 				  "timestamp", now + alarm->snooze * 60,
-				  "active", TRUE,
+				  "active", TRUE,        
 				  NULL);
-	
-	alarm_clear (alarm);
+
+//    alarm_timer_start (alarm);
+}
+
+/**
+ * Alarm cleared signal
+ */
+static void
+alarm_cleared (Alarm *alarm)
+{
+    g_debug ("[%p] #%d: alarm_cleared", alarm, alarm->id);
+
+    // Update triggered flag
+    alarm->triggered = FALSE;
+
+    // Stop player
+	alarm_player_stop (alarm);
 }
 
 /*
- * Clear the alarm. This will stop any running players.
+ * Clear the alarm. Resets the triggered flag and emits the "cleared" signal.
+ * This will also stop any running players.
  */
 void
 alarm_clear (Alarm *alarm)
 {
-	alarm_player_stop (alarm);
+    if (alarm->triggered) {
+        g_signal_emit (alarm, alarm_signal[SIGNAL_CLEARED], 0, NULL);
+    }
 }
 
 /*
@@ -1411,11 +1422,6 @@ alarm_gconf_dir_changed (GConfClient *client,
 		if (strcmp (str, alarm->command) != 0)
 			g_object_set (alarm, name, str, NULL);
 		break;
-	case PROP_NOTIFY_BUBBLE:
-		b = gconf_value_get_bool (entry->value);
-		if (b != alarm->notify_bubble)
-			g_object_set (alarm, name, b, NULL);
-		break;
 	default:
 		g_warning ("Valid property ID %d not handled!", param->param_id);
 		break;
@@ -1428,7 +1434,7 @@ static void
 alarm_dispose (GObject *object)
 {
 	Alarm *alarm = ALARM (object);
-	AlarmPrivate *priv = ALARM_PRIVATE (object);
+//	AlarmPrivate *priv = ALARM_PRIVATE (object);
 	GObjectClass *parent = (GObjectClass *)alarm_parent_class;
 	
 	g_debug ("alarm_dispose (%p)", alarm);
@@ -1723,7 +1729,7 @@ alarm_get_list (const gchar *gconf_dir)
 	GConfClient *client;
 	GSList *dirs = NULL;
 	GSList *l = NULL;
-	gchar *tmp, *dir;
+	gchar *tmp;
 	
 	GList *ret = NULL;
 	Alarm *alarm;
@@ -1792,7 +1798,7 @@ alarm_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
 	uri = media_player_get_uri (player);
 	msg = g_strdup_printf ("Could not play '%s': %s", uri, err->message);
 	
-	g_critical (msg);
+	g_critical ("%s", msg);
 	
 	/* Emit error signal */
 	alarm_error_trigger (alarm, ALARM_ERROR_PLAY, msg);
@@ -1894,7 +1900,7 @@ alarm_command_run (Alarm *alarm)
 		
 		msg = g_strdup_printf ("Could not launch `%s': %s", alarm->command, err->message);
 		
-		g_critical (msg);
+		g_critical ("%s", msg);
 		
 		/* Emit error signal */
 		alarm_error_trigger (alarm, ALARM_ERROR_COMMAND, msg);
@@ -2040,7 +2046,7 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	g_debug ("alarm_set_time_full: Alarm will trigger at %s", tmp);
 	
 	new = mktime (tm);
-	g_debug ("alarm_set_time_full: Setting to %d", new);
+	g_debug ("alarm_set_time_full: Setting to %d", (gint) new);
 	g_object_set (alarm, "timestamp", new, NULL);
 }
 

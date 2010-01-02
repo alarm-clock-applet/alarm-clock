@@ -61,7 +61,7 @@ alarm_fixture_teardown (AlarmFixture *fix,
 						gconstpointer test_data)
 {
 	g_assert (fix->alarm != NULL);
-	
+    
 	alarm_delete (fix->alarm);
 	g_object_unref (fix->alarm);
 }
@@ -95,7 +95,6 @@ test_alarm_props (AlarmFixture *fix,
 				  "sound_file", "file:///foo/bar",
 				  "sound_repeat", FALSE, 
 				  "command", "wiggle-your-toe --arg",
-				  "notify_bubble", TRUE, 
 				  NULL);
 	
 	/* Verify properties */
@@ -112,7 +111,6 @@ test_alarm_props (AlarmFixture *fix,
 	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
 	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
 	g_assert_cmpstr (alarm->command, ==, "wiggle-your-toe --arg");
-	g_assert_cmpint (alarm->notify_bubble, ==, TRUE);
 	
 	/* Unref alarm */
 	g_object_unref (fix->alarm);
@@ -134,7 +132,6 @@ test_alarm_props (AlarmFixture *fix,
 	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
 	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
 	g_assert_cmpstr (alarm->command, ==, "wiggle-your-toe --arg");
-	g_assert_cmpint (alarm->notify_bubble, ==, TRUE);
 }
 
 
@@ -188,7 +185,7 @@ test_alarm_list (AlarmFixture *fix,
 {
 	GList *list = NULL, *l;
 	guint i = 0;
-	Alarm *a, *a1, *a2, *a3;
+	Alarm *a;
 	
 	// Initialize with some dummy alarms
 	a = alarm_new (GCONF_DIR, 3);   g_object_unref (a);
@@ -238,9 +235,25 @@ static void
 test_alarm_signal_alarm (Alarm *a, gchar *data)
 {
 	//g_print ("ALARM on %p! Data: %s\n", a, data);
+    g_assert_cmpuint (a->triggered, ==, TRUE);
 	g_assert_cmpstr (data, ==, "the data");
 	
 	state = 1;
+}
+
+static int n_cleared = 0;
+
+/*
+ * Cleared signal handler
+ */
+static void
+test_alarm_signal_cleared (Alarm *a, gchar *data)
+{
+    g_assert_cmpuint (a->triggered, ==, FALSE);
+    g_assert_cmpstr (data, ==, "the data");
+
+    n_cleared++;
+	state = 2;
 }
 
 /*
@@ -255,7 +268,7 @@ test_alarm_signal_error (Alarm *a, GError *err, gchar *data)
 	g_assert_cmpint (err->code, ==, 123);
 	g_assert_cmpstr (data, ==, "the error data");
 	
-	state = 2;
+	state = 3;
 }
 
 
@@ -264,7 +277,8 @@ test_alarm_signal_error (Alarm *a, GError *err, gchar *data)
  * TEST: Alarm signals
  * 
  * 1. Test "alarm" signal
- * 2. Test "error" signal
+ * 2. Test "cleared" signal
+ * 3. Test "error" signal
  */
 static void
 test_alarm_signals (AlarmFixture *fix,
@@ -282,11 +296,31 @@ test_alarm_signals (AlarmFixture *fix,
 	g_signal_connect (alarm, "alarm",
 					  G_CALLBACK (test_alarm_signal_alarm),
 					  "the data");
+
+    g_signal_connect (alarm, "cleared",
+					  G_CALLBACK (test_alarm_signal_cleared),
+					  "the data");
 	
 	alarm_trigger (alarm);
-	
+
 	g_assert_cmpint (state, ==, 1);
+    g_assert_cmpint (n_cleared, ==, 0);
+
+    // again...
+    alarm_trigger (alarm);
+
+	g_assert_cmpint (state, ==, 1);
+    g_assert_cmpint (n_cleared, ==, 1);
+
+    // Test cleared signals
+	alarm_clear (alarm);
 	
+	g_assert_cmpint (state, ==, 2);
+
+    // Make sure cleared is only triggered once
+    state = 0;
+    alarm_clear (alarm);
+    g_assert_cmpint (state, ==, 0);
 	
 	
 	// Test error signals
@@ -295,7 +329,7 @@ test_alarm_signals (AlarmFixture *fix,
 	
 	alarm_error_trigger (alarm, 123, "Something bad happened");
 	
-	g_assert_cmpint (state, ==, 2);
+	g_assert_cmpint (state, ==, 3);
 }
 
 
@@ -324,7 +358,17 @@ test_alarm_notify (AlarmFixture *fix,
 {
 	Alarm *alarm = fix->alarm;
 	GMainLoop *loop	= g_main_loop_new (g_main_context_default(), FALSE);
+
+	//
+	// Test COMMAND notification
+	//
+	g_object_set (alarm,
+				  "notify_type", ALARM_NOTIFY_COMMAND,
+				  "command", "ls -a",
+				  NULL);
 	
+	alarm_trigger (alarm);
+    
 	//
 	// Test SOUND notification
 	//
@@ -332,17 +376,6 @@ test_alarm_notify (AlarmFixture *fix,
 				  "notify_type", ALARM_NOTIFY_SOUND,
 				  "sound_file", "file:///usr/share/sounds/gnome/default/alerts/sonar.ogg",
 				  "sound_repeat", FALSE,
-				  NULL);
-	
-	alarm_trigger (alarm);
-	
-	
-	//
-	// Test COMMAND notification
-	//
-	g_object_set (alarm,
-				  "notify_type", ALARM_NOTIFY_COMMAND,
-				  "command", "ls -a",
 				  NULL);
 	
 	alarm_trigger (alarm);

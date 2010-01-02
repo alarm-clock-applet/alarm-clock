@@ -1,5 +1,5 @@
 /*
- * edit-alarm.h -- Alarm settings dialog
+ * alarm-settings.h -- Alarm settings dialog
  * 
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
  * 
@@ -66,8 +66,6 @@ struct _AlarmSettingsDialog {
 	GtkWidget *notify_app_combo;
 	GtkWidget *notify_app_command_box;
 	GtkWidget *notify_app_command_entry;
-	
-	GtkWidget *notify_bubble_check;
 
 };
 

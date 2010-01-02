@@ -24,7 +24,7 @@
 #include <time.h>
 
 #include "alarm-list-window.h"
-#include "edit-alarm.h"
+#include "alarm-settings.h"
 
 void
 alarm_list_window_selection_changed (GtkTreeSelection *, gpointer);
@@ -57,7 +57,7 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->delete_button = gtk_builder_get_object (builder, "delete-button");
     list_window->enable_button = gtk_builder_get_object (builder, "enable-button");
     list_window->stop_button = gtk_builder_get_object (builder, "stop-button");
-    list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
+    list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");    
 
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
@@ -281,11 +281,7 @@ alarm_list_window_update_timer (gpointer data)
     valid = gtk_tree_model_get_iter_first (model, &iter);
 
     while (valid) {
-        alarm_list_window_update_row (applet->list_window, &iter);
-/*        path = gtk_tree_model_get_path (model, &iter);
-        gtk_tree_model_row_changed (model, path, &iter);
-        gtk_tree_path_free (path);
-*/        
+        alarm_list_window_update_row (applet->list_window, &iter);        
         valid = gtk_tree_model_iter_next(model, &iter);
     }
     
@@ -352,6 +348,28 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
 }
 
 /**
+ * Toggle cell changed
+ */
+void
+alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
+                                  gchar *path,
+                                  gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    GtkTreeModel *model = GTK_TREE_MODEL (list_window->model);
+    GtkTreeIter iter;
+    Alarm *a;
+    
+    if (gtk_tree_model_get_iter_from_string (model, &iter, path)) {
+        gtk_tree_model_get (model, &iter, ALARM_COLUMN, &a, -1);
+
+        // Toggle enabled state
+        alarm_set_enabled (a, !a->active);
+    }
+}
+
+/**
  * New button clicked
  */
 void
@@ -408,8 +426,9 @@ alarm_list_window_edit_clicked (GtkButton *button, gpointer data)
 		return;
 	}
 	
-	// Clear any running alarms
-	alarm_clear (a);
+	// Stop alarm
+    alarm_clear (a);
+//    alarm_applet_alarm_stop (applet, a);
 
     //display_edit_alarm_dialog (applet, a);
     alarm_settings_dialog_show (applet->settings_dialog, a);
@@ -506,3 +525,37 @@ alarm_list_window_delete_clicked (GtkButton *button, gpointer data)
 
     }
 }
+
+/**
+ * Stop button clicked
+ */
+void
+alarm_list_window_stop_clicked (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    Alarm *a;
+    
+    if (a = alarm_list_window_get_selected_alarm (list_window)) {
+        alarm_clear (a);
+    }
+}
+
+/**
+ * Snooze button clicked
+ */
+void
+alarm_list_window_snooze_clicked (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    Alarm *a;
+    
+    if (a = alarm_list_window_get_selected_alarm (list_window)) {
+        alarm_snooze (a);
+    }
+}
+
+
+
+

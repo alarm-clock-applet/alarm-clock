@@ -1,5 +1,5 @@
 /*
- * edit-alarm.c -- Alarm settings dialog
+ * alarm-settings.c -- Alarm settings dialog
  * 
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
  * 
@@ -21,7 +21,7 @@
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
 
-#include "edit-alarm.h"
+#include "alarm-settings.h"
 #include "alarm-applet.h"
 #include "alarm.h"
 #include "player.h"
@@ -282,7 +282,6 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 	g_object_set (dialog->label_entry, "text", alarm->message, NULL);
 	g_object_set (dialog->notify_sound_loop_check, "active", alarm->sound_loop, NULL);
 	g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
-	g_object_set (dialog->notify_bubble_check, "active", alarm->notify_bubble, NULL);
 	
 	alarm_settings_update_type (dialog);
 	alarm_settings_update_time (dialog);
@@ -803,11 +802,6 @@ alarm_settings_changed_command (GtkEditable *editable, gpointer data)
     g_object_set (dialog->alarm, "command", gtk_entry_get_text (GTK_ENTRY (editable)), NULL);
 }
 
-void
-alarm_settings_changed_notify_bubble (GtkToggleButton *togglebutton, gpointer data)
-{
-	// Do nothing
-}
 
 /*
  * Preview player {{
@@ -937,72 +931,12 @@ alarm_settings_dialog_set_alarm (AlarmSettingsDialog *dialog, Alarm *alarm)
 
     // Notify of change to alarm
     g_signal_connect (alarm, "notify", G_CALLBACK (alarm_changed), dialog);
-
-    // Bind widgets
-	/*alarm_bind (alarm, "message", dialog->label_entry, "text");
-	alarm_bind (alarm, "sound-repeat", dialog->notify_sound_loop_check, "active");
-	alarm_bind (alarm, "command", dialog->notify_app_command_entry, "text");
-	alarm_bind (alarm, "notify-bubble", dialog->notify_bubble_check, "active");
-	*/
-	// Special widgets require special attention!
-	
-	// type
-	/*g_signal_connect (alarm, "notify::type", G_CALLBACK (alarm_type_changed), dialog);
-	g_signal_connect (dialog->clock_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	g_signal_connect (dialog->timer_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	
-	// time/timer
-	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_time_changed), dialog);
-	g_signal_connect (alarm, "notify::timer", G_CALLBACK (alarm_timer_changed), dialog);
-	
-	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	
-	// repeat
-	g_signal_connect (alarm, "notify::repeat", G_CALLBACK (alarm_repeat_changed), dialog);
-	for (i = 0; i < 7; i++)
-		g_signal_connect (dialog->repeat_check[i], "toggled", G_CALLBACK (repeat_changed_cb), dialog);
-	
-	// snooze
-	g_signal_connect (alarm, "notify::snooze", G_CALLBACK (alarm_snooze_changed), dialog);
-	
-	g_signal_connect (dialog->snooze_spin, "value-changed", G_CALLBACK (snooze_changed_cb), dialog);
-	g_signal_connect (dialog->snooze_check, "toggled", G_CALLBACK (snooze_check_changed_cb), dialog);
-	
-	// notify type
-	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);
-	g_signal_connect (dialog->notify_sound_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	g_signal_connect (dialog->notify_app_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	
-	// sound file
-	g_signal_connect (alarm, "notify::sound-file", 
-					  G_CALLBACK (alarm_settings_sound_file_changed), dialog);
-	g_signal_connect (dialog->notify_sound_combo, "changed",
-					  G_CALLBACK (sound_combo_changed_cb), dialog);
-	
-	g_signal_connect (dialog->notify_sound_preview, "clicked",
-					  G_CALLBACK (preview_sound_cb), dialog);
-	
-	// app / command
-	g_signal_connect (alarm, "notify::command",
-					  G_CALLBACK (alarm_settings_command_changed), dialog);
-	
-	g_signal_connect (dialog->notify_app_combo, "changed",
-					  G_CALLBACK (app_combo_changed_cb), dialog);
-	*/
-	/*g_signal_connect (dialog->notify_app_command_entry, "changed",
-					  G_CALLBACK (app_command_changed_cb), dialog);*/
 }
 
 
 /*
- * Dialog creation
- * 
- * TODO: A bug exists which somehow causes some widgets to become NULL
- * 		 and thus crashes the program. Investigate further.
+ * Create a new settings dialog
  */
-
 AlarmSettingsDialog *
 alarm_settings_dialog_new (AlarmApplet *applet)
 {
@@ -1013,29 +947,18 @@ alarm_settings_dialog_new (AlarmApplet *applet)
 
     GtkBuilder *builder = applet->ui;
 	
-	/* Init */
+	// Initialize struct
 	dialog = g_new0 (AlarmSettingsDialog, 1);
 	
 	dialog->applet = applet;
-//	dialog->alarm  = alarm;
 	dialog->player = NULL;
-	dialog->dialog = GTK_WIDGET (gtk_builder_get_object (builder, "edit-alarm"));
+	dialog->dialog = GTK_WIDGET (gtk_builder_get_object (builder, "alarm-settings-dialog"));
 	
-//	g_debug ("NEW AlarmSettingsDialog %p for alarm #%d", dialog, alarm->id);    
-	
-	/* Response from dialog */
-	/*g_signal_connect (dialog->dialog, "response", 
-					  G_CALLBACK (alarm_settings_dialog_response_cb), dialog);	
-	*/
-	/*
-	 * TYPE TOGGLE BUTTONS
-	 */
+	// TYPE TOGGLE BUTTONS
 	dialog->clock_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-clock"));
 	dialog->timer_toggle = GTK_WIDGET (gtk_builder_get_object (builder, "toggle-timer"));
 	
-	/*
-	 * GENERAL SETTINGS
-	 */
+	// GENERAL SETTINGS
 	dialog->label_entry = GTK_WIDGET (gtk_builder_get_object (builder, "label-entry"));
 	gtk_widget_grab_focus (dialog->label_entry);
 	
@@ -1043,31 +966,24 @@ alarm_settings_dialog_new (AlarmApplet *applet)
 	dialog->min_spin = GTK_WIDGET (gtk_builder_get_object (builder, "minute-spin"));
 	dialog->sec_spin = GTK_WIDGET (gtk_builder_get_object (builder, "second-spin"));
 	
-	/*
-	 * REPEAT SETTINGS
-	 */
+	// REPEAT SETTINGS
 	dialog->repeat_expand = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-expand"));
 	dialog->repeat_label  = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-label"));
 	
-	/* The check buttons have the same name as the 3 letter
-	 * string representation of the day.
-	 */
+	// The check buttons have the same name as the 3 letter
+	// string representation of the day.
 	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		dialog->repeat_check[i] = GTK_WIDGET (gtk_builder_get_object (builder, alarm_repeat_to_string (r)));
 	}
 	
-	/*
-	 * SNOOZE SETTINGS
-	 */
+	// SNOOZE SETTINGS
 	dialog->snooze_check = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-check"));
 	dialog->snooze_spin  = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-spin"));
 	
 	snooze_label = gtk_bin_get_child (GTK_BIN (dialog->snooze_check));
 	g_object_set (G_OBJECT (snooze_label), "use-markup", TRUE, NULL);
 	
-	/*
-	 * NOTIFY SETTINGS
-	 */
+	// NOTIFY SETTINGS
 	dialog->notify_sound_radio       = GTK_WIDGET (gtk_builder_get_object (builder, "sound-radio"));
 	dialog->notify_sound_box         = GTK_WIDGET (gtk_builder_get_object (builder, "sound-box"));
 	dialog->notify_sound_combo       = GTK_WIDGET (gtk_builder_get_object (builder, "sound-combo"));
@@ -1078,126 +994,10 @@ alarm_settings_dialog_new (AlarmApplet *applet)
 	dialog->notify_app_combo         = GTK_WIDGET (gtk_builder_get_object (builder, "app-combo"));
 	dialog->notify_app_command_box   = GTK_WIDGET (gtk_builder_get_object (builder, "app-command-box"));
 	dialog->notify_app_command_entry = GTK_WIDGET (gtk_builder_get_object (builder, "app-command-entry"));
-	dialog->notify_bubble_check      = GTK_WIDGET (gtk_builder_get_object (builder, "notify-bubble-check"));
 	
 	
-	/*
-	 * Load apps list
-	 */
+	// Load apps list
 	alarm_applet_apps_load (applet);
-	
-	/*
-	 * Populate widgets
-	 */
-	//alarm_settings_update (dialog);
-	
-	/* Got libnotify? */
-#ifndef HAVE_LIBNOTIFY
-	g_object_set (dialog->notify_bubble_check, "sensitive", FALSE, NULL);
-	gtk_widget_set_tooltip_text (GTK_WIDGET (dialog->notify_bubble_check), _("This feature requires libnotify to be installed"));
-#endif
-
-    /*
-     * Connect widget signals
-     */
-/*
-    // type
-	g_signal_connect (dialog->clock_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	g_signal_connect (dialog->timer_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-
-    // label
-    g_signal_connect (dialog->label_entry, "changed", G_CALLBACK (label_changed_cb), dialog);
-	
-	// time/timer
-	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	
-	// repeat
-	for (i = 0; i < 7; i++)
-		g_signal_connect (dialog->repeat_check[i], "toggled", G_CALLBACK (repeat_changed_cb), dialog);
-	
-	// snooze
-	g_signal_connect (dialog->snooze_spin, "value-changed", G_CALLBACK (snooze_changed_cb), dialog);
-	g_signal_connect (dialog->snooze_check, "toggled", G_CALLBACK (snooze_check_changed_cb), dialog);
-	
-	// notify type
-	g_signal_connect (dialog->notify_sound_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	g_signal_connect (dialog->notify_app_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	
-	// sound file
-	g_signal_connect (dialog->notify_sound_combo, "changed",
-					  G_CALLBACK (sound_combo_changed_cb), dialog);
-	
-	g_signal_connect (dialog->notify_sound_preview, "clicked",
-					  G_CALLBACK (preview_sound_cb), dialog);
-
-    // sound repeat
-    g_signal_connect (dialog->notify_sound_loop_check, "toggled",
-        G_CALLBACK (sound_loop_changed_cb), dialog);
-    
-	// app / command
-	g_signal_connect (dialog->notify_app_combo, "changed",
-					  G_CALLBACK (app_combo_changed_cb), dialog);
-
-
-    */
-	
-	// Bind widgets
-/*	alarm_bind (alarm, "message", dialog->label_entry, "text");
-	alarm_bind (alarm, "sound-repeat", dialog->notify_sound_loop_check, "active");
-	alarm_bind (alarm, "command", dialog->notify_app_command_entry, "text");
-	alarm_bind (alarm, "notify-bubble", dialog->notify_bubble_check, "active");
-	
-	// Special widgets require special attention!
-	
-	// type
-	g_signal_connect (alarm, "notify::type", G_CALLBACK (alarm_type_changed), dialog);
-	g_signal_connect (dialog->clock_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	g_signal_connect (dialog->timer_toggle, "toggled", G_CALLBACK (type_toggle_cb), dialog);
-	
-	// time/timer
-	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_time_changed), dialog);
-	g_signal_connect (alarm, "notify::timer", G_CALLBACK (alarm_timer_changed), dialog);
-	
-	g_signal_connect (dialog->hour_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->min_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	g_signal_connect (dialog->sec_spin, "value-changed", G_CALLBACK (time_changed_cb), dialog);
-	
-	// repeat
-	g_signal_connect (alarm, "notify::repeat", G_CALLBACK (alarm_repeat_changed), dialog);
-	for (i = 0; i < 7; i++)
-		g_signal_connect (dialog->repeat_check[i], "toggled", G_CALLBACK (repeat_changed_cb), dialog);
-	
-	// snooze
-	g_signal_connect (alarm, "notify::snooze", G_CALLBACK (alarm_snooze_changed), dialog);
-	
-	g_signal_connect (dialog->snooze_spin, "value-changed", G_CALLBACK (snooze_changed_cb), dialog);
-	g_signal_connect (dialog->snooze_check, "toggled", G_CALLBACK (snooze_check_changed_cb), dialog);
-	
-	// notify type
-	g_signal_connect (alarm, "notify::notify-type", G_CALLBACK (alarm_notify_type_changed), dialog);
-	g_signal_connect (dialog->notify_sound_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	g_signal_connect (dialog->notify_app_radio, "toggled", G_CALLBACK (notify_type_changed_cb), dialog);
-	
-	// sound file
-	g_signal_connect (alarm, "notify::sound-file", 
-					  G_CALLBACK (alarm_settings_sound_file_changed), dialog);
-	g_signal_connect (dialog->notify_sound_combo, "changed",
-					  G_CALLBACK (sound_combo_changed_cb), dialog);
-	
-	g_signal_connect (dialog->notify_sound_preview, "clicked",
-					  G_CALLBACK (preview_sound_cb), dialog);
-	
-	// app / command
-	g_signal_connect (alarm, "notify::command",
-					  G_CALLBACK (alarm_settings_command_changed), dialog);
-	
-	g_signal_connect (dialog->notify_app_combo, "changed",
-					  G_CALLBACK (app_combo_changed_cb), dialog);
-*/	
-	/*g_signal_connect (dialog->notify_app_command_entry, "changed",
-					  G_CALLBACK (app_command_changed_cb), dialog);*/
 	
 	return dialog;
 }

@@ -46,7 +46,7 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkCheckButton" id="show-notification">
-                        <property name="label" translatable="yes">Show alarm _notifications</property>
+                        <property name="label" translatable="yes">Show _notification messages</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -106,7 +106,7 @@
       <action-widget response="-7">closebutton1</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="edit-alarm">
+  <object class="GtkDialog" id="alarm-settings-dialog">
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Edit alarm</property>
@@ -715,22 +715,6 @@
                     <property name="position">3</property>
                   </packing>
                 </child>
-                <child>
-                  <object class="GtkCheckButton" id="notify-bubble-check">
-                    <property name="label" translatable="yes">Show _notification bubble</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="draw_indicator">True</property>
-                    <signal name="toggled" handler="alarm_settings_changed_notify_bubble"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">4</property>
-                  </packing>
-                </child>
               </object>
             </child>
           </object>
@@ -804,8 +788,9 @@
     <property name="visible">True</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_snooze">
-        <property name="label" translatable="yes">_Snooze alarms</property>
+        <property name="label" translatable="yes">Snoo_ze alarms</property>
         <property name="visible">True</property>
+        <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
         <property name="use_underline">True</property>
         <property name="image">image1</property>
         <property name="use_stock">False</property>
@@ -813,13 +798,14 @@
       </object>
     </child>
     <child>
-      <object class="GtkImageMenuItem" id="status_menu_clear">
-        <property name="label" translatable="yes">_Clear alarms</property>
+      <object class="GtkImageMenuItem" id="status_menu_stop">
+        <property name="label" translatable="yes">_Stop alarms</property>
         <property name="visible">True</property>
+        <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
         <property name="use_underline">True</property>
         <property name="image">image2</property>
         <property name="use_stock">False</property>
-        <signal name="activate" handler="status_menu_clear_cb"/>
+        <signal name="activate" handler="status_menu_stop_cb"/>
       </object>
     </child>
     <child>
@@ -829,8 +815,9 @@
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_edit">
-        <property name="label" translatable="yes">_Edit alarms</property>
+        <property name="label" translatable="yes">Show _alarms</property>
         <property name="visible">True</property>
+        <property name="tooltip_text" translatable="yes">Manage your alarms</property>
         <property name="use_underline">True</property>
         <property name="image">image3</property>
         <property name="use_stock">False</property>
@@ -859,11 +846,11 @@
   </object>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
-    <property name="icon_name">alarm-snooze</property>
+    <property name="icon_name">weather-few-clouds-night</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
-    <property name="stock">gtk-clear</property>
+    <property name="stock">gtk-stop</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -1108,8 +1095,9 @@
                     <property name="spacing">6</property>
                     <property name="title">Actions</property>
                     <child>
-                      <object class="GtkCellRendererToggle" id="cellrenderertoggle2">
+                      <object class="GtkCellRendererToggle" id="enable-toggle">
                         <property name="xalign">1</property>
+                        <signal name="toggled" handler="alarm_list_window_enable_toggled"/>
                       </object>
                       <attributes>
                         <attribute name="active">4</attribute>

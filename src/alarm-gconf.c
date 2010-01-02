@@ -25,7 +25,7 @@
 
 #include "alarm-applet.h"
 #include "alarm-gconf.h"
-#include "edit-alarm.h"
+#include "alarm-settings.h"
 #include "alarm.h"
 
 /*
@@ -90,7 +90,7 @@ alarm_applet_gconf_label_type_changed (GConfClient  *client,
 }
 */
 
-/*
+/**
  * Triggered on global changes to our gconf preference dir.
  * We do this because we're interested in the events where
  * an alarm directory is either added or deleted externally.
@@ -110,7 +110,7 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 	gint id, i, len;
 	gboolean found = FALSE;
 	
-	//g_debug ("GLOBAL_change: %s", entry->key);
+	g_debug ("GLOBAL_change: %s", entry->key);
 	
 	/*
 	 * We're only interested in the first part of the key matching
@@ -246,7 +246,7 @@ alarm_applet_gconf_load (AlarmApplet *applet)
 	
 	client = gconf_client_get_default ();
 	
-	// SHOW_LABEL:
+	// SHOW_NOTIFY:
 	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
 	value = gconf_client_get (client, key, NULL);
 	if (value == NULL) {

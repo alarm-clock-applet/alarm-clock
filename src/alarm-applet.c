@@ -24,7 +24,7 @@
 #include "alarm-applet.h"
 
 #include "alarm.h"
-#include "edit-alarm.h"
+#include "alarm-settings.h"
 
 /*
  * DEFINTIIONS {{
@@ -39,53 +39,124 @@ GHashTable *app_command_map = NULL;
 
 /*
  * Snooze any running (read: playing sound) alarms.
+ *
+ * Returns the number of snoozed alarms
  */
-void
-alarm_applet_snooze_alarms (AlarmApplet *applet)
+guint
+alarm_applet_alarms_snooze (AlarmApplet *applet)
 {
 	GList *l;
 	Alarm *a;
+    guint n_snoozed = 0;
+    gchar *summary, *body;
 
 	g_debug ("Snoozing alarms...");
 
 	// Loop through alarms and snooze all of 'em
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
-		alarm_snooze (a);
+
+        if (alarm_is_playing (a)) {
+    		alarm_snooze (a);
+            n_snoozed++;
+        }
 	}
 
-	// Close notification if present.
-#ifdef HAVE_LIBNOTIFY
-	if (applet->notify) {
-		alarm_applet_notification_close (applet);
-	}
-#endif
+    // Show notification
+    if (n_snoozed > 0) {
+        summary = g_strdup_printf (_("Snoozed %d alarm(s)"), n_snoozed);
+        body = g_strdup_printf (_("You can stop alarms from the Alarm Clock menu."));
+        alarm_applet_notification_show (applet, summary, body, "alarm-clock");
+    }
+    
+    // Reset the triggered counter
+    applet->n_triggered = 0;
+
+    // Update status icon
+    alarm_applet_status_update (applet);
+    
+    return n_snoozed;
 }
 
 /*
- * Clear any running (read: playing sound) alarms.
+ * Stop any running (read: playing sound) alarms.
  */
-void
-alarm_applet_clear_alarms (AlarmApplet *applet)
+guint
+alarm_applet_alarms_stop (AlarmApplet *applet)
 {
 	GList *l;
 	Alarm *a;
-
-	g_debug ("Clearing alarms...");
+    guint n_stopped = 0;
+    gchar *summary, *body;
+    
+	g_debug ("Stopping alarms...");
 
 	// Loop through alarms and clear all of 'em
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
-		alarm_clear (a);
+
+        if (alarm_is_playing (a)) {
+    		alarm_clear (a);
+            n_stopped++;
+        }
 	}
 
-	// Close notification if present.
-#ifdef HAVE_LIBNOTIFY
-	if (applet->notify) {
-		alarm_applet_notification_close (applet);
-	}
-#endif
+    // Show notification
+	if (n_stopped > 0) {
+        summary = g_strdup_printf (_("Stopped %d alarm(s)"), n_stopped);
+        body = g_strdup_printf (_("Repeating alarms will still go off according to schedule."));
+        alarm_applet_notification_show (applet, summary, body, "alarm-clock");
+    }
+    
+    // Reset the triggered counter
+    applet->n_triggered = 0;
+
+    // Update status icon
+    alarm_applet_status_update (applet);
+    
+    return n_stopped;
 }
+
+/**
+ * Snooze an alarm, keeping UI consistent
+ */
+void
+alarm_applet_alarm_snooze (AlarmApplet *applet, Alarm *alarm)
+{
+    g_debug ("Snoozing alarm #%d...", alarm->id);
+
+    // Snooze the alarm
+    alarm_snooze (alarm);
+
+    // Decrement the triggered counter
+    //applet->n_triggered--;
+
+    // TODO: Show notification? Not sure that's necessary here...
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
+}
+
+/**
+ * Stop an alarm, keeping UI consistent
+ */
+void
+alarm_applet_alarm_stop (AlarmApplet *applet, Alarm *alarm)
+{
+    g_debug ("Stopping alarm #%d...", alarm->id);
+    
+    // Stop the alarm
+    alarm_clear (alarm);
+
+    // Decrement the triggered counter
+    //applet->n_triggered--;
+
+    // TODO: Show notification? Not sure that's necessary here...
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
+}
+
 
 
 /*
@@ -192,9 +263,8 @@ gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
 				for (i = 0; sys_langs[i] != NULL; i++) {
 				    if (!strcmp (sys_langs[i], node_lang)) {
 						ret_val = (gchar *) xmlNodeGetContent (element);
-						/* since sys_langs is sorted from most desirable to
-						 * least desirable, exit at first match
-						 */
+						// since sys_langs is sorted from most desirable to
+						// least desirable, exit at first match
 						break;
 				    }
 				}
@@ -214,8 +284,8 @@ get_app_command (const gchar *app)
 	if (app_command_map == NULL) {
 		app_command_map = g_hash_table_new (g_str_hash, g_str_equal);
 
-		/* `rhythmbox-client --play' doesn't actually start playing unless
-		 * Rhythmbox is already running. Sounds like a Bug. */
+		// `rhythmbox-client --play' doesn't actually start playing unless
+		// Rhythmbox is already running. Sounds like a Bug.
 		g_hash_table_insert (app_command_map,
 							 "rhythmbox", "rhythmbox-client --play");
 
@@ -333,9 +403,8 @@ alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
 
 	applet->upcoming_alarm = NULL;
 
-	/* Loop through alarms looking for all active upcoming alarms and locate
-	 * the one which will trigger sooner.
-	 */
+	// Loop through alarms looking for all active upcoming alarms and locate
+	// the one which will trigger sooner.
 
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
@@ -386,21 +455,47 @@ alarm_active_changed (GObject *object,
 	}
 }
 
-/*
+/**
  * Callback for when an alarm is triggered
  * We show the notification bubble here if appropriate.
  */
 static void
-alarm_triggered (Alarm *alarm, gpointer data)
+alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+    gchar *summary, *body;
+    const gchar *icon;
+
+	g_debug ("Alarm triggered: #%d", alarm->id);
+    
+    // Keep track of how many alarms have been triggered
+    applet->n_triggered++;
+
+    // Show notification
+    summary = g_strdup_printf (_("%s"), alarm->message);
+    body = g_strdup_printf (_("You can snooze or stop alarms from the Alarm Clock menu."));
+    icon = (alarm->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
+    alarm_applet_notification_show (applet, summary, body, icon);
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
+}
+
+/**
+ * Callback for when an alarm is cleared
+ */
+static void
+alarm_applet_alarm_cleared (Alarm *alarm, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
 
-	g_debug ("Alarm triggered: #%d", alarm->id);
-
-	/*if (alarm->notify_bubble) {
-		g_debug ("Alarm #%d NOTIFICATION DISPLAY", alarm->id);
-		alarm_applet_notification_display (applet, alarm);
-	}*/
+	g_debug ("Alarm cleared: #%d", alarm->id);
+    
+    // Keep track of how many alarms have been triggered
+    applet->n_triggered--;
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
 }
 
 /*
@@ -411,13 +506,14 @@ alarm_triggered (Alarm *alarm, gpointer data)
  * Alarms list {{
  */
 
-// TODO: Refactor to use a GHashTable instead
+// TODO: Refactor to use a GHashTable instead?
 void
 alarm_applet_alarms_load (AlarmApplet *applet)
 {
+	GList *list = NULL;
+    GList *l = NULL;
+    
 	if (applet->alarms != NULL) {
-		GList *l;
-
 		// Free old alarm objects
 		for (l = applet->alarms; l != NULL; l = l->next) {
 			g_object_unref (ALARM (l->data));
@@ -427,59 +523,59 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 		g_list_free (applet->alarms);
 	}
 
-	// Fetch list of alarms
-	applet->alarms = alarm_get_list (ALARM_GCONF_DIR);
+	// Fetch list of alarms and add them
+    applet->alarms = NULL;
+	list = alarm_get_list (ALARM_GCONF_DIR);
+
+    for (l = list; l != NULL; l = l->next) {
+        alarm_applet_alarms_add (applet, ALARM (l->data));
+    }
 }
 
 void
 alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
-{    
+{
 	applet->alarms = g_list_append (applet->alarms, alarm);
 
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
 	g_signal_connect (alarm, "notify::active", G_CALLBACK (alarm_active_changed), applet);
 	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_active_changed), applet);
 
-	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_triggered), applet);
+	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_applet_alarm_triggered), applet);
+	g_signal_connect (alarm, "cleared", G_CALLBACK (alarm_applet_alarm_cleared), applet);
 
     // Update alarm list window model
-    alarm_list_window_alarm_add (applet->list_window, alarm);
+    if (applet->list_window) {
+        alarm_list_window_alarm_add (applet->list_window, alarm);
+    }
 }
 
 void
 alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 {
-	/*
-	 * Remove from list
-	 */
+	// Remove from list
 	applet->alarms = g_list_remove (applet->alarms, alarm);
 
-	/*
-	 * Clear list store. This will decrease the refcount of our alarms by 1.
-	 */
-	//if (applet->list_alarms_store)
-	//	gtk_list_store_clear (applet->list_alarms_store);
+	// Clear list store. This will decrease the refcount of our alarms by 1.
+	/*if (applet->list_alarms_store)
+		gtk_list_store_clear (applet->list_alarms_store);*/
 
 	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
 
-	/*
-	 * If this is the upcoming alarm, update it.
-	 */
+	// If this is the upcoming alarm, update it.
 	if (applet->upcoming_alarm == alarm) {
 		alarm_applet_upcoming_alarm_update (applet);
 	}
 
-	/*
-	 * Remove any signal handlers for this alarm instance.
-	 */
+	// Remove any signal handlers for this alarm instance.
 	g_signal_handlers_disconnect_matched (alarm, 0, 0, 0, NULL, NULL, NULL);
 
     // Update alarm list window model
-    alarm_list_window_alarm_remove (applet->list_window, alarm);
+    if (applet->list_window) {
+        alarm_list_window_alarm_remove (applet->list_window, alarm);
+    }
     
-	/*
-	 * Dereference alarm
-	 */
+	// Dereference alarm
 	g_object_unref (alarm);
 }
 
@@ -497,10 +593,10 @@ alarm_applet_destroy (AlarmApplet *applet)
 	g_debug ("AlarmApplet DESTROY");
 
 	// Remove any timers
-	if (applet->timer_id) {
+/*	if (applet->timer_id) {
 		g_source_remove (applet->timer_id);
 	}
-
+*/
 	// TODO: Destroy alarms list
 //	if (applet->list_alarms_dialog) {
 //		list_alarms_dialog_close (applet);
@@ -558,53 +654,54 @@ alarm_applet_init()
 {
 	AlarmApplet *applet;
 	
-	/* Initialize applet struct */
+	// Initialize applet struct */
 	applet = g_new0 (AlarmApplet, 1);
     
 	//applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 
-	/* Preferences (defaults).
-	 * ...gconf_get_string can return NULL if the key is not found. We can't
-	 * assume the schema provides the default values for strings. */
+	// Preferences (defaults).
+	// ...gconf_get_string can return NULL if the key is not found. We can't
+	// assume the schema provides the default values for strings.
 	//applet->show_label = TRUE;
 	//applet->label_type = LABEL_TYPE_TIME;
 
-	/* Set up gconf handlers */
+	// Set up gconf handlers
 	alarm_applet_gconf_init (applet);
 
-	/* Load gconf values */
+	// Load gconf values
 	alarm_applet_gconf_load (applet);
 
-	/* Load alarms */
+	// Load alarms
 	alarm_applet_alarms_load (applet);
 
-	/* Find any upcoming active alarms */
+	// Find any upcoming active alarms
 	alarm_applet_upcoming_alarm_update (applet);
 
-	/* Load sounds from alarms */
+	// Load sounds from alarms
 	alarm_applet_sounds_load (applet);
 
-	/* Load apps for alarms */
+	// Load apps for alarms
 	alarm_applet_apps_load (applet);
 
-	/* Connect sound_file notify callback to all alarms */
+    /*
+	// Connect sound_file notify callback to all alarms
 	alarm_signal_connect_list (applet->alarms, "notify::sound-file",
 							   G_CALLBACK (alarm_sound_file_changed), applet);
 
-	/* Connect active & time notify callback to all alarms */
+	// Connect active & time notify callback to all alarms
 	alarm_signal_connect_list (applet->alarms, "notify::active",
 							   G_CALLBACK (alarm_active_changed), applet);
 	alarm_signal_connect_list (applet->alarms, "notify::time",
 							   G_CALLBACK (alarm_active_changed), applet);
 
-	/* Connect alarm trigger notify to all alarms */
+	// Connect alarm trigger notify to all alarms
 	alarm_signal_connect_list (applet->alarms, "alarm",
 							   G_CALLBACK (alarm_triggered), applet);
-
-	/* Set up properties menu */
+*/
+	// Set up properties menu
 	//alarm_applet_menu_init (applet);
 
-	/* Set up applet UI */
+	// Set up applet UI
 	alarm_applet_ui_init (applet);
 
 	return applet;
@@ -615,16 +712,16 @@ main (int argc, char *argv[])
 {
 	AlarmApplet *applet;
 
-    /* Terminate on critical errors */
-    g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
+    // Terminate on critical errors
+    //g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
-	/* Initialize GTK+ */
+	// Initialize GTK+
 	gtk_init (&argc, &argv);
 
-	/* Initialize applet */
+	// Initialize applet
 	applet = alarm_applet_init ();
 	
-	/* Start main loop */
+	// Start main loop
 	gtk_main ();
 	
 	return 0;

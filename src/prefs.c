@@ -35,61 +35,6 @@ preferences_dialog_response_cb (GtkDialog *dialog,
 }
 
 void
-pref_update_label_show (AlarmApplet *applet)
-{
-	g_object_set (applet->pref_label_show, "active", applet->show_label, NULL);
-	g_object_set (applet->pref_label_type_box, "sensitive", applet->show_label, NULL);
-}
-
-void
-pref_update_label_type (AlarmApplet *applet)
-{
-	switch (applet->label_type) {
-	case LABEL_TYPE_TIME:
-		g_object_set (applet->pref_label_type_time, "active", TRUE, NULL);
-		break;
-	default:
-		// LABEL_TYPE_TOTAL
-		g_object_set (applet->pref_label_type_remain, "active", TRUE, NULL);
-		break;
-	}
-}
-
-
-
-static void
-pref_label_show_changed_cb (GtkToggleButton *togglebutton,
-							AlarmApplet *applet)
-{
-	gboolean value = gtk_toggle_button_get_active (togglebutton);
-	
-	//panel_applet_gconf_set_bool (applet->parent, KEY_SHOW_LABEL, value, NULL);
-}
-
-
-static void
-pref_label_type_changed_cb (GtkToggleButton *togglebutton,
-							AlarmApplet *applet)
-{
-	const gchar *name = gtk_widget_get_name (GTK_WIDGET (togglebutton));
-	gboolean value    = gtk_toggle_button_get_active (togglebutton);
-	const gchar *kval;
-	
-	if (!value) {
-		// Not checked, not interested
-		return;
-	}
-	
-	if (strcmp (name, "time-radio") == 0) {
-		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_TIME);
-		//panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, kval, NULL);
-	} else {
-		kval = gconf_enum_to_string (label_type_enum_map, LABEL_TYPE_REMAIN);
-		//panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, kval, NULL);
-	}
-}
-
-void
 preferences_dialog_display (AlarmApplet *applet)
 {
 	if (applet->preferences_dialog != NULL) {

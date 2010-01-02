@@ -32,18 +32,13 @@
 G_BEGIN_DECLS
 
 /* Global GConf keys */
-#define KEY_SHOW_LABEL		"show_label"
-#define KEY_LABEL_TYPE		"label_type"
+#define KEY_SHOW_NOTIFY     "show_notification"
 
-#define N_GCONF_PREFS		3	/* + global gconf listener */
+#define N_GCONF_PREFS		2	/* + global gconf listener */
 
 /* Failsafe defaults for use when the schema isn't found
  * or doesn't provide sensible defaults */
-#define DEF_SHOW_LABEL		TRUE
-#define DEF_LABEL_TYPE		LABEL_TYPE_TIME
-
-/* We store enums as strings */
-GConfEnumStringPair label_type_enum_map [];
+#define DEF_SHOW_NOTIFY     TRUE
 
 /*
  * Init

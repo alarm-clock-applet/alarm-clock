@@ -94,6 +94,8 @@ struct _Alarm {
 	gchar *gconf_dir;		/* GConf directory */
 	gint id;				/* Alarm ID */
 
+    gboolean triggered;     // Whether the alarm has been triggered
+
 	/* GConf mapped values */
 	AlarmType type;
 	time_t time;			/* Time for alarm */
@@ -107,15 +109,15 @@ struct _Alarm {
 	gchar *sound_file;
 	gboolean sound_loop;
 	gchar *command;
-	gboolean notify_bubble;
 };
 
 struct _AlarmClass {
 	GObjectClass parent;
 
 	/* Signals */
-	void (*alarm)(Alarm *alarm);				/* Alarm triggered! */
-	void (*error)(Alarm *alarm, GError *err);	/* An error occured */
+	void (*alarm)(Alarm *alarm);				// Alarm triggered!
+    void (*cleared)(Alarm *alarm);              // Alarm cleared
+	void (*error)(Alarm *alarm, GError *err);	// An error occured
 	void (*player_changed)(Alarm *alarm, MediaPlayerState state);		/* Media player state changed */
 };
 
@@ -147,7 +149,6 @@ typedef enum {
 #define ALARM_DEFAULT_SOUND_FILE	""				// Should default to first in stock sound list
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
 #define ALARM_DEFAULT_COMMAND		""				// Should default to first in app list
-#define ALARM_DEFAULT_NOTIFY_BUBBLE	TRUE
 
 /*
  * GConf settings
@@ -211,6 +212,12 @@ alarm_signal_connect_list (GList *instances,
 						   gpointer data);
 
 void
+alarm_bind (Alarm *alarm, 
+			const gchar *prop, 
+			GObject *dest, 
+			const gchar *dest_prop);
+
+void
 alarm_trigger (Alarm *alarm);
 
 void
@@ -230,6 +237,9 @@ alarm_delete (Alarm *alarm);
 
 void
 alarm_snooze (Alarm *alarm);
+
+gboolean
+alarm_is_playing (Alarm *alarm);
 
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);
@@ -258,6 +268,8 @@ AlarmRepeat alarm_repeat_from_list (GSList *list);
 GSList *alarm_repeat_to_list (AlarmRepeat repeat);
 gint alarm_wday_distance (gint wday1, gint wday2);
 gboolean alarm_should_repeat (Alarm *alarm);
+gchar *alarm_repeat_to_pretty (AlarmRepeat repeat);
+
 
 G_END_DECLS
 

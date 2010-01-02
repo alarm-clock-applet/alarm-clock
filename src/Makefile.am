@@ -20,19 +20,18 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
 						     ui.c ui.h						\
 						     prefs.c prefs.h				\
 						     alarm-list-window.c alarm-list-window.h	\
-						     edit-alarm.c edit-alarm.h		\
+						     alarm-settings.c alarm-settings.h		\
 						     alarm.c alarm.h
 
 alarm_clock_applet_CFLAGS =	                        \
 	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
 	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
 	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
-	@GNOME_CFLAGS@ @LIBNOTIFY_CFLAGS@               \
-	@WARN_CFLAGS@ $(AM_CFLAGS)
+	@GNOME_CFLAGS@  @WARN_CFLAGS@ $(AM_CFLAGS)
 
 alarm_clock_applet_LDADD =		\
 	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
-	@GNOME_LIBS@ @LIBNOTIFY_LIBS@
+	@GNOME_LIBS@
 
 
 #
@@ -43,7 +42,6 @@ schema_in_files = alarm-clock.schemas.in
 schema_DATA = $(schema_in_files:.schemas.in=.schemas)
 
 #@INTLTOOL_SCHEMAS_RULE@
-#@INTLTOOL_SERVER_RULE@
 
 #uninstall-data:
 #	rm -rf $(pkgdatadir)
@@ -56,7 +54,6 @@ uninstall-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-uninstall-rule $(top_builddir)/src/$(schema_DATA)
 endif
 
-CLEANFILES = $(server_DATA)
+#CLEANFILES = $(server_DATA)
 
-EXTRA_DIST += $(server_in_files)	\
-			  $(schema_DATA)
+EXTRA_DIST += $(schema_DATA)

@@ -12,7 +12,8 @@ INCLUDES =						\
 
 LIBS = @BASE_LIBS@
 
-check_PROGRAMS = $(TEST_PROGS) test_player test_list_entry test_util glade_view test_gconf_recursive
+check_PROGRAMS = $(TEST_PROGS) test_player test_list_entry test_util glade_view \
+                 test_gconf_recursive test_libnotify
 
 TEST_PROGS += test_alarm
 
@@ -50,3 +51,7 @@ test_gconf_recursive_SOURCES = test_gconf_recursive.c
 test_gconf_recursive_LDADD =	\
 	$(GLIB_LIBS)				\
 	$(GCONF_LIBS)
+
+test_libnotify_SOURCES = test_libnotify.c
+test_libnotify_CFLAGS = @GTK_CFLAGS@ @GNOME_CFLAGS@
+test_libnotify_LDADD = @GTK_LIBS@ @GNOME_LIBS@

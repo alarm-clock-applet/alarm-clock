@@ -4,7 +4,7 @@
 
 m4_define([alarm_clock_major_version], [0])
 m4_define([alarm_clock_minor_version], [2])
-m4_define([alarm_clock_micro_version], [6])
+m4_define([alarm_clock_micro_version], [7])
 
 m4_define([alarm_clock_version],
           [alarm_clock_major_version.alarm_clock_minor_version.alarm_clock_micro_version])
@@ -56,31 +56,13 @@ GTK_REQUIRED=2.12.0
 PKG_CHECK_MODULES(BASE, [glib-2.0 >= $GLIB_REQUIRED gmodule-2.0])
 PKG_CHECK_MODULES(GTK, [gtk+-2.0 >= $GTK_REQUIRED])
 PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10])
-PKG_CHECK_MODULES(GNOME, 
+PKG_CHECK_MODULES(GNOME,
   [gconf-2.0
    gio-2.0
-   gnome-icon-theme])
+   gnome-icon-theme
+   libnotify >= 0.4.1])
 
 # LIBXML_REQUIRED=2.5.0
-
-# Check for libnotify (optional)
-AC_ARG_WITH(libnotify,
-  AC_HELP_STRING([--without-libnotify],
-                 [disable the use of libnotify]),,
-  with_libnotify=auto)
-
-have_libnotify="no"
-if test "x$with_libnotify" != "xno"; then
-  PKG_CHECK_MODULES(LIBNOTIFY, [libnotify],
-    have_libnotify="yes", have_libnotify="no")
-  
-  if test "x$have_libnotify" = "xyes"; then
-	AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify available])
-  fi
-fi
-
-#AC_SUBST(LIBNOTIFY_CFLAGS)
-#AC_SUBST(LIBNOTIFY_LIBS)
 
 # Check for gconftool
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
@@ -120,8 +102,6 @@ $PACKAGE_NAME $VERSION
 Configure summary:
     prefix:                 ${prefix}
     source code location:   ${srcdir}
-	
-    Notifications (libnotify): $have_libnotify
 
 *************************************************
 "

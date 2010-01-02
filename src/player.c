@@ -61,7 +61,7 @@ media_player_new (const gchar *uri, gboolean loop,
 	gst_init (NULL, NULL);
 	
 	/* Set up player */
-	player->player	= gst_element_factory_make ("playbin", "player");
+	player->player	= gst_element_factory_make ("playbin2", "player");
 	audiosink 		= gst_element_factory_make ("gconfaudiosink", "player-audiosink");
 	videosink 		= gst_element_factory_make ("gconfvideosink", "player-videosink");
 	

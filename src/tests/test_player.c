@@ -47,7 +47,7 @@ int main (int argc, char **argv)
 	MediaPlayer *player;
 	GMainLoop *loop;
 	
-	player = media_player_new(argv[1], FALSE, 
+	player = media_player_new(argv[1], TRUE, 
 							  state_changed, "test data", 
 							  error_handler, "test error");
 	

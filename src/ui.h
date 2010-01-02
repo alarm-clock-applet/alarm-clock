@@ -26,11 +26,7 @@
 
 #include "alarm-applet.h"
 #include "alarm-list-window.h"
-#include "edit-alarm.h"
-
-#ifdef HAVE_LIBNOTIFY
-#include <libnotify/notify.h>
-#endif
+#include "alarm-settings.h"
 
 //#define ORIENT_IS_HORIZONTAL(o)		((o) == PANEL_APPLET_ORIENT_UP || (o) == PANEL_APPLET_ORIENT_DOWN)
 //#define IS_HORIZONTAL(papplet)		(ORIENT_IS_HORIZONTAL (panel_applet_get_orient (papplet)))
@@ -54,14 +50,15 @@ alarm_applet_icon_update (AlarmApplet *applet);
 void
 fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label);
 
-gboolean
-alarm_applet_notification_display (AlarmApplet *applet, Alarm *alarm);
-
-gboolean
-alarm_applet_notification_close (AlarmApplet *applet);
+void
+alarm_applet_notification_show (AlarmApplet *applet, const gchar *summary,
+                                const gchar *body, const gchar *icon);
 
 void
 alarm_applet_ui_init (AlarmApplet *applet);
+
+void
+alarm_applet_status_update (AlarmApplet *applet);
 
 void
 alarm_applet_menu_init (AlarmApplet *applet);
