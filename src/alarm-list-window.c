@@ -32,6 +32,12 @@ alarm_list_window_selection_changed (GtkTreeSelection *, gpointer);
 static gboolean
 alarm_list_window_update_timer (gpointer);
 
+static void
+alarm_list_window_alarm_changed (GObject *object, GParamSpec *param, gpointer data);
+
+static void
+alarm_list_window_alarm_triggered (Alarm *alarm, gpointer data);
+
 
 /**
  * Create a new empty Alarm List Window
@@ -213,6 +219,16 @@ alarm_list_window_alarm_add (AlarmListWindow *list_window, Alarm *alarm)
     gtk_list_store_append (store, &iter);
     gtk_list_store_set (store, &iter, ALARM_COLUMN, alarm, -1);
 
+    // Notify of changes
+    g_signal_connect (alarm, "notify",
+        G_CALLBACK (alarm_list_window_alarm_changed), list_window);
+
+    g_signal_connect (alarm, "alarm",
+        G_CALLBACK (alarm_list_window_alarm_triggered), list_window);
+
+    g_signal_connect (alarm, "cleared",
+        G_CALLBACK (alarm_list_window_alarm_triggered), list_window);
+
     alarm_list_window_update_row (list_window, &iter);
 }
 
@@ -226,6 +242,7 @@ alarm_list_window_alarm_update (AlarmListWindow *list_window, Alarm *alarm)
 
     if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
         alarm_list_window_update_row (list_window, &iter);
+        alarm_list_window_update_toolbar (list_window);
     } else {
         g_warning ("alarm_list_window_alarm_update(): Could not find alarm");
     }
@@ -241,9 +258,41 @@ alarm_list_window_alarm_remove (AlarmListWindow *list_window, Alarm *alarm)
 
     if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
         gtk_list_store_remove (list_window->model, &iter);
+
+        // Disconnect notify handler
+        g_signal_handlers_disconnect_matched (alarm, G_SIGNAL_MATCH_FUNC, 
+            0, 0, NULL, alarm_list_window_alarm_changed, NULL);
+        
     } else {
         g_warning ("alarm_list_window_alarm_remove(): Could not find alarm");
     }
+}
+
+/**
+ * Callback for when an alarm changes
+ */
+static void
+alarm_list_window_alarm_changed (GObject *object, 
+                                 GParamSpec *param,
+                                 gpointer data)
+{
+	Alarm *alarm = ALARM (object);
+    AlarmListWindow *list_window = (AlarmListWindow *)data;
+
+    // Update alarm in window
+    alarm_list_window_alarm_update (list_window, alarm);
+}
+
+/**
+ * Callback for when an alarm is triggered / cleared
+ */
+static void
+alarm_list_window_alarm_triggered (Alarm *alarm, gpointer data)
+{
+	AlarmListWindow *list_window = (AlarmApplet *)data;
+
+    // Update alarm in window
+    alarm_list_window_alarm_update (list_window, alarm);
 }
 
 /**
@@ -325,6 +374,24 @@ alarm_list_window_get_selected_alarm (AlarmListWindow *list_window)
 }
 
 /**
+ * Update toolbar to a consistent state
+ */
+void
+alarm_list_window_update_toolbar (AlarmListWindow *list_window)
+{
+    Alarm *a = alarm_list_window_get_selected_alarm (list_window);
+
+    gboolean sensitive = (a != NULL);
+
+    // Update toolbar
+    g_object_set (list_window->edit_button, "sensitive", sensitive, NULL);
+    g_object_set (list_window->delete_button, "sensitive", sensitive, NULL);
+    g_object_set (list_window->enable_button, "sensitive", sensitive, NULL);
+    g_object_set (list_window->stop_button, "sensitive", sensitive && a->triggered, NULL);
+    g_object_set (list_window->snooze_button, "sensitive", sensitive && a->triggered, NULL);
+}
+
+/**
  * Selection changed in tree view
  *
  * Here we update the sensitivity of the toolbar buttons
@@ -335,16 +402,8 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
 
-    Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-
-    gboolean sensitive = (a != NULL);
-
     // Update toolbar
-    g_object_set (list_window->edit_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->delete_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->enable_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->stop_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->snooze_button, "sensitive", sensitive, NULL);
+    alarm_list_window_update_toolbar (list_window);
 }
 
 /**
@@ -428,9 +487,7 @@ alarm_list_window_edit_clicked (GtkButton *button, gpointer data)
 	
 	// Stop alarm
     alarm_clear (a);
-//    alarm_applet_alarm_stop (applet, a);
-
-    //display_edit_alarm_dialog (applet, a);
+    
     alarm_settings_dialog_show (applet->settings_dialog, a);
 }
 

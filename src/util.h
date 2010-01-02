@@ -54,4 +54,10 @@ is_executable_valid (gchar *executable);
 char *
 alarm_applet_get_data_path (const char *name);
 
+guint
+block_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
+
+guint
+unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
+
 #endif /*UTIL_H_*/

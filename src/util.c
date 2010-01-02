@@ -152,3 +152,37 @@ alarm_applet_get_data_path (const char *name)
 
     return filename;
 }
+
+/**
+ * Block signal handlers by signal name
+ */
+guint
+block_signal_handlers_by_name (gpointer instance, const gchar *signal_name)
+{
+    guint signal_id;
+
+    signal_id = g_signal_lookup (signal_name, G_OBJECT_TYPE (instance));
+
+    g_warn_if_fail (signal_id);
+    g_return_val_if_fail (signal_id, 0);
+
+    return g_signal_handlers_block_matched (instance, G_SIGNAL_MATCH_ID,
+        signal_id, 0, NULL, NULL, NULL);
+}
+
+/**
+ * Unblock signal handlers by signal name
+ */
+guint
+unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name)
+{
+    guint signal_id;
+
+    signal_id = g_signal_lookup (signal_name, G_OBJECT_TYPE (instance));
+
+    g_warn_if_fail (signal_id);
+    g_return_val_if_fail (signal_id, 0);
+
+    return g_signal_handlers_unblock_matched (instance, G_SIGNAL_MATCH_ID,
+        signal_id, 0, NULL, NULL, NULL);
+}

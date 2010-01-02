@@ -177,7 +177,7 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			alarm_applet_alarms_add (applet, a);
             
 		} else if (found) {
-            alarm_list_window_alarm_update (applet->list_window, a);
+            //alarm_list_window_alarm_update (applet->list_window, a);
         }
 	}
 	

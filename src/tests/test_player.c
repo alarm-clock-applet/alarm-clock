@@ -25,11 +25,18 @@
 
 #include "player.h"
 
+GMainLoop *loop;
+MediaPlayer *player;
+
 void state_changed (MediaPlayer *player, MediaPlayerState state, gchar *data)
 {
 	g_debug ("State changed to %s [%d], data is '%s'", 
 				(state == MEDIA_PLAYER_PLAYING) ? "PLAYING" : "STOPPED",
 				state, data);
+
+    if (state == MEDIA_PLAYER_STOPPED && !player->loop) {
+        g_main_loop_quit (loop);
+    }
 }
 
 void error_handler (MediaPlayer *player, GError *error, gchar *data)
@@ -43,10 +50,10 @@ int main (int argc, char **argv)
 		g_print ("Usage: %s <uri>\n", argv[0]);
 		return 1;
 	}
-	
-	MediaPlayer *player;
-	GMainLoop *loop;
-	
+
+    // Terminate on critical errors
+    g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
+    
 	player = media_player_new(argv[1], TRUE, 
 							  state_changed, "test data", 
 							  error_handler, "test error");

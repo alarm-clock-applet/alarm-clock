@@ -631,8 +631,13 @@ alarm_set_property (GObject *object,
 
 	alarm = ALARM (object);
 	client = priv->gconf_client;
-	
-	g_debug ("set_property %s", pspec->name);
+
+    // DEBUGGING INFO
+    GValue strval = {0};
+    g_value_init (&strval, G_TYPE_STRING);
+    g_value_transform (value, &strval);
+	g_debug ("Alarm(%p) #%d set %s=%s", alarm, alarm->id, pspec->name,
+        g_value_get_string(&strval));
 	
 	switch (prop_id) {
 	case PROP_DIR:
@@ -1550,15 +1555,23 @@ alarm_gconf_get_dir (Alarm *alarm)
 gchar *
 alarm_gconf_get_full_key (Alarm *alarm, const gchar *key)
 {
+    gchar *gconf_key;
 	gchar *full_key;
 	
 	g_return_val_if_fail (IS_ALARM (alarm), NULL);
 
 	if (!key)
 		return NULL;
-	
-	full_key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d/%s", alarm->gconf_dir, alarm->id, key);
 
+    // Replace dashes with underscores
+    gconf_key = g_strdup (key);
+    g_strcanon (gconf_key, "abcdefghijklmnopqrstuvwxyz", '_');
+    
+	full_key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d/%s", 
+        alarm->gconf_dir, alarm->id, gconf_key);
+
+    g_free (gconf_key);
+    
 	return full_key;
 }
 

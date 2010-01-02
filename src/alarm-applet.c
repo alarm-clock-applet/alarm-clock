@@ -46,9 +46,10 @@ guint
 alarm_applet_alarms_snooze (AlarmApplet *applet)
 {
 	GList *l;
-	Alarm *a;
+	Alarm *a, *last_snoozed;
     guint n_snoozed = 0;
     gchar *summary, *body;
+    const gchar *icon;
 
 	g_debug ("Snoozing alarms...");
 
@@ -58,15 +59,29 @@ alarm_applet_alarms_snooze (AlarmApplet *applet)
 
         if (alarm_is_playing (a)) {
     		alarm_snooze (a);
+            last_snoozed = a;
             n_snoozed++;
         }
 	}
 
     // Show notification
     if (n_snoozed > 0) {
-        summary = g_strdup_printf (_("Snoozed %d alarm(s)"), n_snoozed);
-        body = g_strdup_printf (_("You can stop alarms from the Alarm Clock menu."));
-        alarm_applet_notification_show (applet, summary, body, "alarm-clock");
+        if (n_snoozed == 1) {
+            // Single alarm snoozed
+            summary = g_strdup_printf (_("%s snoozed"), last_snoozed->message);
+            body = g_strdup_printf (_("You can stop the alarm from the Alarm Clock menu."));
+            icon = (last_snoozed->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
+            alarm_applet_notification_show (applet, summary, body, icon);
+        } else {
+            // More than 1 alarm snoozed
+            summary = g_strdup_printf (_("Snoozed %d alarms"), n_snoozed);
+            body = g_strdup_printf (_("You can stop alarms from the Alarm Clock menu."));
+            icon = "alarm-clock";
+            alarm_applet_notification_show (applet, summary, body, icon);
+        }
+
+        g_free (summary);
+        g_free (body);
     }
     
     // Reset the triggered counter
@@ -85,9 +100,10 @@ guint
 alarm_applet_alarms_stop (AlarmApplet *applet)
 {
 	GList *l;
-	Alarm *a;
+	Alarm *a, *last_stopped;
     guint n_stopped = 0;
     gchar *summary, *body;
+    const gchar *icon;
     
 	g_debug ("Stopping alarms...");
 
@@ -97,15 +113,29 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 
         if (alarm_is_playing (a)) {
     		alarm_clear (a);
+            last_stopped = a;
             n_stopped++;
         }
 	}
 
     // Show notification
-	if (n_stopped > 0) {
-        summary = g_strdup_printf (_("Stopped %d alarm(s)"), n_stopped);
-        body = g_strdup_printf (_("Repeating alarms will still go off according to schedule."));
-        alarm_applet_notification_show (applet, summary, body, "alarm-clock");
+    if (n_stopped > 0) {
+        if (n_stopped == 1) {
+            // Single alarm stopped
+            summary = g_strdup_printf (_("%s stopped"), last_stopped->message);
+            body = g_strdup_printf (_("Repeating alarms will still continue according to schedule."));
+            icon = (last_stopped->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
+            alarm_applet_notification_show (applet, summary, body, icon);
+        } else {
+            // More than 1 alarm stopped
+            summary = g_strdup_printf (_("Stopped %d alarm(s)"), n_stopped);
+            body = g_strdup_printf (_("Repeating alarms will still continue according to schedule."));
+            icon = "alarm-clock";
+            alarm_applet_notification_show (applet, summary, body, icon);
+        }
+
+        g_free (summary);
+        g_free (body);
     }
     
     // Reset the triggered counter
