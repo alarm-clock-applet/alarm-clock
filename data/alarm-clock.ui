@@ -1054,12 +1054,11 @@
                 <signal name="row_activated" handler="alarm_list_window_row_activated"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="type-col">
-                    <property name="spacing">32</property>
+                    <property name="sizing">autosize</property>
                     <property name="title">Type</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
                         <property name="xpad">6</property>
-                        <property name="ypad">6</property>
                         <property name="follow_state">True</property>
                         <property name="stock_size">3</property>
                       </object>
@@ -1071,12 +1070,12 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="time-col">
-                    <property name="spacing">12</property>
+                    <property name="sizing">autosize</property>
                     <property name="title">Time</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext4">
                         <property name="height">36</property>
-                        <property name="xalign">1</property>
+                        <property name="xalign">0</property>
                       </object>
                       <attributes>
                         <attribute name="markup">2</attribute>
@@ -1086,6 +1085,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="label-col">
+                    <property name="sizing">autosize</property>
                     <property name="title">Label</property>
                     <property name="expand">True</property>
                     <child>
@@ -1098,8 +1098,8 @@
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="actions-col">
-                    <property name="resizable">True</property>
                     <property name="spacing">6</property>
+                    <property name="sizing">autosize</property>
                     <property name="title">Actions</property>
                     <child>
                       <object class="GtkCellRendererToggle" id="enable-toggle">

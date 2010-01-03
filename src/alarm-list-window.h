@@ -57,9 +57,9 @@ struct _AlarmListWindow {
 
 //#define TIME_COL_FORMAT "<span font='Bold 11'>%H:%M:%S</span>"
 // TODO: Does fixing the font size give a11y problems?
-#define TIME_COL_CLOCK_FORMAT "<span font='Bold 11'>%H:%M</span><span font='Bold 7'>:%S</span>"
+#define TIME_COL_CLOCK_FORMAT "<span font='Bold 11'> %H:%M</span><span font='Bold 7'>:%S</span>"
 #define TIME_COL_TIMER_FORMAT "<span font='Bold 11'>-%H:%M</span><span font='Bold 7'>:%S</span>"
-#define TIME_COL_REPEAT_FORMAT "\n<sup>%s</sup>"
+#define TIME_COL_REPEAT_FORMAT "\n <sup>%s</sup>"
 #define LABEL_COL_FORMAT "%s"
 
 #define CLOCK_FORMAT "%H:%M"
