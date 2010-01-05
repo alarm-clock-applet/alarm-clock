@@ -38,6 +38,11 @@ alarm_list_window_alarm_changed (GObject *object, GParamSpec *param, gpointer da
 static void
 alarm_list_window_alarm_triggered (Alarm *alarm, gpointer data);
 
+static gint
+alarm_list_window_sort_iter_compare (GtkTreeModel *model, 
+                                     GtkTreeIter *a, GtkTreeIter *b,
+                                     gpointer data);
+
 
 /**
  * Create a new empty Alarm List Window
@@ -48,6 +53,7 @@ alarm_list_window_new (AlarmApplet *applet)
 	AlarmListWindow *list_window;
     GtkBuilder *builder = applet->ui;
     GtkTreeSelection *selection;
+    GtkTreeSortable *sortable;
 	
     // Initialize struct
 	list_window = g_new0 (AlarmListWindow, 1);
@@ -63,7 +69,7 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->delete_button = gtk_builder_get_object (builder, "delete-button");
     list_window->enable_button = gtk_builder_get_object (builder, "enable-button");
     list_window->stop_button = gtk_builder_get_object (builder, "stop-button");
-    list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");    
+    list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
 
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
@@ -72,6 +78,16 @@ alarm_list_window_new (AlarmApplet *applet)
 
     // Update view every second for pretty countdowns
     g_timeout_add_seconds (1, (GSourceFunc) alarm_list_window_update_timer, applet);
+
+    // Set up sorting
+    sortable = GTK_TREE_SORTABLE (list_window->model);
+
+    gtk_tree_sortable_set_sort_func (sortable, SORTID_TIME_REMAINING,
+        alarm_list_window_sort_iter_compare, GINT_TO_POINTER (SORTID_TIME_REMAINING),
+        NULL);
+
+    // Set initial sort order
+    gtk_tree_sortable_set_sort_column_id (sortable, SORTID_TIME_REMAINING, GTK_SORT_ASCENDING);
 
     // Populate with alarms
     alarm_list_window_alarms_add (list_window, applet->alarms);
@@ -121,7 +137,7 @@ alarm_list_window_find_alarm (GtkTreeModel *model,
     valid = gtk_tree_model_get_iter_first (model, &it);
 
     while (valid) {
-        gtk_tree_model_get (model, &it, ALARM_COLUMN, &a, -1);
+        gtk_tree_model_get (model, &it, COLUMN_ALARM, &a, -1);
         
         if (a == alarm) {
             if (iter) {
@@ -165,7 +181,7 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
 
     // Get the alarm at iter
     gtk_tree_model_get (GTK_TREE_MODEL (model), iter,
-                        ALARM_COLUMN, &a,
+                        COLUMN_ALARM, &a,
                         -1);
     
     // If alarm is running (active), show remaining time
@@ -197,10 +213,10 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     label_col = g_strdup_printf (LABEL_COL_FORMAT, a->message);
     
 	gtk_list_store_set (model, iter, 
-                        TYPE_COLUMN, type_col,
-                        TIME_COLUMN, time_col->str,
-                        LABEL_COLUMN, label_col,
-                        ACTIVE_COLUMN, a->active,
+                        COLUMN_TYPE, type_col,
+                        COLUMN_TIME, time_col->str,
+                        COLUMN_LABEL, label_col,
+                        COLUMN_ACTIVE, a->active,
                         -1);
 
     g_string_free (time_col, TRUE);
@@ -217,7 +233,7 @@ alarm_list_window_alarm_add (AlarmListWindow *list_window, Alarm *alarm)
     GtkTreeIter iter;
 
     gtk_list_store_append (store, &iter);
-    gtk_list_store_set (store, &iter, ALARM_COLUMN, alarm, -1);
+    gtk_list_store_set (store, &iter, COLUMN_ALARM, alarm, -1);
 
     // Notify of changes
     g_signal_connect (alarm, "notify",
@@ -239,6 +255,8 @@ void
 alarm_list_window_alarm_update (AlarmListWindow *list_window, Alarm *alarm)
 {
     GtkTreeIter iter;
+
+    g_debug ("AlarmListWindow alarm_update: %p (%s)", alarm, alarm->message);
 
     if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
         alarm_list_window_update_row (list_window, &iter);
@@ -338,6 +356,55 @@ alarm_list_window_update_timer (gpointer data)
     return TRUE;
 }
 
+/**
+ * Sort compare function
+ */
+static gint
+alarm_list_window_sort_iter_compare (GtkTreeModel *model, 
+                                     GtkTreeIter *i1, GtkTreeIter *i2,
+                                     gpointer data)
+{
+    gint sortcol = GPOINTER_TO_INT (data);
+    Alarm *a1, *a2;
+    gint ret = 0;
+
+    // Fetch ze alarms
+    gtk_tree_model_get (model, i1, COLUMN_ALARM, &a1, -1);
+    gtk_tree_model_get (model, i2, COLUMN_ALARM, &a2, -1);
+
+    switch (sortcol) {
+        case SORTID_TIME_REMAINING:
+        {
+            // Sort by remaining time
+            time_t t1, t2;
+
+            // Show active alarms first
+            if (a1->active && a2->active) {
+                t1 = alarm_get_remain_seconds (a1);
+                t2 = alarm_get_remain_seconds (a2);
+                
+            } else if (a1->active && !a2->active) {
+                t1 = 0;
+                t2 = 1;
+            } else if (!a1->active && a2->active) {
+                t1 = 1;
+                t2 = 0;
+            } else {
+                // Both inactive, sort by time
+                t1 = a1->time;
+                t2 = a2->time;
+            }
+
+            ret = t1 - t2;
+        }
+            break;
+        default:
+            g_return_val_if_reached (0);
+    }
+
+    return ret;
+}
+
 
 //
 // Toolbar / tree view callbacks:
@@ -359,18 +426,39 @@ alarm_list_window_get_selected_alarm (AlarmListWindow *list_window)
 
 	if (!gtk_tree_selection_get_selected(selection, &model, &iter)) {
 		// No alarms selected
-		g_debug ("get_selected_alarm: No alarms selected!");
+		//g_debug ("get_selected_alarm: No alarms selected!");
 		return NULL;
 	}
     
-	gtk_tree_model_get (model, &iter, ALARM_COLUMN, &a, -1);
+	gtk_tree_model_get (model, &iter, COLUMN_ALARM, &a, -1);
 	
 	// gtk_tree_model_get () will increase the reference count 
 	// of the alarms each time it's called. We dereference it
 	// here so they can be properly freed later with g_object_unref()
-	g_object_unref (a);
+    // Ugh, we use gtk_tree_model_get a lot, is there no other way?
+	//g_object_unref (a);
 	
 	return a;
+}
+
+/**
+ * Set the selected alarm
+ */
+static void
+alarm_list_window_select_alarm (AlarmListWindow *list_window, Alarm *alarm)
+{
+    GtkTreeModel *model = GTK_TREE_MODEL (list_window->model);
+    GtkTreeSelection *selection;
+    GtkTreeIter iter;
+
+    if (!alarm_list_window_find_alarm (model, alarm, &iter)) {
+        g_warning ("AlarmListWindow select_alarm: Alarm %p not found!", alarm);
+        return;
+    }
+    
+    selection = gtk_tree_view_get_selection (list_window->tree_view);
+
+    gtk_tree_selection_select_iter (selection, &iter);
 }
 
 /**
@@ -386,9 +474,15 @@ alarm_list_window_update_toolbar (AlarmListWindow *list_window)
     // Update toolbar
     g_object_set (list_window->edit_button, "sensitive", sensitive, NULL);
     g_object_set (list_window->delete_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->enable_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->stop_button, "sensitive", sensitive && a->triggered, NULL);
-    g_object_set (list_window->snooze_button, "sensitive", sensitive && a->triggered, NULL);
+    
+    g_object_set (list_window->enable_button, 
+        "sensitive", sensitive && !a->active, NULL);
+    
+    g_object_set (list_window->stop_button, 
+        "sensitive", sensitive && (a->active || a->triggered), NULL);
+    
+    g_object_set (list_window->snooze_button, 
+        "sensitive", sensitive && a->triggered, NULL);
 }
 
 /**
@@ -401,9 +495,40 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
+    Alarm *a = list_window->selected_alarm;
 
+    //g_debug ("AlarmListWindow selection-changed reordered=%d toggled=%d", 
+    //    list_window->reordered, list_window->toggled);
+
+    // If rows have just been reordered, retain the selected row
+    // But only if the reordering was triggered by a click on the toggle cell
+    if (list_window->reordered && list_window->toggled) {
+        //g_debug ("AlarmListWindow: selection-changed REORDERED & TOGGLED!");
+        
+        list_window->reordered = FALSE;
+        list_window->toggled = FALSE;
+
+//        g_debug ("AlarmListWindow: selection-changed selecting %p", list_window->selected_alarm);
+        alarm_list_window_select_alarm (list_window, list_window->selected_alarm);
+        
+        return;
+    }
+
+    // Reset reordered and toggled flags
+    list_window->reordered = FALSE;
+    list_window->toggled = FALSE;
+    
     // Update toolbar
     alarm_list_window_update_toolbar (list_window);
+    
+    // Update selected alarm (might be NULL)
+    list_window->selected_alarm = alarm_list_window_get_selected_alarm (list_window);
+
+    
+    g_debug ("AlarmListWindow: selection-changed from %s (%p) to %s (%p)",
+        (a) ? a->message : "<none>", a,
+        (list_window->selected_alarm) ? list_window->selected_alarm->message : "<none>",
+        list_window->selected_alarm);
 }
 
 /**
@@ -421,8 +546,20 @@ alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
     Alarm *a;
     
     if (gtk_tree_model_get_iter_from_string (model, &iter, path)) {
-        gtk_tree_model_get (model, &iter, ALARM_COLUMN, &a, -1);
+        gtk_tree_model_get (model, &iter, COLUMN_ALARM, &a, -1);
 
+        g_debug ("AlarmListWindow enable toggled on %p", a);
+        
+        // Reset reordered flag
+        list_window->reordered = FALSE;
+        
+        // Select the toggled alarm
+        alarm_list_window_select_alarm (list_window, a);
+
+        // Let selection_changed know an alarm was just toggled so
+        // this alarm is re-selected if the rows are reordered
+        list_window->toggled = TRUE;
+        
         // Toggle enabled state
         alarm_set_enabled (a, !a->active);
     }
@@ -501,6 +638,31 @@ alarm_list_window_row_activated (GtkTreeView       *tree_view,
                                  gpointer           data)
 {
     alarm_list_window_edit_clicked (NULL, data);
+}
+
+/**
+ * Rows reordered
+ */
+void
+alarm_list_window_rows_reordered (GtkTreeModel *model,
+                                  GtkTreePath  *path,
+                                  GtkTreeIter  *iter,
+                                  gpointer      arg3,
+                                  gpointer      data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    Alarm *a;
+
+    // Return if list_window is not set. This happens during initialization.
+    if (!list_window)
+        return;
+    
+    // Retain selected alarm
+    a = alarm_list_window_get_selected_alarm (list_window);
+    
+    // Signal to selection_changed that the rows have been reordered.
+    list_window->reordered = TRUE;
 }
 
 /**
@@ -584,6 +746,22 @@ alarm_list_window_delete_clicked (GtkButton *button, gpointer data)
 }
 
 /**
+ * Enable button clicked
+ */
+void
+alarm_list_window_enable_clicked (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    Alarm *a;
+    
+    if (a = alarm_list_window_get_selected_alarm (list_window)) {
+        alarm_enable (a);
+    }
+}
+
+
+/**
  * Stop button clicked
  */
 void
@@ -594,7 +772,11 @@ alarm_list_window_stop_clicked (GtkButton *button, gpointer data)
     Alarm *a;
     
     if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        alarm_clear (a);
+        if (a->triggered) {
+            alarm_clear (a);
+        } else {
+            alarm_disable (a);
+        }
     }
 }
 

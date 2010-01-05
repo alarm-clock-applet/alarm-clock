@@ -262,6 +262,9 @@ alarm_get_time (Alarm *alarm);
 struct tm *
 alarm_get_remain (Alarm *alarm);
 
+time_t
+alarm_get_remain_seconds (Alarm *alarm);
+
 const gchar *alarm_repeat_to_string (AlarmRepeat repeat);
 AlarmRepeat alarm_repeat_from_string (const gchar *str);
 AlarmRepeat alarm_repeat_from_list (GSList *list);

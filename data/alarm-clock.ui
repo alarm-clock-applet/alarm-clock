@@ -917,6 +917,7 @@
       <!-- column-name Triggered -->
       <column type="gboolean"/>
     </columns>
+    <signal name="rows_reordered" handler="alarm_list_window_rows_reordered"/>
   </object>
   <object class="GtkWindow" id="alarm-list-window">
     <property name="title" translatable="yes">Alarms</property>
@@ -986,9 +987,9 @@
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="tooltip_text" translatable="yes">Enable the selected alarm</property>
-                <property name="label" translatable="yes">Start</property>
+                <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-media-play</property>
+                <property name="stock_id">gtk-apply</property>
                 <signal name="clicked" handler="alarm_list_window_enable_clicked"/>
               </object>
               <packing>
@@ -1050,7 +1051,6 @@
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
                 <property name="rules_hint">True</property>
-                <property name="search_column">1</property>
                 <signal name="row_activated" handler="alarm_list_window_row_activated"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="type-col">

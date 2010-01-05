@@ -2101,11 +2101,15 @@ alarm_get_time (Alarm *alarm)
 	return gmtime (&(alarm->time));
 }
 
-/*
- * Get the remaining alarm time.
- */
 static struct tm tm;
 
+/**
+ * Get the remaining alarm time.
+ *
+ * The return value is a direct pointer to an internal struct and must NOT
+ * be freed. The return value also changes for every call to alarm_get_remain,
+ * so copy it if needed.
+ */
 struct tm *
 alarm_get_remain (Alarm *alarm)
 {
@@ -2123,6 +2127,18 @@ alarm_get_remain (Alarm *alarm)
 	
 	return &tm;
 }
+
+/**
+ * Get the remaining alarm time in seconds
+ */
+time_t
+alarm_get_remain_seconds (Alarm *alarm)
+{
+    time_t now = time (NULL);
+
+    return alarm->timestamp - now;
+}
+
 
 /*
  * AlarmRepeat utilities {{

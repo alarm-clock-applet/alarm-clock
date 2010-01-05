@@ -32,16 +32,24 @@ typedef struct _AlarmListWindow AlarmListWindow;
 #include "alarm.h"
 
 typedef enum {
-    ALARM_COLUMN = 0,
-    TYPE_COLUMN,
-    TIME_COLUMN,
-    LABEL_COLUMN,
-    ACTIVE_COLUMN,
+    COLUMN_ALARM = 0,
+    COLUMN_TYPE,
+    COLUMN_TIME,
+    COLUMN_LABEL,
+    COLUMN_ACTIVE,
     ALARMS_N_COLUMNS
 } AlarmListColumn;
 
+typedef enum {
+    SORTID_TIME_REMAINING = 0,
+} AlarmSortID;
+
 struct _AlarmListWindow {
 	AlarmApplet *applet;
+    
+    Alarm *selected_alarm;
+    gboolean reordered;         // Indicates that rows have just been reordered
+    gboolean toggled;           // Indicates that an alarm has just been toggled
 	
 	GtkWindow *window;
 	GtkListStore *model;
