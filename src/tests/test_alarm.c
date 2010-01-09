@@ -90,7 +90,6 @@ test_alarm_props (AlarmFixture *fix,
 				  "active", FALSE,
 				  "message", "Wakety zooom!",
 				  "repeat", ALARM_REPEAT_MON | ALARM_REPEAT_WED,
-				  "snooze", 12,
 				  "notify_type", ALARM_NOTIFY_COMMAND,
 				  "sound_file", "file:///foo/bar",
 				  "sound_repeat", FALSE, 
@@ -106,7 +105,6 @@ test_alarm_props (AlarmFixture *fix,
 	g_assert_cmpint (alarm->active, ==, FALSE);
 	g_assert_cmpstr (alarm->message, ==, "Wakety zooom!");
 	g_assert_cmpint (alarm->repeat, ==, ALARM_REPEAT_MON | ALARM_REPEAT_WED);
-	g_assert_cmpint (alarm->snooze, ==, 12);
 	g_assert_cmpint (alarm->notify_type, ==, ALARM_NOTIFY_COMMAND);
 	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
 	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
@@ -127,7 +125,6 @@ test_alarm_props (AlarmFixture *fix,
 	g_assert_cmpint (alarm->active, ==, FALSE);
 	g_assert_cmpstr (alarm->message, ==, "Wakety zooom!");
 	g_assert_cmpint (alarm->repeat, ==, ALARM_REPEAT_MON | ALARM_REPEAT_WED);
-	g_assert_cmpint (alarm->snooze, ==, 12);
 	g_assert_cmpint (alarm->notify_type, ==, ALARM_NOTIFY_COMMAND);
 	g_assert_cmpstr (alarm->sound_file, ==, "file:///foo/bar");
 	g_assert_cmpint (alarm->sound_loop, ==, FALSE);
@@ -407,6 +404,7 @@ test_alarm_timers_alarm (Alarm *a, gchar *data)
  * 
  * 1. Test alarm CLOCK setting time to 5 seconds from now.
  * 2. Test alarm TIMER setting time to 3 seconds.
+ * 3. Test alarm snooze for 2 seconds
  */
 static void
 test_alarm_timers (AlarmFixture *fix,
@@ -464,6 +462,14 @@ test_alarm_timers (AlarmFixture *fix,
 	g_main_loop_run (loop);
 	
 	g_assert_cmpint (state - now, ==, 3);
+
+    //
+    // Test snooze for 2 seconds
+    //
+	now = time (NULL);
+    alarm_snooze (alarm, 2);
+
+    g_assert_cmpint (alarm->timestamp, ==, now + 2);
 }
 
 

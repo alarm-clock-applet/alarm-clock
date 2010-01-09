@@ -186,3 +186,29 @@ unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name)
     return g_signal_handlers_unblock_matched (instance, G_SIGNAL_MATCH_ID,
         signal_id, 0, NULL, NULL, NULL);
 }
+
+guint
+block_list (GList *instances, gpointer func)
+{
+    guint blocked = 0;
+    GList *l = NULL;
+
+    for (l = instances; l != NULL; l = l->next) {
+        blocked += BLOCK (l->data, func);
+    }
+
+    return blocked;
+}
+
+guint
+unblock_list (GList *instances, gpointer func)
+{
+    guint unblocked = 0;
+    GList *l = NULL;
+
+    for (l = instances; l != NULL; l = l->next) {
+        unblocked += UNBLOCK (l->data, func);
+    }
+
+    return unblocked;
+}

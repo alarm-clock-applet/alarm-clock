@@ -251,22 +251,6 @@ alarm_applet_notification_show (AlarmApplet *applet,
 	g_object_unref(G_OBJECT(n));
 }
 
-/*
- * Updates label etc
- */
-static gboolean
-alarm_applet_ui_update (AlarmApplet *applet)
-{
-	if (applet->show_label) {
-//		alarm_applet_label_update (applet);
-	}
-	
-	alarm_applet_update_tooltip (applet);
-	
-	return TRUE;
-}
-
-
 
 
 

@@ -113,7 +113,6 @@ static enum {
 	PROP_ACTIVE,
 	PROP_MESSAGE,
 	PROP_REPEAT,
-	PROP_SNOOZE,
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
@@ -129,7 +128,6 @@ static enum {
 #define PROP_NAME_ACTIVE		"active"
 #define PROP_NAME_MESSAGE		"message"
 #define PROP_NAME_REPEAT		"repeat"
-#define PROP_NAME_SNOOZE		"snooze"
 #define PROP_NAME_NOTIFY_TYPE	"notify-type"
 #define PROP_NAME_SOUND_FILE	"sound-file"
 #define PROP_NAME_SOUND_LOOP	"sound-repeat"
@@ -183,7 +181,6 @@ alarm_class_init (AlarmClass *class)
 	GParamSpec *active_param;
 	GParamSpec *message_param;
 	GParamSpec *repeat_param;
-	GParamSpec *snooze_param;
 	GParamSpec *notify_type_param;
 	GParamSpec *sound_file_param;
 	GParamSpec *sound_loop_param;
@@ -261,15 +258,7 @@ alarm_class_init (AlarmClass *class)
 									  ALARM_REPEAT_ALL,		/* max */
 									  ALARM_DEFAULT_REPEAT,	/* default */
 									  G_PARAM_READWRITE);
-	
-	snooze_param = g_param_spec_uint (PROP_NAME_SNOOZE,
-									  "snooze",
-									  "enable snoozing of the alarm",
-									  0,					/* min */
-									  UINT_MAX,				/* max */
-									  ALARM_DEFAULT_SNOOZE,	/* default */
-									  G_PARAM_READWRITE);
-	
+		
 	notify_type_param = g_param_spec_uint (PROP_NAME_NOTIFY_TYPE,
 										"notification type",
 										"what kind of notification should be used",
@@ -312,7 +301,6 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_ACTIVE, active_param);
 	g_object_class_install_property (g_object_class, PROP_MESSAGE, message_param);
 	g_object_class_install_property (g_object_class, PROP_REPEAT, repeat_param);
-	g_object_class_install_property (g_object_class, PROP_SNOOZE, snooze_param);
 	g_object_class_install_property (g_object_class, PROP_NOTIFY_TYPE, notify_type_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
@@ -507,21 +495,6 @@ alarm_gconf_load (Alarm *alarm)
 	}
 	
 	/*
-	 * SNOOZE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_SNOOZE);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-	
-	if (val) {
-		alarm->snooze = gconf_value_get_int (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_SNOOZE, ALARM_DEFAULT_SNOOZE, NULL);
-	}
-	
-	/*
 	 * NOTIFY TYPE
 	 */
 	key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_TYPE);
@@ -636,7 +609,7 @@ alarm_set_property (GObject *object,
     GValue strval = {0};
     g_value_init (&strval, G_TYPE_STRING);
     g_value_transform (value, &strval);
-	g_debug ("Alarm(%p) #%d set %s=%s", alarm, alarm->id, pspec->name,
+	g_debug ("Alarm(%p) #%d: set %s=%s", alarm, alarm->id, pspec->name,
         g_value_get_string(&strval));
 	
 	switch (prop_id) {
@@ -822,21 +795,6 @@ alarm_set_property (GObject *object,
 		g_free (key);
 		
 		break;
-	case PROP_SNOOZE:
-		alarm->snooze = g_value_get_uint (value);
-		
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_SNOOZE);
-		
-		if (!gconf_client_set_int (client, key, alarm->snooze, &err)) {
-			
-			g_critical ("Could not set %s (gconf): %s", 
-						key, err->message);
-			
-			g_error_free (err);
-		}
-		
-		g_free (key);
-		break;
 	case PROP_NOTIFY_TYPE:
 		alarm->notify_type = g_value_get_uint (value);
 		
@@ -949,9 +907,6 @@ alarm_get_property (GObject *object,
 	case PROP_REPEAT:
 		g_value_set_uint (value, alarm->repeat);
 		break;
-	case PROP_SNOOZE:
-		g_value_set_uint (value, alarm->snooze);
-		break;
 	case PROP_NOTIFY_TYPE:
 		g_value_set_uint (value, alarm->notify_type);
 		break;
@@ -982,7 +937,7 @@ alarm_error_quark (void)
 static void
 alarm_error (Alarm *alarm, GError *err)
 {
-	g_debug ("[%p] #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
+	g_debug ("Alarm(%p) #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
 }
 
 void
@@ -1000,7 +955,7 @@ alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg)
 static void
 alarm_player_changed (Alarm *alarm, MediaPlayerState state)
 {
-	g_debug ("alarm_player_changed (%p, %d)", alarm, state);
+	g_debug ("Alarm(%p) #%d: player_changed to %d", alarm, alarm->id, state);
 }
 
 
@@ -1011,7 +966,7 @@ alarm_player_changed (Alarm *alarm, MediaPlayerState state)
 static void 
 alarm_alarm (Alarm *alarm)
 {
-	g_debug ("[%p] #%d: alarm_alarm", alarm, alarm->id);
+	g_debug ("Alarm(%p) #%d: alarm() DING!", alarm, alarm->id);
 
     // Clear first, if needed
     alarm_clear (alarm);
@@ -1021,7 +976,7 @@ alarm_alarm (Alarm *alarm)
 	
 	// Do we want to repeat this alarm?
 	if (alarm_should_repeat (alarm)) {
-		g_debug ("alarm_trigger REPEATING");
+		g_debug ("Alarm(%p) #%d: alarm() Repeating...", alarm, alarm->id);
 		alarm_update_timestamp_full (alarm, FALSE);
 	} else {
 		alarm_disable (alarm);
@@ -1030,16 +985,17 @@ alarm_alarm (Alarm *alarm)
 	switch (alarm->notify_type) {
 	case ALARM_NOTIFY_SOUND:
 		// Start sound playback
-		g_debug("[%p] #%d Start player", alarm, alarm->id);
+		g_debug("Alarm(%p) #%d: alarm() Start player", alarm, alarm->id);
 		alarm_player_start (alarm);
 		break;
 	case ALARM_NOTIFY_COMMAND:
 		// Start app
-		g_debug("[%p] #%d Start command", alarm, alarm->id);
+		g_debug("Alarm(%p) #%d: alarm() Start command", alarm, alarm->id);
 		alarm_command_run (alarm);
 		break;
 	default:
-		g_debug ("NOTIFICATION TYPE %d Not yet implemented.", alarm->notify_type);
+		g_warning ("Alarm(%p) #%d: UNKNOWN NOTIFICATION TYPE %d", 
+            alarm, alarm->id, alarm->notify_type);
 	}
 }
 
@@ -1092,34 +1048,30 @@ alarm_delete (Alarm *alarm)
 	
 	// Remove configuration
 	key = alarm_gconf_get_dir (alarm);
-	g_debug ("alarm_delete: recursive unset on %s", key);
+	g_debug ("Alarm(%p) #%d: alarm_delete() recursive unset on %s", key);
 	gconf_client_recursive_unset (client, key, GCONF_UNSET_INCLUDING_SCHEMA_NAMES, NULL);
 	gconf_client_suggest_sync (client, NULL);
 	g_free (key);
 }
 
 /*
- * Snooze the alarm.
+ * Snooze the alarm for a number of seconds.
  */
 void
-alarm_snooze (Alarm *alarm)
+alarm_snooze (Alarm *alarm, guint seconds)
 {
-	// SNOOZE
-	if (alarm->snooze == 0) {
-		alarm_clear (alarm);
-		return;
-	}
-	
-	if (!alarm->triggered) return;
-	
-	g_debug ("alarm_snooze SNOOZING FOR %d minutes", alarm->snooze);
+    g_assert (alarm->triggered);
     
-	alarm_clear (alarm);	
+	g_debug ("Alarm(%p) #%d: snooze() for %d minutes", alarm, alarm->id, seconds / 60);
 
+    // Silence!
+    alarm_clear (alarm);    
+
+    // Remind later
     time_t now = time (NULL);
 	
 	g_object_set (alarm, 
-				  "timestamp", now + alarm->snooze * 60,
+				  "timestamp", now + seconds,
 				  "active", TRUE,        
 				  NULL);
 
@@ -1132,7 +1084,7 @@ alarm_snooze (Alarm *alarm)
 static void
 alarm_cleared (Alarm *alarm)
 {
-    g_debug ("[%p] #%d: alarm_cleared", alarm, alarm->id);
+    g_debug ("Alarm(%p) #%d: cleared()", alarm, alarm->id);
 
     // Update triggered flag
     alarm->triggered = FALSE;
@@ -1179,7 +1131,7 @@ alarm_timer_update (Alarm *alarm)
 		// Remove callback only if we don't intend to repeat the alarm
 		return alarm_should_repeat (alarm);
 	} else if (alarm->timestamp - now <= 10) {
-		g_debug ("[%p] #%d %2d...", alarm, alarm->id, (int)(alarm->timestamp - now));
+		g_debug ("Alarm(%p) #%d: -%2d...", alarm, alarm->id, (int)(alarm->timestamp - now));
 	}
 	
 	// Keep callback
@@ -1191,7 +1143,7 @@ alarm_timer_start (Alarm *alarm)
 {
 	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
 	
-	g_debug ("[%p] #%d timer_start", alarm, alarm->id);
+	g_debug ("Alarm(%p) #%d: timer_start()", alarm, alarm->id);
 	
 	// Remove old timer, if any
 	alarm_timer_remove (alarm);
@@ -1214,7 +1166,7 @@ alarm_timer_remove (Alarm *alarm)
 	AlarmPrivate *priv = ALARM_PRIVATE(alarm);
 	
 	if (alarm_timer_is_started(alarm)) {
-		g_debug ("#%d timer_remove (%p)", alarm->id, alarm);
+		g_debug ("Alarm(%p) #%d: timer_remove", alarm, alarm->id);
 		
 		g_source_remove (priv->timer_id);
 		
@@ -1361,7 +1313,7 @@ alarm_gconf_dir_changed (GConfClient *client,
 		return;
 	}
 	
-	g_debug ("alarm_gconf changed #%d %p: %s", alarm->id, alarm, name);
+	g_debug ("Alarm(%p) #%d: gconf_dir_changed(): %s", alarm, alarm->id, name);
 	
 	switch (param->param_id) {
 	case PROP_TYPE:
@@ -1383,7 +1335,6 @@ alarm_gconf_dir_changed (GConfClient *client,
 	case PROP_ACTIVE:
 		b = gconf_value_get_bool (entry->value);
 		if (b != alarm->active) {
-			g_debug ("[%p] #%d GCONF-ACTIVE changed from %d to %d", alarm, alarm->id, alarm->active, b);
 			g_object_set (alarm, name, b, NULL);
 		}
 		break;
@@ -1400,11 +1351,6 @@ alarm_gconf_dir_changed (GConfClient *client,
 			g_object_set (alarm, name, i, NULL);
 		
 		g_slist_free (list);
-		break;
-	case PROP_SNOOZE:
-		i = gconf_value_get_int (entry->value);
-		if (i != alarm->snooze)
-			g_object_set (alarm, name, i, NULL);
 		break;
 	case PROP_NOTIFY_TYPE:
 		str = gconf_value_get_string (entry->value);
@@ -1428,7 +1374,8 @@ alarm_gconf_dir_changed (GConfClient *client,
 			g_object_set (alarm, name, str, NULL);
 		break;
 	default:
-		g_warning ("Valid property ID %d not handled!", param->param_id);
+		g_warning ("Alarm(%p) #%d: gconf_dir_changed(): Property ID %d not handled!",
+            alarm, alarm->id, param->param_id);
 		break;
 	}
 	
@@ -1442,7 +1389,7 @@ alarm_dispose (GObject *object)
 //	AlarmPrivate *priv = ALARM_PRIVATE (object);
 	GObjectClass *parent = (GObjectClass *)alarm_parent_class;
 	
-	g_debug ("alarm_dispose (%p)", alarm);
+	g_debug ("Alarm(%p) #%d: dispose()", alarm, alarm->id);
 	
 	if (parent->dispose)
 		parent->dispose (object);
@@ -1575,132 +1522,9 @@ alarm_gconf_get_full_key (Alarm *alarm, const gchar *key)
 	return full_key;
 }
 
-typedef struct {
-	GObject *object;
-	const gchar *name;
-	gulong handler_id;
-} AlarmBindArg;
-
-static AlarmBindArg *
-alarm_bind_arg_new (GObject *object, const gchar *name, gulong handler_id)
-{
-	AlarmBindArg *arg;
-	
-	arg = g_new (AlarmBindArg, 1);
-	arg->object = object;
-	arg->name = name;
-	arg->handler_id = handler_id;
-	
-	return arg;
-}
-
-static void
-alarm_bind_arg_free (AlarmBindArg *arg)
-{
-	if (!arg)
-		return;
-	
-	g_free ((gpointer)arg);
-}
-
-static void
-alarm_bind_update (GObject *object,
-				   GParamSpec *pspec,
-				   gpointer data)
-{
-	Alarm *alarm;
-	AlarmBindArg *arg = (AlarmBindArg *)data;
-	gpointer d;
-	
-	/*
-	 * Determine which argument is the alarm
-	 */
-	if (IS_ALARM (object)) {
-		alarm = ALARM (object);
-	} else {
-		alarm = ALARM (arg->object);
-	}
-	
-	g_debug ("alarm_bind_update #%d(%p) [%s] -> %p [%s]", alarm->id, alarm, pspec->name, arg->object, arg->name);
-	
-	g_object_get (object, pspec->name, &d, NULL);
-	
-	// Block other signal handler
-	g_signal_handlers_block_matched(arg->object, 
-									G_SIGNAL_MATCH_FUNC,
-									0, 0, NULL, alarm_bind_update, NULL);
-	
-	g_object_set (arg->object, arg->name, d, NULL);
-	
-	g_signal_handlers_unblock_matched(arg->object, 
-									  G_SIGNAL_MATCH_FUNC,
-									  0, 0, NULL, alarm_bind_update, NULL);
-}
-
-/*
- * We would like to disconnect any signal handlers from the alarm
- * when the destination object is finalized. And vice versa.
+/**
+ * Compare two alarms based on ID
  */
-static void
-alarm_bind_weak_notify (gpointer data, GObject *where_the_object_was)
-{
-	AlarmBindArg *arg = (AlarmBindArg *)data;
-	
-	g_assert (arg);
-	g_assert (arg->object);
-	g_assert (arg->handler_id);
-	
-	if (G_IS_OBJECT (arg->object)) {
-		if (g_signal_handler_is_connected (arg->object, arg->handler_id)) {
-			g_signal_handler_disconnect (arg->object, arg->handler_id);
-		}
-	}
-	
-	alarm_bind_arg_free (arg);
-}
-
-/*
- * Binds both ways.
- */
-void
-alarm_bind (Alarm *alarm, 
-			const gchar *prop, 
-			GObject *dest, 
-			const gchar *dest_prop)
-{
-	AlarmBindArg *arg, *obj_arg;
-	GParamSpec *param;
-	gchar *tmp;
-	gulong handler, obj_handler;
-	
-	param = g_object_class_find_property (G_OBJECT_GET_CLASS(alarm), prop);
-	g_assert (param);
-	param = g_object_class_find_property (G_OBJECT_GET_CLASS(dest), dest_prop);
-	g_assert (param);
-	
-//	g_debug ("Bind from %p [%s] -> %p [%s]", alarm, prop, dest, dest_prop);
-	
-	// Alarm -> Object
-	tmp = g_strdup_printf("notify::%s", prop);
-	arg = alarm_bind_arg_new (dest, dest_prop, 0);
-	handler = g_signal_connect (alarm, tmp, G_CALLBACK (alarm_bind_update), arg);
-	g_free(tmp);
-	
-	// Object -> Alarm
-	tmp = g_strdup_printf ("notify::%s", dest_prop);
-	obj_arg = alarm_bind_arg_new (G_OBJECT (alarm), prop, handler);
-	obj_handler = g_signal_connect (dest, tmp, G_CALLBACK (alarm_bind_update), obj_arg);
-	g_free(tmp);
-	
-	arg->handler_id = obj_handler;
-	
-	// Disconnect Object when Alarm is finalized (freed)
-	g_object_weak_ref (G_OBJECT (alarm), alarm_bind_weak_notify, arg);
-	
-	// Disconnect Alarm when Object is finalized (freed)
-	g_object_weak_ref (dest, alarm_bind_weak_notify, obj_arg);
-}
-
 static gint
 alarm_list_item_compare (gconstpointer a, gconstpointer b)
 {
@@ -1759,12 +1583,12 @@ alarm_get_list (const gchar *gconf_dir)
 		
 		id = alarm_gconf_dir_get_id (tmp);
 		if (id >= 0) {
-			g_debug ("alarm_get_list: found VALID %s #%d", tmp, id);
+			g_debug ("Alarm: get_list() found '%s' #%d", tmp, id);
 			
 			alarm = alarm_new (gconf_dir, id);
-			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
+//			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
 			ret = g_list_insert_sorted (ret, alarm, alarm_list_item_compare);
-			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);
+//			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);
 		}
 		
 		g_free (tmp);
@@ -1786,14 +1610,13 @@ alarm_signal_connect_list (GList *instances,
 {
 	GList *l;
 	Alarm *a;
-	g_debug ("alarm_signal_connect_list");
+	g_debug ("Alarm: signal_connect_list()");
 	for (l = instances; l != NULL; l = l->next) {
 		a = ALARM (l->data);
 		
-		g_debug (" - connecting #%d: %s...", a->id, detailed_signal);
+		g_debug ("\tconnecting Alarm(%p) #%d: %s...", a, a->id, detailed_signal);
 		
 		gboolean ret = g_signal_connect (a, detailed_signal, c_handler, data);
-		g_debug (" = %d", ret);
 	}
 }
 
@@ -1834,7 +1657,7 @@ alarm_player_state_cb (MediaPlayer *player, MediaPlayerState state, gpointer dat
 	}
 	
 	if (state == MEDIA_PLAYER_STOPPED) {
-		g_debug ("[%p] #%d Freeing media player %p", alarm, alarm->id, player);
+		g_debug ("Alarm(%p) #%d: Freeing media player %p", alarm, alarm->id, player);
 		
 		media_player_free (player);
 		
@@ -1847,7 +1670,7 @@ alarm_player_timeout (gpointer data)
 {
 	Alarm *alarm = ALARM (data);
 	
-	g_debug ("[%p] #%d player_timeout", alarm, alarm->id);
+	g_debug ("Alarm(%p) #%d: player_timeout", alarm, alarm->id);
 	
 	alarm_player_stop (alarm);
 	
@@ -1874,7 +1697,7 @@ alarm_player_start (Alarm *alarm)
 	
 	media_player_start (priv->player);
 	
-	g_debug ("[%p] #%d player_start...", alarm, alarm->id);
+	g_debug ("Alarm(%p) #%d: player_start...", alarm, alarm->id);
 	
 	/*
 	 * Add stop timeout
@@ -1934,7 +1757,8 @@ alarm_command_run (Alarm *alarm)
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second)
 {
-	g_debug ("alarm_set_time (%d:%d:%d)", hour, minute, second);
+	g_debug ("Alarm(%p) #%d: set_time (%d:%d:%d)", alarm, alarm->id, 
+        hour, minute, second);
 	
 	g_object_set (alarm, "time", second + minute * 60 + hour * 60 * 60, NULL);
 }
@@ -1974,7 +1798,8 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	AlarmRepeat rep;
 	struct tm *tm;
 	
-	g_debug ("alarm_set_time_full (%d, %d, %d, %d)", hour, minute, second, include_today);
+	g_debug ("Alarm(%p) #%d: set_timestamp (%d, %d, %d, %d)", alarm, alarm->id,
+        hour, minute, second, include_today);
 	
 	time (&now);
 	tm = localtime (&now);
@@ -1987,7 +1812,7 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 		if (!alarm_time_is_future (tm, hour, minute, second)) {
 			
 			//if (wday < 0) {
-				g_debug("alarm_set_time_full: Alarm is for tomorrow.");
+				g_debug("\tAlarm is for tomorrow.");
 				tm->tm_mday++;
 			/*} else {
 				// wday == tm->tm_wday
@@ -2037,14 +1862,14 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 		
 		// Calculate distance from now to wday
 		if (wday == 7) {
-			g_debug("alarm_set_time_full: Alarm is in (forced) 1 week.");
+			g_debug("\tAlarm is in (forced) 1 week.");
 			d = 7;
 		} else {
-			g_debug ("d = tm->tm_wday(%d) - wday(%d)", tm->tm_wday, wday);
+//			g_debug ("\td = tm->tm_wday(%d) - wday(%d)", tm->tm_wday, wday);
 			d = alarm_wday_distance (tm->tm_wday, wday);
 		}
 		
-		g_debug ("alarm_set_time_full: Alarm is in %d days.", d);
+		g_debug ("\tAlarm is in %d days.", d);
 		
 		tm->tm_mday += d;
 	}
@@ -2056,10 +1881,10 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	// DEBUG:
 	char tmp[512];
 	strftime (tmp, sizeof (tmp), "%c", tm);
-	g_debug ("alarm_set_time_full: Alarm will trigger at %s", tmp);
+	g_debug ("\tAlarm will trigger at %s", tmp);
 	
 	new = mktime (tm);
-	g_debug ("alarm_set_time_full: Setting to %d", (gint) new);
+	g_debug ("\tSetting to %d", (gint) new);
 	g_object_set (alarm, "timestamp", new, NULL);
 }
 
@@ -2072,7 +1897,8 @@ alarm_update_timestamp_full (Alarm *alarm, gboolean include_today)
 {
 	if (alarm->type == ALARM_TYPE_CLOCK) {
 		struct tm *tm = alarm_get_time (alarm);
-		g_debug ("update_timestamp_full: %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		g_debug ("Alarm(%p) #%d: update_timestamp_full: %d:%d:%d", alarm, alarm->id,
+            tm->tm_hour, tm->tm_min, tm->tm_sec);
 		alarm_set_timestamp (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, include_today);
 	} else {
 		/* ALARM_TYPE_TIMER */

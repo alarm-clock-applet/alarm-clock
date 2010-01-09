@@ -60,4 +60,20 @@ block_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
 guint
 unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
 
+guint
+block_list (GList *instances, gpointer func);
+
+guint
+unblock_list (GList *instances, gpointer func);
+
+#define BLOCK(instance, func)   \
+    g_signal_handlers_block_matched ((instance),            \
+                                     G_SIGNAL_MATCH_FUNC,   \
+                                     0, 0, NULL, (func), NULL)
+
+#define UNBLOCK(instance, func)   \
+    g_signal_handlers_unblock_matched ((instance),            \
+                                       G_SIGNAL_MATCH_FUNC,   \
+                                       0, 0, NULL, (func), NULL)
+
 #endif /*UTIL_H_*/

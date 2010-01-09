@@ -58,7 +58,7 @@ alarm_applet_alarms_snooze (AlarmApplet *applet)
 		a = ALARM (l->data);
 
         if (alarm_is_playing (a)) {
-    		alarm_snooze (a);
+    		alarm_snooze (a, 60);
             last_snoozed = a;
             n_snoozed++;
         }
@@ -156,7 +156,7 @@ alarm_applet_alarm_snooze (AlarmApplet *applet, Alarm *alarm)
     g_debug ("Snoozing alarm #%d...", alarm->id);
 
     // Snooze the alarm
-    alarm_snooze (alarm);
+    alarm_snooze (alarm, 60);
 
     // Decrement the triggered counter
     //applet->n_triggered--;
@@ -422,69 +422,6 @@ alarm_applet_apps_load (AlarmApplet *applet)
  * Alarm signals {{
  */
 
-/*
- * Find the soonest-to-trigger upcoming alarm
- */
-static void
-alarm_applet_upcoming_alarm_update (AlarmApplet *applet)
-{
-	GList *l;
-	Alarm *a;
-
-	applet->upcoming_alarm = NULL;
-
-	// Loop through alarms looking for all active upcoming alarms and locate
-	// the one which will trigger sooner.
-
-	for (l = applet->alarms; l; l = l->next) {
-		a = ALARM (l->data);
-
-		if (!a->active) continue;
-
-		if (!applet->upcoming_alarm || a->timestamp < applet->upcoming_alarm->timestamp) {
-			// This alarm is most recent
-			applet->upcoming_alarm = a;
-		}
-	}
-}
-
-/*
- * Callback for when an alarm is activated / deactivated.
- * We use this to update our closest upcoming alarm.
- */
-static void
-alarm_active_changed (GObject *object,
-					  GParamSpec *param,
-					  gpointer data)
-{
-	Alarm *alarm		= ALARM (object);
-	AlarmApplet *applet = (AlarmApplet *)data;
-
-	g_debug ("alarm_active_changed: #%d to %d", alarm->id, alarm->active);
-
-	// Check if this was the upcoming alarm
-	if (!alarm->active) {
-		if (applet->upcoming_alarm == alarm) {
-			applet->upcoming_alarm = NULL;
-
-			alarm_applet_upcoming_alarm_update (applet);
-            //alarm_applet_label_update (applet);
-			//alarm_applet_icon_update (applet);
-		}
-
-		return;
-	}
-
-	if (!applet->upcoming_alarm || alarm->timestamp < applet->upcoming_alarm->timestamp) {
-		// We're next!
-		applet->upcoming_alarm = alarm;
-
-		//alarm_applet_label_update (applet);
-
-		return;
-	}
-}
-
 /**
  * Callback for when an alarm is triggered
  * We show the notification bubble here if appropriate.
@@ -568,8 +505,6 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 	applet->alarms = g_list_append (applet->alarms, alarm);
 
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
-	g_signal_connect (alarm, "notify::active", G_CALLBACK (alarm_active_changed), applet);
-	g_signal_connect (alarm, "notify::time", G_CALLBACK (alarm_active_changed), applet);
 
 	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_applet_alarm_triggered), applet);
 	g_signal_connect (alarm, "cleared", G_CALLBACK (alarm_applet_alarm_cleared), applet);
@@ -591,12 +526,7 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 		gtk_list_store_clear (applet->list_alarms_store);*/
 
 	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
-
-	// If this is the upcoming alarm, update it.
-	if (applet->upcoming_alarm == alarm) {
-		alarm_applet_upcoming_alarm_update (applet);
-	}
-
+    
 	// Remove any signal handlers for this alarm instance.
 	g_signal_handlers_disconnect_matched (alarm, 0, 0, 0, NULL, NULL, NULL);
 
@@ -613,6 +543,7 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
  * }} Alarms list
  */
 
+// TODO: Is this function needed?
 void
 alarm_applet_destroy (AlarmApplet *applet)
 {
@@ -642,7 +573,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 		a = ALARM (l->data);
 
 		// Check if a dialog is open for this alarm
-		dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
+		//dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
 
 		if (dialog) {
 			alarm_settings_dialog_close (dialog);
@@ -701,12 +632,12 @@ alarm_applet_init()
 	// Load gconf values
 	alarm_applet_gconf_load (applet);
 
+    // TODO: Add to gconf
+    applet->snooze_mins = 5;
+
 	// Load alarms
 	alarm_applet_alarms_load (applet);
-
-	// Find any upcoming active alarms
-	alarm_applet_upcoming_alarm_update (applet);
-
+    
 	// Load sounds from alarms
 	alarm_applet_sounds_load (applet);
 
@@ -743,7 +674,7 @@ main (int argc, char *argv[])
 	AlarmApplet *applet;
 
     // Terminate on critical errors
-    //g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
+    g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	// Initialize GTK+
 	gtk_init (&argc, &argv);

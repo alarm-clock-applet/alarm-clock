@@ -224,11 +224,15 @@
             <child>
               <object class="GtkHBox" id="hbox3">
                 <property name="visible">True</property>
+                <property name="spacing">3</property>
                 <child>
                   <object class="GtkSpinButton" id="hour-spin">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                    <property name="max_length">2</property>
+                    <property name="width_chars">2</property>
+                    <property name="xalign">1</property>
                     <property name="adjustment">adjustment4</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
@@ -240,21 +244,13 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="label4">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;span size="xx-large"&gt;&lt;b&gt;:&lt;/b&gt;&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkSpinButton" id="minute-spin">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                    <property name="max_length">2</property>
+                    <property name="width_chars">2</property>
+                    <property name="xalign">1</property>
                     <property name="adjustment">adjustment3</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
@@ -262,18 +258,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label7">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">&lt;span size="xx-large"&gt;&lt;b&gt;:&lt;/b&gt;&lt;/span&gt;</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">3</property>
+                    <property name="position">1</property>
                   </packing>
                 </child>
                 <child>
@@ -281,6 +266,9 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                    <property name="max_length">2</property>
+                    <property name="width_chars">2</property>
+                    <property name="xalign">1</property>
                     <property name="adjustment">adjustment2</property>
                     <property name="climb_rate">1</property>
                     <property name="numeric">True</property>
@@ -288,15 +276,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="position">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label3">
-                    <property name="visible">True</property>
-                  </object>
-                  <packing>
-                    <property name="position">5</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </object>
@@ -333,20 +313,20 @@
               <packing>
                 <property name="top_attach">1</property>
                 <property name="bottom_attach">2</property>
-                <property name="x_options"></property>
+                <property name="x_options">GTK_FILL</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">_Label:</property>
+                <property name="label" translatable="yes">_Name:</property>
                 <property name="use_markup">True</property>
                 <property name="use_underline">True</property>
                 <property name="mnemonic_widget">label-entry</property>
               </object>
               <packing>
-                <property name="x_options"></property>
+                <property name="x_options">GTK_FILL</property>
               </packing>
             </child>
           </object>
@@ -473,7 +453,7 @@
             <child type="label">
               <object class="GtkLabel" id="repeat-label">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;T_rigger alarm:&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;_Repeat:&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="use_underline">True</property>
               </object>
@@ -481,56 +461,6 @@
           </object>
           <packing>
             <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkHBox" id="snooze-box">
-            <property name="visible">True</property>
-            <property name="spacing">2</property>
-            <child>
-              <object class="GtkCheckButton" id="snooze-check">
-                <property name="label" translatable="yes">Snoo_ze for:</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
-                <signal name="toggled" handler="alarm_settings_changed_snooze_check"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinButton" id="snooze-spin">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="adjustment">adjustment1</property>
-                <property name="climb_rate">1</property>
-                <property name="numeric">True</property>
-                <signal name="value_changed" handler="alarm_settings_changed_snooze"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label5">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">minutes</property>
-              </object>
-              <packing>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">4</property>
           </packing>
         </child>
         <child>
@@ -543,7 +473,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">5</property>
+            <property name="position">4</property>
           </packing>
         </child>
         <child>
@@ -721,7 +651,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">6</property>
+            <property name="position">5</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -936,7 +866,7 @@
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
                 <property name="tooltip_text" translatable="yes">New alarm</property>
-                <property name="label" translatable="yes">New</property>
+                <property name="label" translatable="yes">New...</property>
                 <property name="stock_id">gtk-new</property>
                 <signal name="clicked" handler="alarm_list_window_new_clicked"/>
               </object>
@@ -950,7 +880,7 @@
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="tooltip_text" translatable="yes">Edit the selected alarm</property>
-                <property name="label" translatable="yes">Edit</property>
+                <property name="label" translatable="yes">Edit...</property>
                 <property name="stock_id">gtk-edit</property>
                 <signal name="clicked" handler="alarm_list_window_edit_clicked"/>
               </object>
@@ -1014,15 +944,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="snooze-button">
+              <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="tooltip_text" translatable="yes">Snooze the selected alarm</property>
-                <property name="is_important">True</property>
+                <property name="related_action">snooze-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
-                <property name="icon_name">weather-clear-night</property>
-                <signal name="clicked" handler="alarm_list_window_snooze_clicked"/>
+                <property name="menu">snooze-menu</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1059,7 +988,6 @@
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
                         <property name="xpad">6</property>
-                        <property name="follow_state">True</property>
                         <property name="stock_size">3</property>
                       </object>
                       <attributes>
@@ -1130,7 +1058,6 @@
     <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="transient_for">alarm-list-window</property>
-    <property name="has_separator">False</property>
     <property name="message_type">question</property>
     <property name="buttons">cancel</property>
     <property name="text" translatable="yes" comments="The first %s will be replaced with the type of the alarm - either &quot;alarm clock&quot; or &quot;timer&quot;.&#10;The second %s will be replaced with the label of the alarm.">&lt;big&gt;Delete alarm clock &lt;b&gt;Wake up!&lt;/b&gt;?&lt;/big&gt;</property>
@@ -1177,5 +1104,203 @@
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="stock">gtk-delete</property>
+  </object>
+  <object class="GtkMenu" id="snooze-menu">
+    <property name="visible">True</property>
+    <child>
+      <object class="GtkRadioMenuItem" id="snooze-menu-1">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">1 minute</property>
+        <property name="use_underline">True</property>
+        <property name="active">True</property>
+        <property name="draw_as_radio">True</property>
+        <signal name="activate" handler="alarm_list_window_snooze_menu_activated"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkRadioMenuItem" id="snooze-menu-3">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">3 minutes</property>
+        <property name="use_underline">True</property>
+        <property name="draw_as_radio">True</property>
+        <property name="group">snooze-menu-1</property>
+        <signal name="activate" handler="alarm_list_window_snooze_menu_activated"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkRadioMenuItem" id="snooze-menu-5">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">5 minutes</property>
+        <property name="use_underline">True</property>
+        <property name="draw_as_radio">True</property>
+        <property name="group">snooze-menu-1</property>
+        <signal name="activate" handler="alarm_list_window_snooze_menu_activated"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkRadioMenuItem" id="snooze-menu-10">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">10 minutes</property>
+        <property name="use_underline">True</property>
+        <property name="draw_as_radio">True</property>
+        <property name="group">snooze-menu-1</property>
+        <signal name="activate" handler="alarm_list_window_snooze_menu_activated"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="snooze-menu-custom">
+        <property name="visible">True</property>
+        <property name="label" translatable="yes">Custom...</property>
+        <property name="use_underline">True</property>
+        <signal name="activate" handler="alarm_list_window_snooze_menu_custom_activated"/>
+      </object>
+    </child>
+  </object>
+  <object class="GtkAction" id="snooze-action">
+    <property name="label">_Snooze</property>
+    <property name="short_label">_Snooze</property>
+    <property name="tooltip">Snooze the selected alarm</property>
+    <property name="icon_name">weather-few-clouds-night</property>
+    <property name="is_important">True</property>
+    <property name="sensitive">False</property>
+    <signal name="activate" handler="alarm_snooze_action"/>
+  </object>
+  <object class="GtkDialog" id="snooze-dialog">
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Snooze alarm</property>
+    <property name="resizable">False</property>
+    <property name="type_hint">normal</property>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox8">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkHBox" id="hbox5">
+            <property name="visible">True</property>
+            <property name="spacing">12</property>
+            <child>
+              <object class="GtkImage" id="image8">
+                <property name="visible">True</property>
+                <property name="pixel_size">48</property>
+                <property name="icon_name">weather-few-clouds-night</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkHBox" id="hbox7">
+                <property name="visible">True</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel" id="label3">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Snooze for:</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="snooze-spin">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="max_length">2</property>
+                    <property name="invisible_char">&#x2022;</property>
+                    <property name="width_chars">2</property>
+                    <property name="xalign">1</property>
+                    <property name="adjustment">adjustment5</property>
+                    <signal name="activate" handler="gtk_window_activate_default" object="snooze-dialog"/>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label4">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">minutes</property>
+                  </object>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area8">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button2">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="snooze-dialog-button">
+                <property name="label" translatable="yes">_Snooze</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">image9</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button2</action-widget>
+      <action-widget response="-5">snooze-dialog-button</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="icon_name">weather-few-clouds-night</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustment5">
+    <property name="value">5</property>
+    <property name="lower">1</property>
+    <property name="upper">99</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
 </interface>

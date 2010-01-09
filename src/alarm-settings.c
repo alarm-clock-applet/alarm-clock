@@ -30,16 +30,6 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#define BLOCK(instance, func)   \
-    g_signal_handlers_block_matched ((instance),            \
-                                     G_SIGNAL_MATCH_FUNC,   \
-                                     0, 0, NULL, (func), NULL)
-
-#define UNBLOCK(instance, func)   \
-    g_signal_handlers_unblock_matched ((instance),            \
-                                       G_SIGNAL_MATCH_FUNC,   \
-                                       0, 0, NULL, (func), NULL)
-
 
 
 /*
@@ -57,12 +47,6 @@ alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data);
 
 void
 alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data);
-
-void
-alarm_settings_changed_snooze (GtkSpinButton *spinbutton, gpointer data);
-
-void
-alarm_settings_changed_snooze_check (GtkToggleButton *togglebutton, gpointer data);
 
 void
 alarm_settings_changed_notify_type (GtkToggleButton *togglebutton, gpointer data);
@@ -95,7 +79,7 @@ alarm_settings_changed_app (GtkComboBox *combo, gpointer data);
 
 
 
-#define REPEAT_LABEL	_("<b>T_rigger alarm:</b> %s")
+#define REPEAT_LABEL	_("<b>_Repeat:</b> %s")
 
 
 /*
@@ -211,7 +195,7 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 	AlarmRepeat r;
 	gint i;
 	gboolean check;
-	gchar *label;
+	gchar *label, *rep;
 
     g_debug ("AlarmSettingsDialog: update_repeat()");
 	
@@ -233,24 +217,11 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
     /*
      * Update fancy expander label
      */
-    label = alarm_repeat_to_pretty (dialog->alarm->repeat);
+    rep = alarm_repeat_to_pretty (dialog->alarm->repeat);
+    label = g_strdup_printf (REPEAT_LABEL, rep);
     g_object_set (dialog->repeat_label, "label", label, NULL);
     g_free (label);
-}
-
-static void
-alarm_settings_update_snooze (AlarmSettingsDialog *dialog)
-{
-    g_debug ("AlarmSettingsDialog: update_snooze()");
-    
-    BLOCK (dialog->snooze_check, alarm_settings_changed_snooze_check);
-    BLOCK (dialog->snooze_spin, alarm_settings_changed_snooze);
-    
-	g_object_set (dialog->snooze_spin, "value", (gdouble)dialog->alarm->snooze, NULL);	
-	g_object_set (dialog->snooze_check, "active", dialog->alarm->snooze > 0, NULL);
-
-    UNBLOCK (dialog->snooze_check, alarm_settings_changed_snooze_check);
-    UNBLOCK (dialog->snooze_spin, alarm_settings_changed_snooze);
+    g_free (rep);
 }
 
 static void
@@ -404,7 +375,6 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
     alarm_settings_update_label (dialog);
 	alarm_settings_update_time (dialog);
 	alarm_settings_update_repeat (dialog);
-	alarm_settings_update_snooze (dialog);
 	alarm_settings_update_notify_type (dialog);
 	alarm_settings_update_sound (dialog);
     alarm_settings_update_sound_repeat (dialog);
@@ -450,11 +420,7 @@ alarm_changed (GObject *object,
     if (g_strcmp0 (name, "repeat") == 0) {
         alarm_settings_update_repeat (dialog);
     }
-
-    if (g_strcmp0 (name, "snooze") == 0) {
-        alarm_settings_update_snooze (dialog);
-    }
-
+    
     if (g_strcmp0 (name, "notify-type") == 0) {
         alarm_settings_update_notify_type (dialog);
     }
@@ -636,35 +602,6 @@ alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data)
 		new_rep = dialog->alarm->repeat & ~rep;
 	
 	g_object_set (dialog->alarm, "repeat", new_rep, NULL);
-}
-
-void
-alarm_settings_changed_snooze (GtkSpinButton *spinbutton, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-	AlarmSettingsDialog *dialog = applet->settings_dialog;
-
-    g_assert (dialog->alarm != NULL);
-
-    gint val = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->snooze_spin));
-	
-	g_object_set (dialog->alarm, "snooze", val, NULL);
-    g_object_set (dialog->snooze_check, "active", dialog->alarm->snooze > 0, NULL);
-}
-
-void
-alarm_settings_changed_snooze_check (GtkToggleButton *togglebutton, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	AlarmSettingsDialog *dialog = applet->settings_dialog;
-
-    g_assert (dialog->alarm != NULL);
-	g_debug("alarm_settings_changed_snooze_check");
-	if (gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze == 0) {
-		g_object_set (dialog->alarm, "snooze", ALARM_DEF_SNOOZE, NULL);
-	} else if (!gtk_toggle_button_get_active (togglebutton) && dialog->alarm->snooze > 0) {
-		g_object_set (dialog->alarm, "snooze", 0, NULL);
-	}
 }
 
 void
@@ -936,7 +873,7 @@ AlarmSettingsDialog *
 alarm_settings_dialog_new (AlarmApplet *applet)
 {
 	AlarmSettingsDialog *dialog;
-	GtkWidget *clock_content, *timer_content, *snooze_label;
+	GtkWidget *clock_content, *timer_content;
 	AlarmRepeat r;
 	gint i;
 
@@ -970,14 +907,7 @@ alarm_settings_dialog_new (AlarmApplet *applet)
 	for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
 		dialog->repeat_check[i] = GTK_WIDGET (gtk_builder_get_object (builder, alarm_repeat_to_string (r)));
 	}
-	
-	// SNOOZE SETTINGS
-	dialog->snooze_check = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-check"));
-	dialog->snooze_spin  = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-spin"));
-	
-	snooze_label = gtk_bin_get_child (GTK_BIN (dialog->snooze_check));
-	g_object_set (G_OBJECT (snooze_label), "use-markup", TRUE, NULL);
-	
+		
 	// NOTIFY SETTINGS
 	dialog->notify_sound_radio       = GTK_WIDGET (gtk_builder_get_object (builder, "sound-radio"));
 	dialog->notify_sound_box         = GTK_WIDGET (gtk_builder_get_object (builder, "sound-box"));

@@ -59,9 +59,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_NAME		 "Alarm Clock"
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
-#define SNOOZE_ICON		 "alarm-snooze"
 #define ALARM_GCONF_DIR	 "/apps/alarm-clock"
-#define ALARM_DEF_LABEL	 _("No alarms")
 #define ALARM_DEF_SNOOZE 9
 
 #ifndef VERSION
@@ -84,7 +82,6 @@ struct _AlarmApplet {
     
 	/* Alarms */
 	GList	*alarms;
-	Alarm	*upcoming_alarm;	// Next upcoming alarm
     guint   n_triggered;        // Number of triggered alarms
 
 	/* Sounds & apps list */
@@ -93,30 +90,14 @@ struct _AlarmApplet {
 
 	/* List-alarms UI */
 	AlarmListWindow *list_window;
-/*	GtkDialog *list_alarms_dialog;
-	GtkListStore *list_alarms_store;
-	GtkTreeView *list_alarms_view;
-	GList *list_alarms_args;*/
 
     /* Alarm settings dialog */
     AlarmSettingsDialog *settings_dialog;
-
-	/* Open edit alarm dialogs
-	 * Hashed by ID */
-	GHashTable *edit_alarm_dialogs;
-
+    
 	/* Preferences */
 	GtkDialog *preferences_dialog;
-
-	/* Label */
-	GtkWidget *pref_label_show;
-	GtkWidget *pref_label_type_box;
-	GtkWidget *pref_label_type_time;
-	GtkWidget *pref_label_type_remain;
-
-	/* Actual preferences data */
-	gboolean show_label;
-	LabelType label_type;
+    
+    guint snooze_mins;
 
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];

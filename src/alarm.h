@@ -103,7 +103,6 @@ struct _Alarm {
 	gboolean active;
 	gchar *message;
 	AlarmRepeat repeat;
-	gint snooze;
 
 	AlarmNotifyType notify_type;
 	gchar *sound_file;
@@ -144,7 +143,6 @@ typedef enum {
 #define ALARM_DEFAULT_ACTIVE		FALSE
 #define ALARM_DEFAULT_MESSAGE		"Alarm!"
 #define ALARM_DEFAULT_REPEAT		ALARM_REPEAT_NONE
-#define ALARM_DEFAULT_SNOOZE		0
 #define ALARM_DEFAULT_NOTIFY_TYPE	ALARM_NOTIFY_SOUND
 #define ALARM_DEFAULT_SOUND_FILE	""				// Should default to first in stock sound list
 #define ALARM_DEFAULT_SOUND_LOOP	TRUE
@@ -212,12 +210,6 @@ alarm_signal_connect_list (GList *instances,
 						   gpointer data);
 
 void
-alarm_bind (Alarm *alarm, 
-			const gchar *prop, 
-			GObject *dest, 
-			const gchar *dest_prop);
-
-void
 alarm_trigger (Alarm *alarm);
 
 void
@@ -236,7 +228,7 @@ void
 alarm_delete (Alarm *alarm);
 
 void
-alarm_snooze (Alarm *alarm);
+alarm_snooze (Alarm *alarm, guint seconds);
 
 gboolean
 alarm_is_playing (Alarm *alarm);

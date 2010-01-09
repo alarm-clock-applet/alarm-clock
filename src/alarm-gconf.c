@@ -153,11 +153,10 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 			g_debug ("\tDELETE alarm #%d %p", id, a);
 			
 			/* If there's a settings dialog open for this
-			 * alarm, destroy it.
+			 * alarm, close it.
 			 */
-			AlarmSettingsDialog *sdialog = g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
-			if (sdialog) {
-				alarm_settings_dialog_close (sdialog);
+            if (applet->settings_dialog->alarm == a) {
+				alarm_settings_dialog_close (applet->settings_dialog);
 			}
 			
 			/*

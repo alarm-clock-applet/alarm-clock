@@ -42,7 +42,12 @@ static gint
 alarm_list_window_sort_iter_compare (GtkTreeModel *model, 
                                      GtkTreeIter *a, GtkTreeIter *b,
                                      gpointer data);
-
+/*
+static void
+alarm_list_window_init_snooze_menu (AlarmListWindow *list_window);
+*/
+void
+alarm_list_window_snooze_menu_activate (GtkMenuItem *item, gpointer data);
 
 /**
  * Create a new empty Alarm List Window
@@ -59,7 +64,8 @@ alarm_list_window_new (AlarmApplet *applet)
 	list_window = g_new0 (AlarmListWindow, 1);
 
 	list_window->applet = applet;
-	
+
+    // Widgets
 	list_window->window = GTK_WINDOW (gtk_builder_get_object (builder, "alarm-list-window"));
 	list_window->model = GTK_LIST_STORE (gtk_builder_get_object (builder, "alarms-liststore"));
 	list_window->tree_view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "alarm-list-view"));
@@ -70,7 +76,11 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->enable_button = gtk_builder_get_object (builder, "enable-button");
     list_window->stop_button = gtk_builder_get_object (builder, "stop-button");
     list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
+    list_window->snooze_menu = gtk_builder_get_object (builder, "snooze-menu");
 
+    // Actions
+    list_window->snooze_action = gtk_builder_get_object (builder, "snooze-action");
+    
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
     g_signal_connect (selection, "changed", 
@@ -81,7 +91,7 @@ alarm_list_window_new (AlarmApplet *applet)
 
     // Set up sorting
     sortable = GTK_TREE_SORTABLE (list_window->model);
-
+    
     gtk_tree_sortable_set_sort_func (sortable, SORTID_TIME_REMAINING,
         alarm_list_window_sort_iter_compare, GINT_TO_POINTER (SORTID_TIME_REMAINING),
         NULL);
@@ -91,9 +101,61 @@ alarm_list_window_new (AlarmApplet *applet)
 
     // Populate with alarms
     alarm_list_window_alarms_add (list_window, applet->alarms);
+    
+    // Update snooze menu
+    alarm_list_window_snooze_menu_update (list_window);
 
 	return list_window;
 }
+
+/*
+static void
+alarm_list_window_init_snooze_menu (AlarmListWindow *list_window)
+{
+    GtkMenu *snooze_menu = GTK_MENU (list_window->snooze_menu);
+    GSList *group = NULL;
+    GtkWidget *item;
+    
+    guint items[] = {1, 3, 5, 10, NULL};
+    guint mins;
+    gchar *label;
+    gint i;
+
+    for (i = 0; items[i]; i++) {
+        g_debug ("i is %d", i);
+        mins = items[i];
+        if (mins == 1) {
+            label = g_strdup (_("1 minute"));
+        } else {
+            label = g_strdup_printf (_("%d minutes"), mins);
+        }
+
+        item = gtk_radio_menu_item_new_with_label (group, label);
+        group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
+        
+        g_object_set_data (item, "snooze", GUINT_TO_POINTER (mins));
+
+        if (mins == list_window->snooze_mins) {
+            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
+        }
+
+        g_signal_connect (item, "activate",
+            alarm_list_window_snooze_menu_activate, list_window->applet);
+
+
+        g_debug ("Adding snooze %d...", mins);
+        
+        gtk_menu_append (snooze_menu, item);
+
+        g_free (label);
+    }
+
+    item = gtk_menu_item_new_with_label (_("Custom..."));
+    gtk_menu_append (snooze_menu, item);
+
+    gtk_widget_show_all (snooze_menu);
+}
+*/
 
 void
 alarm_list_window_show (AlarmListWindow *list_window)
@@ -471,6 +533,8 @@ alarm_list_window_update_toolbar (AlarmListWindow *list_window)
 
     gboolean sensitive = (a != NULL);
 
+    g_debug ("Update toolbar");
+
     // Update toolbar
     g_object_set (list_window->edit_button, "sensitive", sensitive, NULL);
     g_object_set (list_window->delete_button, "sensitive", sensitive, NULL);
@@ -481,7 +545,7 @@ alarm_list_window_update_toolbar (AlarmListWindow *list_window)
     g_object_set (list_window->stop_button, 
         "sensitive", sensitive && (a->active || a->triggered), NULL);
     
-    g_object_set (list_window->snooze_button, 
+    g_object_set (list_window->snooze_action, 
         "sensitive", sensitive && a->triggered, NULL);
 }
 
@@ -783,7 +847,7 @@ alarm_list_window_stop_clicked (GtkButton *button, gpointer data)
 /**
  * Snooze button clicked
  */
-void
+/*void
 alarm_list_window_snooze_clicked (GtkButton *button, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
@@ -791,10 +855,129 @@ alarm_list_window_snooze_clicked (GtkButton *button, gpointer data)
     Alarm *a;
     
     if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        alarm_snooze (a);
+        alarm_snooze (a, 60);
+    }
+}*/
+
+void
+alarm_snooze_action (GtkAction *action, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    Alarm *a;
+    
+    if (a = alarm_list_window_get_selected_alarm (list_window)) {
+        g_debug ("AlarmListWindow: Snooze Action: %s for %d mins", a->message, applet->snooze_mins);
+        alarm_snooze (a, applet->snooze_mins * 60);
     }
 }
 
+void
+alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
+                                         gpointer          data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    gchar **parts;
+    guint i;
+    guint mins;
 
+//    g_debug ("AlarmListWindow: snooze-menu activated %s to %d", 
+//        gtk_menu_item_get_label (menuitem), gtk_check_menu_item_get_active (menuitem));
+
+    if (gtk_check_menu_item_get_active (menuitem)) {
+        // Determine #mins from the name of the menu item (hackish)
+        // Assumes name follows the format {foo}-{mins}
+        parts = g_strsplit (gtk_widget_get_name (GTK_WIDGET (menuitem)), "-", 0);
+        for (i = 0; parts[i] != NULL; i++)
+            // Loop to the last element
+            ;
+        
+        mins = g_strtod (parts[i-1], NULL);
+        
+        g_debug ("AlarmListWindow: snooze-menu activated: Snooze for %d mins!", mins);
+
+        applet->snooze_mins = mins;
+
+        gtk_action_activate (list_window->snooze_action);
+    }
+}
+
+void
+alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem,
+                                                gpointer          data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    GtkWidget *dialog, *spin;
+    gint response;
+    Alarm *a;
+    guint mins;
+
+    g_debug ("AlarmListWindow: snooze-menu custom activated");
+    
+    dialog = gtk_builder_get_object (applet->ui, "snooze-dialog");
+    spin = gtk_builder_get_object (applet->ui, "snooze-spin");
+
+    // Run dialog, hide for later use
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_hide (GTK_WIDGET (dialog));
+
+	if (response == GTK_RESPONSE_OK) {
+        mins = (gint) gtk_spin_button_get_value (GTK_SPIN_BUTTON (spin));
+        if (a = alarm_list_window_get_selected_alarm (list_window)) {
+            g_debug ("AlarmListWindow: Snooze Custom: %s for %d mins", a->message, mins);
+            alarm_snooze (a, mins * 60);
+        }
+    }
+}
+
+/**
+ * Update the snooze menu according to the applet's snooze_mins property
+ */
+void
+alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
+{
+    AlarmApplet *applet = (AlarmApplet *)list_window->applet;
+    GtkMenuShell *menu = GTK_MENU_SHELL(list_window->snooze_menu);
+    gchar *target_name = g_strdup_printf ("snooze-menu-%d", applet->snooze_mins);
+
+    const gchar *name;
+    GtkMenuItem *item;
+    GList *l = NULL;
+
+    g_debug ("AlarmListWindow: menu_update to %d", applet->snooze_mins);
+
+    block_list (menu->children, alarm_list_window_snooze_menu_activated);
+    
+    for (l = menu->children; l != NULL; l = l->next) {
+        item = GTK_MENU_ITEM (l->data);
+        name = gtk_widget_get_name (GTK_WIDGET (item));
+        if (g_strcmp0 (name, target_name) == 0) {
+            g_object_set (item, "active", TRUE, NULL);
+            
+            g_debug ("AlarmListWindow: menu_update to %s", name);
+        }
+    }
+
+    unblock_list (menu->children, alarm_list_window_snooze_menu_activated);
+    
+    g_free (target_name);
+}
+
+
+void
+alarm_list_window_snooze_menu_activate (GtkMenuItem *item, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    gboolean active;
+
+    guint mins = GPOINTER_TO_INT (g_object_get_data (item, "snooze"));
+    g_object_get (item, "active", &active, NULL);
+
+    g_debug ("%p Snooze for %d mins.. (active is %d).", item, mins, active);
+
+}
 
 
