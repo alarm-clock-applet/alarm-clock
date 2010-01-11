@@ -720,8 +720,9 @@
       <object class="GtkImageMenuItem" id="status_menu_snooze">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="related_action">snooze-all-action</property>
         <property name="use_action_appearance">True</property>
+        <property name="related_action">snooze-all-action</property>
+        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
@@ -729,8 +730,9 @@
       <object class="GtkImageMenuItem" id="status_menu_stop">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="related_action">stop-all-action</property>
         <property name="use_action_appearance">True</property>
+        <property name="related_action">stop-all-action</property>
+        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
@@ -853,8 +855,8 @@
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="related_action">new-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">new-action</property>
                 <property name="label" translatable="yes">New...</property>
               </object>
               <packing>
@@ -865,8 +867,8 @@
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="related_action">edit-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">edit-action</property>
                 <property name="label" translatable="yes">Edit...</property>
               </object>
               <packing>
@@ -877,8 +879,8 @@
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="related_action">delete-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">delete-action</property>
                 <property name="label" translatable="yes">Delete</property>
               </object>
               <packing>
@@ -898,8 +900,8 @@
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="related_action">enabled-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">enabled-action</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
               </object>
@@ -911,8 +913,8 @@
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="related_action">stop-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">stop-action</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
               </object>
@@ -924,8 +926,8 @@
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="related_action">snooze-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">snooze-action</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
                 <property name="menu">snooze-menu</property>
@@ -1026,61 +1028,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkMessageDialog" id="delete-dialog">
-    <property name="border_width">5</property>
-    <property name="title" translatable="yes">Delete Alarm?</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="icon_name">alarm-clock</property>
-    <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
-    <property name="transient_for">alarm-list-window</property>
-    <property name="message_type">question</property>
-    <property name="buttons">cancel</property>
-    <property name="text" translatable="yes" comments="The first %s will be replaced with the type of the alarm - either &quot;alarm clock&quot; or &quot;timer&quot;.&#10;The second %s will be replaced with the label of the alarm.">&lt;big&gt;Delete alarm clock &lt;b&gt;Wake up!&lt;/b&gt;?&lt;/big&gt;</property>
-    <property name="use_markup">True</property>
-    <property name="secondary_text" translatable="yes" comments="The first %s will be replaced with the type of the alarm - either &quot;alarm clock&quot; or &quot;timer&quot;.&#10;The second %s will be replaced with the label of the alarm.&#10;The third %s will be replaced with the time of the alarm.">Are you sure you want to delete the alarm clock labeled &lt;b&gt;Wake up&lt;/b&gt; at &lt;b&gt;08:00&lt;/b&gt;? This action cannot be undone.</property>
-    <property name="secondary_use_markup">True</property>
-    <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox6">
-        <property name="visible">True</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area6">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="delete-button2">
-                <property name="label" translatable="yes">_Delete the alarm!</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="image">image5</property>
-                <property name="use_underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-8">delete-button2</action-widget>
-    </action-widgets>
-  </object>
-  <object class="GtkImage" id="image5">
-    <property name="visible">True</property>
-    <property name="stock">gtk-delete</property>
   </object>
   <object class="GtkMenu" id="snooze-menu">
     <property name="visible">True</property>
@@ -1296,7 +1243,7 @@
   </object>
   <object class="GtkAction" id="edit-action">
     <property name="label">Edit alarm</property>
-    <property name="short_label">Edit</property>
+    <property name="short_label">Edit...</property>
     <property name="tooltip">Edit the selected alarm</property>
     <property name="stock_id">gtk-edit</property>
     <signal name="activate" handler="alarm_action_edit"/>
