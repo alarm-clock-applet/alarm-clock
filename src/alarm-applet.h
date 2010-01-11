@@ -60,11 +60,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
 #define ALARM_GCONF_DIR	 "/apps/alarm-clock"
-#define ALARM_DEF_SNOOZE 9
-
-#ifndef VERSION
-#define VERSION "0.1"
-#endif
+#define ALARM_STD_SNOOZE 9
 
 typedef enum {
 	LABEL_TYPE_INVALID = 0,

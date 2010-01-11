@@ -68,7 +68,7 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->stop_button = gtk_builder_get_object (builder, "stop-button");
     list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
     list_window->snooze_menu = gtk_builder_get_object (builder, "snooze-menu");
-
+    
     // Actions
     list_window->snooze_action = gtk_builder_get_object (builder, "snooze-action");
     
@@ -472,6 +472,17 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
     // Update selected alarm (might be NULL)
     list_window->selected_alarm = alarm_list_window_get_selected_alarm (list_window);
 
+    if (list_window->selected_alarm) {
+        // Update snooze button menu
+        if (list_window->selected_alarm->type == ALARM_TYPE_CLOCK) {
+            // We always snooze for 9 mins on alarm clocks
+            gtk_menu_tool_button_set_menu (list_window->snooze_button, NULL);
+        } else {
+            // Allow custom snooze mins
+            gtk_menu_tool_button_set_menu (list_window->snooze_button, list_window->snooze_menu);
+        }
+    }
+    
     
     g_debug ("AlarmListWindow: selection-changed from %s (%p) to %s (%p)",
         (a) ? a->message : "<none>", a,
