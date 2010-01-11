@@ -718,24 +718,20 @@
     <property name="visible">True</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_snooze">
-        <property name="label" translatable="yes">Snoo_ze alarms</property>
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="use_underline">True</property>
-        <property name="image">image1</property>
-        <property name="use_stock">False</property>
-        <signal name="activate" handler="status_menu_snooze_cb"/>
+        <property name="related_action">snooze-all-action</property>
+        <property name="use_action_appearance">True</property>
+        <property name="use_stock">True</property>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_stop">
-        <property name="label" translatable="yes">_Stop alarms</property>
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="use_underline">True</property>
-        <property name="image">image2</property>
-        <property name="use_stock">False</property>
-        <signal name="activate" handler="status_menu_stop_cb"/>
+        <property name="related_action">stop-all-action</property>
+        <property name="use_action_appearance">True</property>
+        <property name="use_stock">True</property>
       </object>
     </child>
     <child>
@@ -773,14 +769,6 @@
         <signal name="activate" handler="status_menu_about_cb"/>
       </object>
     </child>
-  </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="icon_name">weather-few-clouds-night</property>
-  </object>
-  <object class="GtkImage" id="image2">
-    <property name="visible">True</property>
-    <property name="stock">gtk-stop</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -865,10 +853,9 @@
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="tooltip_text" translatable="yes">New alarm</property>
+                <property name="related_action">new-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">New...</property>
-                <property name="stock_id">gtk-new</property>
-                <signal name="clicked" handler="alarm_list_window_new_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -878,11 +865,9 @@
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="tooltip_text" translatable="yes">Edit the selected alarm</property>
+                <property name="related_action">edit-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Edit...</property>
-                <property name="stock_id">gtk-edit</property>
-                <signal name="clicked" handler="alarm_list_window_edit_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -892,11 +877,9 @@
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="tooltip_text" translatable="yes">Delete the selected alarm</property>
+                <property name="related_action">delete-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Delete</property>
-                <property name="stock_id">gtk-delete</property>
-                <signal name="clicked" handler="alarm_list_window_delete_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -913,14 +896,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToolButton" id="enable-button">
+              <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="tooltip_text" translatable="yes">Enable the selected alarm</property>
+                <property name="related_action">enabled-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-apply</property>
-                <signal name="clicked" handler="alarm_list_window_enable_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -930,13 +911,10 @@
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
-                <property name="tooltip_text" translatable="yes">Stop the selected alarm</property>
-                <property name="is_important">True</property>
+                <property name="related_action">stop-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-stop</property>
-                <signal name="clicked" handler="alarm_list_window_stop_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -946,7 +924,6 @@
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="tooltip_text" translatable="yes">Snooze the selected alarm</property>
                 <property name="related_action">snooze-action</property>
                 <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Snooze</property>
@@ -980,7 +957,7 @@
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
                 <property name="rules_hint">True</property>
-                <signal name="row_activated" handler="alarm_list_window_row_activated"/>
+                <signal name="row_activated" handler="gtk_action_activate" object="edit-action"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="type-col">
                     <property name="sizing">autosize</property>
@@ -1074,7 +1051,7 @@
             <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="delete-action">
+              <object class="GtkButton" id="delete-button2">
                 <property name="label" translatable="yes">_Delete the alarm!</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -1098,7 +1075,7 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-8">delete-action</action-widget>
+      <action-widget response="-8">delete-button2</action-widget>
     </action-widgets>
   </object>
   <object class="GtkImage" id="image5">
@@ -1157,13 +1134,12 @@
     </child>
   </object>
   <object class="GtkAction" id="snooze-action">
-    <property name="label">_Snooze</property>
-    <property name="short_label">_Snooze</property>
+    <property name="label">Snooze alarm</property>
+    <property name="short_label">Snooze</property>
     <property name="tooltip">Snooze the selected alarm</property>
     <property name="icon_name">weather-few-clouds-night</property>
     <property name="is_important">True</property>
-    <property name="sensitive">False</property>
-    <signal name="activate" handler="alarm_snooze_action"/>
+    <signal name="activate" handler="alarm_action_snooze"/>
   </object>
   <object class="GtkDialog" id="snooze-dialog">
     <property name="border_width">5</property>
@@ -1302,5 +1278,55 @@
     <property name="upper">99</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAction" id="stop-action">
+    <property name="label">Stop alarm</property>
+    <property name="short_label">Stop</property>
+    <property name="tooltip">Stop the selected alarm</property>
+    <property name="stock_id">gtk-stop</property>
+    <property name="is_important">True</property>
+    <signal name="activate" handler="alarm_action_stop"/>
+  </object>
+  <object class="GtkAction" id="delete-action">
+    <property name="label">Delete alarm</property>
+    <property name="short_label">Delete</property>
+    <property name="tooltip">Delete the selected alarm</property>
+    <property name="stock_id">gtk-delete</property>
+    <signal name="activate" handler="alarm_action_delete"/>
+  </object>
+  <object class="GtkAction" id="edit-action">
+    <property name="label">Edit alarm</property>
+    <property name="short_label">Edit</property>
+    <property name="tooltip">Edit the selected alarm</property>
+    <property name="stock_id">gtk-edit</property>
+    <signal name="activate" handler="alarm_action_edit"/>
+  </object>
+  <object class="GtkAction" id="new-action">
+    <property name="label">New alarm</property>
+    <property name="short_label">New</property>
+    <property name="tooltip">New alarm</property>
+    <property name="stock_id">gtk-new</property>
+    <signal name="activate" handler="alarm_action_new"/>
+  </object>
+  <object class="GtkToggleAction" id="enabled-action">
+    <property name="label">Enable/disable alarm</property>
+    <property name="short_label">Enable/disable</property>
+    <property name="tooltip">Enable/disable the selected alarm</property>
+    <property name="stock_id">gtk-yes</property>
+    <signal name="activate" handler="alarm_action_enabled"/>
+  </object>
+  <object class="GtkAction" id="snooze-all-action">
+    <property name="label">Snooze all alarms</property>
+    <property name="short_label">Snooze alarms</property>
+    <property name="tooltip">Snooze all beeping alarms</property>
+    <property name="icon_name">weather-few-clouds-night</property>
+    <signal name="activate" handler="alarm_action_snooze_all"/>
+  </object>
+  <object class="GtkAction" id="stop-all-action">
+    <property name="label">Stop all alarms</property>
+    <property name="short_label">Stop alarms</property>
+    <property name="tooltip">Stop all beeping alarms</property>
+    <property name="stock_id">gtk-stop</property>
+    <signal name="activate" handler="alarm_action_stop_all"/>
   </object>
 </interface>

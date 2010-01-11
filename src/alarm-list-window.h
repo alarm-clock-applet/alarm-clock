@@ -104,4 +104,7 @@ alarm_list_window_alarm_remove (AlarmListWindow *list_window, Alarm *alarm);
 void
 alarm_list_window_alarms_add (AlarmListWindow *list_window, GList *alarms);
 
+Alarm *
+alarm_list_window_get_selected_alarm (AlarmListWindow *list_window);
+
 #endif /*ALARM_LIST_WINDOW_H_*/

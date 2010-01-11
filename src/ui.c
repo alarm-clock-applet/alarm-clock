@@ -26,6 +26,7 @@
 #include <libnotify/notify.h>
 
 #include "alarm-applet.h"
+#include "alarm-actions.h"
 #include "ui.h"
 
 enum
@@ -266,6 +267,7 @@ alarm_applet_ui_init (AlarmApplet *applet)
 
     /* Load UI with GtkBuilder */
     applet->ui = alarm_applet_ui_load ("alarm-clock.ui", applet);
+
     
     /* Initialize status icon */
     alarm_applet_status_init(applet);
@@ -285,6 +287,8 @@ alarm_applet_ui_init (AlarmApplet *applet)
     /* Connect signals */
     //gtk_builder_connect_signals (applet->ui, applet);
     
+    /* Initialize actions */
+    alarm_applet_actions_init (applet);
 
 	
 	
@@ -376,14 +380,14 @@ G_MODULE_EXPORT void
 alarm_applet_status_activate (GtkStatusIcon *status_icon,
 							  gpointer       user_data)
 {
-	AlarmApplet *applet = (AlarmApplet *)user_data;
+    AlarmApplet *applet = (AlarmApplet *)user_data;
 
-	g_debug("alarm_applet_status_activate()");
-
-	// TODO: Snooze alarms if any
-	if (alarm_applet_alarms_snooze (applet) == 0) {
-        // No alarms snoozed, show window
-    	alarm_list_window_toggle (applet->list_window);
+    // Snooze triggered alarms if any
+    if (applet->n_triggered > 0) {
+        gtk_action_activate (applet->action_snooze_all);
+    } else {
+        // No alarms triggered, show window
+        alarm_list_window_toggle (applet->list_window);
     }
 }
 
@@ -407,7 +411,7 @@ alarm_applet_status_popup (GtkStatusIcon  *status_icon,
 /*
  * Menu callbacks:
  */
-
+/*
 G_MODULE_EXPORT void
 status_menu_snooze_cb (GtkMenuItem *menuitem,
                        gpointer     user_data)
@@ -425,7 +429,7 @@ status_menu_stop_cb (GtkMenuItem *menuitem,
     
 	alarm_applet_alarms_stop (applet);
 }
-
+*/
 
 G_MODULE_EXPORT void
 status_menu_edit_cb (GtkMenuItem *menuitem,
@@ -492,3 +496,85 @@ media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent)
 }
 
 
+/**
+ * Alarm changed signal handler
+ *
+ * Here we update any actions/views, if necessary
+ */
+void
+alarm_applet_alarm_changed (GObject *object,  GParamSpec *pspec, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    Alarm *alarm = ALARM (object);
+    const gchar *pname = pspec->name;
+    
+    g_debug ("AlarmApplet: Alarm '%s' %s changed", alarm->message, pname);
+
+    // Update Actions
+    if (g_strcmp0 (pname, "active") == 0) {
+        alarm_action_update_enabled (applet);
+    }
+
+    // Update List Window
+    if (applet->list_window && GTK_WIDGET_VISIBLE (applet->list_window->window)) {
+        // Should really check that the changed param is relevant...
+        alarm_list_window_alarm_update (applet->list_window, alarm);
+    }
+
+    // Update Settings
+    if (applet->settings_dialog && applet->settings_dialog->alarm == alarm) {
+        g_debug ("TODO: Update settings dialog");
+    }
+}
+
+/**
+ * Alarm 'alarm' signal handler
+ *
+ * Here we update any actions/views, if necessary
+ */
+void
+alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    gchar *summary, *body;
+    const gchar *icon;
+
+    g_debug ("AlarmApplet: Alarm '%s' triggered", alarm->message);
+    
+    // Keep track of how many alarms have been triggered
+    applet->n_triggered++;
+
+    // Show notification
+    summary = g_strdup_printf (_("%s"), alarm->message);
+    body = g_strdup_printf (_("You can snooze or stop alarms from the Alarm Clock menu."));
+    icon = (alarm->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
+    alarm_applet_notification_show (applet, summary, body, icon);
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
+
+    // Update actions
+    alarm_applet_actions_update_sensitive (applet);
+}
+
+/**
+ * Alarm 'cleared' signal handler
+ *
+ * Here we update any actions/views, if necessary
+ */
+void
+alarm_applet_alarm_cleared (Alarm *alarm, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+
+    g_debug ("AlarmApplet: Alarm '%s' cleared", alarm->message);
+    
+    // Keep track of how many alarms have been triggered
+    applet->n_triggered--;
+    
+    // Update status icon
+    alarm_applet_status_update (applet);
+
+    // Update actions
+    alarm_applet_actions_update_sensitive (applet);
+}

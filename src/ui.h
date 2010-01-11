@@ -58,6 +58,15 @@ void
 alarm_applet_ui_init (AlarmApplet *applet);
 
 void
+alarm_applet_alarm_changed (GObject *object,  GParamSpec *pspec, gpointer data);
+
+void
+alarm_applet_alarm_triggered (Alarm *alarm, gpointer data);
+
+void
+alarm_applet_alarm_cleared (Alarm *alarm, gpointer data);
+
+void
 alarm_applet_status_update (AlarmApplet *applet);
 
 void

@@ -426,7 +426,7 @@ alarm_applet_apps_load (AlarmApplet *applet)
  * Callback for when an alarm is triggered
  * We show the notification bubble here if appropriate.
  */
-static void
+/*static void
 alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
@@ -446,12 +446,12 @@ alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
     
     // Update status icon
     alarm_applet_status_update (applet);
-}
+}*/
 
 /**
  * Callback for when an alarm is cleared
  */
-static void
+/*static void
 alarm_applet_alarm_cleared (Alarm *alarm, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
@@ -463,7 +463,7 @@ alarm_applet_alarm_cleared (Alarm *alarm, gpointer data)
     
     // Update status icon
     alarm_applet_status_update (applet);
-}
+}*/
 
 /*
  * }} Alarm signals
@@ -504,6 +504,7 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 {
 	applet->alarms = g_list_append (applet->alarms, alarm);
 
+    g_signal_connect (alarm, "notify", G_CALLBACK (alarm_applet_alarm_changed), applet);
 	g_signal_connect (alarm, "notify::sound-file", G_CALLBACK (alarm_sound_file_changed), applet);
 
 	g_signal_connect (alarm, "alarm", G_CALLBACK (alarm_applet_alarm_triggered), applet);
@@ -623,17 +624,15 @@ alarm_applet_init()
 	// Preferences (defaults).
 	// ...gconf_get_string can return NULL if the key is not found. We can't
 	// assume the schema provides the default values for strings.
-	//applet->show_label = TRUE;
-	//applet->label_type = LABEL_TYPE_TIME;
+
+    // TODO: Add to gconf
+    applet->snooze_mins = 5;
 
 	// Set up gconf handlers
 	alarm_applet_gconf_init (applet);
 
 	// Load gconf values
 	alarm_applet_gconf_load (applet);
-
-    // TODO: Add to gconf
-    applet->snooze_mins = 5;
 
 	// Load alarms
 	alarm_applet_alarms_load (applet);
@@ -643,25 +642,7 @@ alarm_applet_init()
 
 	// Load apps for alarms
 	alarm_applet_apps_load (applet);
-
-    /*
-	// Connect sound_file notify callback to all alarms
-	alarm_signal_connect_list (applet->alarms, "notify::sound-file",
-							   G_CALLBACK (alarm_sound_file_changed), applet);
-
-	// Connect active & time notify callback to all alarms
-	alarm_signal_connect_list (applet->alarms, "notify::active",
-							   G_CALLBACK (alarm_active_changed), applet);
-	alarm_signal_connect_list (applet->alarms, "notify::time",
-							   G_CALLBACK (alarm_active_changed), applet);
-
-	// Connect alarm trigger notify to all alarms
-	alarm_signal_connect_list (applet->alarms, "alarm",
-							   G_CALLBACK (alarm_triggered), applet);
-*/
-	// Set up properties menu
-	//alarm_applet_menu_init (applet);
-
+    
 	// Set up applet UI
 	alarm_applet_ui_init (applet);
 

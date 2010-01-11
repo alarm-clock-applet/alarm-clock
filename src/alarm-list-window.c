@@ -26,31 +26,22 @@
 #include "alarm-list-window.h"
 #include "alarm-settings.h"
 
-void
+static void
 alarm_list_window_selection_changed (GtkTreeSelection *, gpointer);
 
 static gboolean
 alarm_list_window_update_timer (gpointer);
 
-static void
-alarm_list_window_alarm_changed (GObject *object, GParamSpec *param, gpointer data);
-
-static void
-alarm_list_window_alarm_triggered (Alarm *alarm, gpointer data);
-
 static gint
 alarm_list_window_sort_iter_compare (GtkTreeModel *model, 
                                      GtkTreeIter *a, GtkTreeIter *b,
                                      gpointer data);
-/*
-static void
-alarm_list_window_init_snooze_menu (AlarmListWindow *list_window);
-*/
+
 void
 alarm_list_window_snooze_menu_activate (GtkMenuItem *item, gpointer data);
 
 /**
- * Create a new empty Alarm List Window
+ * Create a new Alarm List Window
  */
 AlarmListWindow *
 alarm_list_window_new (AlarmApplet *applet)
@@ -108,55 +99,9 @@ alarm_list_window_new (AlarmApplet *applet)
 	return list_window;
 }
 
-/*
-static void
-alarm_list_window_init_snooze_menu (AlarmListWindow *list_window)
-{
-    GtkMenu *snooze_menu = GTK_MENU (list_window->snooze_menu);
-    GSList *group = NULL;
-    GtkWidget *item;
-    
-    guint items[] = {1, 3, 5, 10, NULL};
-    guint mins;
-    gchar *label;
-    gint i;
-
-    for (i = 0; items[i]; i++) {
-        g_debug ("i is %d", i);
-        mins = items[i];
-        if (mins == 1) {
-            label = g_strdup (_("1 minute"));
-        } else {
-            label = g_strdup_printf (_("%d minutes"), mins);
-        }
-
-        item = gtk_radio_menu_item_new_with_label (group, label);
-        group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (item));
-        
-        g_object_set_data (item, "snooze", GUINT_TO_POINTER (mins));
-
-        if (mins == list_window->snooze_mins) {
-            gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), TRUE);
-        }
-
-        g_signal_connect (item, "activate",
-            alarm_list_window_snooze_menu_activate, list_window->applet);
-
-
-        g_debug ("Adding snooze %d...", mins);
-        
-        gtk_menu_append (snooze_menu, item);
-
-        g_free (label);
-    }
-
-    item = gtk_menu_item_new_with_label (_("Custom..."));
-    gtk_menu_append (snooze_menu, item);
-
-    gtk_widget_show_all (snooze_menu);
-}
-*/
-
+/**
+ * Show and present list window
+ */
 void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
@@ -164,12 +109,18 @@ alarm_list_window_show (AlarmListWindow *list_window)
 	gtk_window_present (list_window->window);
 }
 
+/**
+ * Hide list window
+ */
 void
 alarm_list_window_hide (AlarmListWindow *list_window)
 {
 	gtk_widget_hide (GTK_WIDGET (list_window->window));
 }
 
+/**
+ * Toggle visibility of list window
+ */
 void
 alarm_list_window_toggle (AlarmListWindow *list_window)
 {
@@ -180,6 +131,11 @@ alarm_list_window_toggle (AlarmListWindow *list_window)
 	}
 }
 
+
+
+//
+// ALARM LIST MODEL:
+//
 
 /**
  * Find alarm in the model
@@ -296,17 +252,7 @@ alarm_list_window_alarm_add (AlarmListWindow *list_window, Alarm *alarm)
 
     gtk_list_store_append (store, &iter);
     gtk_list_store_set (store, &iter, COLUMN_ALARM, alarm, -1);
-
-    // Notify of changes
-    g_signal_connect (alarm, "notify",
-        G_CALLBACK (alarm_list_window_alarm_changed), list_window);
-
-    g_signal_connect (alarm, "alarm",
-        G_CALLBACK (alarm_list_window_alarm_triggered), list_window);
-
-    g_signal_connect (alarm, "cleared",
-        G_CALLBACK (alarm_list_window_alarm_triggered), list_window);
-
+    
     alarm_list_window_update_row (list_window, &iter);
 }
 
@@ -322,9 +268,8 @@ alarm_list_window_alarm_update (AlarmListWindow *list_window, Alarm *alarm)
 
     if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
         alarm_list_window_update_row (list_window, &iter);
-        alarm_list_window_update_toolbar (list_window);
     } else {
-        g_warning ("alarm_list_window_alarm_update(): Could not find alarm");
+        g_warning ("AlarmListWindow alarm_update: Could not find alarm %p", alarm);
     }
 }
 
@@ -338,41 +283,9 @@ alarm_list_window_alarm_remove (AlarmListWindow *list_window, Alarm *alarm)
 
     if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
         gtk_list_store_remove (list_window->model, &iter);
-
-        // Disconnect notify handler
-        g_signal_handlers_disconnect_matched (alarm, G_SIGNAL_MATCH_FUNC, 
-            0, 0, NULL, alarm_list_window_alarm_changed, NULL);
-        
     } else {
-        g_warning ("alarm_list_window_alarm_remove(): Could not find alarm");
+        g_warning ("AlarmListWindow alarm_remove: Could not find alarm %p", alarm);
     }
-}
-
-/**
- * Callback for when an alarm changes
- */
-static void
-alarm_list_window_alarm_changed (GObject *object, 
-                                 GParamSpec *param,
-                                 gpointer data)
-{
-	Alarm *alarm = ALARM (object);
-    AlarmListWindow *list_window = (AlarmListWindow *)data;
-
-    // Update alarm in window
-    alarm_list_window_alarm_update (list_window, alarm);
-}
-
-/**
- * Callback for when an alarm is triggered / cleared
- */
-static void
-alarm_list_window_alarm_triggered (Alarm *alarm, gpointer data)
-{
-	AlarmListWindow *list_window = (AlarmApplet *)data;
-
-    // Update alarm in window
-    alarm_list_window_alarm_update (list_window, alarm);
 }
 
 /**
@@ -469,19 +382,21 @@ alarm_list_window_sort_iter_compare (GtkTreeModel *model,
 
 
 //
-// Toolbar / tree view callbacks:
+// TREE VIEW:
 //
 
 /**
  * Get the selected alarm
  */
-static Alarm *
+Alarm *
 alarm_list_window_get_selected_alarm (AlarmListWindow *list_window)
 {
     GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter iter;
 	Alarm *a;
+
+    g_assert (list_window);
 	
 	// Fetch selection
 	selection = gtk_tree_view_get_selection (list_window->tree_view);
@@ -523,36 +438,11 @@ alarm_list_window_select_alarm (AlarmListWindow *list_window, Alarm *alarm)
     gtk_tree_selection_select_iter (selection, &iter);
 }
 
-/**
- * Update toolbar to a consistent state
- */
-void
-alarm_list_window_update_toolbar (AlarmListWindow *list_window)
-{
-    Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-
-    gboolean sensitive = (a != NULL);
-
-    g_debug ("Update toolbar");
-
-    // Update toolbar
-    g_object_set (list_window->edit_button, "sensitive", sensitive, NULL);
-    g_object_set (list_window->delete_button, "sensitive", sensitive, NULL);
-    
-    g_object_set (list_window->enable_button, 
-        "sensitive", sensitive && !a->active, NULL);
-    
-    g_object_set (list_window->stop_button, 
-        "sensitive", sensitive && (a->active || a->triggered), NULL);
-    
-    g_object_set (list_window->snooze_action, 
-        "sensitive", sensitive && a->triggered, NULL);
-}
 
 /**
  * Selection changed in tree view
  *
- * Here we update the sensitivity of the toolbar buttons
+ * Here we update the associated actions
  */
 void
 alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
@@ -561,20 +451,13 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
     AlarmListWindow *list_window = applet->list_window;
     Alarm *a = list_window->selected_alarm;
 
-    //g_debug ("AlarmListWindow selection-changed reordered=%d toggled=%d", 
-    //    list_window->reordered, list_window->toggled);
-
     // If rows have just been reordered, retain the selected row
     // But only if the reordering was triggered by a click on the toggle cell
     if (list_window->reordered && list_window->toggled) {
-        //g_debug ("AlarmListWindow: selection-changed REORDERED & TOGGLED!");
-        
         list_window->reordered = FALSE;
         list_window->toggled = FALSE;
 
-//        g_debug ("AlarmListWindow: selection-changed selecting %p", list_window->selected_alarm);
         alarm_list_window_select_alarm (list_window, list_window->selected_alarm);
-        
         return;
     }
 
@@ -582,8 +465,9 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
     list_window->reordered = FALSE;
     list_window->toggled = FALSE;
     
-    // Update toolbar
-    alarm_list_window_update_toolbar (list_window);
+    // Update actions
+    alarm_applet_actions_update_sensitive (applet);
+    alarm_action_update_enabled (applet);
     
     // Update selected alarm (might be NULL)
     list_window->selected_alarm = alarm_list_window_get_selected_alarm (list_window);
@@ -624,88 +508,13 @@ alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
         // this alarm is re-selected if the rows are reordered
         list_window->toggled = TRUE;
         
-        // Toggle enabled state
-        alarm_set_enabled (a, !a->active);
+        // Activate the enabled action
+        gtk_action_activate (applet->action_enabled);
     }
 }
 
 /**
- * New button clicked
- */
-void
-alarm_list_window_new_clicked (GtkButton *button, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    Alarm *alarm;
-	AlarmListEntry *entry;
-    GtkTreeIter iter;
-    GtkTreeSelection *selection;
-	
-	// Create new alarm, will fall back to defaults.
-	alarm = alarm_new (ALARM_GCONF_DIR, -1);
-	
-	// Set first sound / app in list
-	if (applet->sounds != NULL) {
-		entry = (AlarmListEntry *)applet->sounds->data;
-		g_object_set (alarm, "sound-file", entry->data, NULL);
-	}
-	
-	if (applet->apps != NULL) {
-		entry = (AlarmListEntry *)applet->apps->data;
-		g_object_set (alarm, "command", entry->data, NULL);
-	}
-
-	// Add alarm to list of alarms
-    // This will indirectly add the alarm to the model
-	alarm_applet_alarms_add (applet, alarm);
-
-    // Select the new alarm in the list
-    if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
-        selection = gtk_tree_view_get_selection (list_window->tree_view);
-        gtk_tree_selection_select_iter (selection, &iter);
-    }
-	
-	// Show edit alarm dialog
-    alarm_settings_dialog_show (applet->settings_dialog, alarm);
-}
-
-/**
- * Edit button clicked
- */
-void
-alarm_list_window_edit_clicked (GtkButton *button, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    
-	Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-	
-	if (!a) {
-		// No alarms selected
-		return;
-	}
-	
-	// Stop alarm
-    alarm_clear (a);
-    
-    alarm_settings_dialog_show (applet->settings_dialog, a);
-}
-
-/**
- * Row activated
- */
-void
-alarm_list_window_row_activated (GtkTreeView       *tree_view,
-                                 GtkTreePath       *path,
-                                 GtkTreeViewColumn *column,
-                                 gpointer           data)
-{
-    alarm_list_window_edit_clicked (NULL, data);
-}
-
-/**
- * Rows reordered
+ * Rows reordered callback
  */
 void
 alarm_list_window_rows_reordered (GtkTreeModel *model,
@@ -729,149 +538,14 @@ alarm_list_window_rows_reordered (GtkTreeModel *model,
     list_window->reordered = TRUE;
 }
 
-/**
- * Delete button clicked
- */
-void
-alarm_list_window_delete_clicked (GtkButton *button, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    AlarmSettingsDialog *sdialog = applet->settings_dialog;
-    
-	Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-    GtkWidget *dialog;
-    gint response;
-    gchar *title, *text, *secondary_text;
 
-    const gchar *type;
-    const gchar *time_format;
-    struct tm *tm;
-    gchar timestr[50];
-
-    
-	if (!a) {
-		// No alarms selected
-		return;
-	}
-	
-	// Clear any running alarms
-	//alarm_clear (a);
-    
-    // Prompt user
-    dialog = gtk_builder_get_object (applet->ui, "delete-dialog");
-
-    // Get time of alarm
-    tm = alarm_get_time (a);
-    
-    if (a->type == ALARM_TYPE_CLOCK) {
-        type = _("alarm clock");
-        time_format = CLOCK_FORMAT;
-    } else {
-        type = _("timer");
-        time_format = TIMER_FORMAT;
-    }
-
-    // Create time string
-    strftime(timestr, sizeof(timestr), time_format, tm);
-
-    // Construct the messages
-    title = g_strdup_printf (DELETE_DIALOG_TITLE, type);
-    text = g_strdup_printf (DELETE_DIALOG_TEXT, type, a->message);
-    secondary_text = g_strdup_printf (DELETE_DIALOG_SECONDARY, type, a->message, timestr);
-    
-    g_object_set (dialog,
-                  "title", title,
-                  "text", text,
-                  "secondary-text", secondary_text,
-                  NULL);
-    
-    g_free (title);
-    g_free (text);
-    g_free (secondary_text);
-
-    // Run dialog, hide for later use
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_hide (GTK_WIDGET (dialog));
-	
-	if (response == GTK_RESPONSE_YES) {
-        // DELETE ALARM
-        alarm_delete (a);
-
-        // If there's a settings dialog open for this alarm, close it.
-        if (sdialog->alarm == a) {
-            alarm_settings_dialog_close (sdialog);
-        }
-
-        // Remove from applet list
-        alarm_applet_alarms_remove (applet, a);
-
-    }
-}
+//
+// TOOLBAR:
+//
 
 /**
- * Enable button clicked
+ * Snooze menu item activated
  */
-void
-alarm_list_window_enable_clicked (GtkButton *button, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    Alarm *a;
-    
-    if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        alarm_enable (a);
-    }
-}
-
-
-/**
- * Stop button clicked
- */
-void
-alarm_list_window_stop_clicked (GtkButton *button, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    Alarm *a;
-    
-    if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        if (a->triggered) {
-            alarm_clear (a);
-        } else {
-            alarm_disable (a);
-        }
-    }
-}
-
-/**
- * Snooze button clicked
- */
-/*void
-alarm_list_window_snooze_clicked (GtkButton *button, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    Alarm *a;
-    
-    if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        alarm_snooze (a, 60);
-    }
-}*/
-
-void
-alarm_snooze_action (GtkAction *action, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    Alarm *a;
-    
-    if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        g_debug ("AlarmListWindow: Snooze Action: %s for %d mins", a->message, applet->snooze_mins);
-        alarm_snooze (a, applet->snooze_mins * 60);
-    }
-}
-
 void
 alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
                                          gpointer          data)
@@ -899,10 +573,13 @@ alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
 
         applet->snooze_mins = mins;
 
-        gtk_action_activate (list_window->snooze_action);
+        gtk_action_activate (applet->action_snooze);
     }
 }
 
+/**
+ * Snooze menu custom item activated
+ */
 void
 alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem,
                                                 gpointer          data)
@@ -964,20 +641,3 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
     
     g_free (target_name);
 }
-
-
-void
-alarm_list_window_snooze_menu_activate (GtkMenuItem *item, gpointer data)
-{
-    AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
-    gboolean active;
-
-    guint mins = GPOINTER_TO_INT (g_object_get_data (item, "snooze"));
-    g_object_get (item, "active", &active, NULL);
-
-    g_debug ("%p Snooze for %d mins.. (active is %d).", item, mins, active);
-
-}
-
-

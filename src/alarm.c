@@ -1048,7 +1048,7 @@ alarm_delete (Alarm *alarm)
 	
 	// Remove configuration
 	key = alarm_gconf_get_dir (alarm);
-	g_debug ("Alarm(%p) #%d: alarm_delete() recursive unset on %s", key);
+	g_debug ("Alarm(%p) #%d: alarm_delete() recursive unset on %s", alarm, alarm->id, key);
 	gconf_client_recursive_unset (client, key, GCONF_UNSET_INCLUDING_SCHEMA_NAMES, NULL);
 	gconf_client_suggest_sync (client, NULL);
 	g_free (key);

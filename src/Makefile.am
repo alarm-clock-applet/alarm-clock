@@ -12,16 +12,17 @@ SUBDIRS = tests
 
 bin_PROGRAMS = alarm-clock-applet
 
-alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h	\
-							 player.c player.h				\
-						     util.c util.h					\
-						     list-entry.c list-entry.h		\
-						     alarm-gconf.c alarm-gconf.h	\
-						     ui.c ui.h						\
-						     prefs.c prefs.h				\
+alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h          	\
+							 player.c player.h				            \
+						     util.c util.h				            	\
+						     list-entry.c list-entry.h		            \
+						     alarm.c alarm.h                            \
+						     alarm-gconf.c alarm-gconf.h            	\
+						     ui.c ui.h					            	\
+						     alarm-actions.c alarm-actions.h            \
 						     alarm-list-window.c alarm-list-window.h	\
-						     alarm-settings.c alarm-settings.h		\
-						     alarm.c alarm.h
+						     alarm-settings.c alarm-settings.h	    	\
+						     prefs.c prefs.h                            
 
 alarm_clock_applet_CFLAGS =	                        \
 	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \

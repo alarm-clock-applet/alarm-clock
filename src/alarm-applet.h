@@ -99,12 +99,26 @@ struct _AlarmApplet {
     
     guint snooze_mins;
 
+    // Actions on one alarm
+    GtkActionGroup *actions_alarm;
+    
+    GtkAction *action_edit;
+    GtkAction *action_delete;
+    GtkToggleAction *action_enabled;
+    GtkAction *action_stop;
+    GtkAction *action_snooze;
+
+    // Global actions
+    GtkActionGroup *actions_global;
+    GtkAction *action_new;
+    GtkAction *action_stop_all;
+    GtkAction *action_snooze_all;
+
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
 };
 
 static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
-//static void time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
 
 void alarm_applet_sounds_load (AlarmApplet *applet);
 
