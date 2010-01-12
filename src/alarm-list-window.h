@@ -63,7 +63,7 @@ struct _AlarmListWindow {
     GtkWidget *snooze_button;
     GtkWidget *snooze_menu;
 
-    GtkAction *snooze_action;
+    GtkAccelGroup *accel_group;
 };
 
 //#define TIME_COL_FORMAT "<span font='Bold 11'>%H:%M:%S</span>"

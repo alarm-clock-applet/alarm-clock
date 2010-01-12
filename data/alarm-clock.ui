@@ -752,7 +752,7 @@
         <property name="use_underline">True</property>
         <property name="image">image3</property>
         <property name="use_stock">False</property>
-        <signal name="activate" handler="status_menu_edit_cb"/>
+        <signal name="activate" handler="alarm_applet_status_menu_edit_cb"/>
       </object>
     </child>
     <child>
@@ -762,7 +762,7 @@
         <property name="use_underline">True</property>
         <property name="image">image4</property>
         <property name="use_stock">False</property>
-        <signal name="activate" handler="status_menu_prefs_cb"/>
+        <signal name="activate" handler="alarm_applet_status_menu_prefs_cb"/>
       </object>
     </child>
     <child>
@@ -771,7 +771,7 @@
         <property name="visible">True</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
-        <signal name="activate" handler="status_menu_about_cb"/>
+        <signal name="activate" handler="alarm_applet_status_menu_about_cb"/>
       </object>
     </child>
   </object>
@@ -1278,5 +1278,11 @@
     <property name="tooltip">Stop all beeping alarms</property>
     <property name="stock_id">gtk-stop</property>
     <signal name="activate" handler="alarm_action_stop_all"/>
+  </object>
+  <object class="GtkToggleAction" id="toggle-list-win-action">
+    <property name="label">Toggle alarms window</property>
+    <property name="short_label">Toggle alarms</property>
+    <property name="tooltip">Toggle the visibility of the alarms window</property>
+    <signal name="activate" handler="alarm_action_toggle_list_win"/>
   </object>
 </interface>

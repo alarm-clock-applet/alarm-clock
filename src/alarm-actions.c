@@ -58,11 +58,19 @@ alarm_applet_actions_init (AlarmApplet *applet)
     applet->action_new = GET_ACTION ("new-action");
     applet->action_stop_all = GET_ACTION ("stop-all-action");
     applet->action_snooze_all = GET_ACTION ("snooze-all-action");
+    
+    applet->action_toggle_list_win = GET_ACTION ("toggle-list-win-action");
+    gtk_action_set_accel_group (applet->action_toggle_list_win,
+        applet->list_window->accel_group);
 
     gtk_action_group_add_action (applet->actions_global, applet->action_new);
     gtk_action_group_add_action (applet->actions_global, applet->action_stop_all);
     gtk_action_group_add_action (applet->actions_global, applet->action_snooze_all);
+    gtk_action_group_add_action_with_accel (applet->actions_global, 
+        applet->action_toggle_list_win, "Escape");
 
+    gtk_action_connect_accelerator (applet->action_toggle_list_win);
+    
     // Update actions
     alarm_applet_actions_update_sensitive (applet);
 }
@@ -286,6 +294,31 @@ alarm_action_snooze_all (GtkAction *action, gpointer data)
     g_debug ("AlarmAction: snooze all");
 
     alarm_applet_alarms_snooze (applet);
+}
+
+/**
+ * Toggle list window action
+ */
+void
+alarm_action_toggle_list_win (GtkAction *action, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmListWindow *list_window = applet->list_window;
+    gboolean active = gtk_toggle_action_get_active(action);
+	
+    g_debug ("AlarmAction: toggle list window");
+    
+/*	if (!a || a->active == active) {
+		// No alarms selected or no change
+		return;
+	}
+     */
+
+    if (active) {
+        alarm_list_window_show(list_window);
+    } else {
+        alarm_list_window_hide(list_window);
+    }
 }
 
 

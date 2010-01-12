@@ -386,8 +386,8 @@ alarm_applet_status_activate (GtkStatusIcon *status_icon,
     if (applet->n_triggered > 0) {
         gtk_action_activate (applet->action_snooze_all);
     } else {
-        // No alarms triggered, show window
-        alarm_list_window_toggle (applet->list_window);
+        // No alarms triggered, toggle list window
+        gtk_action_activate (applet->action_toggle_list_win);
     }
 }
 
@@ -432,16 +432,17 @@ status_menu_stop_cb (GtkMenuItem *menuitem,
 */
 
 G_MODULE_EXPORT void
-status_menu_edit_cb (GtkMenuItem *menuitem,
+alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
                      gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
-	alarm_list_window_show (applet->list_window);
+
+    gtk_toggle_action_set_active (applet->action_toggle_list_win, TRUE);
 }
 
 
 G_MODULE_EXPORT void
-status_menu_prefs_cb (GtkMenuItem *menuitem,
+alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
@@ -450,7 +451,7 @@ status_menu_prefs_cb (GtkMenuItem *menuitem,
 }
 
 G_MODULE_EXPORT void
-status_menu_about_cb (GtkMenuItem *menuitem,
+alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;

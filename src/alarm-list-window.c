@@ -69,8 +69,9 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
     list_window->snooze_menu = gtk_builder_get_object (builder, "snooze-menu");
     
-    // Actions
-    list_window->snooze_action = gtk_builder_get_object (builder, "snooze-action");
+    // Set up window accelerator group
+    list_window->accel_group = gtk_accel_group_new ();
+    gtk_window_add_accel_group (list_window->window, list_window->accel_group);
     
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
@@ -105,7 +106,7 @@ alarm_list_window_new (AlarmApplet *applet)
 void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
-	gtk_widget_show_all (GTK_WIDGET (list_window->window));
+//	gtk_widget_show_all (GTK_WIDGET (list_window->window));
 	gtk_window_present (list_window->window);
 }
 

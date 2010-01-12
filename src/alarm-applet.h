@@ -109,6 +109,7 @@ struct _AlarmApplet {
     GtkAction *action_new;
     GtkAction *action_stop_all;
     GtkAction *action_snooze_all;
+    GtkAction *action_toggle_list_win;
 
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
