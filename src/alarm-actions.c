@@ -315,10 +315,24 @@ alarm_action_toggle_list_win (GtkAction *action, gpointer data)
      */
 
     if (active) {
-        alarm_list_window_show(list_window);
+        alarm_list_window_show (list_window);
     } else {
-        alarm_list_window_hide(list_window);
+        alarm_list_window_hide (list_window);
     }
+}
+
+/**
+ * Quit action
+ */
+void
+alarm_action_quit (GtkAction *action, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+
+    g_debug ("AlarmAction: Quit!");
+
+    // TODO: Free up resources - maybe use gtk_quit_add() & friends
+    gtk_main_quit ();
 }
 
 

@@ -437,9 +437,12 @@ alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
 
-    gtk_toggle_action_set_active (applet->action_toggle_list_win, TRUE);
-}
-
+    if (gtk_toggle_action_get_active (applet->action_toggle_list_win)) {
+        alarm_list_window_show (applet->list_window);
+    } else {
+        gtk_toggle_action_set_active (applet->action_toggle_list_win, TRUE);
+    }
+}       
 
 G_MODULE_EXPORT void
 alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem,

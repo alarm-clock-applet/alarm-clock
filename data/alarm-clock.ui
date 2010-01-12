@@ -774,6 +774,19 @@
         <signal name="activate" handler="alarm_applet_status_menu_about_cb"/>
       </object>
     </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="status_menu_sep2">
+        <property name="visible">True</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="status_menu_quit">
+        <property name="visible">True</property>
+        <property name="related_action">quit-action</property>
+        <property name="use_underline">True</property>
+        <property name="use_stock">True</property>
+      </object>
+    </child>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -1284,5 +1297,12 @@
     <property name="short_label">Toggle alarms</property>
     <property name="tooltip">Toggle the visibility of the alarms window</property>
     <signal name="activate" handler="alarm_action_toggle_list_win"/>
+  </object>
+  <object class="GtkAction" id="quit-action">
+    <property name="label">_Quit</property>
+    <property name="short_label">_Quit</property>
+    <property name="tooltip">Quit Alarm Clock</property>
+    <property name="stock_id">gtk-quit</property>
+    <signal name="activate" handler="alarm_action_quit"/>
   </object>
 </interface>
