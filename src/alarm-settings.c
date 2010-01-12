@@ -575,6 +575,24 @@ alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data)
 	alarm_set_time (dialog->alarm, hour, min, sec);
 }
 
+/**
+ * Use 2-digits in time spin buttons
+ */
+gboolean
+alarm_settings_output_time (GtkSpinButton *spin, gpointer data)
+{
+    GtkAdjustment *adj;
+    gchar *text;
+    gint value;
+    adj = gtk_spin_button_get_adjustment (spin);
+    value = (gint)gtk_adjustment_get_value (adj);
+    text = g_strdup_printf ("%02d", value);
+    gtk_entry_set_text (GTK_ENTRY (spin), text);
+    g_free (text);
+
+    return TRUE; 
+}
+
 void
 alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data)
 {
