@@ -79,7 +79,7 @@ alarm_list_window_new (AlarmApplet *applet)
                       alarm_list_window_selection_changed, applet);
 
     // Update view every second for pretty countdowns
-    g_timeout_add_seconds (1, (GSourceFunc) alarm_list_window_update_timer, applet);
+    g_timeout_add (500, (GSourceFunc) alarm_list_window_update_timer, applet);
 
     // Set up sorting
     sortable = GTK_TREE_SORTABLE (list_window->model);
@@ -226,17 +226,28 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
         g_string_append_printf (time_col, TIME_COL_REPEAT_FORMAT, tmp2);
         g_free (tmp2);
     }
-
+    
     // Create label column
-    label_col = g_strdup_printf (LABEL_COL_FORMAT, a->message);
+    if (a->triggered) {
+        label_col = g_strdup_printf (LABEL_COL_TRIGGERED_FORMAT, a->message);
+    } else {
+        label_col = g_strdup_printf (LABEL_COL_FORMAT, a->message);
+    }
     
 	gtk_list_store_set (model, iter, 
                         COLUMN_TYPE, type_col,
                         COLUMN_TIME, time_col->str,
                         COLUMN_LABEL, label_col,
                         COLUMN_ACTIVE, a->active,
+                        COLUMN_TRIGGERED, a->triggered,
                         -1);
 
+    // Restore icon visibility when an alarm is cleared / snoozed
+    if (!a->triggered) {
+        gtk_list_store_set (model, iter, COLUMN_SHOW_ICON, TRUE, -1);
+    }
+
+    
     g_string_free (time_col, TRUE);
     g_free (label_col);
 }
@@ -318,12 +329,23 @@ alarm_list_window_update_timer (gpointer data)
     GtkTreeIter iter;
     GtkTreePath *path;
     Alarm *a;
+    gboolean show_icon;
     gboolean valid;
 
     valid = gtk_tree_model_get_iter_first (model, &iter);
 
     while (valid) {
-        alarm_list_window_update_row (applet->list_window, &iter);        
+        alarm_list_window_update_row (applet->list_window, &iter);
+        
+        gtk_tree_model_get (model, &iter, 
+                            COLUMN_ALARM, &a,
+                            COLUMN_SHOW_ICON, &show_icon, -1);
+
+        // Blink icon on triggered alarms
+        if (a->triggered) {
+            gtk_list_store_set (model, &iter, COLUMN_SHOW_ICON, !show_icon, -1);
+        }
+        
         valid = gtk_tree_model_iter_next(model, &iter);
     }
     

@@ -37,6 +37,8 @@ typedef enum {
     COLUMN_TIME,
     COLUMN_LABEL,
     COLUMN_ACTIVE,
+    COLUMN_TRIGGERED,
+    COLUMN_SHOW_ICON,
     ALARMS_N_COLUMNS
 } AlarmListColumn;
 
@@ -72,6 +74,7 @@ struct _AlarmListWindow {
 #define TIME_COL_TIMER_FORMAT "<span font='Bold 11'>-%H:%M</span><span font='Bold 7'>:%S</span>"
 #define TIME_COL_REPEAT_FORMAT "\n <sup>%s</sup>"
 #define LABEL_COL_FORMAT "%s"
+#define LABEL_COL_TRIGGERED_FORMAT "<b>%s</b>"
 
 #define CLOCK_FORMAT "%H:%M"
 #define TIMER_FORMAT "-%H:%M"

@@ -852,6 +852,8 @@
       <column type="gboolean"/>
       <!-- column-name Triggered -->
       <column type="gboolean"/>
+      <!-- column-name Show icon -->
+      <column type="gboolean"/>
     </columns>
     <signal name="rows_reordered" handler="alarm_list_window_rows_reordered"/>
   </object>
@@ -986,6 +988,7 @@
                         <property name="stock_size">3</property>
                       </object>
                       <attributes>
+                        <attribute name="visible">6</attribute>
                         <attribute name="icon-name">1</attribute>
                       </attributes>
                     </child>
