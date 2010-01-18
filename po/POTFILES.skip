@@ -1,0 +1,8 @@
+data/mockups.ui
+src/alarms-list.c
+src/tests/test_alarm.c
+src/ui/alarm-clock.glade
+src/ui/edit-alarm.ui
+src/ui/list-alarms.ui
+src/ui/preferences.ui
+src/ui/status.ui

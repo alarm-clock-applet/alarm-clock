@@ -24,10 +24,10 @@
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
-              <object class="GtkLabel" id="display-label">
+              <object class="GtkLabel" id="general-label">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Display&lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;General&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -37,20 +37,19 @@
               </packing>
             </child>
             <child>
-              <object class="GtkAlignment" id="display-alignment">
+              <object class="GtkAlignment" id="general-alignment">
                 <property name="visible">True</property>
                 <property name="left_padding">12</property>
                 <child>
-                  <object class="GtkVBox" id="display-box">
+                  <object class="GtkVBox" id="general-box">
                     <property name="visible">True</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkCheckButton" id="show-notification">
-                        <property name="label" translatable="yes">Show _notification messages</property>
+                      <object class="GtkCheckButton" id="autostart-check">
+                        <property name="label" translatable="yes">_Start automatically on log in</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="tooltip_text" translatable="yes">Show a label with info about upcoming alarms</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -809,7 +808,7 @@
     <property name="copyright" translatable="yes">&#xA9; 2007-2010 Johannes H. Jensen</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">http://alarm-clock.pseudoberries.com/</property>
-    <property name="website_label" translatable="yes">alarm-clock.pseudoberries.com</property>
+    <property name="website_label">alarm-clock.pseudoberries.com</property>
     <property name="authors">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
     <property name="documenters">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
     <property name="artists">Lasse Gulv&#xE5;g S&#xE6;tre &lt;lassegs@gmail.com&gt;</property>
@@ -1307,5 +1306,10 @@
     <property name="tooltip">Quit Alarm Clock</property>
     <property name="stock_id">gtk-quit</property>
     <signal name="activate" handler="alarm_action_quit"/>
+  </object>
+  <object class="GtkToggleAction" id="autostart-action">
+    <property name="label">Start automatically on log in</property>
+    <property name="short_label">Start automatically</property>
+    <signal name="activate" handler="pref_action_autostart"/>
   </object>
 </interface>

@@ -6,18 +6,6 @@
     	Global preferences:
     	-->
     	
-		<schema>
-	      	<key>/schemas/apps/alarm-clock/show_notification</key>
-	      	<owner>alarm-clock</owner>
-			<type>bool</type>
-			<locale name="C">
-				<default>true</default>
-				<short>Show a notification when an alarm is triggered</short>
-				<long>Whether to show a notification message when an alarm is triggered.
-				      This requires libnotify support.</long>
-			</locale>
-		</schema>
-    	
     	
     	<!--
     	Alarm specific:
@@ -27,12 +15,12 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/type</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
+			<default>clock</default>
 			<locale name="C">
-				<default>clock</default>
-				<short>Alarm type</short>
-				<long>The type of the alarm. Either "clock" for an alarm which triggers
-					  at a specific time of day or "timer" for an alarm which triggers
-					  after a specified period of time.</long>
+				<short>Alarm Type</short>
+				<long>The type of the alarm. Either "clock" for an alarm at a 
+				      specific time of day, or "timer" for an alarm after a 
+				      specified period of time.</long>
 			</locale>
 		</schema>
 		
@@ -42,10 +30,11 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/timestamp</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
+			<default>0</default>
 			<locale name="C">
-				<default>0</default>
-				<short>Alarm timestamp</short>
-				<long>The UNIX timestamp for the alarm.</long>
+				<short>Alarm Timestamp</short>
+				<long>The UNIX timestamp for the alarm. Must be set before the
+				      alarm is activated.</long>
 			</locale>
 		</schema>
 		
@@ -54,10 +43,11 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/time</key>
 	      	<owner>alarm-clock</owner>
 			<type>int</type>
+			<default>0</default>
 			<locale name="C">
-				<default>0</default>
-				<short>Alarm time</short>
-				<long>The time (GMT) for the alarm.</long>
+				<short>Alarm Time</short>
+				<long>The time for the alarm. Should be in GMT for "clock"
+				      alarms or length in seconds for "timer" alarms.</long>
 			</locale>
 		</schema>
 		
@@ -68,8 +58,8 @@
 			<type>string</type>
 			<locale name="C">
 				<default>Alarm!</default>
-				<short>Message describing this alarm.</short>
-				<long>A short message which will be displayed when the alarm goes off.</long>
+				<short>Alarm Message</short>
+				<long>A short message which describes the alarm.</long>
 			</locale>
 		</schema>
 		
@@ -77,10 +67,10 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/active</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
+			<default>false</default>
 			<locale name="C">
-				<default>false</default>
-				<short>The running state of the alarm.</short>
-				<long>If true, indicates that the alarm is started.</long>
+				<short>Alarm Running State</short>
+				<long>Indicates whether the alarm has started.</long>
 			</locale>
 		</schema>
 		
@@ -90,37 +80,25 @@
 	      	<owner>alarm-clock</owner>
 			<type>list</type>
 			<list_type>string</list_type>
+			<default>[]</default>
 			<locale name="C">
-				<default>[]</default>
-				<short>When to repeat the alarm.</short>
-				<long>Indicates which days to repeat the alarm. Only applicable for "clock" alarms.</long>
+				<short>Alarm Repeat</short>
+				<long>A list of days when the alarm should be repeated.
+				      This settings is only applicable for "clock" alarms.</long>
 			</locale>
 		</schema>
-		
-		
-		<schema>
-	      	<key>/schemas/apps/alarm-clock/alarm/snooze</key>
-	      	<owner>alarm-clock</owner>
-			<type>int</type>
-			<locale name="C">
-				<default>0</default>
-				<short>Enable snoozing of alarm.</short>
-				<long>If non-zero, indicates that the alarm can be snoozed for the selected minutes.</long>
-			</locale>
-		</schema>
-		
 		
 		<schema>
 	      	<key>/schemas/apps/alarm-clock/alarm/notify_type</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
+			<default>sound</default>
 			<locale name="C">
-				<default>sound</default>
-				<short>Type of notification to use.</short>
-				<long>The type of notification to use when the alarm is triggered.
-					  Can be one of the following:
-					  "sound" to play a sound. The sound must be set in the "sound_file" property.
-					  "command" to run a command.
+				<short>Notification Type</short>
+				<long>The type of notification to use when the alarm goes off.
+					  This can be one of the following:
+					  "sound" to play a sound (specified in the "sound_file" property.)
+					  "command" to run a command (specified in the "command" property.)
 				</long>
 			</locale>
 		</schema>
@@ -129,9 +107,9 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/sound_file</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
+			<default></default>
 			<locale name="C">
-				<default></default>
-				<short>Sound file to play on alarm.</short>
+				<short>Sound File</short>
 				<long>The sound file to play for the "sound" notification type.</long>
 			</locale>
 		</schema>
@@ -140,10 +118,10 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/sound_repeat</key>
 	      	<owner>alarm-clock</owner>
 			<type>bool</type>
+			<default>true</default>
 			<locale name="C">
-				<default>TRUE</default>
-				<short>Repeat sound.</short>
-				<long>Whether we should repeat the alarm sound or not.</long>
+				<short>Repeat Sound</short>
+				<long>Whether to repeat the alarm sound.</long>
 			</locale>
 		</schema>
 		
@@ -151,9 +129,9 @@
 	      	<key>/schemas/apps/alarm-clock/alarm/command</key>
 	      	<owner>alarm-clock</owner>
 			<type>string</type>
+			<default>rhythmbox-client --play</default>
 			<locale name="C">
-				<default>rhythmbox-client --play</default>
-				<short>Command to run on alarm.</short>
+				<short>Command</short>
 				<long>The command to run for the "command" notification type.</long>
 			</locale>
 		</schema>
@@ -163,8 +141,8 @@
 	      	<key>/schemas/apps/alarm-clock/prefs/</key>
 	      	<owner>alarm-clock</owner>
 			<type></type>
+			<default></default>
 			<locale name="C">
-				<default></default>
 				<short></short>
 				<long></long>
 			</locale>

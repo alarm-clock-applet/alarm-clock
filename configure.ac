@@ -32,7 +32,6 @@ AC_SUBST(ALARM_CLOCK_MICRO_VERSION)
 PKG_PROG_PKG_CONFIG
 AC_PROG_CC
 AC_PROG_INSTALL
-#IT_PROG_INTLTOOL([0.40.0])
 
 # *****
 # GNOME
@@ -42,8 +41,6 @@ GNOME_COMMON_INIT
 GNOME_DEBUG_CHECK
 GNOME_COMPILE_WARNINGS([maximum])
 GNOME_MAINTAINER_MODE_DEFINES
-
-#AM_GLIB_GNU_GETTEXT
 
 
 # ***************************
@@ -73,7 +70,22 @@ fi
 
 AM_GCONF_SOURCE_2
 
+# ********************
+# Internationalisation
+# ********************
+
+IT_PROG_INTLTOOL([0.40.0])
+
+GETTEXT_PACKAGE=alarm-clock-applet
+AC_SUBST([GETTEXT_PACKAGE])
+#ALL_LINGUAS=""
+AM_GLIB_GNU_GETTEXT
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [gettext domain])
+#localedir='$(datadir)/locale'
+
+# *******************
 # Run in source tree?
+# *******************
 AC_ARG_ENABLE(run-in-source-tree,
   AC_HELP_STRING([--disable-run-in-source-tree],
                  [disable search for UI files and plugins in local directory]),,
@@ -89,7 +101,8 @@ AC_CONFIG_FILES([Makefile
 				 src/Makefile
 				 src/tests/Makefile
 				 data/Makefile
-				 data/icons/Makefile])
+				 data/icons/Makefile
+				 po/Makefile.in])
 AC_OUTPUT
 
 # ****************************

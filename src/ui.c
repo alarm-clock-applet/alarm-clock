@@ -56,7 +56,7 @@ alarm_applet_ui_load (const char *name, AlarmApplet *applet)
         /* Connect signals */
         gtk_builder_connect_signals (builder, applet);
     } else {
-        g_critical(_("Couldn't load the interface '%s'. %s"), filename, error->message);
+        g_critical("Couldn't load the interface '%s'. %s", filename, error->message);
         g_error_free (error);
     }
 
@@ -83,47 +83,6 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
-}
-
-// TODO: Refactor for more fancy tooltip with alarm summary.
-void
-alarm_applet_update_tooltip (AlarmApplet *applet)
-{
-	struct tm *time, *remain;
-	GList *l;
-	Alarm *a;
-	GString *tip;
-	guint count = 0;
-
-	tip = g_string_new ("");
-	
-	// Find all active alarms
-	for (l = applet->alarms; l; l = l->next) {
-		a = ALARM (l->data);
-		
-		if (!a->active) continue;
-		
-		count++;
-		
-		time   = alarm_get_time (a);
-		remain = alarm_get_remain (a);
-		
-		g_string_append_printf (tip, _("\n(%c) <b>%s</b> @%02d:%02d:%02d (-%02d:%02d:%02d)"), (a->type == ALARM_TYPE_TIMER) ? 'T' : 'A', a->message,
-														time->tm_hour, time->tm_min, time->tm_sec, remain->tm_hour, remain->tm_min, remain->tm_sec);
-	}
-	
-	if (count > 0) {
-		tip = g_string_prepend (tip, _("Active alarms:"));
-	} else {
-		tip = g_string_append (tip, _("No active alarms"));
-	}
-	
-	tip = g_string_append (tip, _("\n\nClick to snooze alarms"));
-	tip = g_string_append (tip, _("\nDouble click to edit alarms"));
-	
-	//gtk_widget_set_tooltip_markup (GTK_WIDGET (applet->parent), tip->str);
-	
-	g_string_free (tip, TRUE);
 }
 
 static gboolean
@@ -458,6 +417,7 @@ alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
+    gchar *title;
     
     gboolean visible;	
     GtkAboutDialog *dialog = GTK_ABOUT_DIALOG (
@@ -467,11 +427,13 @@ alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
 
     if (!visible) {
         // Set properties and show
+        title = g_strdup_printf (_("About %s"), _(ALARM_NAME));
         g_object_set (G_OBJECT (dialog),
-                      "program-name", ALARM_NAME,
-                      "title", _("About " ALARM_NAME),
+                      "program-name", _(ALARM_NAME),
+                      "title", title,
                       "version", VERSION,
                       NULL);
+        g_free (title);
 
         gtk_dialog_run (dialog);
         
@@ -490,7 +452,7 @@ media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent)
 	gchar *uri, *tmp;
 	
 	uri = media_player_get_uri (player);
-	tmp = g_strdup_printf (_("%s: %s"), uri, err->message);
+	tmp = g_strdup_printf ("%s: %s", uri, err->message);
 	
 	g_critical (_("Could not play '%s': %s"), uri, err->message);
 	display_error_dialog (_("Could not play"), tmp, parent);
@@ -549,7 +511,7 @@ alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
     applet->n_triggered++;
 
     // Show notification
-    summary = g_strdup_printf (_("%s"), alarm->message);
+    summary = g_strdup_printf ("%s", alarm->message);
     body = g_strdup_printf (_("You can snooze or stop alarms from the Alarm Clock menu."));
     icon = (alarm->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
     alarm_applet_notification_show (applet, summary, body, icon);

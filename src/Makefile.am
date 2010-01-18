@@ -35,26 +35,3 @@ alarm_clock_applet_LDADD =		\
 	@GNOME_LIBS@
 
 
-#
-# GConf schemas
-#
-schemadir = $(GCONF_SCHEMA_FILE_DIR)
-schema_in_files = alarm-clock.schemas.in
-schema_DATA = $(schema_in_files:.schemas.in=.schemas)
-
-#@INTLTOOL_SCHEMAS_RULE@
-
-#uninstall-data:
-#	rm -rf $(pkgdatadir)
-
-if GCONF_SCHEMAS_INSTALL
-install-data-local:
-	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(top_builddir)/src/$(schema_DATA)
-
-uninstall-local:
-	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-uninstall-rule $(top_builddir)/src/$(schema_DATA)
-endif
-
-#CLEANFILES = $(server_DATA)
-
-EXTRA_DIST += $(schema_DATA)

@@ -654,6 +654,11 @@ main (int argc, char *argv[])
 {
 	AlarmApplet *applet;
 
+    // Internationalization
+    bindtextdomain (GETTEXT_PACKAGE, ALARM_CLOCK_DATADIR "/locale");
+    bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+    textdomain (GETTEXT_PACKAGE);
+
     // Terminate on critical errors
     g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
