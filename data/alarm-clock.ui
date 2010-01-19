@@ -711,8 +711,8 @@
     <property name="icon_name">alarm-clock</property>
     <property name="visible">False</property>
     <property name="has_tooltip">True</property>
-    <property name="tooltip_text">Alarm Clock</property>
-    <property name="title">Alarm Clock</property>
+    <property name="tooltip_text" translatable="yes">Alarm Clock</property>
+    <property name="title" translatable="yes">Alarm Clock</property>
     <signal name="popup_menu" handler="alarm_applet_status_popup"/>
     <signal name="activate" handler="alarm_applet_status_activate"/>
   </object>
@@ -851,7 +851,7 @@
       <column type="gboolean"/>
       <!-- column-name Triggered -->
       <column type="gboolean"/>
-      <!-- column-name Show icon -->
+      <!-- column-name Show -->
       <column type="gboolean"/>
     </columns>
     <signal name="rows_reordered" handler="alarm_list_window_rows_reordered"/>
@@ -872,8 +872,8 @@
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">new-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">New...</property>
               </object>
               <packing>
@@ -884,8 +884,8 @@
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">edit-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Edit...</property>
               </object>
               <packing>
@@ -896,8 +896,8 @@
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">delete-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Delete</property>
               </object>
               <packing>
@@ -917,8 +917,8 @@
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">enabled-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
               </object>
@@ -930,8 +930,8 @@
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">stop-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
               </object>
@@ -943,8 +943,8 @@
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">snooze-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
                 <property name="menu">snooze-menu</property>
@@ -1099,9 +1099,9 @@
     </child>
   </object>
   <object class="GtkAction" id="snooze-action">
-    <property name="label">Snooze alarm</property>
-    <property name="short_label">Snooze</property>
-    <property name="tooltip">Snooze the selected alarm</property>
+    <property name="label" translatable="yes">Snooze alarm</property>
+    <property name="short_label" translatable="yes">Snooze</property>
+    <property name="tooltip" translatable="yes">Snooze the selected alarm</property>
     <property name="icon_name">weather-few-clouds-night</property>
     <property name="is_important">True</property>
     <signal name="activate" handler="alarm_action_snooze"/>
@@ -1245,71 +1245,71 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAction" id="stop-action">
-    <property name="label">Stop alarm</property>
-    <property name="short_label">Stop</property>
-    <property name="tooltip">Stop the selected alarm</property>
+    <property name="label" translatable="yes">Stop alarm</property>
+    <property name="short_label" translatable="yes">Stop</property>
+    <property name="tooltip" translatable="yes">Stop the selected alarm</property>
     <property name="stock_id">gtk-stop</property>
     <property name="is_important">True</property>
     <signal name="activate" handler="alarm_action_stop"/>
   </object>
   <object class="GtkAction" id="delete-action">
-    <property name="label">Delete alarm</property>
-    <property name="short_label">Delete</property>
-    <property name="tooltip">Delete the selected alarm</property>
+    <property name="label" translatable="yes">Delete alarm</property>
+    <property name="short_label" translatable="yes">Delete</property>
+    <property name="tooltip" translatable="yes">Delete the selected alarm</property>
     <property name="stock_id">gtk-delete</property>
     <signal name="activate" handler="alarm_action_delete"/>
   </object>
   <object class="GtkAction" id="edit-action">
-    <property name="label">Edit alarm</property>
-    <property name="short_label">Edit...</property>
-    <property name="tooltip">Edit the selected alarm</property>
+    <property name="label" translatable="yes">Edit alarm</property>
+    <property name="short_label" translatable="yes">Edit...</property>
+    <property name="tooltip" translatable="yes">Edit the selected alarm</property>
     <property name="stock_id">gtk-edit</property>
     <signal name="activate" handler="alarm_action_edit"/>
   </object>
   <object class="GtkAction" id="new-action">
-    <property name="label">New alarm</property>
-    <property name="short_label">New</property>
-    <property name="tooltip">New alarm</property>
+    <property name="label" translatable="yes">New alarm</property>
+    <property name="short_label" translatable="yes">New</property>
+    <property name="tooltip" translatable="yes">New alarm</property>
     <property name="stock_id">gtk-new</property>
     <signal name="activate" handler="alarm_action_new"/>
   </object>
   <object class="GtkToggleAction" id="enabled-action">
-    <property name="label">Enable/disable alarm</property>
-    <property name="short_label">Enable/disable</property>
-    <property name="tooltip">Enable/disable the selected alarm</property>
+    <property name="label" translatable="yes">Enable/disable alarm</property>
+    <property name="short_label" translatable="yes">Enable/disable</property>
+    <property name="tooltip" translatable="yes">Enable/disable the selected alarm</property>
     <property name="stock_id">gtk-yes</property>
     <signal name="activate" handler="alarm_action_enabled"/>
   </object>
   <object class="GtkAction" id="snooze-all-action">
-    <property name="label">Snooze all alarms</property>
-    <property name="short_label">Snooze alarms</property>
-    <property name="tooltip">Snooze all beeping alarms</property>
+    <property name="label" translatable="yes">Snooze all alarms</property>
+    <property name="short_label" translatable="yes">Snooze alarms</property>
+    <property name="tooltip" translatable="yes">Snooze all beeping alarms</property>
     <property name="icon_name">weather-few-clouds-night</property>
     <signal name="activate" handler="alarm_action_snooze_all"/>
   </object>
   <object class="GtkAction" id="stop-all-action">
-    <property name="label">Stop all alarms</property>
-    <property name="short_label">Stop alarms</property>
-    <property name="tooltip">Stop all beeping alarms</property>
+    <property name="label" translatable="yes">Stop all alarms</property>
+    <property name="short_label" translatable="yes">Stop alarms</property>
+    <property name="tooltip" translatable="yes">Stop all beeping alarms</property>
     <property name="stock_id">gtk-stop</property>
     <signal name="activate" handler="alarm_action_stop_all"/>
   </object>
   <object class="GtkToggleAction" id="toggle-list-win-action">
-    <property name="label">Toggle alarms window</property>
-    <property name="short_label">Toggle alarms</property>
-    <property name="tooltip">Toggle the visibility of the alarms window</property>
+    <property name="label" translatable="yes">Toggle alarms window</property>
+    <property name="short_label" translatable="yes">Toggle alarms</property>
+    <property name="tooltip" translatable="yes">Toggle the visibility of the alarms window</property>
     <signal name="activate" handler="alarm_action_toggle_list_win"/>
   </object>
   <object class="GtkAction" id="quit-action">
-    <property name="label">_Quit</property>
-    <property name="short_label">_Quit</property>
-    <property name="tooltip">Quit Alarm Clock</property>
+    <property name="label" translatable="yes">_Quit</property>
+    <property name="short_label" translatable="yes">_Quit</property>
+    <property name="tooltip" translatable="yes">Quit Alarm Clock</property>
     <property name="stock_id">gtk-quit</property>
     <signal name="activate" handler="alarm_action_quit"/>
   </object>
   <object class="GtkToggleAction" id="autostart-action">
-    <property name="label">Start automatically on log in</property>
-    <property name="short_label">Start automatically</property>
+    <property name="label" translatable="yes">Start automatically on log in</property>
+    <property name="short_label" translatable="yes">Start automatically</property>
     <signal name="activate" handler="pref_action_autostart"/>
   </object>
 </interface>
