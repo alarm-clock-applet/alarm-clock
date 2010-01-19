@@ -210,15 +210,9 @@ alarm_action_snooze (GtkAction *action, gpointer data)
     guint mins = applet->snooze_mins;
     
     if (a = alarm_list_window_get_selected_alarm (list_window)) {
-        if (a->type == ALARM_TYPE_CLOCK) {
-            // Clocks always snooze for 9 minutes
-            mins = ALARM_STD_SNOOZE;
-        }
+        g_debug ("AlarmAction: snooze '%s'", a->message);
         
-        g_debug ("AlarmAction: snooze '%s' for %d minutes", 
-            a->message, mins);
-        
-        alarm_snooze (a, mins * 60);
+        alarm_applet_alarm_snooze (applet, a);
     }
 }
 

@@ -38,7 +38,7 @@ GHashTable *app_command_map = NULL;
  */
 
 /*
- * Snooze any running (read: playing sound) alarms.
+ * Snooze any triggered alarms.
  *
  * Returns the number of snoozed alarms
  */
@@ -53,12 +53,12 @@ alarm_applet_alarms_snooze (AlarmApplet *applet)
 
 	g_debug ("Snoozing alarms...");
 
-	// Loop through alarms and snooze all of 'em
+	// Loop through alarms and snooze all triggered ones
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
 
-        if (alarm_is_playing (a)) {
-    		alarm_snooze (a, 60);
+        if (a->triggered) {
+            alarm_applet_alarm_snooze (applet, a);
             last_snoozed = a;
             n_snoozed++;
         }
@@ -153,15 +153,16 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 void
 alarm_applet_alarm_snooze (AlarmApplet *applet, Alarm *alarm)
 {
-    g_debug ("Snoozing alarm #%d...", alarm->id);
-
-    // Snooze the alarm
-    alarm_snooze (alarm, 60);
-
-    // Decrement the triggered counter
-    //applet->n_triggered--;
-
-    // TODO: Show notification? Not sure that's necessary here...
+    guint mins = applet->snooze_mins;
+    
+    if (alarm->type == ALARM_TYPE_CLOCK) {
+        // Clocks always snooze for 9 minutes
+        mins = ALARM_STD_SNOOZE;
+    }
+    
+    g_debug ("AlarmApplet: snooze '%s' for %d minutes", alarm->message, mins);
+        
+    alarm_snooze (alarm, mins * 60);
     
     // Update status icon
     alarm_applet_status_update (applet);
