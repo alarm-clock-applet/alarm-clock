@@ -21,6 +21,8 @@
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
 
+#include <stdlib.h>
+
 #include "alarm-applet.h"
 
 #include "alarm.h"
@@ -608,6 +610,43 @@ alarm_applet_destroy (AlarmApplet *applet)
 }
 
 
+static UniqueResponse
+unique_app_message_cb (UniqueApp         *app,
+                       UniqueCommand      command,
+                       UniqueMessageData *message,
+                       guint              time_,
+                       gpointer           user_data)
+{
+    AlarmApplet *applet = (AlarmApplet *)user_data;
+
+    UniqueResponse res;
+
+    switch (command) {
+        case UNIQUE_ACTIVATE:
+            g_debug ("AlarmApplet: unique_app_message: ACTIVATE");
+            if (gtk_toggle_action_get_active (applet->action_toggle_list_win)) {
+                // Already visible, present to user
+                alarm_list_window_show (applet->list_window);
+            } else {
+                // Toggle list window visibility
+                gtk_action_activate (applet->action_toggle_list_win);
+            }
+            
+            res = UNIQUE_RESPONSE_OK;
+            break;
+        default:
+            g_warning ("AlarmApplet: unique_app_message: Unknown command %d",
+                command);
+            
+            res = UNIQUE_RESPONSE_INVALID;
+            break;
+    }
+
+    return res;
+}
+
+
+
 /*
  * INIT {{
  */
@@ -650,9 +689,13 @@ alarm_applet_init()
 	return applet;
 }
 
+/**
+ * Alarm Clock main()
+ */
 int
 main (int argc, char *argv[])
 {
+    UniqueApp *unique_app;
 	AlarmApplet *applet;
 
     // Internationalization
@@ -666,11 +709,37 @@ main (int argc, char *argv[])
 	// Initialize GTK+
 	gtk_init (&argc, &argv);
 
+    // Initialize unique app
+    unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
+
+    // Check if we're already running
+    if (unique_app_is_running (unique_app)) {
+        g_debug ("Alarm Clock is ALREADY RUNNING!");
+
+        // Send activate message
+        UniqueMessageData *message = unique_message_data_new ();
+
+        unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
+
+        unique_message_data_free (message);
+        g_object_unref (unique_app);
+
+        return EXIT_SUCCESS;
+    }
+
+    
+
 	// Initialize applet
 	applet = alarm_applet_init ();
-	
+
+    // Connect unique app message-received signal
+    g_signal_connect (unique_app, "message-received", 
+        G_CALLBACK (unique_app_message_cb), applet);
+    
 	// Start main loop
 	gtk_main ();
+
+    g_object_unref (unique_app);
 	
 	return 0;
 }

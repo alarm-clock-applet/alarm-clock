@@ -106,7 +106,7 @@ alarm_list_window_new (AlarmApplet *applet)
 void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
-	gtk_window_present (list_window->window);
+	gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
 }
 
 /**

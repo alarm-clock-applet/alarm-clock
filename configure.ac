@@ -57,7 +57,8 @@ PKG_CHECK_MODULES(GNOME,
   [gconf-2.0
    gio-2.0
    gnome-icon-theme
-   libnotify >= 0.4.1])
+   libnotify >= 0.4.1
+   unique-1.0])
 
 # LIBXML_REQUIRED=2.5.0
 

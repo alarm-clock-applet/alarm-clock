@@ -34,6 +34,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>
+#include <unique/unique.h>
 
 //#include <panel-applet.h>
 //#include <panel-applet-gconf.h>
