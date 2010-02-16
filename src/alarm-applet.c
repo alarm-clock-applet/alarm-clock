@@ -150,22 +150,22 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 }
 
 /**
- * Snooze an alarm, keeping UI consistent
+ * Snooze an alarm, according to UI settings
  */
 void
 alarm_applet_alarm_snooze (AlarmApplet *applet, Alarm *alarm)
 {
     guint mins = applet->snooze_mins;
-    
+
     if (alarm->type == ALARM_TYPE_CLOCK) {
         // Clocks always snooze for 9 minutes
         mins = ALARM_STD_SNOOZE;
     }
-    
+
     g_debug ("AlarmApplet: snooze '%s' for %d minutes", alarm->message, mins);
-        
+
     alarm_snooze (alarm, mins * 60);
-    
+
     // Update status icon
     alarm_applet_status_update (applet);
 }
@@ -177,15 +177,10 @@ void
 alarm_applet_alarm_stop (AlarmApplet *applet, Alarm *alarm)
 {
     g_debug ("Stopping alarm #%d...", alarm->id);
-    
+
     // Stop the alarm
     alarm_clear (alarm);
 
-    // Decrement the triggered counter
-    //applet->n_triggered--;
-
-    // TODO: Show notification? Not sure that's necessary here...
-    
     // Update status icon
     alarm_applet_status_update (applet);
 }
@@ -419,58 +414,6 @@ alarm_applet_apps_load (AlarmApplet *applet)
 //	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
 //	applet->apps = g_list_append (applet->apps, entry);
 }
-
-
-/*
- * Alarm signals {{
- */
-
-/**
- * Callback for when an alarm is triggered
- * We show the notification bubble here if appropriate.
- */
-/*static void
-alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-    gchar *summary, *body;
-    const gchar *icon;
-
-	g_debug ("Alarm triggered: #%d", alarm->id);
-    
-    // Keep track of how many alarms have been triggered
-    applet->n_triggered++;
-
-    // Show notification
-    summary = g_strdup_printf (_("%s"), alarm->message);
-    body = g_strdup_printf (_("You can snooze or stop alarms from the Alarm Clock menu."));
-    icon = (alarm->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
-    alarm_applet_notification_show (applet, summary, body, icon);
-    
-    // Update status icon
-    alarm_applet_status_update (applet);
-}*/
-
-/**
- * Callback for when an alarm is cleared
- */
-/*static void
-alarm_applet_alarm_cleared (Alarm *alarm, gpointer data)
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-
-	g_debug ("Alarm cleared: #%d", alarm->id);
-    
-    // Keep track of how many alarms have been triggered
-    applet->n_triggered--;
-    
-    // Update status icon
-    alarm_applet_status_update (applet);
-}*/
-
-/*
- * }} Alarm signals
- */
 
 /*
  * Alarms list {{
@@ -714,7 +657,7 @@ main (int argc, char *argv[])
 
     // Check if we're already running
     if (unique_app_is_running (unique_app)) {
-        g_debug ("Alarm Clock is ALREADY RUNNING!");
+    	g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
 
         // Send activate message
         UniqueMessageData *message = unique_message_data_new ();
