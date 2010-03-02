@@ -340,13 +340,15 @@ alarm_action_toggle_autostart (GtkAction *action, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
 	gboolean active = gtk_toggle_action_get_active (action);
+	gboolean autostart_state = prefs_autostart_get_state();
 	//gboolean check_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (applet->pref_autostart_check));
 
 	g_debug ("AlarmAction: toggle autostart to %d", active);
 
-	/*if (active != check_active) {
-
-	}*/
+	if (active != autostart_state) {
+		g_debug ("AlarmAction: set autostart to %d!", active);
+		prefs_autostart_set_state (active);
+	}
 }
 
 

@@ -50,6 +50,7 @@ prefs_init (AlarmApplet *applet)
 }
 
 // Ordered list of autostart files we watch for
+GFile *autostart_user_file = NULL;
 GList *autostart_files = NULL;
 
 /**
@@ -70,9 +71,9 @@ prefs_autostart_init (AlarmApplet *applet)
 
 	// Add user-specific autostart: ~/.config/autostart/PACKAGE.desktop
 	filename = g_build_filename (g_get_user_config_dir (), "autostart", PACKAGE ".desktop", NULL);
-	file = g_file_new_for_path (filename);
+	autostart_user_file = g_file_new_for_path (filename);
 
-	autostart_files = g_list_append (autostart_files, file);
+	autostart_files = g_list_append (autostart_files, autostart_user_file);
 
 	g_free(filename);
 
@@ -158,6 +159,7 @@ prefs_autostart_get_state ()
 			if (!err && b) {
 				// Hidden is true, autostart is FALSE
 				g_debug ("Preferences: Autostart Hidden=true");
+				g_key_file_free (kf);
 				return FALSE;
 			}
 
@@ -172,6 +174,7 @@ prefs_autostart_get_state ()
 			if (!err && !b) {
 				// X-GNOME-Autostart-enabled is false, autostart is FALSE
 				g_debug ("Preferences: Autostart X-GNOME-Autostart-enabled=false");
+				g_key_file_free (kf);
 				return FALSE;
 			}
 
@@ -179,6 +182,8 @@ prefs_autostart_get_state ()
 				g_error_free (err);
 				err = NULL;
 			}
+
+			g_key_file_free (kf);
 
 		} else {
 			g_warning ("Preferences: Could not load autostart-file '%s': %s", filename, err->message);
@@ -192,6 +197,100 @@ prefs_autostart_get_state ()
 	}
 
 	return FALSE;
+}
+
+/**
+ * Enable / disable autostart
+ */
+void
+prefs_autostart_set_state (gboolean state)
+{
+	gboolean current_state = prefs_autostart_get_state();
+
+	if (current_state == state) {
+		// No change
+		return;
+	}
+
+	GFile *file = prefs_autostart_get_current ();
+	GFile *f;
+	gchar *filename, *str;
+	gsize length;
+	GKeyFile *kf;
+	GFileOutputStream *fstream;
+	GError *err = NULL;
+
+	if (state) {
+		// Enable
+		g_debug ("Preferences: Autostart ENABLE!");
+		if (file == autostart_user_file) {
+			// Unset Hidden and X-GNOME-Autostart-enabled
+			kf = g_key_file_new ();
+
+			filename = g_file_get_path (file);
+
+			if (g_key_file_load_from_file(kf, filename, G_KEY_FILE_NONE, &err)) {
+				g_key_file_remove_key (kf, "Desktop Entry", "Hidden", NULL);
+				g_key_file_remove_key (kf, "Desktop Entry", "X-GNOME-Autostart-enabled", NULL);
+
+				// Write out results
+				fstream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
+				if (fstream) {
+					str = g_key_file_to_data (kf, &length, NULL);
+
+					g_print ("Writing str: %s", str);
+					g_output_stream_write_all (fstream, str, length, NULL, NULL, &err);
+					g_output_stream_close (fstream, NULL, &err);
+				}
+			}
+
+			if (err) {
+				g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
+				g_error_free (err);
+			}
+
+			g_free(filename);
+
+		} else {
+			// Copy .desktop to autostart_user_file
+			filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
+			f = g_file_new_for_path (filename);
+
+			if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
+				g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
+				g_error_free (err);
+			}
+
+			g_free (filename);
+		}
+
+	} else {
+		// Disable
+		g_debug ("Preferences: Autostart DISABLE!");
+
+		if (file) {
+
+		} else {
+			// Disabled already, should not happen
+			g_warning ("Preferences: Autostart is already disabled!?!?");
+		}
+	}
+
+	//
+	// Enabling:
+	// 1. get_current?
+	//	    no: copy .desktop to ~/.config/autostart, finished
+	//	    yes: is in user cfg?
+	//			no: copy .desktop to ~/.config/autostart, finished
+	//			yes: unset Hidden and X-GNOME-Autostart-enabled
+	//
+	// Disabling:
+	// 1. get_current?
+	//		no: disabled already, finished
+	//		yes: is in user cfg?
+	//			no: copy .desktop to ~/.config/autostart, set Hidden=true
+	//			yes: set Hidden=true
+	//
 }
 
 /**
