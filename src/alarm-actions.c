@@ -63,11 +63,14 @@ alarm_applet_actions_init (AlarmApplet *applet)
     gtk_action_set_accel_group (applet->action_toggle_list_win,
         applet->list_window->accel_group);
 
+    applet->action_toggle_autostart = GET_ACTION ("autostart-action");
+
     gtk_action_group_add_action (applet->actions_global, applet->action_new);
     gtk_action_group_add_action (applet->actions_global, applet->action_stop_all);
     gtk_action_group_add_action (applet->actions_global, applet->action_snooze_all);
     gtk_action_group_add_action_with_accel (applet->actions_global, 
         applet->action_toggle_list_win, "Escape");
+    gtk_action_group_add_action (applet->actions_global, applet->action_toggle_autostart);
 
     gtk_action_connect_accelerator (applet->action_toggle_list_win);
     
@@ -329,7 +332,22 @@ alarm_action_quit (GtkAction *action, gpointer data)
     gtk_main_quit ();
 }
 
+/*
+ * Toggle autostart action
+ */
+void
+alarm_action_toggle_autostart (GtkAction *action, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	gboolean active = gtk_toggle_action_get_active (action);
+	//gboolean check_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (applet->pref_autostart_check));
 
+	g_debug ("AlarmAction: toggle autostart to %d", active);
+
+	/*if (active != check_active) {
+
+	}*/
+}
 
 
 
