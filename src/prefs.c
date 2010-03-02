@@ -241,8 +241,12 @@ prefs_autostart_set_state (gboolean state)
 					g_print ("Writing str: %s", str);
 					g_output_stream_write_all (fstream, str, length, NULL, NULL, &err);
 					g_output_stream_close (fstream, NULL, &err);
+
+					g_free (str);
 				}
 			}
+
+			g_key_file_free (kf);
 
 			if (err) {
 				g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
@@ -269,6 +273,48 @@ prefs_autostart_set_state (gboolean state)
 		g_debug ("Preferences: Autostart DISABLE!");
 
 		if (file) {
+			if (file != autostart_user_file) {
+				// Copy .desktop to autostart_user_file
+				filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
+				f = g_file_new_for_path (filename);
+
+				if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
+					g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
+					g_error_free (err);
+				}
+
+				g_free(filename);
+
+				file = autostart_user_file;
+			}
+
+			// Set Hidden=true
+			kf = g_key_file_new ();
+
+			filename = g_file_get_path (file);
+
+			if (g_key_file_load_from_file(kf, filename, G_KEY_FILE_NONE, &err)) {
+				g_key_file_set_boolean(kf, "Desktop Entry", "Hidden", TRUE);
+
+				// Write out results
+				fstream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
+				if (fstream) {
+					str = g_key_file_to_data (kf, &length, NULL);
+
+					g_print ("Writing str: %s", str);
+					g_output_stream_write_all (fstream, str, length, NULL, NULL, &err);
+					g_output_stream_close (fstream, NULL, &err);
+
+					g_free (str);
+				}
+			}
+
+			g_key_file_free (kf);
+
+			if (err) {
+				g_warning ("Preferences: Error when disabling autostart-file '%s': %s", filename, err->message);
+				g_error_free (err);
+			}
 
 		} else {
 			// Disabled already, should not happen
