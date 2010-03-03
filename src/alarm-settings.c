@@ -135,58 +135,63 @@ create_img_label (const gchar *label_text, const gchar *icon_name)
 static void
 alarm_settings_update_type (AlarmSettingsDialog *dialog)
 {
-    g_debug ("AlarmSettingsDialog: update_type()");
     
-    BLOCK (dialog->clock_toggle, alarm_settings_changed_type);
-    BLOCK (dialog->timer_toggle, alarm_settings_changed_type);
+    AlarmType type = dialog->alarm->type;
+    gboolean clock_toggled = gtk_toggle_button_get_active(dialog->clock_toggle);
+    gboolean timer_toggled = gtk_toggle_button_get_active(dialog->timer_toggle);
 
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->clock_toggle), 
-        dialog->alarm->type == ALARM_TYPE_CLOCK);
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->timer_toggle), 
-        dialog->alarm->type == ALARM_TYPE_TIMER);
-    
-    if (dialog->alarm->type == ALARM_TYPE_CLOCK) {
+    if ((type == ALARM_TYPE_CLOCK && clock_toggled) ||
+    	(type == ALARM_TYPE_TIMER && timer_toggled)) {
+    	// No change
+    	return;
+    }
+
+    g_debug ("AlarmSettingsDialog: update_type()");
+
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->clock_toggle),
+		type == ALARM_TYPE_CLOCK);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->timer_toggle),
+		type == ALARM_TYPE_TIMER);
+
+	if (type == ALARM_TYPE_CLOCK) {
 		gtk_widget_set_sensitive(dialog->repeat_expand, TRUE);
 	} else {
 		gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
 	}
-
-    UNBLOCK (dialog->clock_toggle, alarm_settings_changed_type);
-    UNBLOCK (dialog->timer_toggle, alarm_settings_changed_type);
 }
 
 static void
 alarm_settings_update_label (AlarmSettingsDialog *dialog)
 {
+	const gchar *entry_text = gtk_entry_get_text (dialog->label_entry);
+    if (g_strcmp0 (entry_text, dialog->alarm->message) == 0) {
+    	// No change
+    	return;
+    }
+
     g_debug ("AlarmSettingsDialog: update_label()");
     
-    BLOCK (dialog->label_entry, alarm_settings_changed_label);
-    
     g_object_set (dialog->label_entry, "text", dialog->alarm->message, NULL);
-    
-    UNBLOCK (dialog->label_entry, alarm_settings_changed_label);
 }
 
 static void
 alarm_settings_update_time (AlarmSettingsDialog *dialog)
 {
-	struct tm *tm;
+	struct tm *tm = alarm_get_time(dialog->alarm);
+	gint hour = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->hour_spin));
+	gint min = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->min_spin));
+	gint sec = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->sec_spin));
+
+	if (tm->tm_hour == hour && tm->tm_min == min && tm->tm_sec == sec) {
+		// No change
+		return;
+	}
 
     g_debug ("AlarmSettingsDialog: update_time()");
 	
-	tm = alarm_get_time(dialog->alarm);
-
-    BLOCK (dialog->hour_spin, alarm_settings_changed_time);
-    BLOCK (dialog->min_spin, alarm_settings_changed_time);
-    BLOCK (dialog->sec_spin, alarm_settings_changed_time);
-    
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), tm->tm_hour);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->min_spin), tm->tm_min);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->sec_spin), tm->tm_sec);
-
-    UNBLOCK (dialog->hour_spin, alarm_settings_changed_time);
-    UNBLOCK (dialog->min_spin, alarm_settings_changed_time);
-    UNBLOCK (dialog->sec_spin, alarm_settings_changed_time);
 }
 
 static void
@@ -206,11 +211,9 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 		check = (dialog->alarm->repeat & r) != 0;
 		
 		// Activate the appropriate widget
-        BLOCK (dialog->repeat_check[i], alarm_settings_changed_repeat);
-        
-		g_object_set (dialog->repeat_check[i], "active", check, NULL);
-        
-        UNBLOCK (dialog->repeat_check[i], alarm_settings_changed_repeat);
+		if (gtk_toggle_button_get_active(dialog->repeat_check[i]) != check) {
+			g_object_set (dialog->repeat_check[i], "active", check, NULL);
+		}
 	}
 	
 
@@ -227,14 +230,24 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 static void
 alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 {
-    g_debug ("AlarmSettingsDialog: update_notify_type()");
+    AlarmNotifyType type = dialog->alarm->notify_type;
     
+    gboolean sound_active = gtk_toggle_button_get_active (dialog->notify_app_radio);
+    gboolean sound_sensitive = gtk_widget_is_sensitive (dialog->notify_sound_box);
+    gboolean app_active = gtk_toggle_button_get_active (dialog->notify_app_radio);
+    gboolean app_sensitive = gtk_widget_is_sensitive (dialog->notify_app_box);
+
+    if ((type == ALARM_NOTIFY_SOUND && sound_sensitive && !app_sensitive) ||
+    	(type == ALARM_NOTIFY_COMMAND && !sound_sensitive && app_sensitive)) {
+    	// No change
+    	return;
+    }
+
+    g_debug ("AlarmSettingsDialog: update_notify_type()");
+
 	// Enable selected
 	switch (dialog->alarm->notify_type) {
         case ALARM_NOTIFY_COMMAND:
-
-            BLOCK (dialog->notify_app_radio, alarm_settings_changed_notify_type);
-
             g_object_set (dialog->notify_app_radio, "active", TRUE, NULL);
             g_object_set (dialog->notify_app_box, "sensitive", TRUE, NULL);
 
@@ -246,20 +259,14 @@ alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
                 media_player_stop (dialog->player);
             }
 
-            UNBLOCK (dialog->notify_app_radio, alarm_settings_changed_notify_type);
-
             break;
         default:
             // NOTIFY_SOUND
-            BLOCK (dialog->notify_sound_radio, alarm_settings_changed_notify_type);
-            
             g_object_set (dialog->notify_sound_radio, "active", TRUE, NULL);
             g_object_set (dialog->notify_sound_box, "sensitive", TRUE, NULL);
 
             // Disable others
             g_object_set (dialog->notify_app_box, "sensitive", FALSE, NULL);
-
-            UNBLOCK (dialog->notify_sound_radio, alarm_settings_changed_notify_type);
             break;
     }
 }
@@ -269,13 +276,19 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 {
 	AlarmListEntry *item;
 	GList *l;
-	guint pos, len, combo_len;
+	gint pos, len, combo_len;
 	gint sound_pos = -1;
+
+	pos = gtk_combo_box_get_active (dialog->notify_sound_combo);
+	item = g_list_nth_data (dialog->applet->sounds, pos);
+
+	if (item && g_strcmp0 (item->data, dialog->alarm->sound_file) == 0) {
+		// No change
+		return;
+	}
 
     g_debug ("AlarmSettingsDialog: update_sound()");
 
-    BLOCK (dialog->notify_sound_combo, alarm_settings_changed_sound);
-	
 	/* Fill sounds list */
 	fill_combo_box (GTK_COMBO_BOX (dialog->notify_sound_combo),
 					dialog->applet->sounds, _("Select sound file..."));
@@ -290,21 +303,20 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 			break;
 		}
 	}
-
-    UNBLOCK (dialog->notify_sound_combo, alarm_settings_changed_sound);
 }
 
 static void
 alarm_settings_update_sound_repeat (AlarmSettingsDialog *dialog)
 {
+	if (gtk_toggle_button_get_active (dialog->notify_sound_loop_check) == dialog->alarm->sound_loop) {
+		// No change
+		return;
+	}
+
     g_debug ("AlarmSettingsDialog: update_sound_repeat()");
-    
-    BLOCK (dialog->notify_sound_loop_check, alarm_settings_changed_sound_repeat);
     
 	g_object_set (dialog->notify_sound_loop_check, 
         "active", dialog->alarm->sound_loop, NULL);
-    
-    UNBLOCK (dialog->notify_sound_loop_check, alarm_settings_changed_sound_repeat);
 }
 
 static void
@@ -315,12 +327,18 @@ alarm_settings_update_app (AlarmSettingsDialog *dialog)
 	guint pos, len, combo_len;
 	gboolean custom = FALSE;
 
+	pos = gtk_combo_box_get_active (dialog->notify_app_combo);
+	item = g_list_nth_data (dialog->applet->apps, pos);
+
+	if (item && g_strcmp0 (item->data, dialog->alarm->command) == 0) {
+		// No change
+		return;
+	}
+
     g_debug ("AlarmSettingsDialog: update_app()");
 	
 //	g_debug ("alarm_settings_update_app (%p): app_combo: %p, applet: %p, apps: %p", dialog, dialog->notify_app_combo, dialog->applet, dialog->applet->apps);
 //	g_debug ("alarm_settings_update_app setting entry to %s", dialog->alarm->command);
-
-    BLOCK (dialog->notify_app_combo, alarm_settings_changed_app);
     
 	/* Fill apps list */
 	fill_combo_box (GTK_COMBO_BOX (dialog->notify_app_combo),
@@ -350,8 +368,6 @@ alarm_settings_update_app (AlarmSettingsDialog *dialog)
 		g_object_set (dialog->notify_app_command_entry, "sensitive", custom, NULL);
 	
 	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->notify_app_combo), pos);
-
-    UNBLOCK (dialog->notify_app_combo, alarm_settings_changed_app);
 }
 
 static void
@@ -359,11 +375,12 @@ alarm_settings_update_app_command (AlarmSettingsDialog *dialog)
 {
     g_debug ("AlarmSettingsDialog: update_app_command()");
     
-    BLOCK (dialog->notify_app_command_entry, alarm_settings_changed_command);
+    if (g_strcmp0 (dialog->alarm->command, gtk_entry_get_text (dialog->notify_app_command_entry)) == 0) {
+    	// No change
+    	return;
+    }
     
     g_object_set (dialog->notify_app_command_entry, "text", dialog->alarm->command, NULL);
-    
-    UNBLOCK (dialog->notify_app_command_entry, alarm_settings_changed_command);
 }
 
 static void
@@ -426,21 +443,7 @@ alarm_changed (GObject *object,
     }
 
     if (g_strcmp0 (name, "sound-file") == 0) {
-        // Block sound combo signals to prevent infinite loop
-	    // because the "changed" signal will be emitted when we
-	    // change the combo box tree model.
-	    /*g_signal_handlers_block_matched (dialog->notify_sound_combo, 
-									     G_SIGNAL_MATCH_FUNC, 
-									     0, 0, NULL, alarm_settings_changed_sound, NULL);
-	    */
-	    // Update UI
 	    alarm_settings_update_sound (dialog);
-	
-	    // Unblock combo signals
-	    /*g_signal_handlers_unblock_matched (dialog->notify_sound_combo, 
-									       G_SIGNAL_MATCH_FUNC,
-									       0, 0, NULL, alarm_settings_changed_sound, NULL);
-         */
     }
 
     if (g_strcmp0 (name, "sound-repeat") == 0) {
@@ -448,20 +451,8 @@ alarm_changed (GObject *object,
     }
 
     if (g_strcmp0 (name, "command") == 0) {
-        // Block sound combo signals to prevent infinite loop
-	    // because the "changed" signal will be emitted when we
-	    // change the combo box tree model.
-	    /*g_signal_handlers_block_matched (dialog->notify_app_combo, 
-									     G_SIGNAL_MATCH_FUNC, 
-									     0, 0, NULL, alarm_settings_changed_app, NULL);
-	*/
-	    // Update UI
 	    alarm_settings_update_app (dialog);
-	
-	    // Unblock combo signals
-	    /*g_signal_handlers_unblock_matched (dialog->notify_app_combo, 
-									       G_SIGNAL_MATCH_FUNC,
-									       0, 0, NULL, alarm_settings_changed_app, NULL);*/
+	    alarm_settings_update_app_command (dialog);
     }
 /*
     if (g_strcmp0 (name, "") == 0) {
