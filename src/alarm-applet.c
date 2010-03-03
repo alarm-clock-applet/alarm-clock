@@ -511,8 +511,8 @@ alarm_applet_destroy (AlarmApplet *applet)
 //	}
 
 	// Destroy preferences dialog
-	if (applet->preferences_dialog) {
-		gtk_widget_destroy (GTK_WIDGET (applet->preferences_dialog));
+	if (applet->prefs_dialog) {
+		gtk_widget_destroy (GTK_WIDGET (applet->prefs_dialog));
 	}
 
 	// Loop through all alarms and free like a mad man!

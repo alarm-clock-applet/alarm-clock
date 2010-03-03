@@ -46,10 +46,11 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkCheckButton" id="autostart-check">
-                        <property name="label" translatable="yes">_Start automatically on log in</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="use_action_appearance">True</property>
+                        <property name="related_action">autostart-action</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -712,7 +713,6 @@
     <property name="visible">False</property>
     <property name="has_tooltip">True</property>
     <property name="tooltip_text" translatable="yes">Alarm Clock</property>
-    <property name="title" translatable="yes">Alarm Clock</property>
     <signal name="popup_menu" handler="alarm_applet_status_popup"/>
     <signal name="activate" handler="alarm_applet_status_activate"/>
   </object>
@@ -722,8 +722,8 @@
       <object class="GtkImageMenuItem" id="status_menu_snooze">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="use_action_appearance">True</property>
         <property name="related_action">snooze-all-action</property>
+        <property name="use_action_appearance">True</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
@@ -732,8 +732,8 @@
       <object class="GtkImageMenuItem" id="status_menu_stop">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="use_action_appearance">True</property>
         <property name="related_action">stop-all-action</property>
+        <property name="use_action_appearance">True</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
@@ -872,8 +872,8 @@
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="related_action">new-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">new-action</property>
                 <property name="label" translatable="yes">New...</property>
               </object>
               <packing>
@@ -884,8 +884,8 @@
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="related_action">edit-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">edit-action</property>
                 <property name="label" translatable="yes">Edit...</property>
               </object>
               <packing>
@@ -896,8 +896,8 @@
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="related_action">delete-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">delete-action</property>
                 <property name="label" translatable="yes">Delete</property>
               </object>
               <packing>
@@ -917,8 +917,8 @@
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="related_action">enabled-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">enabled-action</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
               </object>
@@ -930,8 +930,8 @@
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="related_action">stop-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">stop-action</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
               </object>
@@ -943,8 +943,8 @@
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="related_action">snooze-action</property>
                 <property name="use_action_appearance">True</property>
+                <property name="related_action">snooze-action</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
                 <property name="menu">snooze-menu</property>
@@ -1308,8 +1308,8 @@
     <signal name="activate" handler="alarm_action_quit"/>
   </object>
   <object class="GtkToggleAction" id="autostart-action">
-    <property name="label" translatable="yes">Start automatically on log in</property>
-    <property name="short_label" translatable="yes">Start automatically</property>
-    <signal name="activate" handler="pref_action_autostart"/>
+    <property name="label" translatable="yes">Start automatically at login</property>
+    <property name="short_label" translatable="yes">Start automatically at login</property>
+    <signal name="activate" handler="alarm_action_toggle_autostart"/>
   </object>
 </interface>

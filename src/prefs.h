@@ -27,6 +27,12 @@
 #include "alarm-applet.h"
 
 void
-preferences_dialog_display (AlarmApplet *applet);
+prefs_init (AlarmApplet *applet);
+
+void
+prefs_dialog_show (AlarmApplet *applet);
+
+gboolean
+prefs_autostart_get_state ();
 
 #endif /*PREFS_H_*/

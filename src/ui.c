@@ -52,6 +52,8 @@ alarm_applet_ui_load (const char *name, AlarmApplet *applet)
     
     builder = gtk_builder_new();
     
+    g_debug ("Loading UI from %s...", filename);
+
     if (gtk_builder_add_from_file (builder, filename, &error)) {
         /* Connect signals */
         gtk_builder_connect_signals (builder, applet);
@@ -242,13 +244,14 @@ alarm_applet_ui_init (AlarmApplet *applet)
     /* Initialize alarm settings dialog */
     applet->settings_dialog = alarm_settings_dialog_new (applet);
     
-    
     /* Connect signals */
     //gtk_builder_connect_signals (applet->ui, applet);
     
     /* Initialize actions */
     alarm_applet_actions_init (applet);
 
+    /* Initialize preferences dialog */
+    prefs_init (applet);
 	
 	
 	//g_object_set(applet->status_icon, "blinking", TRUE, NULL);
@@ -409,7 +412,7 @@ alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem,
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
 	
-	preferences_dialog_display (applet);
+	prefs_dialog_show (applet);
 }
 
 G_MODULE_EXPORT void

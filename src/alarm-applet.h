@@ -92,7 +92,8 @@ struct _AlarmApplet {
     AlarmSettingsDialog *settings_dialog;
     
 	/* Preferences */
-	GtkDialog *preferences_dialog;
+	GtkDialog *prefs_dialog;
+	GtkWidget *prefs_autostart_check;
     
     guint snooze_mins;
 
@@ -111,6 +112,7 @@ struct _AlarmApplet {
     GtkAction *action_stop_all;
     GtkAction *action_snooze_all;
     GtkAction *action_toggle_list_win;
+    GtkAction *action_toggle_autostart;
 
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
