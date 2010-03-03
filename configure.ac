@@ -16,8 +16,9 @@ AC_INIT([alarm-clock], [alarm_clock_version],
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.9 foreign])
+AM_INIT_AUTOMAKE([foreign 1.11 -Wall silent-rules])
 AM_MAINTAINER_MODE([enable])
+AM_SILENT_RULES([yes])
 
 
 # Substitute variables

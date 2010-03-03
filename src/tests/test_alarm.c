@@ -551,26 +551,6 @@ test_alarm_repeat (AlarmFixture *fix,
 	g_slist_free (list);
 }
 
-/*
- * TEST: alarm_bind
- */
-static void
-test_alarm_bind (AlarmFixture *fix,
-				 gconstpointer test_data)
-{
-	Alarm *alarm  = fix->alarm;
-	Alarm *alarm2 = alarm_new (GCONF_DIR, 1);
-	
-	alarm_bind (alarm, "command", G_OBJECT (alarm2), "message");
-	
-	g_object_set (alarm, "command", "wickid!", NULL);
-	
-	g_assert_cmpstr (alarm->command, ==, alarm2->message);
-	
-	alarm_delete (alarm2);
-	g_object_unref (alarm2);
-}
-
 
 
 /*
@@ -591,7 +571,6 @@ int main (int argc, char **argv)
 	g_test_add ("/alarm/props",  AlarmFixture, 0, alarm_fixture_setup, test_alarm_props, alarm_fixture_teardown);
 	g_test_add ("/alarm/signal", AlarmFixture, 0, alarm_fixture_setup, test_alarm_signals, alarm_fixture_teardown);
 	g_test_add ("/alarm/notify", AlarmFixture, 0, alarm_fixture_setup, test_alarm_notify, alarm_fixture_teardown);
-	g_test_add ("/alarm/bind",	 AlarmFixture, 0, alarm_fixture_setup, test_alarm_bind, alarm_fixture_teardown);
 	g_test_add ("/alarm/timers", AlarmFixture, 0, alarm_fixture_setup, test_alarm_timers, alarm_fixture_teardown);
 	
 	return g_test_run ();

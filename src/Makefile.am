@@ -5,6 +5,15 @@ gladedir = $(pkgdatadir)/glade
 
 SUBDIRS = tests
 
+AM_CFLAGS =	                        \
+	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
+	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
+	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
+	@GNOME_CFLAGS@  @WARN_CFLAGS@
+
+LDADD =		\
+	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
+	@GNOME_LIBS@
 
 #
 # alarm-clock-applet binary
@@ -24,14 +33,5 @@ alarm_clock_applet_SOURCES = alarm-applet.c alarm-applet.h          	\
 						     alarm-settings.c alarm-settings.h	    	\
 						     prefs.c prefs.h                            
 
-alarm_clock_applet_CFLAGS =	                        \
-	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
-	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
-	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
-	@GNOME_CFLAGS@  @WARN_CFLAGS@ $(AM_CFLAGS)
-
-alarm_clock_applet_LDADD =		\
-	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
-	@GNOME_LIBS@
 
 
