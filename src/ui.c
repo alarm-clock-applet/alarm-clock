@@ -429,6 +429,9 @@ alarm_applet_alarm_triggered (Alarm *alarm, gpointer data)
     icon = (alarm->type == ALARM_TYPE_TIMER) ? TIMER_ICON : ALARM_ICON;
     alarm_applet_notification_show (applet, summary, body, icon);
     
+    g_free (summary);
+    g_free (body);
+
     // Update status icon
     alarm_applet_status_update (applet);
 

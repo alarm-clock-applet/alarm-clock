@@ -53,7 +53,7 @@ main(int argc, char *argv[])
     GtkStatusIcon *si = gtk_status_icon_new_from_icon_name ("alarm-clock");
 
 	/* Stock icon */
-	n = notify_notification_new_with_status_icon("Alarm Test",
+	n = notify_notification_new_with_status_icon("Alarm & <b>Test</b>",
                                                  "Click the alarm icon to snooze",
                                                  "alarm-timer", si);
 

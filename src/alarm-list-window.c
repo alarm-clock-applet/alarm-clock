@@ -250,11 +250,13 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     }
     
     // Create label column
+    tmp2 = g_markup_escape_text (a->message, -1);
     if (a->triggered) {
-        label_col = g_strdup_printf (LABEL_COL_TRIGGERED_FORMAT, a->message);
+        label_col = g_strdup_printf (LABEL_COL_TRIGGERED_FORMAT, tmp2);
     } else {
-        label_col = g_strdup_printf (LABEL_COL_FORMAT, a->message);
+        label_col = g_strdup_printf (LABEL_COL_FORMAT, tmp2);
     }
+    g_free (tmp2);
     
 	gtk_list_store_set (GTK_LIST_STORE (model), iter,
                         COLUMN_TYPE, type_col,
