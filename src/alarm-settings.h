@@ -77,4 +77,13 @@ display_edit_alarm_dialog (AlarmApplet *applet, Alarm *alarm);
 void
 alarm_settings_dialog_close (AlarmSettingsDialog *dialog);
 
+gboolean
+alarm_settings_output_time (GtkSpinButton *spin, gpointer data);
+
+void
+alarm_settings_sound_preview (GtkButton *button, gpointer data);
+
+void
+alarm_settings_dialog_response (GtkDialog *dialog, gint rid, gpointer data);
+
 #endif /*EDITALARM_H_*/

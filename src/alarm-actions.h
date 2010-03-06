@@ -36,4 +36,37 @@ alarm_applet_actions_update_sensitive (AlarmApplet *applet);
 void
 alarm_action_update_enabled (AlarmApplet *applet);
 
+void
+alarm_action_edit (GtkAction *action, gpointer data);
+
+void
+alarm_action_delete (GtkAction *action, gpointer data);
+
+void
+alarm_action_enabled (GtkToggleAction *action, gpointer data);
+
+void
+alarm_action_stop (GtkAction *action, gpointer data);
+
+void
+alarm_action_stop_all (GtkAction *action, gpointer data);
+
+void
+alarm_action_new (GtkAction *action, gpointer data);
+
+void
+alarm_action_snooze (GtkAction *action, gpointer data);
+
+void
+alarm_action_snooze_all (GtkAction *action, gpointer data);
+
+void
+alarm_action_toggle_list_win (GtkAction *action, gpointer data);
+
+void
+alarm_action_quit (GtkAction *action, gpointer data);
+
+void
+alarm_action_toggle_autostart (GtkAction *action, gpointer data);
+
 #endif // ALARM_ACTIONS_H

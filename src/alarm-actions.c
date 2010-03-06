@@ -86,7 +86,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
 /**
  * Edit alarm action
  */
-G_MODULE_EXPORT void
+void
 alarm_action_edit (GtkAction *action, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;

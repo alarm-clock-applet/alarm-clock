@@ -48,7 +48,7 @@ guint
 alarm_applet_alarms_snooze (AlarmApplet *applet)
 {
 	GList *l;
-	Alarm *a, *last_snoozed;
+	Alarm *a, *last_snoozed = NULL;
     guint n_snoozed = 0;
     gchar *summary, *body;
     const gchar *icon;
@@ -102,7 +102,7 @@ guint
 alarm_applet_alarms_stop (AlarmApplet *applet)
 {
 	GList *l;
-	Alarm *a, *last_stopped;
+	Alarm *a, *last_stopped = NULL;
     guint n_stopped = 0;
     gchar *summary, *body;
     const gchar *icon;

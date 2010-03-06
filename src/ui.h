@@ -57,6 +57,9 @@ alarm_applet_notification_show (AlarmApplet *applet, const gchar *summary,
 void
 alarm_applet_ui_init (AlarmApplet *applet);
 
+GtkBuilder *
+alarm_applet_ui_load (const char *name, AlarmApplet *applet);
+
 void
 alarm_applet_alarm_changed (GObject *object,  GParamSpec *pspec, gpointer data);
 
@@ -74,5 +77,24 @@ alarm_applet_menu_init (AlarmApplet *applet);
 
 void
 media_player_error_cb (MediaPlayer *player, GError *err, gpointer data);
+
+void
+alarm_applet_status_activate (GtkStatusIcon *status_icon, gpointer user_data);
+
+void
+alarm_applet_status_popup (GtkStatusIcon  *status_icon,
+                           guint           button,
+                           guint           activate_time,
+                           gpointer        user_data);
+
+void
+alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem, gpointer user_data);
+
+void
+alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem, gpointer user_data);
+
+void
+alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem, gpointer user_data);
+
 
 #endif /*UI_H_*/

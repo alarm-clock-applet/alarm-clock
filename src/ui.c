@@ -302,7 +302,7 @@ status_menu_stop_cb (GtkMenuItem *menuitem,
 }
 */
 
-G_MODULE_EXPORT void
+void
 alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
                      gpointer     user_data)
 {
@@ -315,7 +315,7 @@ alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
     }
 }       
 
-G_MODULE_EXPORT void
+void
 alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
@@ -324,7 +324,7 @@ alarm_applet_status_menu_prefs_cb (GtkMenuItem *menuitem,
 	prefs_dialog_show (applet);
 }
 
-G_MODULE_EXPORT void
+void
 alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
                       gpointer     user_data)
 {
