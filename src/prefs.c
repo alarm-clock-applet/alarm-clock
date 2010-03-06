@@ -113,7 +113,7 @@ prefs_autostart_init (AlarmApplet *applet)
  *
  * Returns NULL if no autostart desktop files were found
  */
-GFile *
+static GFile *
 prefs_autostart_get_current ()
 {
 	GFile *f;
@@ -239,8 +239,8 @@ prefs_autostart_set_state (gboolean state)
 					str = g_key_file_to_data (kf, &length, NULL);
 
 					g_print ("Writing str: %s", str);
-					g_output_stream_write_all (fstream, str, length, NULL, NULL, &err);
-					g_output_stream_close (fstream, NULL, &err);
+					g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
+					g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
 
 					g_free (str);
 				}
@@ -302,8 +302,8 @@ prefs_autostart_set_state (gboolean state)
 					str = g_key_file_to_data (kf, &length, NULL);
 
 					g_print ("Writing str: %s", str);
-					g_output_stream_write_all (fstream, str, length, NULL, NULL, &err);
-					g_output_stream_close (fstream, NULL, &err);
+					g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
+					g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
 
 					g_free (str);
 				}

@@ -32,7 +32,7 @@
  * DEFINTIIONS {{
  */
 
-gchar *supported_sound_mime_types [] = { "audio", "video", "application/ogg", NULL };
+const gchar *supported_sound_mime_types [] = { "audio", "video", "application/ogg", NULL };
 GHashTable *app_command_map = NULL;
 
 /*
@@ -289,7 +289,7 @@ gnome_da_xml_get_string (const xmlNode *parent, const gchar *val_name)
 		    	ret_val = (gchar *) xmlNodeGetContent (element);
 		    } else {
 				for (i = 0; sys_langs[i] != NULL; i++) {
-				    if (!strcmp (sys_langs[i], node_lang)) {
+				    if (!strcmp (sys_langs[i], (const char *)node_lang)) {
 						ret_val = (gchar *) xmlNodeGetContent (element);
 						// since sys_langs is sorted from most desirable to
 						// least desirable, exit at first match
@@ -369,9 +369,9 @@ alarm_applet_apps_load (AlarmApplet *applet)
     root = xmlDocGetRootElement (xml_doc);
 
 	for (section = root->children; section != NULL; section = section->next) {
-		if (!xmlStrncmp (section->name, "media-players", 13)) {
+		if (!xmlStrncmp (section->name, (const xmlChar *)"media-players", 13)) {
 		    for (element = section->children; element != NULL; element = element->next) {
-				if (!xmlStrncmp (element->name, "media-player", 12)) {
+				if (!xmlStrncmp (element->name, (const xmlChar *)"media-player", 12)) {
 				    executable = gnome_da_xml_get_string (element, "executable");
 				    if (is_executable_valid (executable)) {
 				    	name = gnome_da_xml_get_string (element, "name");
@@ -491,7 +491,7 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
  */
 
 // TODO: Is this function needed?
-void
+/*void
 alarm_applet_destroy (AlarmApplet *applet)
 {
 	GList *l;
@@ -500,11 +500,6 @@ alarm_applet_destroy (AlarmApplet *applet)
 
 	g_debug ("AlarmApplet DESTROY");
 
-	// Remove any timers
-/*	if (applet->timer_id) {
-		g_source_remove (applet->timer_id);
-	}
-*/
 	// TODO: Destroy alarms list
 //	if (applet->list_alarms_dialog) {
 //		list_alarms_dialog_close (applet);
@@ -521,11 +516,6 @@ alarm_applet_destroy (AlarmApplet *applet)
 
 		// Check if a dialog is open for this alarm
 		//dialog = (AlarmSettingsDialog *)g_hash_table_lookup (applet->edit_alarm_dialogs, (gconstpointer)a->id);
-
-		if (dialog) {
-			alarm_settings_dialog_close (dialog);
-			//g_free (dialog);
-		}
 
 		g_object_unref (a);
 	}
@@ -550,7 +540,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 
 	// Finally free the AlarmApplet struct itself
 	g_free (applet);
-}
+}*/
 
 
 static UniqueResponse
@@ -567,12 +557,12 @@ unique_app_message_cb (UniqueApp         *app,
     switch (command) {
         case UNIQUE_ACTIVATE:
             g_debug ("AlarmApplet: unique_app_message: ACTIVATE");
-            if (gtk_toggle_action_get_active (applet->action_toggle_list_win)) {
+            if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (applet->action_toggle_list_win))) {
                 // Already visible, present to user
                 alarm_list_window_show (applet->list_window);
             } else {
                 // Toggle list window visibility
-                gtk_action_activate (applet->action_toggle_list_win);
+                gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
             }
             
             res = UNIQUE_RESPONSE_OK;

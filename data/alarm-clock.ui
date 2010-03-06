@@ -722,8 +722,8 @@
       <object class="GtkImageMenuItem" id="status_menu_snooze">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="related_action">snooze-all-action</property>
         <property name="use_action_appearance">True</property>
+        <property name="related_action">snooze-all-action</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
@@ -732,8 +732,8 @@
       <object class="GtkImageMenuItem" id="status_menu_stop">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="related_action">stop-all-action</property>
         <property name="use_action_appearance">True</property>
+        <property name="related_action">stop-all-action</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>

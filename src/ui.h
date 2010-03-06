@@ -73,6 +73,6 @@ void
 alarm_applet_menu_init (AlarmApplet *applet);
 
 void
-media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent);
+media_player_error_cb (MediaPlayer *player, GError *err, gpointer data);
 
 #endif /*UI_H_*/

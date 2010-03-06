@@ -25,6 +25,7 @@
 
 #include "alarm-list-window.h"
 #include "alarm-settings.h"
+#include "alarm-actions.h"
 
 static void
 alarm_list_window_selection_changed (GtkTreeSelection *, gpointer);
@@ -38,7 +39,28 @@ alarm_list_window_sort_iter_compare (GtkTreeModel *model,
                                      gpointer data);
 
 void
-alarm_list_window_snooze_menu_activate (GtkMenuItem *item, gpointer data);
+alarm_list_window_rows_reordered (GtkTreeModel *model,
+                                  GtkTreePath  *path,
+                                  GtkTreeIter  *iter,
+                                  gpointer      arg3,
+                                  gpointer      data);
+
+void
+alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
+                                  gchar *path,
+                                  gpointer data);
+
+void
+alarm_list_window_snooze_menu_activated (GtkMenuItem *item, gpointer data);
+
+void
+alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem, gpointer data);
+
+void
+alarm_list_window_snooze_menu_update (AlarmListWindow *list_window);
+
+static void
+alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter);
 
 /**
  * Create a new Alarm List Window
@@ -61,13 +83,13 @@ alarm_list_window_new (AlarmApplet *applet)
 	list_window->model = GTK_LIST_STORE (gtk_builder_get_object (builder, "alarms-liststore"));
 	list_window->tree_view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "alarm-list-view"));
 
-    list_window->new_button = gtk_builder_get_object (builder, "new-button");
-    list_window->edit_button = gtk_builder_get_object (builder, "edit-button");
-    list_window->delete_button = gtk_builder_get_object (builder, "delete-button");
-    list_window->enable_button = gtk_builder_get_object (builder, "enable-button");
-    list_window->stop_button = gtk_builder_get_object (builder, "stop-button");
-    list_window->snooze_button = gtk_builder_get_object (builder, "snooze-button");
-    list_window->snooze_menu = gtk_builder_get_object (builder, "snooze-menu");
+    list_window->new_button = GTK_WIDGET (gtk_builder_get_object (builder, "new-button"));
+    list_window->edit_button = GTK_WIDGET (gtk_builder_get_object (builder, "edit-button"));
+    list_window->delete_button = GTK_WIDGET (gtk_builder_get_object (builder, "delete-button"));
+    list_window->enable_button = GTK_WIDGET (gtk_builder_get_object (builder, "enable-button"));
+    list_window->stop_button = GTK_WIDGET (gtk_builder_get_object (builder, "stop-button"));
+    list_window->snooze_button = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-button"));
+    list_window->snooze_menu = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-menu"));
     
     // Set up window accelerator group
     list_window->accel_group = gtk_accel_group_new ();
@@ -76,7 +98,7 @@ alarm_list_window_new (AlarmApplet *applet)
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
     g_signal_connect (selection, "changed", 
-                      alarm_list_window_selection_changed, applet);
+                      G_CALLBACK (alarm_list_window_selection_changed), applet);
 
     // Update view every second for pretty countdowns
     g_timeout_add (500, (GSourceFunc) alarm_list_window_update_timer, applet);
@@ -173,19 +195,19 @@ alarm_list_window_find_alarm (GtkTreeModel *model,
 /**
  * Check whether the list window contains an alarm
  */
-gboolean
+static gboolean
 alarm_list_window_contains (AlarmListWindow *list_window, Alarm *alarm)
 {
-    return alarm_list_window_find_alarm(list_window->model, alarm, NULL);
+    return alarm_list_window_find_alarm (GTK_TREE_MODEL (list_window->model), alarm, NULL);
 }
 
 /**
  * Update the row in the list at the position specified by iter
  */
-void
+static void
 alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
 {
-    GtkTreeModel *model = list_window->model;
+    GtkTreeModel *model = GTK_TREE_MODEL (list_window->model);
     Alarm *a;
 
     gchar tmp[200];
@@ -234,7 +256,7 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
         label_col = g_strdup_printf (LABEL_COL_FORMAT, a->message);
     }
     
-	gtk_list_store_set (model, iter, 
+	gtk_list_store_set (GTK_LIST_STORE (model), iter,
                         COLUMN_TYPE, type_col,
                         COLUMN_TIME, time_col->str,
                         COLUMN_LABEL, label_col,
@@ -244,7 +266,7 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
 
     // Restore icon visibility when an alarm is cleared / snoozed
     if (!a->triggered) {
-        gtk_list_store_set (model, iter, COLUMN_SHOW_ICON, TRUE, -1);
+        gtk_list_store_set (GTK_LIST_STORE (model), iter, COLUMN_SHOW_ICON, TRUE, -1);
     }
 
     
@@ -277,7 +299,7 @@ alarm_list_window_alarm_update (AlarmListWindow *list_window, Alarm *alarm)
 
     g_debug ("AlarmListWindow alarm_update: %p (%s)", alarm, alarm->message);
 
-    if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
+    if (alarm_list_window_find_alarm (GTK_TREE_MODEL (list_window->model), alarm, &iter)) {
         alarm_list_window_update_row (list_window, &iter);
     } else {
         g_warning ("AlarmListWindow alarm_update: Could not find alarm %p", alarm);
@@ -292,7 +314,7 @@ alarm_list_window_alarm_remove (AlarmListWindow *list_window, Alarm *alarm)
 {
     GtkTreeIter iter;
 
-    if (alarm_list_window_find_alarm (list_window->model, alarm, &iter)) {
+    if (alarm_list_window_find_alarm (GTK_TREE_MODEL (list_window->model), alarm, &iter)) {
         gtk_list_store_remove (list_window->model, &iter);
     } else {
         g_warning ("AlarmListWindow alarm_remove: Could not find alarm %p", alarm);
@@ -306,7 +328,6 @@ void
 alarm_list_window_alarms_add (AlarmListWindow *list_window, GList *alarms)
 {
     AlarmApplet *applet = list_window->applet;
-    GtkListStore *model = list_window->model;
     
     GList *l = NULL;
     Alarm *a;
@@ -327,7 +348,6 @@ alarm_list_window_update_timer (gpointer data)
     AlarmApplet *applet = (AlarmApplet *)data;
     GtkTreeModel *model = GTK_TREE_MODEL (applet->list_window->model);
     GtkTreeIter iter;
-    GtkTreePath *path;
     Alarm *a;
     gboolean show_icon;
     gboolean valid;
@@ -343,7 +363,7 @@ alarm_list_window_update_timer (gpointer data)
 
         // Blink icon on triggered alarms
         if (a->triggered) {
-            gtk_list_store_set (model, &iter, COLUMN_SHOW_ICON, !show_icon, -1);
+            gtk_list_store_set (GTK_LIST_STORE (model), &iter, COLUMN_SHOW_ICON, !show_icon, -1);
         }
         
         valid = gtk_tree_model_iter_next(model, &iter);
@@ -498,10 +518,10 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
         // Update snooze button menu
         if (list_window->selected_alarm->type == ALARM_TYPE_CLOCK) {
             // We always snooze for 9 mins on alarm clocks
-            gtk_menu_tool_button_set_menu (list_window->snooze_button, NULL);
+            gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (list_window->snooze_button), NULL);
         } else {
             // Allow custom snooze mins
-            gtk_menu_tool_button_set_menu (list_window->snooze_button, list_window->snooze_menu);
+            gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (list_window->snooze_button), list_window->snooze_menu);
         }
     }
     
@@ -542,7 +562,7 @@ alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
         list_window->toggled = TRUE;
         
         // Activate the enabled action
-        gtk_action_activate (applet->action_enabled);
+        gtk_action_activate (GTK_ACTION (applet->action_enabled));
     }
 }
 
@@ -584,7 +604,6 @@ alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
                                          gpointer          data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
-    AlarmListWindow *list_window = applet->list_window;
     gchar **parts;
     guint i;
     guint mins;
@@ -592,7 +611,7 @@ alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
 //    g_debug ("AlarmListWindow: snooze-menu activated %s to %d", 
 //        gtk_menu_item_get_label (menuitem), gtk_check_menu_item_get_active (menuitem));
 
-    if (gtk_check_menu_item_get_active (menuitem)) {
+    if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
         // Determine #mins from the name of the menu item (hackish)
         // Assumes name follows the format {foo}-{mins}
         parts = g_strsplit (gtk_widget_get_name (GTK_WIDGET (menuitem)), "-", 0);
@@ -626,8 +645,8 @@ alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem,
 
     g_debug ("AlarmListWindow: snooze-menu custom activated");
     
-    dialog = gtk_builder_get_object (applet->ui, "snooze-dialog");
-    spin = gtk_builder_get_object (applet->ui, "snooze-spin");
+    dialog = GTK_WIDGET (gtk_builder_get_object (applet->ui, "snooze-dialog"));
+    spin = GTK_WIDGET (gtk_builder_get_object (applet->ui, "snooze-spin"));
 
     // Run dialog, hide for later use
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -635,7 +654,7 @@ alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem,
 
 	if (response == GTK_RESPONSE_OK) {
         mins = (gint) gtk_spin_button_get_value (GTK_SPIN_BUTTON (spin));
-        if (a = alarm_list_window_get_selected_alarm (list_window)) {
+        if ((a = alarm_list_window_get_selected_alarm (list_window))) {
             g_debug ("AlarmListWindow: Snooze Custom: %s for %d mins", a->message, mins);
             alarm_snooze (a, mins * 60);
         }

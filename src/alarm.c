@@ -152,21 +152,6 @@ static void alarm_cleared (Alarm *alarm);
 static void alarm_error (Alarm *alarm, GError *err);
 static void alarm_player_changed (Alarm *alarm, MediaPlayerState state);
 
-/* For debugging purposes only */
-static void
-dump_list (GSList *list)
-{
-	GSList *l;
-	
-	g_print ("[ ");
-	for (l = list; l; l = l->next) {
-		g_print ("%s", (gchar *)l->data);
-		if (l->next)
-			g_print (", ");
-	}
-	g_print (" ]");
-}
-
 
 /* Initialize the Alarm class */
 static void 
@@ -1616,7 +1601,7 @@ alarm_signal_connect_list (GList *instances,
 		
 		g_debug ("\tconnecting Alarm(%p) #%d: %s...", a, a->id, detailed_signal);
 		
-		gboolean ret = g_signal_connect (a, detailed_signal, c_handler, data);
+		g_signal_connect (a, detailed_signal, c_handler, data);
 	}
 }
 

@@ -43,7 +43,7 @@ G_BEGIN_DECLS
 
 typedef struct _AlarmApplet AlarmApplet;
 
-gchar *supported_sound_mime_types[];
+const gchar *supported_sound_mime_types[];
 GHashTable *app_command_map;
 
 void alarm_applet_label_update (AlarmApplet *applet);
@@ -111,14 +111,12 @@ struct _AlarmApplet {
     GtkAction *action_new;
     GtkAction *action_stop_all;
     GtkAction *action_snooze_all;
-    GtkAction *action_toggle_list_win;
-    GtkAction *action_toggle_autostart;
+    GtkToggleAction *action_toggle_list_win;
+    GtkToggleAction *action_toggle_autostart;
 
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];
 };
-
-static void set_alarm_time (AlarmApplet *applet, guint hour, guint minute, guint second);
 
 void alarm_applet_sounds_load (AlarmApplet *applet);
 

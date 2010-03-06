@@ -33,6 +33,9 @@ void
 prefs_dialog_show (AlarmApplet *applet);
 
 gboolean
-prefs_autostart_get_state ();
+prefs_autostart_get_state (void);
+
+void
+prefs_autostart_set_state (gboolean state);
 
 #endif /*PREFS_H_*/

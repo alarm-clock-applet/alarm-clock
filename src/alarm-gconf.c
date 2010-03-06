@@ -97,7 +97,7 @@ alarm_applet_gconf_label_type_changed (GConfClient  *client,
  * 
  * When this happens we update our list of alarms.
  */
-void
+static void
 alarm_applet_gconf_global_change (GConfClient  *client,
 								  guint         cnxn_id,
 								  GConfEntry   *entry,
@@ -195,7 +195,6 @@ void
 alarm_applet_gconf_init (AlarmApplet *applet)
 {
 	GConfClient *client;
-	gchar       *key;
 
 	client = gconf_client_get_default ();
 
@@ -238,33 +237,7 @@ alarm_applet_gconf_init (AlarmApplet *applet)
 void
 alarm_applet_gconf_load (AlarmApplet *applet)
 {
-	GConfClient *client;
-	GConfValue	*value;
-	gchar       *key;
-	gchar		*tmp;
+	/*GConfClient *client;
 	
-	client = gconf_client_get_default ();
-	
-	// SHOW_NOTIFY:
-	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
-	value = gconf_client_get (client, key, NULL);
-	if (value == NULL) {
-		// Schema defaults not found
-		applet->show_label = DEF_SHOW_LABEL;
-		panel_applet_gconf_set_bool (applet->parent, KEY_SHOW_LABEL, DEF_SHOW_LABEL, NULL);
-	} else {
-		applet->show_label = gconf_value_get_bool (value);
-		gconf_value_free (value);
-	}
-	g_free (key);
-	
-	
-	// LABEL_TYPE:
-	tmp = panel_applet_gconf_get_string (applet->parent, KEY_LABEL_TYPE, NULL);
-	if (tmp == NULL || !gconf_string_to_enum (label_type_enum_map, tmp, (gint *)&(applet->label_type))) {
-		// Schema defaults not found or unable to map
-		applet->label_type = DEF_LABEL_TYPE;
-		panel_applet_gconf_set_string (applet->parent, KEY_LABEL_TYPE, gconf_enum_to_string (label_type_enum_map, DEF_LABEL_TYPE), NULL);
-	}
-	g_free(tmp);*/
+	client = gconf_client_get_default ();*/
 }

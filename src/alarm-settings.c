@@ -68,9 +68,6 @@ alarm_settings_changed_command (GtkEditable *editable, gpointer data);
 static void
 alarm_settings_update_time (AlarmSettingsDialog *dialog);
 
-static void
-time_changed_cb (GtkSpinButton *spinbutton, gpointer data);
-
 void
 alarm_settings_changed_sound (GtkComboBox *combo, gpointer data);
 
@@ -80,51 +77,6 @@ alarm_settings_changed_app (GtkComboBox *combo, gpointer data);
 
 
 #define REPEAT_LABEL	_("<b>_Repeat:</b> %s")
-
-
-/*
- * Utility functions
- */
-
-static GtkWidget *
-create_img_label (const gchar *label_text, const gchar *icon_name)
-{
-	gchar *tmp;
-	
-	tmp = g_strdup_printf ("<b>%s</b>", label_text);
-	
-	GdkPixbuf *icon;
-	GtkWidget *img, *label, *spacer;	// TODO: Ugly with spacer
-	GtkWidget *hbox;
-	
-	icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default (),
-									 icon_name,
-									 24,
-									 0, NULL);
-	img = gtk_image_new_from_pixbuf(icon);
-	label = g_object_new (GTK_TYPE_LABEL,
-						  "label", tmp,
-						  "use-markup", TRUE,
-						  "xalign", 0.0,
-						  NULL);
-	
-	hbox = g_object_new (GTK_TYPE_HBOX, "spacing", 6, NULL);
-	
-	spacer = g_object_new (GTK_TYPE_LABEL, "label", "", NULL);
-	gtk_box_pack_start_defaults (GTK_BOX (hbox), spacer);
-	
-	gtk_box_pack_start(GTK_BOX (hbox), img, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX (hbox), label, FALSE, FALSE, 0);
-	
-	spacer = g_object_new (GTK_TYPE_LABEL, "label", "", NULL);
-	gtk_box_pack_start_defaults (GTK_BOX (hbox), spacer);
-	
-	g_free (tmp);
-	
-	return hbox;
-}
-
-
 
 
 
@@ -137,8 +89,8 @@ alarm_settings_update_type (AlarmSettingsDialog *dialog)
 {
     
     AlarmType type = dialog->alarm->type;
-    gboolean clock_toggled = gtk_toggle_button_get_active(dialog->clock_toggle);
-    gboolean timer_toggled = gtk_toggle_button_get_active(dialog->timer_toggle);
+    gboolean clock_toggled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->clock_toggle));
+    gboolean timer_toggled = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->timer_toggle));
 
     if ((type == ALARM_TYPE_CLOCK && clock_toggled) ||
     	(type == ALARM_TYPE_TIMER && timer_toggled)) {
@@ -163,7 +115,7 @@ alarm_settings_update_type (AlarmSettingsDialog *dialog)
 static void
 alarm_settings_update_label (AlarmSettingsDialog *dialog)
 {
-	const gchar *entry_text = gtk_entry_get_text (dialog->label_entry);
+	const gchar *entry_text = gtk_entry_get_text (GTK_ENTRY (dialog->label_entry));
     if (g_strcmp0 (entry_text, dialog->alarm->message) == 0) {
     	// No change
     	return;
@@ -211,7 +163,7 @@ alarm_settings_update_repeat (AlarmSettingsDialog *dialog)
 		check = (dialog->alarm->repeat & r) != 0;
 		
 		// Activate the appropriate widget
-		if (gtk_toggle_button_get_active(dialog->repeat_check[i]) != check) {
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON (dialog->repeat_check[i])) != check) {
 			g_object_set (dialog->repeat_check[i], "active", check, NULL);
 		}
 	}
@@ -232,13 +184,13 @@ alarm_settings_update_notify_type (AlarmSettingsDialog *dialog)
 {
     AlarmNotifyType type = dialog->alarm->notify_type;
     
-    gboolean sound_active = gtk_toggle_button_get_active (dialog->notify_app_radio);
+    gboolean sound_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->notify_app_radio));
     gboolean sound_sensitive = gtk_widget_is_sensitive (dialog->notify_sound_box);
-    gboolean app_active = gtk_toggle_button_get_active (dialog->notify_app_radio);
+    gboolean app_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->notify_app_radio));
     gboolean app_sensitive = gtk_widget_is_sensitive (dialog->notify_app_box);
 
-    if ((type == ALARM_NOTIFY_SOUND && sound_sensitive && !app_sensitive) ||
-    	(type == ALARM_NOTIFY_COMMAND && !sound_sensitive && app_sensitive)) {
+    if ((type == ALARM_NOTIFY_SOUND && sound_active && sound_sensitive && !app_sensitive) ||
+    	(type == ALARM_NOTIFY_COMMAND && app_active && !sound_sensitive && app_sensitive)) {
     	// No change
     	return;
     }
@@ -276,10 +228,10 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 {
 	AlarmListEntry *item;
 	GList *l;
-	gint pos, len, combo_len;
+	gint pos;
 	gint sound_pos = -1;
 
-	pos = gtk_combo_box_get_active (dialog->notify_sound_combo);
+	pos = gtk_combo_box_get_active (GTK_COMBO_BOX (dialog->notify_sound_combo));
 	item = g_list_nth_data (dialog->applet->sounds, pos);
 
 	if (item && g_strcmp0 (item->data, dialog->alarm->sound_file) == 0) {
@@ -308,7 +260,7 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 static void
 alarm_settings_update_sound_repeat (AlarmSettingsDialog *dialog)
 {
-	if (gtk_toggle_button_get_active (dialog->notify_sound_loop_check) == dialog->alarm->sound_loop) {
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->notify_sound_loop_check)) == dialog->alarm->sound_loop) {
 		// No change
 		return;
 	}
@@ -324,10 +276,10 @@ alarm_settings_update_app (AlarmSettingsDialog *dialog)
 {
 	AlarmListEntry *item;
 	GList *l;
-	guint pos, len, combo_len;
+	guint pos, len;
 	gboolean custom = FALSE;
 
-	pos = gtk_combo_box_get_active (dialog->notify_app_combo);
+	pos = gtk_combo_box_get_active (GTK_COMBO_BOX (dialog->notify_app_combo));
 	item = g_list_nth_data (dialog->applet->apps, pos);
 
 	if (item && g_strcmp0 (item->data, dialog->alarm->command) == 0) {
@@ -375,7 +327,7 @@ alarm_settings_update_app_command (AlarmSettingsDialog *dialog)
 {
     g_debug ("AlarmSettingsDialog: update_app_command()");
     
-    if (g_strcmp0 (dialog->alarm->command, gtk_entry_get_text (dialog->notify_app_command_entry)) == 0) {
+    if (g_strcmp0 (dialog->alarm->command, gtk_entry_get_text (GTK_ENTRY (dialog->notify_app_command_entry))) == 0) {
     	// No change
     	return;
     }
@@ -386,8 +338,6 @@ alarm_settings_update_app_command (AlarmSettingsDialog *dialog)
 static void
 alarm_settings_update (AlarmSettingsDialog *dialog)
 {
-	Alarm *alarm = ALARM (dialog->alarm);
-	
 	alarm_settings_update_type (dialog);
     alarm_settings_update_label (dialog);
 	alarm_settings_update_time (dialog);
@@ -749,8 +699,9 @@ alarm_settings_changed_command (GtkEditable *editable, gpointer data)
  */
 
 static void
-preview_player_state_cb (MediaPlayer *player, MediaPlayerState state, AlarmSettingsDialog *dialog)
+preview_player_state_cb (MediaPlayer *player, MediaPlayerState state, gpointer data)
 {
+	AlarmSettingsDialog *dialog = (AlarmSettingsDialog *)data;
 	const gchar *stock;
 	
 	if (state == MEDIA_PLAYER_PLAYING) {
@@ -859,8 +810,6 @@ alarm_settings_dialog_response (GtkDialog *dialog,
 static void
 alarm_settings_dialog_set_alarm (AlarmSettingsDialog *dialog, Alarm *alarm)
 {
-    int i;
-    
     // Clear dialog
     alarm_settings_dialog_clear (dialog);
 
@@ -882,7 +831,6 @@ AlarmSettingsDialog *
 alarm_settings_dialog_new (AlarmApplet *applet)
 {
 	AlarmSettingsDialog *dialog;
-	GtkWidget *clock_content, *timer_content;
 	AlarmRepeat r;
 	gint i;
 

@@ -36,6 +36,8 @@ enum
     N_COLUMNS
 };
 
+static void alarm_applet_status_init (AlarmApplet *applet);
+
 /*
  * Load a user interface by name
  */
@@ -75,11 +77,11 @@ display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWind
 	dialog = gtk_message_dialog_new (parent,
 									GTK_DIALOG_DESTROY_WITH_PARENT,
 									GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-									message);
+									"%s", message);
 	
 	if (secondary_text != NULL) {
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-												  secondary_text);
+												  "%s", secondary_text);
 	}
 	
 	gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
@@ -161,34 +163,6 @@ fill_combo_box (GtkComboBox *combo_box, GList *list, const gchar *custom_label)
 			-1);
 }
 
-
-static gboolean
-button_cb (GtkStatusIcon  *status_icon,
-           GdkEventButton *event,
-           gpointer       data)   
-{
-	AlarmApplet *applet = (AlarmApplet *)data;
-	
-	g_debug("BUTTON: %d", event->button);
-	
-	/* React only to left mouse button */
-	if (event->button == 2 || event->button == 3) {
-		return FALSE;
-	}
-	
-	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
-		/* Double click: Open list alarms */
-        alarm_list_window_show (applet->list_window);
-	} else {
-		alarm_applet_alarms_snooze (applet);
-	}
-	
-	/* Show edit alarms dialog */
-	//display_list_alarms_dialog (applet);
-	
-	return TRUE;
-}
-
 /**
  * Show a notification
  */
@@ -220,12 +194,6 @@ alarm_applet_notification_show (AlarmApplet *applet,
 void
 alarm_applet_ui_init (AlarmApplet *applet)
 {
-	GtkWidget *hbox;
-	GdkPixbuf *icon;
-    
-    GError* error = NULL;
-    char *filename;
-
     /* Load UI with GtkBuilder */
     applet->ui = alarm_applet_ui_load ("alarm-clock.ui", applet);
 
@@ -252,71 +220,12 @@ alarm_applet_ui_init (AlarmApplet *applet)
 
     /* Initialize preferences dialog */
     prefs_init (applet);
-	
-	
-	//g_object_set(applet->status_icon, "blinking", TRUE, NULL);
-
-	return;
-	
-	/* Set up PanelApplet signals */
-	/*g_signal_connect (G_OBJECT(applet->parent), "button-press-event",
-					  G_CALLBACK(button_cb), applet);
-	
-	g_signal_connect (G_OBJECT(applet->parent), "unrealize",
-					  G_CALLBACK(unrealize_cb), applet);
-	
-	g_signal_connect (G_OBJECT(applet->parent), "change-background",
-					  G_CALLBACK (applet_back_change), applet);
-	
-	g_signal_connect (G_OBJECT(applet->parent), "change-orient",
-					  G_CALLBACK (orient_change_cb), applet);
-	
-	g_signal_connect (G_OBJECT(applet->parent), "size-allocate",
-					  G_CALLBACK (change_size_cb), applet);
-	*/
-	
-	/* Set up container box */
-	/*if (IS_HORIZONTAL (applet->parent))
-		applet->box = gtk_hbox_new(FALSE, 6);
-	else
-		applet->box = gtk_vbox_new(FALSE, 6);
-	*/
-	/* Store orientation for future reference */
-	//applet->orient = panel_applet_get_orient (applet->parent);
-	
-	/* Set up icon and label */
-	//applet->icon = gtk_image_new ();
-	//alarm_applet_icon_update (applet);
-	
-	/*applet->label = g_object_new(GTK_TYPE_LABEL,
-								 "label", ALARM_DEF_LABEL,
-								 "use-markup", TRUE,
-								 "visible", applet->show_label,
-								 "no-show-all", TRUE,			/* So gtk_widget_show_all() won't set visible to TRUE */
-	/*							 NULL);*/
-	
-	/* Set up UI updater */
-//	alarm_applet_ui_update (applet);
-//	applet->timer_id = g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
-	
-	/* Pack */
-//	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->icon);
-//	gtk_box_pack_start_defaults(GTK_BOX (applet->box), applet->label);
-	
-	/* Update orientation */
-//	update_orient (applet);
-	
-	/* Add to container and show */
-	//gtk_container_add (GTK_CONTAINER (applet->parent), applet->box);
-	//gtk_widget_show_all (GTK_WIDGET (applet->parent));
-	
-//	alarm_applet_update_tooltip (applet);
 }
 
 /*
  * Initialize status icon
  */
-void
+static void
 alarm_applet_status_init (AlarmApplet *applet)
 {
     applet->status_icon = GTK_STATUS_ICON (gtk_builder_get_object (applet->ui, "status_icon"));
@@ -349,7 +258,7 @@ alarm_applet_status_activate (GtkStatusIcon *status_icon,
         gtk_action_activate (applet->action_snooze_all);
     } else {
         // No alarms triggered, toggle list window
-        gtk_action_activate (applet->action_toggle_list_win);
+        gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
     }
 }
 
@@ -438,7 +347,7 @@ alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
                       NULL);
         g_free (title);
 
-        gtk_dialog_run (dialog);
+        gtk_dialog_run (GTK_DIALOG (dialog));
         
     } else {
         // Already visible, present it
@@ -450,8 +359,9 @@ alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
  * An error callback for MediaPlayers
  */
 void
-media_player_error_cb (MediaPlayer *player, GError *err, GtkWindow *parent)
+media_player_error_cb (MediaPlayer *player, GError *err, gpointer data)
 {
+	GtkWindow *parent = GTK_WINDOW (data);
 	gchar *uri, *tmp;
 	
 	uri = media_player_get_uri (player);
