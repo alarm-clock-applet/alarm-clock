@@ -110,6 +110,9 @@ alarm_list_window_alarms_add (AlarmListWindow *list_window, GList *alarms);
 gboolean
 alarm_list_window_find_alarm (GtkTreeModel *model, Alarm *alarm, GtkTreeIter *iter);
 
+gboolean
+alarm_list_window_contains (AlarmListWindow *list_window, Alarm *alarm);
+
 Alarm *
 alarm_list_window_get_selected_alarm (AlarmListWindow *list_window);
 

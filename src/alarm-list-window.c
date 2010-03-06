@@ -195,7 +195,7 @@ alarm_list_window_find_alarm (GtkTreeModel *model,
 /**
  * Check whether the list window contains an alarm
  */
-static gboolean
+gboolean
 alarm_list_window_contains (AlarmListWindow *list_window, Alarm *alarm)
 {
     return alarm_list_window_find_alarm (GTK_TREE_MODEL (list_window->model), alarm, NULL);
