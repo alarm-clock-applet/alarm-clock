@@ -338,7 +338,7 @@ alarm_applet_status_menu_about_cb (GtkMenuItem *menuitem,
     g_object_get (dialog, "visible", &visible, NULL);
 
     if (!visible) {
-        // Set properties and show
+        // About Alarm Clock
         title = g_strdup_printf (_("About %s"), _(ALARM_NAME));
         g_object_set (G_OBJECT (dialog),
                       "program-name", _(ALARM_NAME),
