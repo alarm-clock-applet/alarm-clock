@@ -76,7 +76,7 @@ alarm_settings_changed_app (GtkComboBox *combo, gpointer data);
 
 
 
-#define REPEAT_LABEL	_("<b>_Repeat:</b> %s")
+#define REPEAT_LABEL	_("_Repeat: %s")
 
 
 

@@ -27,8 +27,10 @@
               <object class="GtkLabel" id="general-label">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;General&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="label" translatable="yes">General</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -155,8 +157,10 @@
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Alarm Clock&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">Alarm Clock</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -194,8 +198,10 @@
                       <object class="GtkLabel" id="label8">
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">&lt;b&gt;Timer&lt;/b&gt;</property>
-                        <property name="use_markup">True</property>
+                        <property name="label" translatable="yes">Timer</property>
+                        <attributes>
+                          <attribute name="weight" value="bold"/>
+                        </attributes>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -456,8 +462,7 @@
             <child type="label">
               <object class="GtkLabel" id="repeat-label">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">&lt;b&gt;_Repeat:&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
+                <property name="label" translatable="yes">_Repeat:</property>
                 <property name="use_underline">True</property>
               </object>
             </child>
@@ -470,8 +475,10 @@
           <object class="GtkLabel" id="notification-label2">
             <property name="visible">True</property>
             <property name="xalign">0</property>
-            <property name="label" translatable="yes">&lt;b&gt;Alert&lt;/b&gt;</property>
-            <property name="use_markup">True</property>
+            <property name="label" translatable="yes">Alert</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -805,7 +812,7 @@
     <property name="has_separator">False</property>
     <property name="program_name">Alarm Clock</property>
     <property name="version">0.0.0</property>
-    <property name="copyright" translatable="yes">&#xA9; 2007-2010 Johannes H. Jensen</property>
+    <property name="copyright">&#xA9; 2007-2010 Johannes H. Jensen</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">http://alarm-clock.pseudoberries.com/</property>
     <property name="website_label">alarm-clock.pseudoberries.com</property>
