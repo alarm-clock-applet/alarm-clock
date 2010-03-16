@@ -1,0 +1,45 @@
+Overview of changes in Alarm Clock 0.3.0  "Less snooze"
+=======================================================
+
+* Alarm Clock has moved to the notification area and can be started as a normal
+  application
+* An option to autostart Alarm Clock on log in has been added
+* Blink icon when an alarm is triggered
+* General User Interface improvements
+* Improvements to the alarm list window
+* Add sorting of the alarm list
+* Notify bubble improvements - remove per-alarm notify bubble settings
+* Snooze improvements - global snooze settings, enable snooze for timers
+* Add translation support - translations are now done in Launchpad
+
+
+Bugs fixed:
+243153 - No hint bubble when there is a "&" sign in the lable
+334684 - Notification needs to be improved in jaunty
+421098 - Source code an Gentoo QA
+490824 - Sorting alarms on time
+500600 - Update countdown for active alarms in alarm list
+501069 - Remove deprecated gnome-vfs dependency and use gio instead
+501073 - Remove deprecated libgnomeui dependency
+502230 - Properly seek player to start when looping
+
+New and updated translations:
+ar, courtesy of Propeng
+be, courtesy of Mikola Tsekhan <mail@tsekhan.com>
+da, courtesy of nanker
+de, courtesy of theunexpecteds
+es, courtesy of Gonzalo Testa <gonzalogtesta@gmail.com>
+fo, courtesy of Gunleif Joensen
+fr, courtesy of Pierre Slamich <pierre.slamich@gmail.com>
+he, courtesy of Yaron <sh.yaron@gmail.com>
+hi, courtesy of manishmahabir <manishmahabir@yahoo.com>
+hu, courtesy of Gergely Szarka <szarka.honved@gmail.com>
+ja, courtesy of Yuki Kodama
+ms, courtesy of Ibrahim Elias <imen802003@netscape.net>
+nb, courtesy of Johannes H. Jensen <joh@pseudoberries.com>
+nn, courtesy of Håkon Sandsmark
+pl, courtesy of Stanisław Gackowski <launchpad@soeb.eu>
+pt, courtesy of Renato Martins
+pt_BR, courtesy of Gilfran Ribeiro <contato@gilfran.net>
+ru, courtesy of Oleg Koptev <koptev.oleg@gmail.com>
+zh_CN, courtesy of lhquark <lhquark@yahoo.com.cn>

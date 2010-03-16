@@ -1,27 +1,22 @@
 Alarm Clock
 =================
 
-This package contains an applet for use with the GNOME panel. Therefore, it
-requires gnome-core to be installed.
+This package contains a program for use with the GNOME panel.
 
 Requirements
 ------------
 
 You need at least:
 
-    gnome-panel-2.13.4
-    glib-2.13.0
-    gtk-2.11.0
-    gconf-2.8.0
-    libglade-2.4.0
+    glib-2.16.0
+    gtk-2.12.0
+    gconf-2.0
+    gio-2.0
+    gnome-icon-theme
     gstreamer-0.10.2
-    libgnome-2.8.0
-    libgnomeui-2.8.0
-    gnome-icon-theme-2.15.91
-
-Some extras that improve functionality:
-
-    libnotify-0.3.2
+    libnotify-0.4.1
+    libxml-2.0
+    unique-1.0
 
 Installation
 ------------
@@ -34,14 +29,6 @@ cd alarm-clock-<VERSION>
 
 Compile with the usual:
 
-./configure --prefix=/usr
+./configure
 make
 make install
-
-
-Note: It's important that you install into /usr so the BONOBO .server file is
-	  placed under a directory which gnome-panel can recognize.
-	  
-	  If you would like to install to another prefix, you need to move
-	  AlarmClock.server to the bonobo server directory afterwards (usually
-	  /usr/lib/bonobo/servers).
