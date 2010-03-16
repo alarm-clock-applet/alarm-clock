@@ -8,11 +8,18 @@ EXTRA_DIST +=               \
     intltool-merge.in       \
     intltool-update.in
 
-DISTCLEANFILES =                \
-        intltool-extract        \
-        intltool-merge          \
-        intltool-update
+DISTCLEANFILES =            \
+    intltool-extract        \
+    intltool-merge          \
+    intltool-update
 
 
-dist-hook:
-	bzr log > $(distdir)/ChangeLog
+dist-hook: gen-ChangeLog
+
+.PHONY: gen-ChangeLog
+gen-ChangeLog:
+	if test -d .bzr; then                           \
+      bzr log > $(distdir)/cl-t;                	\
+      rm -f $(distdir)/ChangeLog;                   \
+      mv $(distdir)/cl-t $(distdir)/ChangeLog;      \
+    fi

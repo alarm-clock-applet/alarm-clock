@@ -1,3 +1,5 @@
+include $(top_srcdir)/Makefile.decl
+
 iconsdir = $(datadir)/icons
 icons = 			\
 	alarm-clock.svg		\
@@ -24,7 +26,7 @@ icons = 			\
 	alarm-snooze.48.png	\
 	alarm-snooze.64.png	
 
-EXTRA_DIST = $(icons)
+EXTRA_DIST += $(icons)
 
 
 gtk_update_icon_cache = gtk-update-icon-cache -f -t $(iconsdir)/hicolor

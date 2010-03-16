@@ -1,3 +1,5 @@
+include $(top_srcdir)/Makefile.decl
+
 SUBDIRS = icons
 
 uidir = $(pkgdatadir)
@@ -27,7 +29,7 @@ uninstall-local:
 endif
 
 
-EXTRA_DIST = $(ui_DATA) $(desktop_in_files) $(schemas_in_files)
+EXTRA_DIST += $(ui_DATA) $(desktop_in_files) $(schemas_in_files)
 
 CLEANFILES = $(desktop_DATA) $(schemas_DATA)
 
