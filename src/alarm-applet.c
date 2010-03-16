@@ -201,15 +201,34 @@ alarm_applet_sounds_load (AlarmApplet *applet)
 	GList *l, *l2;
 	gboolean found;
 
+	const gchar* const *sysdirs;
+	gchar *sounds_dir = NULL;
+	gchar *tmp;
+	gint i;
+
 	//g_assert (applet->alarms);
 
 	// Free old list
 	if (applet->sounds != NULL)
 		alarm_list_entry_list_free (&(applet->sounds));
 
-	// Load stock sounds
-	applet->sounds = alarm_list_entry_list_new ("file://" ALARM_CLOCK_DATADIR "/sounds/gnome/default/alerts/",
-												supported_sound_mime_types);
+	// Locate gnome sounds
+	sysdirs = g_get_system_data_dirs ();
+	for (i = 0; !sounds_dir && sysdirs[i] != NULL; i++) {
+		tmp = g_build_filename(sysdirs[i], "sounds/gnome/default/alerts", NULL);
+		if (g_file_test (tmp, G_FILE_TEST_IS_DIR)) {
+			// Load stock sounds
+			g_debug ("AlarmApplet: sounds_load: Found %s!", tmp);
+			sounds_dir = g_strdup_printf ("file://%s", tmp);
+			applet->sounds = alarm_list_entry_list_new (sounds_dir, supported_sound_mime_types);
+			g_free (sounds_dir);
+		}
+		g_free(tmp);
+	}
+
+	if (!sounds_dir) {
+		g_warning ("AlarmApplet: Could not locate sounds!");
+	}
 
 	// Load custom sounds from alarms
 	for (l = applet->alarms; l != NULL; l = l->next) {
@@ -342,74 +361,77 @@ alarm_applet_apps_load (AlarmApplet *applet)
 	xmlNode *root, *section, *element;
     gchar *executable;
     const gchar *tmp;
+	const gchar* const *sysdirs;
+	gint i;
 
 	if (applet->apps != NULL)
 		alarm_list_entry_list_free (&(applet->apps));
 
-	// We'll get the default media players from g-d-a.xml
-	// from gnome-control-center
-	filename = g_build_filename (ALARM_CLOCK_DATADIR,
-								 "gnome-control-center",
-								 "default-apps",
-					 			 "gnome-default-applications.xml",
-					 			 NULL);
+	// Locate g-d-a.xml
+	sysdirs = g_get_system_data_dirs ();
+	for (i = 0; sysdirs[i] != NULL; i++) {
+		// We'll get the default media players from g-d-a.xml
+		// from gnome-control-center
+		filename = g_build_filename (sysdirs[i],
+									 "gnome-control-center",
+									 "default-apps",
+									 "gnome-default-applications.xml",
+									 NULL);
 
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		g_critical ("Could not find %s.", filename);
-		return;
-	}
+		if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
+			xml_doc = xmlParseFile (filename);
 
-    xml_doc = xmlParseFile (filename);
+			if (!xml_doc) {
+				g_warning ("Could not load %s.", filename);
+				continue;
+			}
 
-    if (!xml_doc) {
-    	g_warning ("Could not load %s.", filename);
-    	return;
-    }
+			root = xmlDocGetRootElement (xml_doc);
 
-    root = xmlDocGetRootElement (xml_doc);
+			for (section = root->children; section != NULL; section = section->next) {
+				if (!xmlStrncmp (section->name, (const xmlChar *)"media-players", 13)) {
+					for (element = section->children; element != NULL; element = element->next) {
+						if (!xmlStrncmp (element->name, (const xmlChar *)"media-player", 12)) {
+							executable = gnome_da_xml_get_string (element, "executable");
+							if (is_executable_valid (executable)) {
+								name = gnome_da_xml_get_string (element, "name");
+								icon = gnome_da_xml_get_string (element, "icon-name");
 
-	for (section = root->children; section != NULL; section = section->next) {
-		if (!xmlStrncmp (section->name, (const xmlChar *)"media-players", 13)) {
-		    for (element = section->children; element != NULL; element = element->next) {
-				if (!xmlStrncmp (element->name, (const xmlChar *)"media-player", 12)) {
-				    executable = gnome_da_xml_get_string (element, "executable");
-				    if (is_executable_valid (executable)) {
-				    	name = gnome_da_xml_get_string (element, "name");
-				    	icon = gnome_da_xml_get_string (element, "icon-name");
-
-				    	// Lookup executable in app command map
-				    	tmp = get_app_command (executable);
-				    	if (tmp)
-				    		command = g_strdup (tmp);
-				    	else {
-				    		// Fall back to command specified in XML
-				    		command = gnome_da_xml_get_string (element, "command");
-				    	}
-
+								// Lookup executable in app command map
+								tmp = get_app_command (executable);
+								if (tmp)
+									command = g_strdup (tmp);
+								else {
+									// Fall back to command specified in XML
+									command = gnome_da_xml_get_string (element, "command");
+								}
 
 
-						g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
 
-						entry = alarm_list_entry_new (name, command, icon);
+								g_debug ("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
 
-						g_free (name);
-						g_free (command);
-						g_free (icon);
+								entry = alarm_list_entry_new (name, command, icon);
 
-						applet->apps = g_list_append (applet->apps, entry);
-				    }
+								g_free (name);
+								g_free (command);
+								g_free (icon);
 
-				    if (executable)
-				    	g_free (executable);
+								applet->apps = g_list_append (applet->apps, entry);
+							}
+
+							if (executable)
+								g_free (executable);
+						}
+					}
 				}
-		    }
-	    }
+			}
+
+			g_free(filename);
+			break;
+		}
+
+		g_free(filename);
 	}
-
-
-
-
-	g_free (filename);
 
 //	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
 //	applet->apps = g_list_append (applet->apps, entry);
