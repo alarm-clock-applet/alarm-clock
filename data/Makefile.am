@@ -29,5 +29,5 @@ endif
 
 EXTRA_DIST = $(ui_DATA) $(desktop_in_files) $(schema_in_files)
 
-DISTCLEANFILES = $(desktop_files)
+CLEANFILES = $(desktop_DATA) $(schemas_DATA)
 
