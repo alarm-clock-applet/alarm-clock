@@ -637,7 +637,7 @@ main (int argc, char *argv[])
     textdomain (GETTEXT_PACKAGE);
 
     // Terminate on critical errors
-    g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
+    //g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	// Initialize GTK+
 	gtk_init (&argc, &argv);

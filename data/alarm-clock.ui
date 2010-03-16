@@ -816,7 +816,11 @@
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">http://alarm-clock.pseudoberries.com/</property>
     <property name="website_label">alarm-clock.pseudoberries.com</property>
-    <property name="authors">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
+    <property name="authors">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;
+
+Contributors:
+Arnaud Soyez &lt;weboide@codealpha.net&gt;
+Chow Loong Jin &lt;hyperair@ubuntu.com&gt;</property>
     <property name="documenters">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
     <property name="artists">Lasse Gulv&#xE5;g S&#xE6;tre &lt;lassegs@gmail.com&gt;</property>
     <property name="logo_icon_name">alarm-clock</property>
