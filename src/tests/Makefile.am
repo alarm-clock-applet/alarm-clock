@@ -10,7 +10,7 @@ AM_CFLAGS =	                        				\
 
 LIBS = @BASE_LIBS@
 
-check_PROGRAMS = $(TEST_PROGS) test_player test_list_entry test_util glade_view \
+check_PROGRAMS = $(TEST_PROGS) test_player test_list_entry test_util \
                  test_gconf_recursive test_libnotify
 
 TEST_PROGS += test_alarm

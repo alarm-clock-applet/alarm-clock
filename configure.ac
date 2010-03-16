@@ -59,9 +59,8 @@ PKG_CHECK_MODULES(GNOME,
    gio-2.0
    gnome-icon-theme
    libnotify >= 0.4.1
+   libxml-2.0
    unique-1.0])
-
-# LIBXML_REQUIRED=2.5.0
 
 # Check for gconftool
 AC_PATH_PROG(GCONFTOOL, gconftool-2, no)
