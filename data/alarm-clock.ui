@@ -986,7 +986,6 @@
                 <signal name="row_activated" handler="gtk_action_activate" object="edit-action"/>
                 <child>
                   <object class="GtkTreeViewColumn" id="type-col">
-                    <property name="sizing">autosize</property>
                     <property name="title">Type</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
@@ -1117,6 +1116,7 @@
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Snooze alarm</property>
     <property name="resizable">False</property>
+    <property name="icon_name">alarm-clock</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
