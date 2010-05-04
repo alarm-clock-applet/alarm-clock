@@ -153,7 +153,19 @@ alarm_list_window_toggle (AlarmListWindow *list_window)
 	}
 }
 
+/**
+ * Delete-event handler for list-window
+ */
+gboolean
+alarm_list_window_delete_event (GtkWidget *window, GdkEvent *event, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	//AlarmListWindow *list_window = applet->list_window;
 
+	gtk_action_activate (applet->action_toggle_list_win);
+
+	return TRUE;
+}
 
 //
 // ALARM LIST MODEL:

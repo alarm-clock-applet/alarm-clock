@@ -872,7 +872,7 @@ Chow Loong Jin &lt;hyperair@ubuntu.com&gt;</property>
     <property name="default_width">350</property>
     <property name="default_height">200</property>
     <property name="icon_name">alarm-clock</property>
-    <signal name="delete_event" handler="gtk_widget_hide_on_delete"/>
+    <signal name="delete_event" handler="alarm_list_window_delete_event"/>
     <child>
       <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
