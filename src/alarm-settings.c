@@ -139,7 +139,7 @@ alarm_settings_update_time (AlarmSettingsDialog *dialog)
 		return;
 	}
 
-    g_debug ("AlarmSettingsDialog: update_time()");
+    g_debug ("AlarmSettingsDialog: update_time() to %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), tm->tm_hour);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->min_spin), tm->tm_min);
@@ -506,13 +506,24 @@ alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data)
     AlarmApplet *applet = (AlarmApplet *)data;
 	AlarmSettingsDialog *dialog = applet->settings_dialog;
 	guint hour, min, sec;
+	struct tm *tm;
 
     g_assert (dialog->alarm != NULL);
     
-	hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
-	min = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->min_spin));
-	sec = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->sec_spin));
-	
+    tm = alarm_get_time(dialog->alarm);
+    hour = tm->tm_hour;
+    min = tm->tm_min;
+    sec = tm->tm_sec;
+
+    // Check which spin button emitted the signal
+    if (spinbutton == dialog->hour_spin) {
+		hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
+    } else if (spinbutton == dialog->min_spin) {
+    	min = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->min_spin));
+    } else if (spinbutton == dialog->sec_spin) {
+    	sec = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->sec_spin));
+    }
+
 	alarm_set_time (dialog->alarm, hour, min, sec);
 }
 
