@@ -549,10 +549,12 @@ alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data)
 	/* The check buttons have the same name as the 3 letter
 	 * string representation of the day.
 	 */
-	name   = gtk_widget_get_name (GTK_WIDGET (togglebutton));
+	name   = gtk_buildable_get_name (GTK_BUILDABLE (togglebutton));
 	rep    = alarm_repeat_from_string (name);
 	active = gtk_toggle_button_get_active (togglebutton);
 	
+	g_debug("Changed repeat on: %s, active: %d", name, active);
+
 	if (active)
 		// Add rep
 		new_rep = dialog->alarm->repeat | rep;
@@ -569,7 +571,7 @@ alarm_settings_changed_notify_type (GtkToggleButton *togglebutton, gpointer data
     AlarmApplet *applet = (AlarmApplet *)data;
 	AlarmSettingsDialog *dialog = applet->settings_dialog;
     
-	const gchar *name = gtk_widget_get_name (GTK_WIDGET (togglebutton));
+	const gchar *name = gtk_buildable_get_name (GTK_BUILDABLE (togglebutton));;
 	gboolean value    = gtk_toggle_button_get_active (togglebutton);
 	
 	if (!value) {

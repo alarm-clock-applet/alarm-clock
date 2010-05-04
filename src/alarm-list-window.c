@@ -616,7 +616,7 @@ alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (menuitem))) {
         // Determine #mins from the name of the menu item (hackish)
         // Assumes name follows the format {foo}-{mins}
-        parts = g_strsplit (gtk_widget_get_name (GTK_WIDGET (menuitem)), "-", 0);
+        parts = g_strsplit (gtk_buildable_get_name (GTK_BUILDABLE (menuitem)), "-", 0);
         for (i = 0; parts[i] != NULL; i++)
             // Loop to the last element
             ;
@@ -683,7 +683,7 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
     
     for (l = menu->children; l != NULL; l = l->next) {
         item = GTK_MENU_ITEM (l->data);
-        name = gtk_widget_get_name (GTK_WIDGET (item));
+        name = gtk_buildable_get_name (GTK_BUILDABLE (item));
         if (g_strcmp0 (name, target_name) == 0) {
             g_object_set (item, "active", TRUE, NULL);
             
