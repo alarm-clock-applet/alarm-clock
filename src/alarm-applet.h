@@ -70,6 +70,9 @@ typedef enum {
 } LabelType;
 
 struct _AlarmApplet {
+	/* Unique app */
+	UniqueApp *unique_app;
+
     /* User Interface */
     GtkBuilder *ui;
 

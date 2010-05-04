@@ -607,12 +607,59 @@ unique_app_message_cb (UniqueApp         *app,
  */
 
 static AlarmApplet*
-alarm_applet_init()
+alarm_applet_init (int *argc, char ***argv)
 {
 	AlarmApplet *applet;
+	UniqueApp *unique_app;
+
+	GError *error = NULL;
+	GOptionContext *context;
+
+	gboolean hidden = FALSE;     // Start hidden
+
+    // Command line options
+	GOptionEntry entries[] =
+	{
+		{ "hidden", 0, 0, G_OPTION_ARG_NONE, &hidden, "Start hidden", NULL },
+		{ NULL }
+	};
+
+	// Initialize unique app
+	unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
+
+	// Check if we're already running
+	if (unique_app_is_running (unique_app)) {
+		g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
+
+		// Send activate message
+		UniqueMessageData *message = unique_message_data_new ();
+
+		unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
+
+		unique_message_data_free (message);
+		g_object_unref (unique_app);
+
+		exit (EXIT_SUCCESS);
+	}
 	
-	// Initialize applet struct */
+	// Parse command-line arguments
+	context = g_option_context_new (NULL);
+	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+
+	if (!g_option_context_parse (context, argc, argv, &error)) {
+		g_printerr ("%s\n", error->message);
+		exit (EXIT_FAILURE);
+	}
+
+	// Initialize applet struct
 	applet = g_new0 (AlarmApplet, 1);
+
+	// Set up unique app
+	applet->unique_app = unique_app;
+
+	g_signal_connect (unique_app, "message-received",
+		G_CALLBACK (unique_app_message_cb), applet);
     
 	//applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 
@@ -620,8 +667,8 @@ alarm_applet_init()
 	// ...gconf_get_string can return NULL if the key is not found. We can't
 	// assume the schema provides the default values for strings.
 
-    // TODO: Add to gconf
-    applet->snooze_mins = 5;
+	// TODO: Add to gconf
+	applet->snooze_mins = 5;
 
 	// Set up gconf handlers
 	alarm_applet_gconf_init (applet);
@@ -637,11 +684,27 @@ alarm_applet_init()
 
 	// Load apps for alarms
 	alarm_applet_apps_load (applet);
-    
+
 	// Set up applet UI
 	alarm_applet_ui_init (applet);
 
+	// Show alarms window, unless --hidden
+	if (!hidden) {
+		gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
+	}
+
 	return applet;
+}
+
+/**
+ * Cleanup
+ */
+static void
+alarm_applet_quit (AlarmApplet *applet)
+{
+    g_debug ("AlarmApplet: Quitting...");
+
+    g_object_unref (applet->unique_app);
 }
 
 /**
@@ -650,7 +713,6 @@ alarm_applet_init()
 int
 main (int argc, char *argv[])
 {
-    UniqueApp *unique_app;
 	AlarmApplet *applet;
 
     // Internationalization
@@ -664,38 +726,15 @@ main (int argc, char *argv[])
 	// Initialize GTK+
 	gtk_init (&argc, &argv);
 
-    // Initialize unique app
-    unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
-
-    // Check if we're already running
-    if (unique_app_is_running (unique_app)) {
-    	g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
-
-        // Send activate message
-        UniqueMessageData *message = unique_message_data_new ();
-
-        unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
-
-        unique_message_data_free (message);
-        g_object_unref (unique_app);
-
-        return EXIT_SUCCESS;
-    }
-
-    
-
 	// Initialize applet
-	applet = alarm_applet_init ();
-
-    // Connect unique app message-received signal
-    g_signal_connect (unique_app, "message-received", 
-        G_CALLBACK (unique_app_message_cb), applet);
+	applet = alarm_applet_init (&argc, &argv);
     
 	// Start main loop
 	gtk_main ();
-
-    g_object_unref (unique_app);
 	
+	// Clean up
+	alarm_applet_quit (applet);
+
 	return 0;
 }
 
