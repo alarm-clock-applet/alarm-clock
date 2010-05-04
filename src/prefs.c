@@ -24,6 +24,7 @@
 #include <glib.h>
 #include <gio/gio.h>
 
+#include <config.h>
 #include "prefs.h"
 
 
@@ -223,39 +224,8 @@ prefs_autostart_set_state (gboolean state)
 	if (state) {
 		// Enable
 		g_debug ("Preferences: Autostart ENABLE!");
-		if (file == autostart_user_file) {
-			// Unset Hidden and X-GNOME-Autostart-enabled
-			kf = g_key_file_new ();
 
-			filename = g_file_get_path (file);
-
-			if (g_key_file_load_from_file(kf, filename, G_KEY_FILE_NONE, &err)) {
-				g_key_file_remove_key (kf, "Desktop Entry", "Hidden", NULL);
-				g_key_file_remove_key (kf, "Desktop Entry", "X-GNOME-Autostart-enabled", NULL);
-
-				// Write out results
-				fstream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
-				if (fstream) {
-					str = g_key_file_to_data (kf, &length, NULL);
-
-					g_print ("Writing str: %s", str);
-					g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
-					g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
-
-					g_free (str);
-				}
-			}
-
-			g_key_file_free (kf);
-
-			if (err) {
-				g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
-				g_error_free (err);
-			}
-
-			g_free(filename);
-
-		} else {
+		if (file != autostart_user_file) {
 			// Copy .desktop to autostart_user_file
 			filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
 			f = g_file_new_for_path (filename);
@@ -267,6 +237,40 @@ prefs_autostart_set_state (gboolean state)
 
 			g_free (filename);
 		}
+
+		// Unset Hidden and X-GNOME-Autostart-enabled
+		kf = g_key_file_new ();
+
+		filename = g_file_get_path (autostart_user_file);
+
+		if (g_key_file_load_from_file(kf, filename, G_KEY_FILE_NONE, &err)) {
+			g_key_file_remove_key (kf, "Desktop Entry", "Hidden", NULL);
+			g_key_file_remove_key (kf, "Desktop Entry", "X-GNOME-Autostart-enabled", NULL);
+
+			// Start hidden on autostart
+			g_key_file_set_string (kf, "Desktop Entry", "Exec", PACKAGE " --hidden");
+
+			// Write out results
+			fstream = g_file_replace (autostart_user_file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
+			if (fstream) {
+				str = g_key_file_to_data (kf, &length, NULL);
+
+				g_print ("Writing str: %s", str);
+				g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
+				g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
+
+				g_free (str);
+			}
+		}
+
+		g_key_file_free (kf);
+
+		if (err) {
+			g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
+			g_error_free (err);
+		}
+
+		g_free(filename);
 
 	} else {
 		// Disable
@@ -284,20 +288,18 @@ prefs_autostart_set_state (gboolean state)
 				}
 
 				g_free(filename);
-
-				file = autostart_user_file;
 			}
 
 			// Set Hidden=true
 			kf = g_key_file_new ();
 
-			filename = g_file_get_path (file);
+			filename = g_file_get_path (autostart_user_file);
 
 			if (g_key_file_load_from_file(kf, filename, G_KEY_FILE_NONE, &err)) {
 				g_key_file_set_boolean(kf, "Desktop Entry", "Hidden", TRUE);
 
 				// Write out results
-				fstream = g_file_replace (file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
+				fstream = g_file_replace (autostart_user_file, NULL, FALSE, G_FILE_CREATE_NONE, NULL, &err);
 				if (fstream) {
 					str = g_key_file_to_data (kf, &length, NULL);
 

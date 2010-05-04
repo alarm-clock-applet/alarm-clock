@@ -516,11 +516,11 @@ alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data)
     sec = tm->tm_sec;
 
     // Check which spin button emitted the signal
-    if (spinbutton == dialog->hour_spin) {
+    if (GTK_WIDGET (spinbutton) == dialog->hour_spin) {
 		hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
-    } else if (spinbutton == dialog->min_spin) {
+    } else if (GTK_WIDGET (spinbutton) == dialog->min_spin) {
     	min = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->min_spin));
-    } else if (spinbutton == dialog->sec_spin) {
+    } else if (GTK_WIDGET (spinbutton) == dialog->sec_spin) {
     	sec = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->sec_spin));
     }
 

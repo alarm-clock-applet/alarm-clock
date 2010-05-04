@@ -27,6 +27,9 @@
 #include "alarm-settings.h"
 #include "alarm-actions.h"
 
+gboolean
+alarm_list_window_delete_event (GtkWidget *window, GdkEvent *event, gpointer data);
+
 static void
 alarm_list_window_selection_changed (GtkTreeSelection *, gpointer);
 
@@ -160,9 +163,8 @@ gboolean
 alarm_list_window_delete_event (GtkWidget *window, GdkEvent *event, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
-	//AlarmListWindow *list_window = applet->list_window;
 
-	gtk_action_activate (applet->action_toggle_list_win);
+	gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
 
 	return TRUE;
 }
