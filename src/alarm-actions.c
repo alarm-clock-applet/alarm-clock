@@ -126,13 +126,15 @@ alarm_action_delete (GtkAction *action, gpointer data)
     
     g_debug ("AlarmAction: delete '%s'", a->message);
 
-    // DELETE ALARM
-    alarm_delete (a);
-
     // If there's a settings dialog open for this alarm, close it.
     if (sdialog->alarm == a) {
         alarm_settings_dialog_close (sdialog);
     }
+
+    // Disable, clear and delete alarm
+    alarm_disable (a);
+    alarm_clear (a);
+    alarm_delete (a);
 
     // Remove from applet list
     alarm_applet_alarms_remove (applet, a);
