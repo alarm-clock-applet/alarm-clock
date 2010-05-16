@@ -7,65 +7,67 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-06 16:27+0100\n"
-"PO-Revision-Date: 2010-03-14 08:53+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2010-03-16 23:03+0100\n"
+"PO-Revision-Date: 2010-05-05 18:17+0000\n"
+"Last-Translator: Waluyo Adi Siswanto <Unknown>\n"
 "Language-Team: Indonesian <id@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-03-16 16:32+0000\n"
+"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
-msgstr ""
+msgstr "Jam Alarm"
 
 #: ../data/alarm-clock-applet.desktop.in.h:2
 msgid "Wake up in the morning"
-msgstr ""
+msgstr "Bangun di pagi hari"
 
 #: ../data/alarm-clock.schemas.in.h:1
 msgid ""
 "A list of days when the alarm should be repeated. This settings is only "
 "applicable for \"clock\" alarms."
 msgstr ""
+"Daftar hari ketika alarm mesti diulang. Tatanan ini hanya berlaku bagi alarm "
+"\"jam\"."
 
 #: ../data/alarm-clock.schemas.in.h:2
 msgid "A short message which describes the alarm."
-msgstr ""
+msgstr "Pesan singkat yang mendeskripsikan alarm."
 
 #: ../data/alarm-clock.schemas.in.h:3
 msgid "Alarm Message"
-msgstr ""
+msgstr "Pesan Alarm"
 
 #: ../data/alarm-clock.schemas.in.h:4
 msgid "Alarm Repeat"
-msgstr ""
+msgstr "Ulangi Alarm"
 
 #: ../data/alarm-clock.schemas.in.h:5
 msgid "Alarm Running State"
-msgstr ""
+msgstr "Status Alarm Berjalan"
 
 #: ../data/alarm-clock.schemas.in.h:6
 msgid "Alarm Time"
-msgstr ""
+msgstr "Waktu Alarm"
 
 #: ../data/alarm-clock.schemas.in.h:7
 msgid "Alarm Timestamp"
-msgstr ""
+msgstr "Penanda Waktu Alarm"
 
 #: ../data/alarm-clock.schemas.in.h:8
 msgid "Alarm Type"
-msgstr ""
+msgstr "Tipe Alarm"
 
 #: ../data/alarm-clock.schemas.in.h:9
 msgid "Alarm!"
-msgstr ""
+msgstr "Alarm!"
 
 #: ../data/alarm-clock.schemas.in.h:10
 msgid "Command"
-msgstr ""
+msgstr "Perintah"
 
 #: ../data/alarm-clock.schemas.in.h:11
 msgid "Indicates whether the alarm has started."
@@ -73,34 +75,37 @@ msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:12
 msgid "Notification Type"
-msgstr ""
+msgstr "Jenis Pemberitahuan"
 
 #: ../data/alarm-clock.schemas.in.h:13
 msgid "Repeat Sound"
-msgstr ""
+msgstr "Ulangi Suara"
 
 #: ../data/alarm-clock.schemas.in.h:14
 msgid "Sound File"
-msgstr ""
+msgstr "Berkas Suara"
 
 #: ../data/alarm-clock.schemas.in.h:15
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
+"Penanda waktu UNIX bagi alarm. Mesti ditata sebelum alarm diaktifkan."
 
 #: ../data/alarm-clock.schemas.in.h:16
 msgid "The command to run for the \"command\" notification type."
-msgstr ""
+msgstr "Perintah yang dijalankan bagi tipe pemberitahuan \"perintah\"."
 
 #: ../data/alarm-clock.schemas.in.h:17
 msgid "The sound file to play for the \"sound\" notification type."
-msgstr ""
+msgstr "Berkas suara untuk dimainkan bagi tipe pemberitahuan \"suara\"."
 
 #: ../data/alarm-clock.schemas.in.h:18
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
 msgstr ""
+"Waktu bagi alarm. Mesti dalam GMT bagi alarm \"jam\" atau lama waktu dalam "
+"detik bagi alarm \"pewaktu\"."
 
 #: ../data/alarm-clock.schemas.in.h:19
 msgid ""
@@ -109,52 +114,58 @@ msgid ""
 "property.) \"command\" to run a command (specified in the \"command\" "
 "property.)"
 msgstr ""
+"Tipe pemberitahuan yang dipakai ketika alarm terjadi. Ini bisa salah satu "
+"dari: \"sound\" (suara) untuk memainkan suatu suara (dinyatakan dalam "
+"properti \"sound_file\"), \"command\" (perintah) untuk menjalankan suatu "
+"perintah (dinyatakan dalam properti \"command\")."
 
 #: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
+"Tipe alarm. Bisa \"clock\" untuk alarm pada suatu saat, atau \"timer\" untuk "
+"alarm setelah suatu perioda waktu yang dinyatakan."
 
 #: ../data/alarm-clock.schemas.in.h:21
 msgid "Whether to repeat the alarm sound."
-msgstr ""
+msgstr "Apakah akan mengulang suara alarm."
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
-msgstr ""
+msgstr "1 menit"
 
 #: ../data/alarm-clock.ui.h:2
 msgid "10 minutes"
-msgstr ""
+msgstr "10 menit"
 
 #: ../data/alarm-clock.ui.h:3
 msgid "3 minutes"
-msgstr ""
+msgstr "3 menit"
 
 #: ../data/alarm-clock.ui.h:4
 msgid "5 minutes"
-msgstr ""
+msgstr "5 menit"
 
 #: ../data/alarm-clock.ui.h:5
 msgid "About Alarm Clock"
-msgstr ""
+msgstr "Tentang Jam Alarm"
 
 #: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
-msgstr ""
+msgstr "Preferensi Jam Alarm"
 
 #: ../data/alarm-clock.ui.h:8
 msgid "Alarms"
-msgstr ""
+msgstr "Alarm"
 
 #: ../data/alarm-clock.ui.h:9
 msgid "Alert"
-msgstr ""
+msgstr "Peringatan"
 
 #: ../data/alarm-clock.ui.h:10
 msgid "Co_mmand:"
-msgstr ""
+msgstr "_Perintah:"
 
 #: ../data/alarm-clock.ui.h:11
 msgid "Custom..."
@@ -162,31 +173,31 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:12
 msgid "Delete"
-msgstr ""
+msgstr "Hapus"
 
 #: ../data/alarm-clock.ui.h:13
 msgid "Delete alarm"
-msgstr ""
+msgstr "Hapus alarm"
 
 #: ../data/alarm-clock.ui.h:14
 msgid "Delete the selected alarm"
-msgstr ""
+msgstr "Hapus alarm yang dipilih"
 
 #: ../data/alarm-clock.ui.h:15
 msgid "Edit alarm"
-msgstr ""
+msgstr "Edit alarm"
 
 #: ../data/alarm-clock.ui.h:16
 msgid "Edit the selected alarm"
-msgstr ""
+msgstr "Sunting alarm terpilih"
 
 #: ../data/alarm-clock.ui.h:17
 msgid "Edit..."
-msgstr ""
+msgstr "Sunting..."
 
 #: ../data/alarm-clock.ui.h:18
 msgid "Enable"
-msgstr ""
+msgstr "Aktifkan"
 
 #: ../data/alarm-clock.ui.h:19
 msgid "Enable/disable"
@@ -202,11 +213,11 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:22
 msgid "Fri"
-msgstr ""
+msgstr "Jum"
 
 #: ../data/alarm-clock.ui.h:23
 msgid "General"
-msgstr ""
+msgstr "Umum"
 
 #: ../data/alarm-clock.ui.h:24
 msgid "Get up in the morning!"
@@ -218,19 +229,19 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:26
 msgid "Mon"
-msgstr ""
+msgstr "Sen"
 
 #: ../data/alarm-clock.ui.h:27
 msgid "New"
-msgstr ""
+msgstr "Baru"
 
 #: ../data/alarm-clock.ui.h:28
 msgid "New alarm"
-msgstr ""
+msgstr "Alarm baru"
 
 #: ../data/alarm-clock.ui.h:29
 msgid "New..."
-msgstr ""
+msgstr "Baru..."
 
 #: ../data/alarm-clock.ui.h:30
 msgid "Play _sound"
@@ -246,7 +257,7 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:33
 msgid "Sat"
-msgstr ""
+msgstr "Sab"
 
 #: ../data/alarm-clock.ui.h:34
 msgid "Show _alarms"
@@ -290,7 +301,7 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:44
 msgid "Stop"
-msgstr ""
+msgstr "Henti"
 
 #: ../data/alarm-clock.ui.h:45
 msgid "Stop alarm"
@@ -318,7 +329,7 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:51
 msgid "Thu"
-msgstr ""
+msgstr "Kam"
 
 #: ../data/alarm-clock.ui.h:52
 msgid "Timer"
@@ -338,7 +349,7 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:56
 msgid "Tue"
-msgstr ""
+msgstr "Sel"
 
 #: ../data/alarm-clock.ui.h:57
 msgid "Wake up sleepy head!"
@@ -346,19 +357,19 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:58
 msgid "Wed"
-msgstr ""
+msgstr "Rab"
 
 #: ../data/alarm-clock.ui.h:59
 msgid "_Name:"
-msgstr ""
+msgstr "_Nama:"
 
 #: ../data/alarm-clock.ui.h:60
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferensi"
 
 #: ../data/alarm-clock.ui.h:61
 msgid "_Quit"
-msgstr ""
+msgstr "_Keluar"
 
 #: ../data/alarm-clock.ui.h:62
 msgid "_Repeat:"
@@ -370,11 +381,11 @@ msgstr ""
 
 #: ../data/alarm-clock.ui.h:64
 msgid "_Time:"
-msgstr ""
+msgstr "Wak_tu:"
 
 #: ../data/alarm-clock.ui.h:65
 msgid "minutes"
-msgstr ""
+msgstr "menit"
 
 #. Single alarm snoozed
 #: ../src/alarm-applet.c:73
@@ -415,7 +426,7 @@ msgstr ""
 msgid "Stopped %d alarm(s)"
 msgstr ""
 
-#: ../src/alarm-applet.c:650
+#: ../src/alarm-applet.c:672
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr ""
@@ -447,13 +458,13 @@ msgstr ""
 
 #: ../src/alarm.c:2038
 msgid "Every day"
-msgstr ""
+msgstr "Setiap hari"
 
 #. About Alarm Clock
 #: ../src/ui.c:342
 #, c-format
 msgid "About %s"
-msgstr ""
+msgstr "Tentang %s"
 
 #: ../src/ui.c:370
 #, c-format

@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-06 16:27+0100\n"
-"PO-Revision-Date: 2010-03-07 12:34+0000\n"
+"POT-Creation-Date: 2010-03-16 23:03+0100\n"
+"PO-Revision-Date: 2010-03-16 18:18+0000\n"
 "Last-Translator: Gilfran Ribeiro <contato@gilfran.net>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-03-16 16:32+0000\n"
+"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
@@ -430,7 +430,7 @@ msgstr "Alarmes recorrentes continuarão seguindo o programado."
 msgid "Stopped %d alarm(s)"
 msgstr "%d alarme(s) interrompidos"
 
-#: ../src/alarm-applet.c:650
+#: ../src/alarm-applet.c:672
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s já está em execução. saindo...\n"
