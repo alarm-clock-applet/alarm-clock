@@ -1,3 +1,30 @@
+Overview of changes in Alarm Clock 0.3.1  "It's gettin' pretty"
+===============================================================
+
+* Properly toggle alarm-list-window
+* Parse command-line options
+* Add --hidden command-line flag
+* Start --hidden on autostart
+
+
+Bugs fixed:
+558559 - Double-clicking on alarm erratically changes alarm time/duration
+559514 - The alarms list window should be shown when launching the application
+559531 - Remember the alarms list window position
+567564 - repeat once: checkbox does not work in gtk+ 2.20
+567762 - deleting running alarm doesn't cancel them
+
+New and updated translations:
+be, courtesy of Mikola Tsekhan <mail@tsekhan.com>
+bg, courtesy of svilborg
+da, courtesy of nanker
+de, courtesy of Jakob Kramer <Unknown>
+fr, courtesy of Pierre Slamich <pierre.slamich@gmail.com>
+gl, courtesy of Dario <dario.villar.v@gmail.com>
+id, courtesy of Waluyo Adi Siswanto
+ru, courtesy of Misha Shnurapet <Unknown>
+
+
 Overview of changes in Alarm Clock 0.3.0  "Less snooze"
 =======================================================
 
