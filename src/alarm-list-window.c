@@ -132,6 +132,7 @@ void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
 	gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
+	gtk_window_move (list_window->window, list_window->window_pos_x, list_window->window_pos_y);
 }
 
 /**
@@ -140,6 +141,7 @@ alarm_list_window_show (AlarmListWindow *list_window)
 void
 alarm_list_window_hide (AlarmListWindow *list_window)
 {
+	gtk_window_get_position (list_window->window, &(list_window->window_pos_x), &(list_window->window_pos_y));
 	gtk_widget_hide (GTK_WIDGET (list_window->window));
 }
 
