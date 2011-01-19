@@ -189,6 +189,7 @@ prefs_autostart_get_state ()
 		} else {
 			g_warning ("Preferences: Could not load autostart-file '%s': %s", filename, err->message);
 			g_error_free (err);
+			err = NULL;
 			g_free(filename);
 		}
 
@@ -246,6 +247,7 @@ prefs_autostart_set_state (gboolean state)
 			if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
 				g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
 				g_error_free (err);
+				err = NULL;
 				g_free (filename);
 				return;
 			}
@@ -283,6 +285,7 @@ prefs_autostart_set_state (gboolean state)
 		if (err) {
 			g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
 			g_error_free (err);
+			err = NULL;
 		}
 
 		g_free(filename);
@@ -300,6 +303,7 @@ prefs_autostart_set_state (gboolean state)
 				if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
 					g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
 					g_error_free (err);
+					err = NULL;
 				}
 
 				g_free(filename);
@@ -331,6 +335,7 @@ prefs_autostart_set_state (gboolean state)
 			if (err) {
 				g_warning ("Preferences: Error when disabling autostart-file '%s': %s", filename, err->message);
 				g_error_free (err);
+				err = NULL;
 			}
 
 		} else {
