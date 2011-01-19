@@ -9,11 +9,11 @@ AM_CFLAGS =	                        \
 	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
 	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
 	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
-	@GNOME_CFLAGS@  @WARN_CFLAGS@
+	@GNOME_CFLAGS@ @APP_INDICATOR_CFLAGS@ @WARN_CFLAGS@
 
 LDADD =		\
 	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
-	@GNOME_LIBS@
+	@GNOME_LIBS@ @APP_INDICATOR_LIBS@
 
 #
 # alarm-clock-applet binary

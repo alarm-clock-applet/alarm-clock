@@ -36,8 +36,11 @@
 #include <gst/gst.h>
 #include <unique/unique.h>
 
-//#include <panel-applet.h>
-//#include <panel-applet-gconf.h>
+#include <config.h>
+
+#ifdef HAVE_APP_INDICATOR
+#include <libappindicator/app-indicator.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -76,8 +79,15 @@ struct _AlarmApplet {
     /* User Interface */
     GtkBuilder *ui;
 
+#ifdef HAVE_APP_INDICATOR
+    /* App Indicator */
+    AppIndicator *app_indicator;
+#else
 	/* Status Icon */
 	GtkStatusIcon *status_icon;
+#endif
+
+	/* Status menu */
     GtkWidget *status_menu;
     
 	/* Alarms */

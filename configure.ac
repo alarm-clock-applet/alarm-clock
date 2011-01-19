@@ -10,7 +10,7 @@ m4_define([alarm_clock_version],
           [alarm_clock_major_version.alarm_clock_minor_version.alarm_clock_micro_version])
           
 AC_INIT([alarm-clock], [alarm_clock_version],
-		[Johannes H. Jensen <joh@pseudoberries.com>],
+		[https://bugs.launchpad.net/alarm-clock],
 		[alarm-clock-applet])
 		
 AC_CONFIG_SRCDIR([src])
@@ -71,6 +71,33 @@ fi
 
 AM_GCONF_SOURCE_2
 
+#
+# Check for AppIndicator (optional)
+#
+APPINDICATOR_REQUIRED=0.0.7
+
+AC_ARG_ENABLE(appindicator,
+              AS_HELP_STRING([--enable-appindicator[=@<:@no/auto/yes@:>@]],[Build support for application indicators ]),
+              [enable_appindicator=$enableval],
+              [enable_appindicator="auto"])
+
+if test x$enable_appindicator = xauto ; then
+    PKG_CHECK_EXISTS([appindicator-0.1 >= $APPINDICATOR_REQUIRED],
+                     enable_appindicator="yes",
+                     enable_appindicator="no")
+fi
+
+if test x"$enable_appindicator" = xyes ; then
+    PKG_CHECK_EXISTS([appindicator-0.1],,
+                     AC_MSG_ERROR([appindicator-0.1 is not installed]))
+    PKG_CHECK_MODULES(APP_INDICATOR,
+                    appindicator-0.1 >= $APPINDICATOR_REQUIRED)
+#    AC_SUBST(APP_INDICATOR_CFLAGS)
+#    AC_SUBST(APP_INDICATOR_LIBS)
+    AC_DEFINE(HAVE_APP_INDICATOR, 1, [Have AppIndicator])
+fi
+AM_CONDITIONAL(HAVE_APP_INDICATOR, test x"$enable_appindicator" = xyes)
+
 # ********************
 # Internationalisation
 # ********************
@@ -116,6 +143,7 @@ $PACKAGE_NAME $VERSION
 Configure summary:
     prefix:                 ${prefix}
     source code location:   ${srcdir}
+    application indicators: ${enable_appindicator}
 
 *************************************************
 "

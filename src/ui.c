@@ -176,8 +176,7 @@ alarm_applet_notification_show (AlarmApplet *applet,
     NotifyNotification *n;
     GError *error = NULL;
 
-    n = notify_notification_new_with_status_icon (summary, body, icon,
-                                                  applet->status_icon);
+    n = notify_notification_new (summary, body, icon, NULL);
     
     if (!notify_notification_show (n, &error)) {
         g_warning ("Failed to send notification: %s", error->message);
@@ -228,10 +227,19 @@ alarm_applet_ui_init (AlarmApplet *applet)
 static void
 alarm_applet_status_init (AlarmApplet *applet)
 {
+	applet->status_menu = GTK_WIDGET (gtk_builder_get_object (applet->ui, "status_menu"));
+
+#ifdef HAVE_APP_INDICATOR
+	applet->app_indicator = app_indicator_new(PACKAGE_NAME, ALARM_ICON,
+			APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+	app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ACTIVE);
+	//app_indicator_set_attention_icon (indicator, "indicator-messages-new");
+	app_indicator_set_menu (applet->app_indicator, GTK_MENU (applet->status_menu));
+#else
     applet->status_icon = GTK_STATUS_ICON (gtk_builder_get_object (applet->ui, "status_icon"));
-    applet->status_menu = GTK_WIDGET (gtk_builder_get_object (applet->ui, "status_menu"));
 
     gtk_status_icon_set_visible (applet->status_icon, TRUE);
+#endif
 }
 
 /*
@@ -240,13 +248,17 @@ alarm_applet_status_init (AlarmApplet *applet)
 void
 alarm_applet_status_update (AlarmApplet *applet)
 {
+#ifdef HAVE_APP_INDICATOR
+	// TODO: Find appropriate way to attract attention with AppIndicator
+#else
     gtk_status_icon_set_blinking (applet->status_icon, applet->n_triggered > 0);
+#endif
 }
 
 /*
  * Status icon callbacks:
  */
-
+#ifndef HAVE_APP_INDICATOR
 G_MODULE_EXPORT void
 alarm_applet_status_activate (GtkStatusIcon *status_icon,
 							  gpointer       user_data)
@@ -278,6 +290,7 @@ alarm_applet_status_popup (GtkStatusIcon  *status_icon,
                     button,
                     activate_time);
 }
+#endif
 
 /*
  * Menu callbacks:
