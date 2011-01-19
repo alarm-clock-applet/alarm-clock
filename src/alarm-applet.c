@@ -113,7 +113,7 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 	for (l = applet->alarms; l; l = l->next) {
 		a = ALARM (l->data);
 
-        if (alarm_is_playing (a)) {
+		if (a->triggered) {
     		alarm_clear (a);
             last_stopped = a;
             n_stopped++;
