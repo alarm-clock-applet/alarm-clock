@@ -189,6 +189,7 @@ prefs_autostart_get_state ()
 		} else {
 			g_warning ("Preferences: Could not load autostart-file '%s': %s", filename, err->message);
 			g_error_free (err);
+			err = NULL;
 			g_free(filename);
 		}
 
@@ -198,6 +199,46 @@ prefs_autostart_get_state ()
 	}
 
 	return FALSE;
+}
+
+/**
+ * Create the ~/.config/autostart/alarm-clock-applet.desktop file
+ */
+static gboolean
+prefs_create_autostart_user_file()
+{
+	GFile *f;
+	GError *err = NULL;
+	gchar *filename;
+
+	// Create ~/.config/autostart if it doesn't exist
+	f = g_file_get_parent (autostart_user_file);
+	if (!g_file_query_exists (f, NULL)) {
+		g_debug ("Preferences: creating user autostart dir...");
+		if (!g_file_make_directory_with_parents (f, NULL, &err)) {
+			filename = g_file_get_path (f);
+			g_warning ("Preferences: Could not mkdir '%s': %s", filename, err->message);
+			g_free (filename);
+			g_object_unref (f);
+			return FALSE;
+		}
+	}
+
+	// Copy .desktop to autostart_user_file
+	filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
+	f = g_file_new_for_path (filename);
+
+	if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
+		g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
+		g_error_free (err);
+		err = NULL;
+		g_free (filename);
+		return FALSE;
+	}
+
+	g_free (filename);
+
+	return TRUE;
 }
 
 /**
@@ -214,7 +255,6 @@ prefs_autostart_set_state (gboolean state)
 	}
 
 	GFile *file = prefs_autostart_get_current ();
-	GFile *f;
 	gchar *filename, *str;
 	gsize length;
 	GKeyFile *kf;
@@ -226,31 +266,8 @@ prefs_autostart_set_state (gboolean state)
 		g_debug ("Preferences: Autostart ENABLE!");
 
 		if (file != autostart_user_file) {
-			// Create ~/.config/autostart if it doesn't exist
-			f = g_file_get_parent (autostart_user_file);
-			if (!g_file_query_exists (f, NULL)) {
-				g_debug ("Preferences: creating user autostart dir...");
-				if (!g_file_make_directory_with_parents (f, NULL, &err)) {
-					filename = g_file_get_path (f);
-					g_warning ("Preferences: Could not mkdir '%s': %s", filename, err->message);
-					g_free (filename);
-					g_object_unref (f);
-					return;
-				}
-			}
-
-			// Copy .desktop to autostart_user_file
-			filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
-			f = g_file_new_for_path (filename);
-
-			if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
-				g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
-				g_error_free (err);
-				g_free (filename);
-				return;
-			}
-
-			g_free (filename);
+			if ( ! prefs_create_autostart_user_file() )
+			    return;
 		}
 
 		// Unset Hidden and X-GNOME-Autostart-enabled
@@ -283,6 +300,7 @@ prefs_autostart_set_state (gboolean state)
 		if (err) {
 			g_warning ("Preferences: Error when enabling autostart-file '%s': %s", filename, err->message);
 			g_error_free (err);
+			err = NULL;
 		}
 
 		g_free(filename);
@@ -293,16 +311,8 @@ prefs_autostart_set_state (gboolean state)
 
 		if (file) {
 			if (file != autostart_user_file) {
-				// Copy .desktop to autostart_user_file
-				filename = g_build_filename (ALARM_CLOCK_DATADIR, "applications", PACKAGE ".desktop", NULL);
-				f = g_file_new_for_path (filename);
-
-				if (!g_file_copy (f, autostart_user_file, G_FILE_COPY_NONE, NULL, NULL, NULL, &err)) {
-					g_warning ("Preferences: Could not copy '%s' to user config dir: %s", filename, err->message);
-					g_error_free (err);
-				}
-
-				g_free(filename);
+				if ( ! prefs_create_autostart_user_file() )
+				    return;
 			}
 
 			// Set Hidden=true
@@ -331,6 +341,7 @@ prefs_autostart_set_state (gboolean state)
 			if (err) {
 				g_warning ("Preferences: Error when disabling autostart-file '%s': %s", filename, err->message);
 				g_error_free (err);
+				err = NULL;
 			}
 
 		} else {
