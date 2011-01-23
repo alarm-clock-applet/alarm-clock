@@ -90,7 +90,7 @@
                   <object class="GtkVBox" id="appearance-box">
                     <property name="visible">True</property>
                     <child>
-                      <object class="GtkCheckButton" id="appearance-check">
+                      <object class="GtkCheckButton" id="show-label-check">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>

@@ -400,17 +400,26 @@ prefs_autostart_update (AlarmApplet *applet)
 void
 prefs_show_label_init (AlarmApplet *applet)
 {
+#ifdef HAVE_APP_INDICATOR
 	GConfClient *client = gconf_client_get_default ();
-	GError *err = NULL;
 
 	// Monitor gconf key
 	guint i = gconf_client_notify_add (
 					client, ALARM_GCONF_DIR "/show_label",
 					(GConfClientNotifyFunc) prefs_show_label_changed,
-					applet, NULL, &err);
+					applet, NULL, NULL);
 
 	// Update state
 	prefs_show_label_update (applet);
+
+#else
+	// No AppIndicator support, disable option
+	GtkWidget *show_label_check = GTK_WIDGET (gtk_builder_get_object (applet->ui, "show-label-check"));
+	gtk_widget_set_sensitive (show_label_check, FALSE);
+	gtk_widget_set_tooltip_text (show_label_check, "Requires application indicators");
+
+	gtk_toggle_action_set_active (applet->action_toggle_show_label, FALSE);
+#endif
 }
 
 /**
