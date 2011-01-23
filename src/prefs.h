@@ -38,4 +38,10 @@ prefs_autostart_get_state (void);
 void
 prefs_autostart_set_state (gboolean state);
 
+gboolean
+prefs_show_label_get (AlarmApplet *applet);
+
+void
+prefs_show_label_set (AlarmApplet *applet, gboolean state);
+
 #endif /*PREFS_H_*/

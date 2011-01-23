@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
@@ -8,7 +8,6 @@
     <property name="resizable">False</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
     <signal name="destroy_event" handler="gtk_widget_hide"/>
     <signal name="close" handler="gtk_widget_hide"/>
     <signal name="response" handler="gtk_widget_hide"/>
@@ -16,12 +15,10 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="prefs-container">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
             <property name="border_width">12</property>
-            <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkLabel" id="general-label">
@@ -45,14 +42,13 @@
                 <child>
                   <object class="GtkVBox" id="general-box">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkCheckButton" id="autostart-check">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
-                        <property name="use_action_appearance">True</property>
                         <property name="related_action">autostart-action</property>
+                        <property name="use_action_appearance">True</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
                       </object>
@@ -69,6 +65,53 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="appearance-label">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Appearance</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkAlignment" id="appearance-alignment">
+                <property name="visible">True</property>
+                <property name="left_padding">12</property>
+                <child>
+                  <object class="GtkVBox" id="appearance-box">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkCheckButton" id="appearance-check">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="related_action">show-label-action</property>
+                        <property name="use_action_appearance">True</property>
+                        <property name="use_underline">True</property>
+                        <property name="draw_indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -117,14 +160,12 @@
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
     <signal name="destroy_event" handler="gtk_true"/>
     <signal name="response" handler="alarm_settings_dialog_response"/>
     <signal name="delete_event" handler="gtk_true"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox4">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child>
           <object class="GtkHBox" id="hbox2">
@@ -493,7 +534,6 @@
             <child>
               <object class="GtkVBox" id="notification-box">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkRadioButton" id="sound-radio">
@@ -518,7 +558,6 @@
                     <child>
                       <object class="GtkVBox" id="sound-box">
                         <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
                         <child>
                           <object class="GtkHBox" id="play-sound-inner-box2">
                             <property name="visible">True</property>
@@ -600,7 +639,6 @@
                     <child>
                       <object class="GtkVBox" id="app-box">
                         <property name="visible">True</property>
-                        <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkComboBox" id="app-combo">
@@ -729,8 +767,8 @@
       <object class="GtkImageMenuItem" id="status_menu_snooze">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="use_action_appearance">True</property>
         <property name="related_action">snooze-all-action</property>
+        <property name="use_action_appearance">True</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
@@ -739,8 +777,8 @@
       <object class="GtkImageMenuItem" id="status_menu_stop">
         <property name="visible">True</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="use_action_appearance">True</property>
         <property name="related_action">stop-all-action</property>
+        <property name="use_action_appearance">True</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
@@ -809,10 +847,9 @@
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
     <property name="program_name">Alarm Clock</property>
     <property name="version">0.0.0</property>
-    <property name="copyright">&#xA9; 2007-2010 Johannes H. Jensen</property>
+    <property name="copyright">© 2007-2011 Johannes H. Jensen</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">http://alarm-clock.pseudoberries.com/</property>
     <property name="website_label">alarm-clock.pseudoberries.com</property>
@@ -823,14 +860,13 @@ Arnaud Soyez &lt;weboide@codealpha.net&gt;
 Chow Loong Jin &lt;hyperair@ubuntu.com&gt;
 Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="documenters">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
-    <property name="artists">Lasse Gulv&#xE5;g S&#xE6;tre &lt;lassegs@gmail.com&gt;</property>
+    <property name="artists">Lasse Gulvåg Sætre &lt;lassegs@gmail.com&gt;</property>
     <property name="logo_icon_name">alarm-clock</property>
     <signal name="close" handler="gtk_widget_hide"/>
     <signal name="response" handler="gtk_widget_hide"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox5">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <placeholder/>
@@ -877,15 +913,14 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <child>
       <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <object class="GtkToolbar" id="alarm-toolbar">
             <property name="visible">True</property>
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">new-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">New...</property>
               </object>
               <packing>
@@ -896,8 +931,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">edit-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Edit...</property>
               </object>
               <packing>
@@ -908,8 +943,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">delete-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Delete</property>
               </object>
               <packing>
@@ -929,8 +964,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">enabled-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
               </object>
@@ -942,8 +977,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">stop-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
               </object>
@@ -955,8 +990,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="use_action_appearance">True</property>
                 <property name="related_action">snooze-action</property>
+                <property name="use_action_appearance">True</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
                 <property name="menu">snooze-menu</property>
@@ -1123,11 +1158,9 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="resizable">False</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog-vbox8">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child>
           <object class="GtkHBox" id="hbox5">
@@ -1167,7 +1200,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="max_length">2</property>
-                    <property name="invisible_char">&#x2022;</property>
+                    <property name="invisible_char">•</property>
                     <property name="width_chars">2</property>
                     <property name="xalign">1</property>
                     <property name="adjustment">adjustment5</property>
@@ -1323,5 +1356,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="label" translatable="yes">Start automatically at login</property>
     <property name="short_label" translatable="yes">Start automatically at login</property>
     <signal name="activate" handler="alarm_action_toggle_autostart"/>
+  </object>
+  <object class="GtkToggleAction" id="show-label-action">
+    <property name="label" translatable="yes">Show countdown label</property>
+    <property name="short_label" translatable="yes">Show countdown label</property>
+    <signal name="activate" handler="alarm_action_toggle_show_label"/>
   </object>
 </interface>

@@ -38,6 +38,16 @@ void
 autostart_monitor_changed(GFileMonitor *monitor, GFile *file,
 		GFile *other_file, GFileMonitorEvent event_type, gpointer user_data);
 
+void
+prefs_show_label_init (AlarmApplet *applet);
+
+void
+prefs_show_label_update (AlarmApplet *applet);
+
+void
+prefs_show_label_changed (GConfClient *client, guint cnxn_id,
+						  GConfEntry *entry, AlarmApplet *applet);
+
 /**
  * Initialize preferences dialog and friends
  */
@@ -48,6 +58,7 @@ prefs_init (AlarmApplet *applet)
 	applet->prefs_autostart_check = GTK_WIDGET (gtk_builder_get_object (applet->ui, "autostart-check"));
 
 	prefs_autostart_init (applet);
+	prefs_show_label_init (applet);
 }
 
 // Ordered list of autostart files we watch for
@@ -381,6 +392,96 @@ prefs_autostart_update (AlarmApplet *applet)
 	if (state != new_state) {
 		gtk_toggle_action_set_active (applet->action_toggle_autostart, new_state);
 	}
+}
+
+/**
+ * Initialize show_label preference
+ */
+void
+prefs_show_label_init (AlarmApplet *applet)
+{
+	GConfClient *client = gconf_client_get_default ();
+	GError *err = NULL;
+
+	// Monitor gconf key
+	guint i = gconf_client_notify_add (
+					client, ALARM_GCONF_DIR "/show_label",
+					(GConfClientNotifyFunc) prefs_show_label_changed,
+					applet, NULL, &err);
+
+	g_debug("Preferences: Notify ID %d", i);
+
+	if (err) {
+		g_warning ("!?!?!? %s", err->message);
+	}
+}
+
+/**
+ * Get the current show_label state from GConf
+ */
+gboolean
+prefs_show_label_get (AlarmApplet *applet)
+{
+	GConfClient *client = gconf_client_get_default ();
+	GConfValue *value;
+	gboolean state;
+
+	// Get config value
+	value = gconf_client_get(client, ALARM_GCONF_DIR "/show_label", NULL);
+	if (value == NULL) {
+		g_warning ("Get %s failed", ALARM_GCONF_DIR "/show_label");
+		return gtk_toggle_action_get_active (applet->action_toggle_show_label);
+	}
+
+	state = gconf_value_get_bool (value);
+	gconf_value_free (value);
+
+	return state;
+}
+
+/**
+ * Set show_label state in GConf
+ */
+void
+prefs_show_label_set (AlarmApplet *applet, gboolean state)
+{
+	GConfClient *client = gconf_client_get_default ();
+	gboolean current_state = prefs_show_label_get (applet);
+
+	if (current_state == state) {
+		// No change
+		return;
+	}
+
+	// Set config value
+	gconf_client_set_bool (client, ALARM_GCONF_DIR "/show_label", state, NULL);
+}
+
+/**
+ * Update show_label state
+ */
+void
+prefs_show_label_update (AlarmApplet *applet)
+{
+	gboolean state = gtk_toggle_action_get_active (applet->action_toggle_show_label);
+	gboolean new_state = prefs_show_label_get (applet);
+
+	g_debug ("Preferences: Show_label update: new state: %d", new_state);
+
+	if (state != new_state) {
+		gtk_toggle_action_set_active (applet->action_toggle_show_label, new_state);
+	}
+}
+
+void
+prefs_show_label_changed (GConfClient  *client,
+					      guint         cnxn_id,
+					      GConfEntry   *entry,
+					      AlarmApplet  *applet)
+{
+	g_debug ("show_label_changed");
+
+	prefs_show_label_update (applet);
 }
 
 /**

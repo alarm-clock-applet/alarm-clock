@@ -64,6 +64,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
         applet->list_window->accel_group);
 
     applet->action_toggle_autostart = GTK_TOGGLE_ACTION (GET_ACTION ("autostart-action"));
+    applet->action_toggle_show_label = GTK_TOGGLE_ACTION (GET_ACTION ("show-label-action"));
 
     gtk_action_group_add_action (applet->actions_global, applet->action_new);
     gtk_action_group_add_action (applet->actions_global, applet->action_stop_all);
@@ -71,6 +72,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
     gtk_action_group_add_action_with_accel (applet->actions_global, 
         GTK_ACTION (applet->action_toggle_list_win), "Escape");
     gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_autostart));
+    gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_show_label));
 
     gtk_action_connect_accelerator (GTK_ACTION (applet->action_toggle_list_win));
     
@@ -340,6 +342,25 @@ alarm_action_toggle_autostart (GtkAction *action, gpointer data)
 	if (active != autostart_state) {
 		g_debug ("AlarmAction: set autostart to %d!", active);
 		prefs_autostart_set_state (active);
+	}
+}
+
+/*
+ * Toggle show_label action
+ */
+void
+alarm_action_toggle_show_label (GtkAction *action, gpointer data)
+{
+	AlarmApplet *applet = (AlarmApplet *)data;
+	gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+	gboolean show_label_state = prefs_show_label_get(applet);
+	//gboolean check_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (applet->pref_autostart_check));
+
+	g_debug ("AlarmAction: toggle show_label to %d", active);
+
+	if (active != show_label_state) {
+		g_debug ("AlarmAction: set show_label to %d!", active);
+		prefs_show_label_set (applet, active);
 	}
 }
 

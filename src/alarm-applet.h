@@ -126,6 +126,7 @@ struct _AlarmApplet {
     GtkAction *action_snooze_all;
     GtkToggleAction *action_toggle_list_win;
     GtkToggleAction *action_toggle_autostart;
+    GtkToggleAction *action_toggle_show_label;
 
 	/* GConf */
 	guint listeners [N_GCONF_PREFS];

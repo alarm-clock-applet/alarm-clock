@@ -258,11 +258,11 @@ alarm_applet_status_update (AlarmApplet *applet)
 /*
  * Status icon callbacks:
  */
-#ifndef HAVE_APP_INDICATOR
 G_MODULE_EXPORT void
 alarm_applet_status_activate (GtkStatusIcon *status_icon,
 							  gpointer       user_data)
 {
+#ifndef HAVE_APP_INDICATOR
     AlarmApplet *applet = (AlarmApplet *)user_data;
 
     // Snooze triggered alarms if any
@@ -272,6 +272,7 @@ alarm_applet_status_activate (GtkStatusIcon *status_icon,
         // No alarms triggered, toggle list window
         gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
     }
+#endif
 }
 
 G_MODULE_EXPORT void
@@ -280,6 +281,7 @@ alarm_applet_status_popup (GtkStatusIcon  *status_icon,
                            guint           activate_time,
                            gpointer        user_data)
 {
+#ifndef HAVE_APP_INDICATOR
     AlarmApplet *applet = (AlarmApplet *)user_data;
 
     gtk_menu_popup (GTK_MENU (applet->status_menu),
@@ -289,8 +291,8 @@ alarm_applet_status_popup (GtkStatusIcon  *status_icon,
                     status_icon,
                     button,
                     activate_time);
-}
 #endif
+}
 
 /*
  * Menu callbacks:

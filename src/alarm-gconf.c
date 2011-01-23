@@ -194,10 +194,9 @@ alarm_applet_gconf_global_change (GConfClient  *client,
 void
 alarm_applet_gconf_init (AlarmApplet *applet)
 {
-	GConfClient *client;
+	GConfClient *client = gconf_client_get_default ();
 
-	client = gconf_client_get_default ();
-
+	gconf_client_add_dir (client, ALARM_GCONF_DIR, GCONF_CLIENT_PRELOAD_RECURSIVE, NULL);
     
 	
 	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);

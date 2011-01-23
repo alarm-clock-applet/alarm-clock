@@ -69,4 +69,7 @@ alarm_action_quit (GtkAction *action, gpointer data);
 void
 alarm_action_toggle_autostart (GtkAction *action, gpointer data);
 
+void
+alarm_action_toggle_show_label (GtkAction *action, gpointer data);
+
 #endif // ALARM_ACTIONS_H
