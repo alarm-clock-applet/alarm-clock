@@ -186,6 +186,62 @@ alarm_applet_notification_show (AlarmApplet *applet,
 	g_object_unref(G_OBJECT(n));
 }
 
+void
+alarm_applet_label_update (AlarmApplet *applet)
+{
+#ifdef HAVE_APP_INDICATOR
+	GList *l;
+	Alarm *a;
+	Alarm *next_alarm = NULL;
+	struct tm *tm;
+	guint hour, min, sec, now;
+	gchar *tmp;
+	gboolean show_label = gtk_toggle_action_get_active (applet->action_toggle_show_label);
+
+	if (!show_label) {
+		app_indicator_set_label (applet->app_indicator, NULL, NULL);
+		return;
+	}
+
+	//
+	// Show countdown
+	//
+	for (l = applet->alarms; l; l = l->next) {
+		a = ALARM (l->data);
+		if (!a->active) continue;
+
+		if (!next_alarm || a->timestamp < next_alarm->timestamp) {
+			next_alarm = a;
+		}
+	}
+
+	if (!next_alarm) {
+		// No upcoming alarms
+		app_indicator_set_label (applet->app_indicator, NULL, NULL);
+		return;
+	}
+
+	tm = alarm_get_remain (next_alarm);
+	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+	app_indicator_set_label (applet->app_indicator, tmp, NULL);
+	g_free(tmp);
+
+#endif
+}
+
+/*
+ * Updates label etc
+ */
+static gboolean
+alarm_applet_ui_update (AlarmApplet *applet)
+{
+	alarm_applet_label_update (applet);
+
+	//alarm_applet_update_tooltip (applet);
+
+	return TRUE;
+}
+
 
 
 
@@ -219,6 +275,10 @@ alarm_applet_ui_init (AlarmApplet *applet)
 
     /* Initialize preferences dialog */
     prefs_init (applet);
+
+    /* Set up UI updater */
+	alarm_applet_ui_update (applet);
+	g_timeout_add_seconds (1, (GSourceFunc)alarm_applet_ui_update, applet);
 }
 
 /*
