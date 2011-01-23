@@ -25,24 +25,11 @@
 #define ALARM_GCONF_H_
 
 #include <time.h>
-//#include <panel-applet-gconf.h>
 
 #include "alarm-applet.h"
 
 G_BEGIN_DECLS
 
-/* Global GConf keys */
-#define KEY_SHOW_NOTIFY     "show_notification"
-
-#define N_GCONF_PREFS		2	/* + global gconf listener */
-
-/* Failsafe defaults for use when the schema isn't found
- * or doesn't provide sensible defaults */
-#define DEF_SHOW_NOTIFY     TRUE
-
-/*
- * Init
- */
 void
 alarm_applet_gconf_init (AlarmApplet *applet);
 

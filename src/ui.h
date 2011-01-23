@@ -28,10 +28,6 @@
 #include "alarm-list-window.h"
 #include "alarm-settings.h"
 
-//#define ORIENT_IS_HORIZONTAL(o)		((o) == PANEL_APPLET_ORIENT_UP || (o) == PANEL_APPLET_ORIENT_DOWN)
-//#define IS_HORIZONTAL(papplet)		(ORIENT_IS_HORIZONTAL (panel_applet_get_orient (papplet)))
-
-
 void
 display_error_dialog (const gchar *message, const gchar *secondary_text, GtkWindow *parent);
 

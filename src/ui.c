@@ -199,7 +199,6 @@ alarm_applet_label_update (AlarmApplet *applet)
 	Alarm *a;
 	Alarm *next_alarm = NULL;
 	struct tm *tm;
-	guint hour, min, sec, now;
 	gchar *tmp;
 	gboolean show_label = gtk_toggle_action_get_active (applet->action_toggle_show_label);
 

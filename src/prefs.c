@@ -404,10 +404,10 @@ prefs_show_label_init (AlarmApplet *applet)
 	GConfClient *client = gconf_client_get_default ();
 
 	// Monitor gconf key
-	guint i = gconf_client_notify_add (
-					client, ALARM_GCONF_DIR "/show_label",
-					(GConfClientNotifyFunc) prefs_show_label_changed,
-					applet, NULL, NULL);
+	gconf_client_notify_add (
+			client, ALARM_GCONF_DIR "/show_label",
+			(GConfClientNotifyFunc) prefs_show_label_changed,
+			applet, NULL, NULL);
 
 	// Update state
 	prefs_show_label_update (applet);

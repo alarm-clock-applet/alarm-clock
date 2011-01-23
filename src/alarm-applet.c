@@ -670,11 +670,8 @@ alarm_applet_init (int *argc, char ***argv)
 	// TODO: Add to gconf
 	applet->snooze_mins = 5;
 
-	// Set up gconf handlers
+	// Initialize gconf
 	alarm_applet_gconf_init (applet);
-
-	// Load gconf values
-	alarm_applet_gconf_load (applet);
 
 	// Load alarms
 	alarm_applet_alarms_load (applet);

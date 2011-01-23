@@ -28,68 +28,6 @@
 #include "alarm-settings.h"
 #include "alarm.h"
 
-/*
- * LabelType enum to GConf string value map
- */
-GConfEnumStringPair label_type_enum_map [] = {
-	{ LABEL_TYPE_TIME,		"alarm-time"  },
-	{ LABEL_TYPE_REMAIN,	"remaining-time"  },
-	{ 0, NULL }
-};
-
-/*
- * GCONF CALLBACKS {{
- */
-/*
-void
-alarm_applet_gconf_show_label_changed (GConfClient  *client,
-									   guint         cnxn_id,
-									   GConfEntry   *entry,
-									   AlarmApplet  *applet)
-{
-	g_debug ("show_label_changed");
-	
-	if (!entry->value || entry->value->type != GCONF_VALUE_BOOL)
-		return;
-	
-	applet->show_label = gconf_value_get_bool (entry->value);
-	
-	g_object_set (applet->label, "visible", applet->show_label, NULL);
-	
-	if (applet->preferences_dialog != NULL) {
-		pref_update_label_show (applet);
-	}
-}
-
-void
-alarm_applet_gconf_label_type_changed (GConfClient  *client,
-									  guint         cnxn_id,
-									  GConfEntry   *entry,
-									  AlarmApplet  *applet)
-{
-	g_debug ("label_type_changed");
-	
-	const gchar *tmp;
-	
-	if (!entry->value || entry->value->type != GCONF_VALUE_STRING)
-		return;
-	
-	tmp = gconf_value_get_string (entry->value);
-	if (tmp) {
-		if (!gconf_string_to_enum (label_type_enum_map, tmp, (gint *)&(applet->label_type))) {
-			// No match, set to default
-			applet->label_type = DEF_LABEL_TYPE;
-		}
-		
-		alarm_applet_label_update (applet);
-	}
-	
-	if (applet->preferences_dialog != NULL) {
-		pref_update_label_type (applet);
-	}
-}
-*/
-
 /**
  * Triggered on global changes to our gconf preference dir.
  * We do this because we're interested in the events where
@@ -198,45 +136,13 @@ alarm_applet_gconf_init (AlarmApplet *applet)
 
 	gconf_client_add_dir (client, ALARM_GCONF_DIR, GCONF_CLIENT_PRELOAD_RECURSIVE, NULL);
     
-	
-	/*key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_SHOW_LABEL);
-	applet->listeners [0] =
-		gconf_client_notify_add (
-				client, key,
-				(GConfClientNotifyFunc) alarm_applet_gconf_show_label_changed,
-				applet, NULL, NULL);
-	g_free (key);
-	
-	key = panel_applet_gconf_get_full_key (PANEL_APPLET (applet->parent), KEY_LABEL_TYPE);
-	applet->listeners [1] =
-		gconf_client_notify_add (
-				client, key,
-				(GConfClientNotifyFunc) alarm_applet_gconf_label_type_changed,
-				applet, NULL, NULL);
-	g_free (key);
-	*/
 	/*
 	 * Listen for changes to the alarms.
 	 * We want to know when an alarm is added and removed.
 	 */
-	applet->listeners [2] =
-		gconf_client_notify_add (
-				client, ALARM_GCONF_DIR,
-				(GConfClientNotifyFunc) alarm_applet_gconf_global_change,
-				applet, NULL, NULL);
+	gconf_client_notify_add (
+			client, ALARM_GCONF_DIR,
+			(GConfClientNotifyFunc) alarm_applet_gconf_global_change,
+			applet, NULL, NULL);
 	
-}
-
-/* Load gconf values into applet.
- * We are very paranoid about gconf here. 
- * We can't rely on the schemas to exist, and so if we don't get any
- * defaults from gconf, we set them manually.
- * Not only that, but if some error occurs while setting the
- * defaults in gconf, we already have them copied locally. */
-void
-alarm_applet_gconf_load (AlarmApplet *applet)
-{
-	/*GConfClient *client;
-	
-	client = gconf_client_get_default ();*/
 }
