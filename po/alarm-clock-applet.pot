@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-23 16:41+0100\n"
+"POT-Creation-Date: 2011-01-23 17:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -464,21 +464,25 @@ msgid "Every day"
 msgstr ""
 
 #. About Alarm Clock
-#: ../src/ui.c:422
+#: ../src/ui.c:421
 #, c-format
 msgid "About %s"
 msgstr ""
 
-#: ../src/ui.c:450
+#: ../src/ui.c:449
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr ""
 
-#: ../src/ui.c:451
+#: ../src/ui.c:450
 msgid "Could not play"
 msgstr ""
 
-#: ../src/ui.c:508
+#: ../src/ui.c:507
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
+msgstr ""
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
 msgstr ""

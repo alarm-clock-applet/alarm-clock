@@ -416,7 +416,7 @@ prefs_show_label_init (AlarmApplet *applet)
 	// No AppIndicator support, disable option
 	GtkWidget *show_label_check = GTK_WIDGET (gtk_builder_get_object (applet->ui, "show-label-check"));
 	gtk_widget_set_sensitive (show_label_check, FALSE);
-	gtk_widget_set_tooltip_text (show_label_check, "Requires application indicators");
+	gtk_widget_set_tooltip_text (show_label_check, _("Requires application indicators"));
 
 	gtk_toggle_action_set_active (applet->action_toggle_show_label, FALSE);
 #endif

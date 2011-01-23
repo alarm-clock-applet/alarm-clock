@@ -5,3 +5,4 @@ src/alarm-applet.c
 src/alarm-settings.c
 src/alarm.c
 src/ui.c
+src/prefs.c
