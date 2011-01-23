@@ -176,7 +176,12 @@ alarm_applet_notification_show (AlarmApplet *applet,
     NotifyNotification *n;
     GError *error = NULL;
 
+    // Gotta love API breakage...
+#ifdef HAVE_LIBNOTIFY_0_7
+    n = notify_notification_new (summary, body, icon);
+#else
     n = notify_notification_new (summary, body, icon, NULL);
+#endif
     
     if (!notify_notification_show (n, &error)) {
         g_warning ("Failed to send notification: %s", error->message);

@@ -72,6 +72,16 @@ fi
 AM_GCONF_SOURCE_2
 
 #
+# Check for libnotify 0.7
+#
+PKG_CHECK_MODULES(LIBNOTIFY_0_7, libnotify >= 0.7, have_libnotify_0_7=yes, have_libnotify_0_7=no)
+
+if test x$have_libnotify_0_7 = xyes ; then
+    AC_DEFINE(HAVE_LIBNOTIFY_0_7, 1, [Have libnotify 0.7])
+fi
+AM_CONDITIONAL(HAVE_LIBNOTIFY_0_7, test x$have_libnotify_0_7 = xyes)
+
+#
 # Check for AppIndicator (optional)
 #
 APPINDICATOR_REQUIRED=0.0.7
