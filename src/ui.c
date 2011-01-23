@@ -227,7 +227,7 @@ alarm_applet_label_update (AlarmApplet *applet)
 	}
 
 	tm = alarm_get_remain (next_alarm);
-	tmp = g_strdup_printf(_("%02d:%02d:%02d"), tm->tm_hour, tm->tm_min, tm->tm_sec);
+	tmp = g_strdup_printf("%02d:%02d:%02d", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	app_indicator_set_label (applet->app_indicator, tmp, NULL);
 	g_free(tmp);
 

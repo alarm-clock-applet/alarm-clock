@@ -13,7 +13,7 @@
             <type>bool</type>
             <default>false</default>
             <locale name="C">
-                <short>Show countdown label.</short>
+                <short>Show countdown label</short>
                 <long>Whether to show a label on the right side of the icon
                       with the time remaining to the next alarm.</long>
             </locale>
