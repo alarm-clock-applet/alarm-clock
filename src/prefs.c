@@ -409,11 +409,8 @@ prefs_show_label_init (AlarmApplet *applet)
 					(GConfClientNotifyFunc) prefs_show_label_changed,
 					applet, NULL, &err);
 
-	g_debug("Preferences: Notify ID %d", i);
-
-	if (err) {
-		g_warning ("!?!?!? %s", err->message);
-	}
+	// Update state
+	prefs_show_label_update (applet);
 }
 
 /**
