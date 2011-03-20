@@ -1,3 +1,49 @@
+Overview of changes in Alarm Clock 0.3.2  "Indicate this"
+===============================================================
+
+* Add support for application indicators
+* Countdown label for application indicator
+* New status icon indicating triggered alarms
+
+
+Bugs fixed:
+565302 - Add countdown label (for application indicator)
+610632 - Create ~/.config/autostart if it doesn't exist
+671962 - Add support for libnotify 0.7
+682999 - Properly stop triggered alarms that are not playing sound
+704956 - Add support for application indicators
+706832 - Clicking on status icon should bring up list instead of snoozing
+
+New and updated translations:
+ar, courtesy of Ahmed Mohammed
+ast, courtesy of Xuacu Saturio <xuacusk8@gmail.com>
+be, courtesy of Mikola Tsekhan <mail@tsekhan.com>
+ca, courtesy of I. De Marchi
+cs, courtesy of Oliwer <linuch@centrum.cz>
+de, courtesy of Christoph Wickert
+es, courtesy of Fitoschido <fitoschido@gmail.com>
+et, courtesy of Tarmo Ilves <tarmo.ilves.001@mail.ee>
+fi, courtesy of Jiri Grönroos
+fo, courtesy of Gunleif Joensen
+fr, courtesy of Nicolas Delvaux
+gl, courtesy of Miguel Anxo Bouzada <mbouzada@gmail.com>
+he, courtesy of Yaron <sh.yaron@gmail.com>
+hu, courtesy of Papp Bence <papp.bence89@gmail.com>
+id, courtesy of Arief Setiadi Wibowo <q_thrynx@yahoo.com>
+ja, courtesy of jugger Yamamoto
+ka, courtesy of Giorgi Maghlakelidze <acidlabz@gmail.com>
+la, courtesy of nivek1385 <nivek1385@yeltrahnivek.com>
+nb, courtesy of Johannes H. Jensen <joh@pseudoberries.com>
+nl, courtesy of Rachid
+pl, courtesy of XeonBloomfield
+pt_BR, courtesy of André Gondim <andregondim@ubuntu.com>
+ru, courtesy of Сергій Матрунчик (SkyMan)
+tr, courtesy of Burak Ilgıcıoğlu
+uk, courtesy of Сергій Матрунчик (SkyMan)
+zh_CN, courtesy of Lele Long <schemacs@gmail.com>
+zh_TW, courtesy of Cheng-Chia Tseng <pswo10680@gmail.com>
+
+
 Overview of changes in Alarm Clock 0.3.1  "It's gettin' pretty"
 ===============================================================
 

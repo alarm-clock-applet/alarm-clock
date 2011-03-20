@@ -1,7 +1,7 @@
 Alarm Clock
 =================
 
-This package contains a program for use with the GNOME panel.
+This package contains a program for use with the GNOME panel or equivalent.
 
 Requirements
 ------------
@@ -18,13 +18,21 @@ You need at least:
     libxml-2.0
     unique-1.0
 
+
+Optional dependencies:
+
+    appindicator >= 0.0.7
+
+Application indicator support is automatically detected during configure.
+
+
 Installation
 ------------
 
 Unpackage with:
 
-tar zxvf alarm-clock-<VERSION>.tar.gz
-cd alarm-clock-<VERSION>
+tar zxvf alarm-clock-applet-<VERSION>.tar.gz
+cd alarm-clock-applet-<VERSION>
 
 
 Compile with the usual:
