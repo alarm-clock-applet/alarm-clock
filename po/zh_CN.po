@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-03-16 18:18+0000\n"
-"Last-Translator: lhquark <lhquark@yahoo.com.cn>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2011-03-20 01:22+0000\n"
+"Last-Translator: Lele Long <schemacs@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <zh_CN@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 "X-Language: zh_CN\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
@@ -24,7 +25,7 @@ msgstr "闹钟"
 
 #: ../data/alarm-clock-applet.desktop.in.h:2
 msgid "Wake up in the morning"
-msgstr ""
+msgstr "早晨唤醒"
 
 #: ../data/alarm-clock.schemas.in.h:1
 msgid ""
@@ -42,7 +43,7 @@ msgstr "闹钟消息"
 
 #: ../data/alarm-clock.schemas.in.h:4
 msgid "Alarm Repeat"
-msgstr ""
+msgstr "循环闹铃"
 
 #: ../data/alarm-clock.schemas.in.h:5
 msgid "Alarm Running State"
@@ -50,19 +51,19 @@ msgstr "闹钟运行状态"
 
 #: ../data/alarm-clock.schemas.in.h:6
 msgid "Alarm Time"
-msgstr ""
+msgstr "闹铃时间"
 
 #: ../data/alarm-clock.schemas.in.h:7
 msgid "Alarm Timestamp"
-msgstr ""
+msgstr "闹铃时间戳"
 
 #: ../data/alarm-clock.schemas.in.h:8
 msgid "Alarm Type"
-msgstr ""
+msgstr "闹铃类型"
 
 #: ../data/alarm-clock.schemas.in.h:9
 msgid "Alarm!"
-msgstr ""
+msgstr "闹铃"
 
 #: ../data/alarm-clock.schemas.in.h:10
 msgid "Command"
@@ -80,47 +81,58 @@ msgstr "通知类型"
 msgid "Repeat Sound"
 msgstr "重复响铃"
 
-#: ../data/alarm-clock.schemas.in.h:14
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr "查看倒计时标签"
+
+#: ../data/alarm-clock.schemas.in.h:15
 msgid "Sound File"
 msgstr "声音文件"
 
-#: ../data/alarm-clock.schemas.in.h:15
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr "闹钟的 UNIX 时间戳。必须在闹钟激活前设定。"
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr "“命令”通知类型下要运行的命令。"
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr "“响铃”通知类型下要播放的声音文件。"
 
-#: ../data/alarm-clock.schemas.in.h:18
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
 msgstr "闹铃时间。“时钟”闹钟下应为 GMT 时间，“计时器”闹钟下应为秒长。"
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
 "property.) \"command\" to run a command (specified in the \"command\" "
 "property.)"
 msgstr ""
-"闹钟起闹时的通知类型。可以是下列之一：“响铃” 播放一个声音文件(在“声音文件”属性中指定。) “命令” 运行一个命令(在“命令”属性中指定。)"
+"闹钟起闹时的通知类型。可以是下列之一：“响铃” 播放一个声音文件(在“声音文件”属"
+"性中指定。) “命令” 运行一个命令(在“命令”属性中指定。)"
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr "闹钟类型。“时钟”为在特定时间起闹，“计时器”为经过一特定时间段后起闹。"
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
 msgstr "是否要重复闹钟响铃。"
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr "是否在图标右侧显示距离下次闹铃的剩余时间。"
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
@@ -152,229 +164,233 @@ msgstr "闹钟"
 
 #: ../data/alarm-clock.ui.h:9
 msgid "Alert"
-msgstr ""
+msgstr "警告"
 
 #: ../data/alarm-clock.ui.h:10
+msgid "Appearance"
+msgstr "外观"
+
+#: ../data/alarm-clock.ui.h:11
 msgid "Co_mmand:"
 msgstr "命令(_M)："
 
-#: ../data/alarm-clock.ui.h:11
+#: ../data/alarm-clock.ui.h:12
 msgid "Custom..."
 msgstr "定制..."
 
-#: ../data/alarm-clock.ui.h:12
+#: ../data/alarm-clock.ui.h:13
 msgid "Delete"
 msgstr "删除"
 
-#: ../data/alarm-clock.ui.h:13
+#: ../data/alarm-clock.ui.h:14
 msgid "Delete alarm"
 msgstr "删除闹钟"
 
-#: ../data/alarm-clock.ui.h:14
+#: ../data/alarm-clock.ui.h:15
 msgid "Delete the selected alarm"
 msgstr "删除选定闹钟"
 
-#: ../data/alarm-clock.ui.h:15
+#: ../data/alarm-clock.ui.h:16
 msgid "Edit alarm"
 msgstr "编辑闹钟"
 
-#: ../data/alarm-clock.ui.h:16
+#: ../data/alarm-clock.ui.h:17
 msgid "Edit the selected alarm"
 msgstr "编辑选定闹钟"
 
-#: ../data/alarm-clock.ui.h:17
+#: ../data/alarm-clock.ui.h:18
 msgid "Edit..."
 msgstr "编辑..."
 
-#: ../data/alarm-clock.ui.h:18
+#: ../data/alarm-clock.ui.h:19
 msgid "Enable"
 msgstr "启用"
 
-#: ../data/alarm-clock.ui.h:19
+#: ../data/alarm-clock.ui.h:20
 msgid "Enable/disable"
 msgstr "启用/停用"
 
-#: ../data/alarm-clock.ui.h:20
+#: ../data/alarm-clock.ui.h:21
 msgid "Enable/disable alarm"
 msgstr "启用/停用 闹钟"
 
-#: ../data/alarm-clock.ui.h:21
+#: ../data/alarm-clock.ui.h:22
 msgid "Enable/disable the selected alarm"
 msgstr "启用/停用 选定闹钟"
 
-#: ../data/alarm-clock.ui.h:22
+#: ../data/alarm-clock.ui.h:23
 msgid "Fri"
 msgstr "星期五"
 
-#: ../data/alarm-clock.ui.h:23
+#: ../data/alarm-clock.ui.h:24
 msgid "General"
 msgstr "常规"
 
-#: ../data/alarm-clock.ui.h:24
-msgid "Get up in the morning!"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:25
+msgid "Get up in the morning!"
+msgstr "早晨起床！"
+
+#: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "管理您的闹钟"
 
-#: ../data/alarm-clock.ui.h:26
+#: ../data/alarm-clock.ui.h:27
 msgid "Mon"
 msgstr "星期一"
 
-#: ../data/alarm-clock.ui.h:27
+#: ../data/alarm-clock.ui.h:28
 msgid "New"
 msgstr "新建"
 
-#: ../data/alarm-clock.ui.h:28
+#: ../data/alarm-clock.ui.h:29
 msgid "New alarm"
 msgstr "新建闹钟"
 
-#: ../data/alarm-clock.ui.h:29
+#: ../data/alarm-clock.ui.h:30
 msgid "New..."
 msgstr "新建..."
 
-#: ../data/alarm-clock.ui.h:30
+#: ../data/alarm-clock.ui.h:31
 msgid "Play _sound"
 msgstr "播放响铃(_S)"
 
-#: ../data/alarm-clock.ui.h:31
+#: ../data/alarm-clock.ui.h:32
 msgid "Quit Alarm Clock"
 msgstr "退出闹钟"
 
-#: ../data/alarm-clock.ui.h:32
+#: ../data/alarm-clock.ui.h:33
 msgid "Repea_t sound"
 msgstr "重复响铃(_T)"
 
-#: ../data/alarm-clock.ui.h:33
+#: ../data/alarm-clock.ui.h:34
 msgid "Sat"
 msgstr "星期六"
 
-#: ../data/alarm-clock.ui.h:34
+#: ../data/alarm-clock.ui.h:35
 msgid "Show _alarms"
 msgstr "显示闹钟(_A)"
 
-#: ../data/alarm-clock.ui.h:35
-msgid "Snooze"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze alarm"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:37
-msgid "Snooze alarms"
-msgstr ""
+msgid "Snooze"
+msgstr "打瞌睡"
 
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze all alarms"
-msgstr ""
+msgid "Snooze alarm"
+msgstr "打盹闹铃"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze all beeping alarms"
-msgstr ""
+msgid "Snooze alarms"
+msgstr "贪睡闹钟"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze for:"
-msgstr ""
+msgid "Snooze all alarms"
+msgstr "将所有闹钟设为贪睡"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze the selected alarm"
-msgstr ""
+msgid "Snooze all beeping alarms"
+msgstr "将所有蜂鸣闹钟设为贪睡"
 
 #: ../data/alarm-clock.ui.h:42
+msgid "Snooze for:"
+msgstr "设置贪睡"
+
+#: ../data/alarm-clock.ui.h:43
+msgid "Snooze the selected alarm"
+msgstr "为选定的闹钟设置贪睡"
+
+#: ../data/alarm-clock.ui.h:44
 msgid "Start _Application"
 msgstr "启动程序(_A)"
 
-#: ../data/alarm-clock.ui.h:43
+#: ../data/alarm-clock.ui.h:45
 msgid "Start automatically at login"
 msgstr "登入时自动启动"
 
-#: ../data/alarm-clock.ui.h:44
+#: ../data/alarm-clock.ui.h:46
 msgid "Stop"
 msgstr "停止"
 
-#: ../data/alarm-clock.ui.h:45
+#: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "停止闹钟"
 
-#: ../data/alarm-clock.ui.h:46
+#: ../data/alarm-clock.ui.h:48
 msgid "Stop alarms"
 msgstr "停止闹钟"
 
-#: ../data/alarm-clock.ui.h:47
+#: ../data/alarm-clock.ui.h:49
 msgid "Stop all alarms"
 msgstr "停止所有闹钟"
 
-#: ../data/alarm-clock.ui.h:48
+#: ../data/alarm-clock.ui.h:50
 msgid "Stop all beeping alarms"
 msgstr "停止所有正在起闹的闹钟"
 
-#: ../data/alarm-clock.ui.h:49
+#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "停止选定的闹钟"
 
-#: ../data/alarm-clock.ui.h:50
+#: ../data/alarm-clock.ui.h:52
 msgid "Sun"
 msgstr "星期日"
 
-#: ../data/alarm-clock.ui.h:51
+#: ../data/alarm-clock.ui.h:53
 msgid "Thu"
 msgstr "星期四"
 
-#: ../data/alarm-clock.ui.h:52
+#: ../data/alarm-clock.ui.h:54
 msgid "Timer"
 msgstr "计时器"
 
-#: ../data/alarm-clock.ui.h:53
-msgid "Toggle alarms"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:54
-msgid "Toggle alarms window"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:55
-msgid "Toggle the visibility of the alarms window"
-msgstr ""
+msgid "Toggle alarms"
+msgstr "关闭/开启所有闹钟"
 
 #: ../data/alarm-clock.ui.h:56
+msgid "Toggle alarms window"
+msgstr "切换闹钟窗口"
+
+#: ../data/alarm-clock.ui.h:57
+msgid "Toggle the visibility of the alarms window"
+msgstr "切换闹钟窗口的可见性"
+
+#: ../data/alarm-clock.ui.h:58
 msgid "Tue"
 msgstr "星期二"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:59
 msgid "Wake up sleepy head!"
 msgstr "醒来，懒虫！"
 
-#: ../data/alarm-clock.ui.h:58
+#: ../data/alarm-clock.ui.h:60
 msgid "Wed"
 msgstr "星期三"
 
-#: ../data/alarm-clock.ui.h:59
+#: ../data/alarm-clock.ui.h:61
 msgid "_Name:"
 msgstr "名称(_N)："
 
-#: ../data/alarm-clock.ui.h:60
+#: ../data/alarm-clock.ui.h:62
 msgid "_Preferences"
 msgstr "首选项(_P)"
 
-#: ../data/alarm-clock.ui.h:61
+#: ../data/alarm-clock.ui.h:63
 msgid "_Quit"
 msgstr "退出(_Q)"
 
-#: ../data/alarm-clock.ui.h:62
+#: ../data/alarm-clock.ui.h:64
 msgid "_Repeat:"
 msgstr "重复(_R)："
 
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:65
 msgid "_Snooze"
-msgstr ""
+msgstr "贪睡(_S)"
 
-#: ../data/alarm-clock.ui.h:64
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
 msgstr "时间(_T)："
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr "分钟"
 
@@ -382,7 +398,7 @@ msgstr "分钟"
 #: ../src/alarm-applet.c:73
 #, c-format
 msgid "%s snoozed"
-msgstr ""
+msgstr "%s 被设为贪睡"
 
 #: ../src/alarm-applet.c:74
 #, c-format
@@ -393,7 +409,7 @@ msgstr "您可以从闹钟菜单停止闹钟。"
 #: ../src/alarm-applet.c:79
 #, c-format
 msgid "Snoozed %d alarms"
-msgstr ""
+msgstr "%d 个闹钟被设置为贪睡"
 
 #: ../src/alarm-applet.c:80
 #, c-format
@@ -417,7 +433,7 @@ msgstr "重复闹钟会根据日程安排继续运行。"
 msgid "Stopped %d alarm(s)"
 msgstr "%d 个闹钟已停止"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s 已经在运行，正在退出...\n"
@@ -452,21 +468,25 @@ msgid "Every day"
 msgstr "每天"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
 msgstr "关于 %s"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "无法播放 '%s': %s"
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr "无法播放"
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
-msgstr ""
+msgstr "您可以在闹钟面板将闹钟禁用或设置为贪睡"
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr "需要应用程序指示器"

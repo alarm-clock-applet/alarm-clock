@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-03-16 18:20+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2011-01-23 20:29+0000\n"
 "Last-Translator: Yaron <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
+"Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
@@ -81,55 +82,67 @@ msgstr "Notification Type"
 msgid "Repeat Sound"
 msgstr "Repeat Sound"
 
-#: ../data/alarm-clock.schemas.in.h:14
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr "הצגת תווית ספירה לאחור"
+
+#: ../data/alarm-clock.schemas.in.h:15
 msgid "Sound File"
 msgstr "Sound File"
 
-#: ../data/alarm-clock.schemas.in.h:15
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr "The command to run for the \"command\" notification type."
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr "The sound file to play for the \"sound\" notification type."
 
-#: ../data/alarm-clock.schemas.in.h:18
-msgid ""
-"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
-"seconds for \"timer\" alarms."
-msgstr ""
-"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
-"seconds for \"timer\" alarms."
-
 #: ../data/alarm-clock.schemas.in.h:19
 msgid ""
-"The type of notification to use when the alarm goes off. This can be one of "
-"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
-"property.) \"command\" to run a command (specified in the \"command\" "
-"property.)"
+"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
+"seconds for \"timer\" alarms."
 msgstr ""
-"The type of notification to use when the alarm goes off. This can be one of "
-"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
-"property.) \"command\" to run a command (specified in the \"command\" "
-"property.)"
+"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
+"seconds for \"timer\" alarms."
 
 #: ../data/alarm-clock.schemas.in.h:20
 msgid ""
+"The type of notification to use when the alarm goes off. This can be one of "
+"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
+"property.) \"command\" to run a command (specified in the \"command\" "
+"property.)"
+msgstr ""
+"The type of notification to use when the alarm goes off. This can be one of "
+"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
+"property.) \"command\" to run a command (specified in the \"command\" "
+"property.)"
+
+#: ../data/alarm-clock.schemas.in.h:21
+msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
 msgstr "Whether to repeat the alarm sound."
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
@@ -164,226 +177,230 @@ msgid "Alert"
 msgstr "התרעה"
 
 #: ../data/alarm-clock.ui.h:10
+msgid "Appearance"
+msgstr "מראה"
+
+#: ../data/alarm-clock.ui.h:11
 msgid "Co_mmand:"
 msgstr "פ_קודה:"
 
-#: ../data/alarm-clock.ui.h:11
+#: ../data/alarm-clock.ui.h:12
 msgid "Custom..."
 msgstr "התאמה אישית..."
 
-#: ../data/alarm-clock.ui.h:12
+#: ../data/alarm-clock.ui.h:13
 msgid "Delete"
 msgstr "מחיקה"
 
-#: ../data/alarm-clock.ui.h:13
+#: ../data/alarm-clock.ui.h:14
 msgid "Delete alarm"
 msgstr "מחיקת התרעה"
 
-#: ../data/alarm-clock.ui.h:14
+#: ../data/alarm-clock.ui.h:15
 msgid "Delete the selected alarm"
 msgstr "מחיקת ההתרעה הנבחרת"
 
-#: ../data/alarm-clock.ui.h:15
+#: ../data/alarm-clock.ui.h:16
 msgid "Edit alarm"
 msgstr "עריכת ההתרעה"
 
-#: ../data/alarm-clock.ui.h:16
+#: ../data/alarm-clock.ui.h:17
 msgid "Edit the selected alarm"
 msgstr "עריכת ההתרעה הנבחרת"
 
-#: ../data/alarm-clock.ui.h:17
+#: ../data/alarm-clock.ui.h:18
 msgid "Edit..."
 msgstr "עריכה..."
 
-#: ../data/alarm-clock.ui.h:18
+#: ../data/alarm-clock.ui.h:19
 msgid "Enable"
 msgstr "הפעלה"
 
-#: ../data/alarm-clock.ui.h:19
+#: ../data/alarm-clock.ui.h:20
 msgid "Enable/disable"
 msgstr "הפעלה/נטרול"
 
-#: ../data/alarm-clock.ui.h:20
+#: ../data/alarm-clock.ui.h:21
 msgid "Enable/disable alarm"
 msgstr "הפעלת/נטרול ההתרעה"
 
-#: ../data/alarm-clock.ui.h:21
+#: ../data/alarm-clock.ui.h:22
 msgid "Enable/disable the selected alarm"
 msgstr "הפעלה/נטרול של ההתרעה הנבחרת"
 
-#: ../data/alarm-clock.ui.h:22
+#: ../data/alarm-clock.ui.h:23
 msgid "Fri"
 msgstr "ו"
 
-#: ../data/alarm-clock.ui.h:23
+#: ../data/alarm-clock.ui.h:24
 msgid "General"
 msgstr "כללי"
 
-#: ../data/alarm-clock.ui.h:24
+#: ../data/alarm-clock.ui.h:25
 msgid "Get up in the morning!"
 msgstr "להתעורר בבוקר!"
 
-#: ../data/alarm-clock.ui.h:25
+#: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "ניהול ההתרעות שלך"
 
-#: ../data/alarm-clock.ui.h:26
+#: ../data/alarm-clock.ui.h:27
 msgid "Mon"
 msgstr "ב"
 
-#: ../data/alarm-clock.ui.h:27
+#: ../data/alarm-clock.ui.h:28
 msgid "New"
 msgstr "חדשה"
 
-#: ../data/alarm-clock.ui.h:28
+#: ../data/alarm-clock.ui.h:29
 msgid "New alarm"
 msgstr "התרעה חדשה"
 
-#: ../data/alarm-clock.ui.h:29
+#: ../data/alarm-clock.ui.h:30
 msgid "New..."
 msgstr "חדשה..."
 
-#: ../data/alarm-clock.ui.h:30
+#: ../data/alarm-clock.ui.h:31
 msgid "Play _sound"
 msgstr "השמעת _צליל"
 
-#: ../data/alarm-clock.ui.h:31
+#: ../data/alarm-clock.ui.h:32
 msgid "Quit Alarm Clock"
 msgstr "יציאה מהשעון המעורר"
 
-#: ../data/alarm-clock.ui.h:32
+#: ../data/alarm-clock.ui.h:33
 msgid "Repea_t sound"
 msgstr "ח_זרה על הצליל"
 
-#: ../data/alarm-clock.ui.h:33
+#: ../data/alarm-clock.ui.h:34
 msgid "Sat"
 msgstr "ש"
 
-#: ../data/alarm-clock.ui.h:34
+#: ../data/alarm-clock.ui.h:35
 msgid "Show _alarms"
 msgstr "ה_צגת התרעות"
 
-#: ../data/alarm-clock.ui.h:35
+#: ../data/alarm-clock.ui.h:37
 msgid "Snooze"
 msgstr "נודניק"
 
-#: ../data/alarm-clock.ui.h:36
+#: ../data/alarm-clock.ui.h:38
 msgid "Snooze alarm"
 msgstr "דחיית ההתרעה"
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:39
 msgid "Snooze alarms"
 msgstr "דחיית ההתרעות"
 
-#: ../data/alarm-clock.ui.h:38
+#: ../data/alarm-clock.ui.h:40
 msgid "Snooze all alarms"
 msgstr "דחיית כל ההתרעות"
 
-#: ../data/alarm-clock.ui.h:39
+#: ../data/alarm-clock.ui.h:41
 msgid "Snooze all beeping alarms"
 msgstr "דחיית כל ההתרעות המזמזמות"
 
-#: ../data/alarm-clock.ui.h:40
+#: ../data/alarm-clock.ui.h:42
 msgid "Snooze for:"
 msgstr "דחייה למשך:"
 
-#: ../data/alarm-clock.ui.h:41
+#: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr "דחיית ההתרעה הנבחרת"
 
-#: ../data/alarm-clock.ui.h:42
+#: ../data/alarm-clock.ui.h:44
 msgid "Start _Application"
 msgstr "הפעלת _יישום"
 
-#: ../data/alarm-clock.ui.h:43
+#: ../data/alarm-clock.ui.h:45
 msgid "Start automatically at login"
 msgstr "התחלה אוטומטית עם ההפעלה"
 
-#: ../data/alarm-clock.ui.h:44
+#: ../data/alarm-clock.ui.h:46
 msgid "Stop"
 msgstr "עצירה"
 
-#: ../data/alarm-clock.ui.h:45
+#: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "עצירת ההתרעה"
 
-#: ../data/alarm-clock.ui.h:46
+#: ../data/alarm-clock.ui.h:48
 msgid "Stop alarms"
 msgstr "עצירת ההתרעות"
 
-#: ../data/alarm-clock.ui.h:47
+#: ../data/alarm-clock.ui.h:49
 msgid "Stop all alarms"
 msgstr "עצירת כל ההתרעות"
 
-#: ../data/alarm-clock.ui.h:48
+#: ../data/alarm-clock.ui.h:50
 msgid "Stop all beeping alarms"
 msgstr "עצירת כל ההתרעות המזמזמות"
 
-#: ../data/alarm-clock.ui.h:49
+#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "עצירת ההתרעה הנוכחית"
 
-#: ../data/alarm-clock.ui.h:50
+#: ../data/alarm-clock.ui.h:52
 msgid "Sun"
 msgstr "א"
 
-#: ../data/alarm-clock.ui.h:51
+#: ../data/alarm-clock.ui.h:53
 msgid "Thu"
 msgstr "ה"
 
-#: ../data/alarm-clock.ui.h:52
+#: ../data/alarm-clock.ui.h:54
 msgid "Timer"
 msgstr "קוצב זמן"
 
-#: ../data/alarm-clock.ui.h:53
+#: ../data/alarm-clock.ui.h:55
 msgid "Toggle alarms"
 msgstr "החלפת מצב ההתרעות"
 
-#: ../data/alarm-clock.ui.h:54
+#: ../data/alarm-clock.ui.h:56
 msgid "Toggle alarms window"
 msgstr "הצגה/הסתרה של חלון ההתרעות"
 
-#: ../data/alarm-clock.ui.h:55
+#: ../data/alarm-clock.ui.h:57
 msgid "Toggle the visibility of the alarms window"
 msgstr "הצגה/הסתרה של חלון ההתרעות"
 
-#: ../data/alarm-clock.ui.h:56
+#: ../data/alarm-clock.ui.h:58
 msgid "Tue"
 msgstr "ג"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:59
 msgid "Wake up sleepy head!"
 msgstr "קדימה לקום ישנוני!"
 
-#: ../data/alarm-clock.ui.h:58
+#: ../data/alarm-clock.ui.h:60
 msgid "Wed"
 msgstr "ד"
 
-#: ../data/alarm-clock.ui.h:59
+#: ../data/alarm-clock.ui.h:61
 msgid "_Name:"
 msgstr "_שם:"
 
-#: ../data/alarm-clock.ui.h:60
+#: ../data/alarm-clock.ui.h:62
 msgid "_Preferences"
 msgstr "ה_עדפות"
 
-#: ../data/alarm-clock.ui.h:61
+#: ../data/alarm-clock.ui.h:63
 msgid "_Quit"
 msgstr "י_ציאה"
 
-#: ../data/alarm-clock.ui.h:62
+#: ../data/alarm-clock.ui.h:64
 msgid "_Repeat:"
 msgstr "_חזרה:"
 
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:65
 msgid "_Snooze"
 msgstr "_נודניק"
 
-#: ../data/alarm-clock.ui.h:64
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
 msgstr "_שעה:"
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr "דקות"
 
@@ -426,7 +443,7 @@ msgstr "ההתרעות החוזרות ימשיכו בהתאם לתזמון."
 msgid "Stopped %d alarm(s)"
 msgstr "נעצרו %d התרעות"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s כבר פעילה, מתבצעת יציאה...\n"
@@ -461,21 +478,25 @@ msgid "Every day"
 msgstr "כל יום"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
 msgstr "על אודות %s"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "לא ניתן להשמיע את '%s':‏ %s"
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr "לא ניתן לנגן"
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "ניתן לדחות או לעצור התרעות מתפריט השעון המעורר."
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr "נדרשים מחווני יישומים"

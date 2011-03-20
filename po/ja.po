@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-03-16 18:21+0000\n"
-"Last-Translator: Johannes H. Jensen <joh@pseudoberries.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2010-12-22 00:12+0000\n"
+"Last-Translator: jugger Yamamoto <Unknown>\n"
 "Language-Team: Japanese <ja@li.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
@@ -79,48 +80,63 @@ msgstr "通知の種類"
 msgid "Repeat Sound"
 msgstr "リピートの音"
 
-#: ../data/alarm-clock.schemas.in.h:14
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr ""
+
+#: ../data/alarm-clock.schemas.in.h:15
 msgid "Sound File"
 msgstr "アラーム音のファイル"
 
-#: ../data/alarm-clock.schemas.in.h:15
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
-msgstr "アラームに使用する UNIX のタイムスタンプ。アラームをオンにする前に設定する必要があります。"
+msgstr ""
+"アラームに使用する UNIX のタイムスタンプ。アラームをオンにする前に設定する必"
+"要があります。"
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr "\"command\" 通知のときに実行されるコマンド。"
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr "\"sound\" 通知のときに再生される音ファイル。"
 
-#: ../data/alarm-clock.schemas.in.h:18
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
-msgstr ""
+msgstr "アラームの時間。時刻の時はGMT(UTC)、タイマーの時は時間を秒で指定。"
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
 "property.) \"command\" to run a command (specified in the \"command\" "
 "property.)"
 msgstr ""
-"アラームが起動したときの通知の種類。次のいずれか1つです： \"sound\" は \"sound_file\" "
-"プロパティで指定した音ファイルを再生します。 \"command\" は \"command\" プロパティで指定したコマンドを実行します。"
+"アラームが起動したときの通知の種類。次のいずれか1つです： \"sound\" は "
+"\"sound_file\" プロパティで指定した音ファイルを再生します。 \"command\" は "
+"\"command\" プロパティで指定したコマンドを実行します。"
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
-msgstr "アラームの種類。\"clock\" は指定した日時に動作します。\"timer\" は指定間隔ごとに動作します。"
+msgstr ""
+"アラームの種類。\"clock\" は指定した日時に動作します。\"timer\" は指定間隔ご"
+"とに動作します。"
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
 msgstr "アラーム音を連続再生するかどうか"
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
@@ -155,226 +171,230 @@ msgid "Alert"
 msgstr "アラート"
 
 #: ../data/alarm-clock.ui.h:10
+msgid "Appearance"
+msgstr ""
+
+#: ../data/alarm-clock.ui.h:11
 msgid "Co_mmand:"
 msgstr "コマンド(_M):"
 
-#: ../data/alarm-clock.ui.h:11
+#: ../data/alarm-clock.ui.h:12
 msgid "Custom..."
 msgstr "カスタム..."
 
-#: ../data/alarm-clock.ui.h:12
+#: ../data/alarm-clock.ui.h:13
 msgid "Delete"
 msgstr "削除"
 
-#: ../data/alarm-clock.ui.h:13
+#: ../data/alarm-clock.ui.h:14
 msgid "Delete alarm"
 msgstr "アラームを削除"
 
-#: ../data/alarm-clock.ui.h:14
+#: ../data/alarm-clock.ui.h:15
 msgid "Delete the selected alarm"
 msgstr "選択中のアラームを削除"
 
-#: ../data/alarm-clock.ui.h:15
+#: ../data/alarm-clock.ui.h:16
 msgid "Edit alarm"
 msgstr "アラームを編集"
 
-#: ../data/alarm-clock.ui.h:16
+#: ../data/alarm-clock.ui.h:17
 msgid "Edit the selected alarm"
 msgstr "選択中のアラームを編集"
 
-#: ../data/alarm-clock.ui.h:17
+#: ../data/alarm-clock.ui.h:18
 msgid "Edit..."
 msgstr "編集..."
 
-#: ../data/alarm-clock.ui.h:18
+#: ../data/alarm-clock.ui.h:19
 msgid "Enable"
 msgstr "有効"
 
-#: ../data/alarm-clock.ui.h:19
+#: ../data/alarm-clock.ui.h:20
 msgid "Enable/disable"
 msgstr "オン/オフ"
 
-#: ../data/alarm-clock.ui.h:20
+#: ../data/alarm-clock.ui.h:21
 msgid "Enable/disable alarm"
 msgstr "アラームのオン/オフ"
 
-#: ../data/alarm-clock.ui.h:21
+#: ../data/alarm-clock.ui.h:22
 msgid "Enable/disable the selected alarm"
 msgstr "選択中のアラームのオン/オフ"
 
-#: ../data/alarm-clock.ui.h:22
+#: ../data/alarm-clock.ui.h:23
 msgid "Fri"
 msgstr "金曜"
 
-#: ../data/alarm-clock.ui.h:23
+#: ../data/alarm-clock.ui.h:24
 msgid "General"
 msgstr "一般"
 
-#: ../data/alarm-clock.ui.h:24
+#: ../data/alarm-clock.ui.h:25
 msgid "Get up in the morning!"
 msgstr "朝起きる"
 
-#: ../data/alarm-clock.ui.h:25
+#: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "アラームの設定"
 
-#: ../data/alarm-clock.ui.h:26
+#: ../data/alarm-clock.ui.h:27
 msgid "Mon"
 msgstr "月曜"
 
-#: ../data/alarm-clock.ui.h:27
+#: ../data/alarm-clock.ui.h:28
 msgid "New"
 msgstr "新規"
 
-#: ../data/alarm-clock.ui.h:28
+#: ../data/alarm-clock.ui.h:29
 msgid "New alarm"
 msgstr "新しいアラーム"
 
-#: ../data/alarm-clock.ui.h:29
+#: ../data/alarm-clock.ui.h:30
 msgid "New..."
 msgstr "新規..."
 
-#: ../data/alarm-clock.ui.h:30
+#: ../data/alarm-clock.ui.h:31
 msgid "Play _sound"
 msgstr "音の再生(_S)"
 
-#: ../data/alarm-clock.ui.h:31
+#: ../data/alarm-clock.ui.h:32
 msgid "Quit Alarm Clock"
 msgstr "アラーム時計の終了"
 
-#: ../data/alarm-clock.ui.h:32
+#: ../data/alarm-clock.ui.h:33
 msgid "Repea_t sound"
 msgstr "音のリピート(_T)"
 
-#: ../data/alarm-clock.ui.h:33
+#: ../data/alarm-clock.ui.h:34
 msgid "Sat"
 msgstr "土曜"
 
-#: ../data/alarm-clock.ui.h:34
+#: ../data/alarm-clock.ui.h:35
 msgid "Show _alarms"
 msgstr "アラームの表示(_A)"
 
-#: ../data/alarm-clock.ui.h:35
+#: ../data/alarm-clock.ui.h:37
 msgid "Snooze"
 msgstr "スヌーズ"
 
-#: ../data/alarm-clock.ui.h:36
+#: ../data/alarm-clock.ui.h:38
 msgid "Snooze alarm"
 msgstr "アラームをスヌーズ"
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:39
 msgid "Snooze alarms"
 msgstr "アラームをスヌーズ"
 
-#: ../data/alarm-clock.ui.h:38
+#: ../data/alarm-clock.ui.h:40
 msgid "Snooze all alarms"
 msgstr "すべてのアラームをスヌーズ"
 
-#: ../data/alarm-clock.ui.h:39
+#: ../data/alarm-clock.ui.h:41
 msgid "Snooze all beeping alarms"
 msgstr "動作中のすべてのアラームをスヌーズ"
 
-#: ../data/alarm-clock.ui.h:40
+#: ../data/alarm-clock.ui.h:42
 msgid "Snooze for:"
 msgstr "スヌーズする："
 
-#: ../data/alarm-clock.ui.h:41
+#: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr "選択中のアラームをスヌーズ"
 
-#: ../data/alarm-clock.ui.h:42
+#: ../data/alarm-clock.ui.h:44
 msgid "Start _Application"
 msgstr "アプリケーションを起動(_A)"
 
-#: ../data/alarm-clock.ui.h:43
+#: ../data/alarm-clock.ui.h:45
 msgid "Start automatically at login"
 msgstr "ログイン時に自動起動"
 
-#: ../data/alarm-clock.ui.h:44
+#: ../data/alarm-clock.ui.h:46
 msgid "Stop"
 msgstr "停止"
 
-#: ../data/alarm-clock.ui.h:45
+#: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "アラームを停止"
 
-#: ../data/alarm-clock.ui.h:46
+#: ../data/alarm-clock.ui.h:48
 msgid "Stop alarms"
 msgstr "アラームを停止"
 
-#: ../data/alarm-clock.ui.h:47
+#: ../data/alarm-clock.ui.h:49
 msgid "Stop all alarms"
 msgstr "すべてのアラームを停止"
 
-#: ../data/alarm-clock.ui.h:48
+#: ../data/alarm-clock.ui.h:50
 msgid "Stop all beeping alarms"
 msgstr "すべての動作中のアラームを停止"
 
-#: ../data/alarm-clock.ui.h:49
+#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "選択中のアラームを停止"
 
-#: ../data/alarm-clock.ui.h:50
+#: ../data/alarm-clock.ui.h:52
 msgid "Sun"
 msgstr "日曜"
 
-#: ../data/alarm-clock.ui.h:51
+#: ../data/alarm-clock.ui.h:53
 msgid "Thu"
 msgstr "木曜"
 
-#: ../data/alarm-clock.ui.h:52
+#: ../data/alarm-clock.ui.h:54
 msgid "Timer"
 msgstr "タイマー"
 
-#: ../data/alarm-clock.ui.h:53
+#: ../data/alarm-clock.ui.h:55
 msgid "Toggle alarms"
 msgstr "アラームの切り替え"
 
-#: ../data/alarm-clock.ui.h:54
+#: ../data/alarm-clock.ui.h:56
 msgid "Toggle alarms window"
 msgstr "アラームウィンドウの切り替え"
 
-#: ../data/alarm-clock.ui.h:55
+#: ../data/alarm-clock.ui.h:57
 msgid "Toggle the visibility of the alarms window"
 msgstr "アラームウィンドウの表示切り替え"
 
-#: ../data/alarm-clock.ui.h:56
+#: ../data/alarm-clock.ui.h:58
 msgid "Tue"
 msgstr "火曜"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:59
 msgid "Wake up sleepy head!"
 msgstr "起きろー！"
 
-#: ../data/alarm-clock.ui.h:58
+#: ../data/alarm-clock.ui.h:60
 msgid "Wed"
 msgstr "水曜"
 
-#: ../data/alarm-clock.ui.h:59
+#: ../data/alarm-clock.ui.h:61
 msgid "_Name:"
 msgstr "名前(_N):"
 
-#: ../data/alarm-clock.ui.h:60
+#: ../data/alarm-clock.ui.h:62
 msgid "_Preferences"
 msgstr "設定(_P)"
 
-#: ../data/alarm-clock.ui.h:61
+#: ../data/alarm-clock.ui.h:63
 msgid "_Quit"
 msgstr "終了(_Q)"
 
-#: ../data/alarm-clock.ui.h:62
+#: ../data/alarm-clock.ui.h:64
 msgid "_Repeat:"
 msgstr "リピート(_R):"
 
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:65
 msgid "_Snooze"
 msgstr "スヌーズ(_S)"
 
-#: ../data/alarm-clock.ui.h:64
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
 msgstr "時間(_T):"
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr "分"
 
@@ -417,7 +437,7 @@ msgstr ""
 msgid "Stopped %d alarm(s)"
 msgstr "%d のアラームが停止"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s はすでに実行されているため、終了します\n"
@@ -452,21 +472,25 @@ msgid "Every day"
 msgstr "毎日"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
 msgstr "%s について"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "'%s' を再生できませんでした: %s"
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr "再生できませんでした"
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "アラーム時計のメニューからスヌーズまたは停止できます。"
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr ""

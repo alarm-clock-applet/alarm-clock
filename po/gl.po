@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-05-01 23:38+0000\n"
-"Last-Translator: Dario <dario.villar.v@gmail.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2011-01-23 22:02+0000\n"
+"Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: Galician <gl@li.org>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
@@ -23,15 +24,15 @@ msgstr "Reloxo despertador"
 
 #: ../data/alarm-clock-applet.desktop.in.h:2
 msgid "Wake up in the morning"
-msgstr "Levantarse pola mañan"
+msgstr "Espertarse pola mañan"
 
 #: ../data/alarm-clock.schemas.in.h:1
 msgid ""
 "A list of days when the alarm should be repeated. This settings is only "
 "applicable for \"clock\" alarms."
 msgstr ""
-"Unha lista de dias cando a alarma debe ser repetida. Estas cpmfiguracions "
-"son só aplicables para alarmas \"reloxo\""
+"Unha lista de dias nos que a alarma debe ser repetida. Estas comfiguracions "
+"son só aplicábeis para alarmas de «reloxo»"
 
 #: ../data/alarm-clock.schemas.in.h:2
 msgid "A short message which describes the alarm."
@@ -43,19 +44,19 @@ msgstr "Mensaxe de alarma"
 
 #: ../data/alarm-clock.schemas.in.h:4
 msgid "Alarm Repeat"
-msgstr "Repetir Alarma"
+msgstr "Repetición da alarma"
 
 #: ../data/alarm-clock.schemas.in.h:5
 msgid "Alarm Running State"
-msgstr "Estado da Alarma"
+msgstr "Estado da alarma"
 
 #: ../data/alarm-clock.schemas.in.h:6
 msgid "Alarm Time"
-msgstr "Tempo da Alarma"
+msgstr "Hora da alarma"
 
 #: ../data/alarm-clock.schemas.in.h:7
 msgid "Alarm Timestamp"
-msgstr ""
+msgstr "Timestamp da alarma"
 
 #: ../data/alarm-clock.schemas.in.h:8
 msgid "Alarm Type"
@@ -67,11 +68,11 @@ msgstr "Alarma!"
 
 #: ../data/alarm-clock.schemas.in.h:10
 msgid "Command"
-msgstr "Comando"
+msgstr "Orde"
 
 #: ../data/alarm-clock.schemas.in.h:11
 msgid "Indicates whether the alarm has started."
-msgstr "Indica cando a alama empezou."
+msgstr "Indica se a a alama comezou."
 
 #: ../data/alarm-clock.schemas.in.h:12
 msgid "Notification Type"
@@ -79,56 +80,70 @@ msgstr "Tipo de notificación."
 
 #: ../data/alarm-clock.schemas.in.h:13
 msgid "Repeat Sound"
-msgstr "Repetie Sonido"
+msgstr "Repetir son"
 
-#: ../data/alarm-clock.schemas.in.h:14
-msgid "Sound File"
-msgstr "Arquivo de sonido"
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr "Mostrar a etiqueta de conta atrás"
 
 #: ../data/alarm-clock.schemas.in.h:15
+msgid "Sound File"
+msgstr "Ficheiro de son"
+
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
-
-#: ../data/alarm-clock.schemas.in.h:16
-msgid "The command to run for the \"command\" notification type."
-msgstr "O comando para executar polo tipo de notificación \"comando\""
+"Marca de tempo de UNIX para a alarma. Debe ser definido antes de que a "
+"alarma sexa activada."
 
 #: ../data/alarm-clock.schemas.in.h:17
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "O arquivo de son para reproducir no tipo de notificacion \"son\""
+msgid "The command to run for the \"command\" notification type."
+msgstr "Otde para executar polo tipo de notificación «orde»"
 
 #: ../data/alarm-clock.schemas.in.h:18
+msgid "The sound file to play for the \"sound\" notification type."
+msgstr "Ficheiro de son para reproducir no tipo de notificación «son»"
+
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
 msgstr ""
-"O tempo para a alarma. Debe estar en GMT para alarmas \"reloxo\" ou o largo "
-"en segundos para alarmas \"cronómetro\""
+"Hora para a alarma. Debe estar en GMT para alarmas «reloxo» ou o tempo en "
+"segundos para alarmas «temporizador»"
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
 "property.) \"command\" to run a command (specified in the \"command\" "
 "property.)"
 msgstr ""
-"O tipo de notificacion para usar cando a alarma se apaga. Esto pode ser un "
-"dos seguintes: \"son\" para reproducir un son(especificado no "
-"\"Arquivo_de_son\" adecuadamente.) \"comando \" para executar un "
-"comando(especificado en \"comando\" adecuadamente.)"
+"Tipo de notificación para usar cando a alarma se apaga. Isto pode ser un dos "
+"seguintes: «son» para reproducir un son (especificado na propiedade "
+"«Ficheiro_de_son») «orde» para executar unha orde (especificado na "
+"propiedade «orde»)"
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
-"O tipo de alarma. Tanto \"reloxo\" para unha alarma a unha hora especifica "
-"do dia, ou \"cronometro\" para unha alarma a un periodo de tempo especificado"
+"Tipo de alarma. «Reloxo» para unha alarma a unha hora especifica do dia, ou "
+"«temporizador» para unha alarma despois dun período de tempo especificado"
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
 msgstr "Se se repite o son da alarma"
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
+"Para mostrar unha etiqueta no lado dereito da icona co tempo restante ata a "
+"próxima alarma."
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
@@ -148,11 +163,11 @@ msgstr "5 minutos"
 
 #: ../data/alarm-clock.ui.h:5
 msgid "About Alarm Clock"
-msgstr "Acerca de Reloxo de Alarma"
+msgstr "Sobre Alarm Clock"
 
 #: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
-msgstr "Preferencias de Reloxo de Alarma"
+msgstr "Preferencias do despertador"
 
 #: ../data/alarm-clock.ui.h:8
 msgid "Alarms"
@@ -163,226 +178,230 @@ msgid "Alert"
 msgstr "Alerta"
 
 #: ../data/alarm-clock.ui.h:10
-msgid "Co_mmand:"
-msgstr "Or_de:"
+msgid "Appearance"
+msgstr "Aparencia"
 
 #: ../data/alarm-clock.ui.h:11
-msgid "Custom..."
-msgstr "Personalizado..."
+msgid "Co_mmand:"
+msgstr "_Orde:"
 
 #: ../data/alarm-clock.ui.h:12
+msgid "Custom..."
+msgstr "Personalizar..."
+
+#: ../data/alarm-clock.ui.h:13
 msgid "Delete"
 msgstr "Eliminar"
 
-#: ../data/alarm-clock.ui.h:13
-msgid "Delete alarm"
-msgstr "Borrar a alarma"
-
 #: ../data/alarm-clock.ui.h:14
-msgid "Delete the selected alarm"
-msgstr "Borrar a alarma escollida."
+msgid "Delete alarm"
+msgstr "Eliminar a alarma"
 
 #: ../data/alarm-clock.ui.h:15
+msgid "Delete the selected alarm"
+msgstr "Eliminar a alarma seleccionada"
+
+#: ../data/alarm-clock.ui.h:16
 msgid "Edit alarm"
 msgstr "Modificar a alarma"
 
-#: ../data/alarm-clock.ui.h:16
-msgid "Edit the selected alarm"
-msgstr "Editar a alarma escollida"
-
 #: ../data/alarm-clock.ui.h:17
+msgid "Edit the selected alarm"
+msgstr "Editar a alarma seleccionada"
+
+#: ../data/alarm-clock.ui.h:18
 msgid "Edit..."
 msgstr "Editar..."
 
-#: ../data/alarm-clock.ui.h:18
+#: ../data/alarm-clock.ui.h:19
 msgid "Enable"
 msgstr "Activar"
 
-#: ../data/alarm-clock.ui.h:19
-msgid "Enable/disable"
-msgstr "Activar/Desactivar"
-
 #: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable alarm"
-msgstr "Activar/Desactivar alarma"
+msgid "Enable/disable"
+msgstr "Activar/desactivar"
 
 #: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable the selected alarm"
-msgstr "Activar/Desactivar a alarma escollida"
+msgid "Enable/disable alarm"
+msgstr "Activar/desactivar alarma"
 
 #: ../data/alarm-clock.ui.h:22
-msgid "Fri"
-msgstr "Ven"
+msgid "Enable/disable the selected alarm"
+msgstr "Activar/desactivar a alarma escollida"
 
 #: ../data/alarm-clock.ui.h:23
+msgid "Fri"
+msgstr "ven."
+
+#: ../data/alarm-clock.ui.h:24
 msgid "General"
 msgstr "Xeral"
 
-#: ../data/alarm-clock.ui.h:24
-msgid "Get up in the morning!"
-msgstr "Levantate pola mañán!"
-
 #: ../data/alarm-clock.ui.h:25
-msgid "Manage your alarms"
-msgstr "Manexa as tuas alarmas"
+msgid "Get up in the morning!"
+msgstr "Espertar pola mañán!"
 
 #: ../data/alarm-clock.ui.h:26
-msgid "Mon"
-msgstr "Lun"
+msgid "Manage your alarms"
+msgstr "Xestione as súas alarmas"
 
 #: ../data/alarm-clock.ui.h:27
-msgid "New"
-msgstr "Novo"
+msgid "Mon"
+msgstr "lun."
 
 #: ../data/alarm-clock.ui.h:28
+msgid "New"
+msgstr "Nova"
+
+#: ../data/alarm-clock.ui.h:29
 msgid "New alarm"
 msgstr "Nova alarma"
 
-#: ../data/alarm-clock.ui.h:29
-msgid "New..."
-msgstr "Novo..."
-
 #: ../data/alarm-clock.ui.h:30
-msgid "Play _sound"
-msgstr "Reproduce_Son"
+msgid "New..."
+msgstr "Nova..."
 
 #: ../data/alarm-clock.ui.h:31
-msgid "Quit Alarm Clock"
-msgstr "Quitar Reloco de Alarma"
+msgid "Play _sound"
+msgstr "Reproducir un _son"
 
 #: ../data/alarm-clock.ui.h:32
-msgid "Repea_t sound"
-msgstr "Repeti_r Son"
+msgid "Quit Alarm Clock"
+msgstr "Saír do despertador"
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Sat"
-msgstr "Sáb"
+msgid "Repea_t sound"
+msgstr "_Repetir son"
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Show _alarms"
-msgstr "Amosar_alarmas"
+msgid "Sat"
+msgstr "sáb."
 
 #: ../data/alarm-clock.ui.h:35
-msgid "Snooze"
-msgstr "Dormitar"
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze alarm"
-msgstr "Dormitar alarma"
+msgid "Show _alarms"
+msgstr "Mostrar _alarmas"
 
 #: ../data/alarm-clock.ui.h:37
-msgid "Snooze alarms"
-msgstr "Dormitar alarmas"
+msgid "Snooze"
+msgstr "Pospor"
 
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze all alarms"
-msgstr "Dormitar todas as alarmas"
+msgid "Snooze alarm"
+msgstr "Pospor a alarma"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze all beeping alarms"
-msgstr "Dormitar todas as alarmas que estan a soar"
+msgid "Snooze alarms"
+msgstr "Pospor as alarmas"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze for:"
-msgstr "Dormitar por:"
+msgid "Snooze all alarms"
+msgstr "Pospor todas as alarmas"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze the selected alarm"
-msgstr "Dormitar a alarma seleccionada"
+msgid "Snooze all beeping alarms"
+msgstr "Pospor todas as alarmas que están a soar"
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Start _Application"
-msgstr "Arrancar_Aplicazón"
+msgid "Snooze for:"
+msgstr "Pospor durante:"
 
 #: ../data/alarm-clock.ui.h:43
-msgid "Start automatically at login"
-msgstr "Arrancar automáticamente no login"
+msgid "Snooze the selected alarm"
+msgstr "Pospor as alarmas seleccionadas"
 
 #: ../data/alarm-clock.ui.h:44
+msgid "Start _Application"
+msgstr "Iniciar _aplicativo"
+
+#: ../data/alarm-clock.ui.h:45
+msgid "Start automatically at login"
+msgstr "Iniciar automáticamente coa sesión"
+
+#: ../data/alarm-clock.ui.h:46
 msgid "Stop"
 msgstr "Deter"
 
-#: ../data/alarm-clock.ui.h:45
-msgid "Stop alarm"
-msgstr "Parar alarma"
-
-#: ../data/alarm-clock.ui.h:46
-msgid "Stop alarms"
-msgstr "Parar alarmas"
-
 #: ../data/alarm-clock.ui.h:47
-msgid "Stop all alarms"
-msgstr "Parar todas as alarmas"
+msgid "Stop alarm"
+msgstr "Deter a alarma"
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop all beeping alarms"
-msgstr "Parar todas as alarmas que esta a soar"
+msgid "Stop alarms"
+msgstr "Deter as alarmas"
 
 #: ../data/alarm-clock.ui.h:49
-msgid "Stop the selected alarm"
-msgstr "Parar a alarma escollida"
+msgid "Stop all alarms"
+msgstr "Deter todas as alarmas"
 
 #: ../data/alarm-clock.ui.h:50
-msgid "Sun"
-msgstr "Dom"
+msgid "Stop all beeping alarms"
+msgstr "Deter todas as alarmas sonoras"
 
 #: ../data/alarm-clock.ui.h:51
-msgid "Thu"
-msgstr "Xov"
+msgid "Stop the selected alarm"
+msgstr "Deter a alarma seleccionada"
 
 #: ../data/alarm-clock.ui.h:52
-msgid "Timer"
-msgstr "Cronómetro"
+msgid "Sun"
+msgstr "dom."
 
 #: ../data/alarm-clock.ui.h:53
+msgid "Thu"
+msgstr "xov."
+
+#: ../data/alarm-clock.ui.h:54
+msgid "Timer"
+msgstr "Temporizador"
+
+#: ../data/alarm-clock.ui.h:55
 msgid "Toggle alarms"
 msgstr "Intercambiar alarmas"
 
-#: ../data/alarm-clock.ui.h:54
-msgid "Toggle alarms window"
-msgstr "Intercambiar as ventás das alarmas"
-
-#: ../data/alarm-clock.ui.h:55
-msgid "Toggle the visibility of the alarms window"
-msgstr "Intercambiar a visibilidade das ventás das alarmas"
-
 #: ../data/alarm-clock.ui.h:56
-msgid "Tue"
-msgstr "Mar"
+msgid "Toggle alarms window"
+msgstr "Intercambiar as xanelas das alarmas"
 
 #: ../data/alarm-clock.ui.h:57
-msgid "Wake up sleepy head!"
-msgstr "Levantate cabeza durmida!"
+msgid "Toggle the visibility of the alarms window"
+msgstr "Intercambiar a visibilidade das xanelas das alarmas"
 
 #: ../data/alarm-clock.ui.h:58
-msgid "Wed"
-msgstr "Mér"
+msgid "Tue"
+msgstr "mar."
 
 #: ../data/alarm-clock.ui.h:59
+msgid "Wake up sleepy head!"
+msgstr "Esperta! hora de erguerse!"
+
+#: ../data/alarm-clock.ui.h:60
+msgid "Wed"
+msgstr ",er."
+
+#: ../data/alarm-clock.ui.h:61
 msgid "_Name:"
 msgstr "_Nome:"
 
-#: ../data/alarm-clock.ui.h:60
+#: ../data/alarm-clock.ui.h:62
 msgid "_Preferences"
 msgstr "_Preferencias"
 
-#: ../data/alarm-clock.ui.h:61
+#: ../data/alarm-clock.ui.h:63
 msgid "_Quit"
 msgstr "_Sair"
 
-#: ../data/alarm-clock.ui.h:62
+#: ../data/alarm-clock.ui.h:64
 msgid "_Repeat:"
 msgstr "_Repetir:"
 
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:65
 msgid "_Snooze"
 msgstr "_Pospor"
 
-#: ../data/alarm-clock.ui.h:64
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
 msgstr "_Hora:"
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr "minutos"
 
@@ -390,62 +409,62 @@ msgstr "minutos"
 #: ../src/alarm-applet.c:73
 #, c-format
 msgid "%s snoozed"
-msgstr "%s dormitar"
+msgstr "%s posposta"
 
 #: ../src/alarm-applet.c:74
 #, c-format
 msgid "You can stop the alarm from the Alarm Clock menu."
-msgstr "Pôdes parar a alarma desde o menu do Reloxo."
+msgstr "Pode parar a alarma desde o menú do despertador."
 
 #. More than 1 alarm snoozed
 #: ../src/alarm-applet.c:79
 #, c-format
 msgid "Snoozed %d alarms"
-msgstr "Dormitadas %d alarmas"
+msgstr "Pospostas %d alarmas"
 
 #: ../src/alarm-applet.c:80
 #, c-format
 msgid "You can stop alarms from the Alarm Clock menu."
-msgstr "Podes parar alarmas dende o menu do reloxo."
+msgstr "Pode deter as alarmas desde o menú do despertador."
 
 #. Single alarm stopped
 #: ../src/alarm-applet.c:127
 #, c-format
 msgid "%s stopped"
-msgstr "%s parada"
+msgstr "%s detida"
 
 #: ../src/alarm-applet.c:128 ../src/alarm-applet.c:134
 #, c-format
 msgid "Repeating alarms will still continue according to schedule."
-msgstr "A repetición das alarmas continuará acorde o acordado."
+msgstr "A repetición das alarmas continuará consonte o acordado."
 
 #. More than 1 alarm stopped
 #: ../src/alarm-applet.c:133
 #, c-format
 msgid "Stopped %d alarm(s)"
-msgstr "Paradas %d alarmas"
+msgstr "Detidas %d alarmas"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
-msgstr ""
+msgstr "%s xa se está a executar, saíndo...\n"
 
 #: ../src/alarm-settings.c:79
 #, c-format
 msgid "_Repeat: %s"
-msgstr "_Repetir:%s"
+msgstr "_Repetir: %s"
 
 #: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
 msgid "Select sound file..."
-msgstr "Seleccione un arquivo de son..."
+msgstr "Seleccionar ficheiro de son..."
 
 #: ../src/alarm-settings.c:297
 msgid "Custom command..."
-msgstr "Comando personalizado..."
+msgstr "Orde personalizada..."
 
 #: ../src/alarm.c:2029
 msgid "Once"
-msgstr "Unha"
+msgstr "Unha vez"
 
 #: ../src/alarm.c:2032
 msgid "Weekdays"
@@ -460,21 +479,25 @@ msgid "Every day"
 msgstr "Todos os días"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
-msgstr "Acerca de %s"
+msgstr "Sobre %s"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
-msgstr "Non se puido reproducir '%s': %s"
+msgstr "Non se pode reproducir «%s»: %s"
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
-msgstr "Non se puido reproducir"
+msgstr "Non se pode reproducir"
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
-msgstr "Pode dormitar ou parar alarmas dende o menu do reloxo despertador."
+msgstr "Pode pospor ou deter as alarmas desde o menú do despertador"
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr "Require do aplicativo de indicadores"

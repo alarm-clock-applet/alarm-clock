@@ -1,11 +1,14 @@
 # keep this file sorted alphabetically, one language code per line
 ar
+ast
 be
 bg
 ca
+cs
 da
 de
 es
+et
 fi
 fo
 fr
@@ -14,12 +17,21 @@ he
 hi
 hu
 id
+it
 ja
+ka
+la
 ms
 nb
+nl
 nn
 pl
 pt_BR
 pt
 ru
+si
+sv
+tr
+uk
 zh_CN
+zh_TW

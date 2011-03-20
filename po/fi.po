@@ -6,24 +6,25 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-05-09 20:39+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2011-01-23 20:44+0000\n"
+"Last-Translator: Jiri Grönroos <Unknown>\n"
 "Language-Team: Finnish <fi@li.org>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
-msgstr ""
+msgstr "Herätyskello"
 
 #: ../data/alarm-clock-applet.desktop.in.h:2
 msgid "Wake up in the morning"
-msgstr ""
+msgstr "Herää jo!"
 
 #: ../data/alarm-clock.schemas.in.h:1
 msgid ""
@@ -33,15 +34,15 @@ msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:2
 msgid "A short message which describes the alarm."
-msgstr ""
+msgstr "Lyhyt herätystä kuvaava syy."
 
 #: ../data/alarm-clock.schemas.in.h:3
 msgid "Alarm Message"
-msgstr ""
+msgstr "Herätysviesti"
 
 #: ../data/alarm-clock.schemas.in.h:4
 msgid "Alarm Repeat"
-msgstr ""
+msgstr "Herätyksen toisto"
 
 #: ../data/alarm-clock.schemas.in.h:5
 msgid "Alarm Running State"
@@ -49,7 +50,7 @@ msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:6
 msgid "Alarm Time"
-msgstr ""
+msgstr "Herätysaika"
 
 #: ../data/alarm-clock.schemas.in.h:7
 msgid "Alarm Timestamp"
@@ -57,15 +58,15 @@ msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:8
 msgid "Alarm Type"
-msgstr ""
+msgstr "Hälytyksen tyyppi"
 
 #: ../data/alarm-clock.schemas.in.h:9
 msgid "Alarm!"
-msgstr ""
+msgstr "Herätys!"
 
 #: ../data/alarm-clock.schemas.in.h:10
 msgid "Command"
-msgstr ""
+msgstr "Komento"
 
 #: ../data/alarm-clock.schemas.in.h:11
 msgid "Indicates whether the alarm has started."
@@ -73,36 +74,40 @@ msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:12
 msgid "Notification Type"
-msgstr ""
+msgstr "Huomautuksen tyyppi"
 
 #: ../data/alarm-clock.schemas.in.h:13
 msgid "Repeat Sound"
-msgstr ""
+msgstr "Toista ääni"
 
-#: ../data/alarm-clock.schemas.in.h:14
-msgid "Sound File"
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
 msgstr ""
 
 #: ../data/alarm-clock.schemas.in.h:15
+msgid "Sound File"
+msgstr "Äänitiedosto"
+
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:18
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -110,271 +115,281 @@ msgid ""
 "property.)"
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
+msgstr "Toistetaanko herätysääni."
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
-msgstr ""
+msgstr "1 minuutti"
 
 #: ../data/alarm-clock.ui.h:2
 msgid "10 minutes"
-msgstr ""
+msgstr "10 minuuttia"
 
 #: ../data/alarm-clock.ui.h:3
 msgid "3 minutes"
-msgstr ""
+msgstr "3 minuuttia"
 
 #: ../data/alarm-clock.ui.h:4
 msgid "5 minutes"
-msgstr ""
+msgstr "5 minuuttia"
 
 #: ../data/alarm-clock.ui.h:5
 msgid "About Alarm Clock"
-msgstr ""
+msgstr "Tietoja herätyskellosta"
 
 #: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
-msgstr ""
+msgstr "Herätyskellon asetukset"
 
 #: ../data/alarm-clock.ui.h:8
 msgid "Alarms"
-msgstr ""
+msgstr "Herätykset"
 
 #: ../data/alarm-clock.ui.h:9
 msgid "Alert"
-msgstr ""
+msgstr "Hälytys"
 
 #: ../data/alarm-clock.ui.h:10
-msgid "Co_mmand:"
-msgstr ""
+msgid "Appearance"
+msgstr "Ulkoasu"
 
 #: ../data/alarm-clock.ui.h:11
-msgid "Custom..."
-msgstr ""
+msgid "Co_mmand:"
+msgstr "Ko_mento:"
 
 #: ../data/alarm-clock.ui.h:12
-msgid "Delete"
-msgstr ""
+msgid "Custom..."
+msgstr "Mukautettu..."
 
 #: ../data/alarm-clock.ui.h:13
-msgid "Delete alarm"
-msgstr ""
+msgid "Delete"
+msgstr "Poista"
 
 #: ../data/alarm-clock.ui.h:14
-msgid "Delete the selected alarm"
-msgstr ""
+msgid "Delete alarm"
+msgstr "Poista herätys"
 
 #: ../data/alarm-clock.ui.h:15
-msgid "Edit alarm"
-msgstr ""
+msgid "Delete the selected alarm"
+msgstr "Poista valittu herätys"
 
 #: ../data/alarm-clock.ui.h:16
-msgid "Edit the selected alarm"
-msgstr ""
+msgid "Edit alarm"
+msgstr "Muokkaa herätystä"
 
 #: ../data/alarm-clock.ui.h:17
-msgid "Edit..."
-msgstr ""
+msgid "Edit the selected alarm"
+msgstr "Muokkaa valittua herätystä"
 
 #: ../data/alarm-clock.ui.h:18
-msgid "Enable"
-msgstr ""
+msgid "Edit..."
+msgstr "Muokkaa..."
 
 #: ../data/alarm-clock.ui.h:19
-msgid "Enable/disable"
-msgstr ""
+msgid "Enable"
+msgstr "Käytä"
 
 #: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable alarm"
-msgstr ""
+msgid "Enable/disable"
+msgstr "Käytä/älä käytä"
 
 #: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable the selected alarm"
-msgstr ""
+msgid "Enable/disable alarm"
+msgstr "Käytä/älä käytä herätystä"
 
 #: ../data/alarm-clock.ui.h:22
-msgid "Fri"
-msgstr ""
+msgid "Enable/disable the selected alarm"
+msgstr "Käytä/älä käytä valittua herätystä"
 
 #: ../data/alarm-clock.ui.h:23
-msgid "General"
-msgstr ""
+msgid "Fri"
+msgstr "Pe"
 
 #: ../data/alarm-clock.ui.h:24
-msgid "Get up in the morning!"
-msgstr ""
+msgid "General"
+msgstr "Yleiset"
 
 #: ../data/alarm-clock.ui.h:25
-msgid "Manage your alarms"
-msgstr ""
+msgid "Get up in the morning!"
+msgstr "Herää jo!"
 
 #: ../data/alarm-clock.ui.h:26
-msgid "Mon"
-msgstr ""
+msgid "Manage your alarms"
+msgstr "Hallitse herätyksiä"
 
 #: ../data/alarm-clock.ui.h:27
-msgid "New"
-msgstr ""
+msgid "Mon"
+msgstr "Ma"
 
 #: ../data/alarm-clock.ui.h:28
-msgid "New alarm"
-msgstr ""
+msgid "New"
+msgstr "Uusi"
 
 #: ../data/alarm-clock.ui.h:29
-msgid "New..."
-msgstr ""
+msgid "New alarm"
+msgstr "Uusi herätys"
 
 #: ../data/alarm-clock.ui.h:30
-msgid "Play _sound"
-msgstr ""
+msgid "New..."
+msgstr "Uusi..."
 
 #: ../data/alarm-clock.ui.h:31
-msgid "Quit Alarm Clock"
-msgstr ""
+msgid "Play _sound"
+msgstr "Soita _ääni"
 
 #: ../data/alarm-clock.ui.h:32
-msgid "Repea_t sound"
-msgstr ""
+msgid "Quit Alarm Clock"
+msgstr "Lopeta herätyskello"
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Sat"
-msgstr ""
+msgid "Repea_t sound"
+msgstr "Toist_a ääni"
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Show _alarms"
-msgstr ""
+msgid "Sat"
+msgstr "La"
 
 #: ../data/alarm-clock.ui.h:35
+msgid "Show _alarms"
+msgstr "Näytä _herätykset"
+
+#: ../data/alarm-clock.ui.h:37
 msgid "Snooze"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:36
+#: ../data/alarm-clock.ui.h:38
 msgid "Snooze alarm"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:39
 msgid "Snooze alarms"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:38
+#: ../data/alarm-clock.ui.h:40
 msgid "Snooze all alarms"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:39
+#: ../data/alarm-clock.ui.h:41
 msgid "Snooze all beeping alarms"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:40
+#: ../data/alarm-clock.ui.h:42
 msgid "Snooze for:"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:41
+#: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:42
-msgid "Start _Application"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:43
-msgid "Start automatically at login"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:44
-msgid "Stop"
-msgstr ""
+msgid "Start _Application"
+msgstr "Käynnistä _sovellus"
 
 #: ../data/alarm-clock.ui.h:45
-msgid "Stop alarm"
-msgstr ""
+msgid "Start automatically at login"
+msgstr "Käynnistä automaattisesti sisäänkirjautumisen yhteydessä"
 
 #: ../data/alarm-clock.ui.h:46
-msgid "Stop alarms"
-msgstr ""
+msgid "Stop"
+msgstr "Lopeta"
 
 #: ../data/alarm-clock.ui.h:47
-msgid "Stop all alarms"
-msgstr ""
+msgid "Stop alarm"
+msgstr "Lopeta herätys"
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop all beeping alarms"
-msgstr ""
+msgid "Stop alarms"
+msgstr "Lopeta herätykset"
 
 #: ../data/alarm-clock.ui.h:49
-msgid "Stop the selected alarm"
-msgstr ""
+msgid "Stop all alarms"
+msgstr "Lopeta kaikki herätykset"
 
 #: ../data/alarm-clock.ui.h:50
-msgid "Sun"
-msgstr ""
+msgid "Stop all beeping alarms"
+msgstr "Lopeta kaikki toistettavat herätykset"
 
 #: ../data/alarm-clock.ui.h:51
-msgid "Thu"
-msgstr ""
+msgid "Stop the selected alarm"
+msgstr "Lopeta valittu herätys"
 
 #: ../data/alarm-clock.ui.h:52
-msgid "Timer"
-msgstr ""
+msgid "Sun"
+msgstr "Su"
 
 #: ../data/alarm-clock.ui.h:53
+msgid "Thu"
+msgstr "To"
+
+#: ../data/alarm-clock.ui.h:54
+msgid "Timer"
+msgstr "Ajastin"
+
+#: ../data/alarm-clock.ui.h:55
 msgid "Toggle alarms"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:54
+#: ../data/alarm-clock.ui.h:56
 msgid "Toggle alarms window"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:55
+#: ../data/alarm-clock.ui.h:57
 msgid "Toggle the visibility of the alarms window"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:56
-msgid "Tue"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:57
-msgid "Wake up sleepy head!"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:58
-msgid "Wed"
-msgstr ""
+msgid "Tue"
+msgstr "Ti"
 
 #: ../data/alarm-clock.ui.h:59
-msgid "_Name:"
-msgstr ""
+msgid "Wake up sleepy head!"
+msgstr "Herätys unikeko!"
 
 #: ../data/alarm-clock.ui.h:60
-msgid "_Preferences"
-msgstr ""
+msgid "Wed"
+msgstr "Ke"
 
 #: ../data/alarm-clock.ui.h:61
-msgid "_Quit"
-msgstr ""
+msgid "_Name:"
+msgstr "_Nimi:"
 
 #: ../data/alarm-clock.ui.h:62
-msgid "_Repeat:"
-msgstr ""
+msgid "_Preferences"
+msgstr "_Asetukset"
 
 #: ../data/alarm-clock.ui.h:63
+msgid "_Quit"
+msgstr "_Lopeta"
+
+#: ../data/alarm-clock.ui.h:64
+msgid "_Repeat:"
+msgstr "_Toisto:"
+
+#: ../data/alarm-clock.ui.h:65
 msgid "_Snooze"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:64
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
-msgstr ""
+msgstr "_Aika:"
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
-msgstr ""
+msgstr "minuuttia"
 
 #. Single alarm snoozed
 #: ../src/alarm-applet.c:73
@@ -385,7 +400,7 @@ msgstr ""
 #: ../src/alarm-applet.c:74
 #, c-format
 msgid "You can stop the alarm from the Alarm Clock menu."
-msgstr ""
+msgstr "Voit lopettaa herätyksen herätyskellon valikosta."
 
 #. More than 1 alarm snoozed
 #: ../src/alarm-applet.c:79
@@ -396,75 +411,79 @@ msgstr ""
 #: ../src/alarm-applet.c:80
 #, c-format
 msgid "You can stop alarms from the Alarm Clock menu."
-msgstr ""
+msgstr "Voit lopettaa herätykset herätyskellon valikosta."
 
 #. Single alarm stopped
 #: ../src/alarm-applet.c:127
 #, c-format
 msgid "%s stopped"
-msgstr ""
+msgstr "%s lopetettu"
 
 #: ../src/alarm-applet.c:128 ../src/alarm-applet.c:134
 #, c-format
 msgid "Repeating alarms will still continue according to schedule."
-msgstr ""
+msgstr "Toistuvat herätykset jatkuvat aikataulun mukaisesti."
 
 #. More than 1 alarm stopped
 #: ../src/alarm-applet.c:133
 #, c-format
 msgid "Stopped %d alarm(s)"
-msgstr ""
+msgstr "Lopetettu %d hälytystä"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
-msgstr ""
+msgstr "%s on jo käynnissä, poistutaan...\n"
 
 #: ../src/alarm-settings.c:79
 #, c-format
 msgid "_Repeat: %s"
-msgstr ""
+msgstr "_Toisto: %s"
 
 #: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
 msgid "Select sound file..."
-msgstr ""
+msgstr "Valitse äänitiedosto..."
 
 #: ../src/alarm-settings.c:297
 msgid "Custom command..."
-msgstr ""
+msgstr "Mukautettu komento..."
 
 #: ../src/alarm.c:2029
 msgid "Once"
-msgstr ""
+msgstr "Kerran"
 
 #: ../src/alarm.c:2032
 msgid "Weekdays"
-msgstr ""
+msgstr "Arkisin"
 
 #: ../src/alarm.c:2035
 msgid "Weekends"
-msgstr ""
+msgstr "Viikonloppuisin"
 
 #: ../src/alarm.c:2038
 msgid "Every day"
-msgstr ""
+msgstr "Joka päivä"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
-msgstr ""
+msgstr "Tietoja - %s"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr ""
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr ""
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
+msgstr ""
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
 msgstr ""

@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
-"PO-Revision-Date: 2010-03-16 18:19+0000\n"
-"Last-Translator: Johannes H. Jensen <joh@pseudoberries.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"PO-Revision-Date: 2010-06-12 15:12+0000\n"
+"Last-Translator: Gunleif Joensen <Unknown>\n"
 "Language-Team: Faroese <fo@li.org>\n"
+"Language: fo\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
@@ -81,32 +82,36 @@ msgstr "Fráboðanar snið"
 msgid "Repeat Sound"
 msgstr "Endurtøku ljóð"
 
-#: ../data/alarm-clock.schemas.in.h:14
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr ""
+
+#: ../data/alarm-clock.schemas.in.h:15
 msgid "Sound File"
 msgstr "Ljóðfíla"
 
-#: ../data/alarm-clock.schemas.in.h:15
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
 "UNIX tíðastemplið fyri vekjaraklokkuna, má ásetast áðrenn vekjarin kann "
 "virkjast."
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:18
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -114,14 +119,20 @@ msgid ""
 "property.)"
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
+msgstr "Um vekjaraljóðurin skal endurtakast."
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:1
@@ -154,229 +165,233 @@ msgstr "Vekjara tíðir"
 
 #: ../data/alarm-clock.ui.h:9
 msgid "Alert"
-msgstr ""
+msgstr "Gev gætur"
 
 #: ../data/alarm-clock.ui.h:10
+msgid "Appearance"
+msgstr ""
+
+#: ../data/alarm-clock.ui.h:11
 msgid "Co_mmand:"
 msgstr "Stýriboð"
 
-#: ../data/alarm-clock.ui.h:11
+#: ../data/alarm-clock.ui.h:12
 msgid "Custom..."
 msgstr "Laga til..."
 
-#: ../data/alarm-clock.ui.h:12
+#: ../data/alarm-clock.ui.h:13
 msgid "Delete"
 msgstr "Strika"
 
-#: ../data/alarm-clock.ui.h:13
+#: ../data/alarm-clock.ui.h:14
 msgid "Delete alarm"
 msgstr "Strika vekjara tíð"
 
-#: ../data/alarm-clock.ui.h:14
+#: ../data/alarm-clock.ui.h:15
 msgid "Delete the selected alarm"
 msgstr "Strika valdu vekjara tíðina"
 
-#: ../data/alarm-clock.ui.h:15
+#: ../data/alarm-clock.ui.h:16
 msgid "Edit alarm"
 msgstr "Ritstjórna vekjaratíðir"
 
-#: ../data/alarm-clock.ui.h:16
+#: ../data/alarm-clock.ui.h:17
 msgid "Edit the selected alarm"
 msgstr "Ritsjórna tí valdu vekjara tíðina"
 
-#: ../data/alarm-clock.ui.h:17
+#: ../data/alarm-clock.ui.h:18
 msgid "Edit..."
 msgstr "Ritstjórna..."
 
-#: ../data/alarm-clock.ui.h:18
+#: ../data/alarm-clock.ui.h:19
 msgid "Enable"
 msgstr "Gilda"
 
-#: ../data/alarm-clock.ui.h:19
+#: ../data/alarm-clock.ui.h:20
 msgid "Enable/disable"
 msgstr "Gilda/ógilda"
 
-#: ../data/alarm-clock.ui.h:20
+#: ../data/alarm-clock.ui.h:21
 msgid "Enable/disable alarm"
 msgstr "Gilda/ógilda vekjaraklokku"
 
-#: ../data/alarm-clock.ui.h:21
+#: ../data/alarm-clock.ui.h:22
 msgid "Enable/disable the selected alarm"
 msgstr "Gilda/ógilda tí valdu vekjara tíðina"
 
-#: ../data/alarm-clock.ui.h:22
+#: ../data/alarm-clock.ui.h:23
 msgid "Fri"
 msgstr "frí"
 
-#: ../data/alarm-clock.ui.h:23
-msgid "General"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:24
+msgid "General"
+msgstr "Alment"
+
+#: ../data/alarm-clock.ui.h:25
 msgid "Get up in the morning!"
 msgstr "Kom upp á morgni!"
 
-#: ../data/alarm-clock.ui.h:25
+#: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "Stýr tinar vekjara tíðir"
 
-#: ../data/alarm-clock.ui.h:26
+#: ../data/alarm-clock.ui.h:27
 msgid "Mon"
 msgstr "mán"
 
-#: ../data/alarm-clock.ui.h:27
+#: ../data/alarm-clock.ui.h:28
 msgid "New"
 msgstr "Nýggj"
 
-#: ../data/alarm-clock.ui.h:28
+#: ../data/alarm-clock.ui.h:29
 msgid "New alarm"
 msgstr "Nýggj vekjaratíð"
 
-#: ../data/alarm-clock.ui.h:29
+#: ../data/alarm-clock.ui.h:30
 msgid "New..."
 msgstr "Nýggj..."
 
-#: ../data/alarm-clock.ui.h:30
+#: ../data/alarm-clock.ui.h:31
 msgid "Play _sound"
 msgstr "Spæl _ljóð"
 
-#: ../data/alarm-clock.ui.h:31
+#: ../data/alarm-clock.ui.h:32
 msgid "Quit Alarm Clock"
 msgstr "Sløkk vekjaraklokkuna"
 
-#: ../data/alarm-clock.ui.h:32
+#: ../data/alarm-clock.ui.h:33
 msgid "Repea_t sound"
 msgstr "Endurta_k ljóð"
 
-#: ../data/alarm-clock.ui.h:33
+#: ../data/alarm-clock.ui.h:34
 msgid "Sat"
 msgstr "ley"
 
-#: ../data/alarm-clock.ui.h:34
+#: ../data/alarm-clock.ui.h:35
 msgid "Show _alarms"
 msgstr "Sýn _vekjaratíðir"
 
-#: ../data/alarm-clock.ui.h:35
-msgid "Snooze"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze alarm"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:37
-msgid "Snooze alarms"
-msgstr ""
+msgid "Snooze"
+msgstr "Durva"
 
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze all alarms"
-msgstr ""
+msgid "Snooze alarm"
+msgstr "Durvi vekjari"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze all beeping alarms"
-msgstr ""
+msgid "Snooze alarms"
+msgstr "Durva alarmar"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze for:"
-msgstr ""
+msgid "Snooze all alarms"
+msgstr "Durva allar alarmar"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze the selected alarm"
-msgstr ""
+msgid "Snooze all beeping alarms"
+msgstr "Durva allar bippandi alarmar"
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Start _Application"
-msgstr ""
+msgid "Snooze for:"
+msgstr "Durva fyri:"
 
 #: ../data/alarm-clock.ui.h:43
-msgid "Start automatically at login"
-msgstr ""
+msgid "Snooze the selected alarm"
+msgstr "Durva tann valda alarmin"
 
 #: ../data/alarm-clock.ui.h:44
+msgid "Start _Application"
+msgstr "Byrja nýtsluskip_an"
+
+#: ../data/alarm-clock.ui.h:45
+msgid "Start automatically at login"
+msgstr "Byrja sjálvvirkandi við innritan"
+
+#: ../data/alarm-clock.ui.h:46
 msgid "Stop"
 msgstr "Steðga"
 
-#: ../data/alarm-clock.ui.h:45
+#: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "Steðga vekjaraklokku"
 
-#: ../data/alarm-clock.ui.h:46
+#: ../data/alarm-clock.ui.h:48
 msgid "Stop alarms"
 msgstr "Steðga vekjaraklokkur"
 
-#: ../data/alarm-clock.ui.h:47
+#: ../data/alarm-clock.ui.h:49
 msgid "Stop all alarms"
 msgstr "Steðga allar vekjaraklokkur"
 
-#: ../data/alarm-clock.ui.h:48
+#: ../data/alarm-clock.ui.h:50
 msgid "Stop all beeping alarms"
-msgstr ""
+msgstr "Steðga allar bippandi alarmar"
 
-#: ../data/alarm-clock.ui.h:49
+#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "Steðga tí valdu vekjaraklokkuna"
 
-#: ../data/alarm-clock.ui.h:50
+#: ../data/alarm-clock.ui.h:52
 msgid "Sun"
 msgstr "sun"
 
-#: ../data/alarm-clock.ui.h:51
+#: ../data/alarm-clock.ui.h:53
 msgid "Thu"
 msgstr "hós"
 
-#: ../data/alarm-clock.ui.h:52
+#: ../data/alarm-clock.ui.h:54
 msgid "Timer"
-msgstr ""
+msgstr "Tíðarvørður"
 
-#: ../data/alarm-clock.ui.h:53
+#: ../data/alarm-clock.ui.h:55
 msgid "Toggle alarms"
 msgstr "Skift vekjaraklokkur"
 
-#: ../data/alarm-clock.ui.h:54
+#: ../data/alarm-clock.ui.h:56
 msgid "Toggle alarms window"
 msgstr "Skift vekjara gluggar"
 
-#: ../data/alarm-clock.ui.h:55
+#: ../data/alarm-clock.ui.h:57
 msgid "Toggle the visibility of the alarms window"
 msgstr "Skift sjónleikan á vekjara glugganum"
 
-#: ../data/alarm-clock.ui.h:56
+#: ../data/alarm-clock.ui.h:58
 msgid "Tue"
 msgstr "týs"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:59
 msgid "Wake up sleepy head!"
 msgstr "Vækna tín svøvnhít"
 
-#: ../data/alarm-clock.ui.h:58
+#: ../data/alarm-clock.ui.h:60
 msgid "Wed"
 msgstr "mik"
 
-#: ../data/alarm-clock.ui.h:59
+#: ../data/alarm-clock.ui.h:61
 msgid "_Name:"
 msgstr "_Navn:"
 
-#: ../data/alarm-clock.ui.h:60
+#: ../data/alarm-clock.ui.h:62
 msgid "_Preferences"
 msgstr "_Sertokkar"
 
-#: ../data/alarm-clock.ui.h:61
+#: ../data/alarm-clock.ui.h:63
 msgid "_Quit"
 msgstr "_Gevst"
 
-#: ../data/alarm-clock.ui.h:62
-msgid "_Repeat:"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:63
-msgid "_Snooze"
-msgstr ""
-
 #: ../data/alarm-clock.ui.h:64
+msgid "_Repeat:"
+msgstr "Endu_rtak:"
+
+#: ../data/alarm-clock.ui.h:65
+msgid "_Snooze"
+msgstr "_Durva"
+
+#: ../data/alarm-clock.ui.h:66
 msgid "_Time:"
 msgstr "_Tíð"
 
-#: ../data/alarm-clock.ui.h:65
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr "minuttir"
 
@@ -384,7 +399,7 @@ msgstr "minuttir"
 #: ../src/alarm-applet.c:73
 #, c-format
 msgid "%s snoozed"
-msgstr ""
+msgstr "%s durvaður"
 
 #: ../src/alarm-applet.c:74
 #, c-format
@@ -395,7 +410,7 @@ msgstr ""
 #: ../src/alarm-applet.c:79
 #, c-format
 msgid "Snoozed %d alarms"
-msgstr ""
+msgstr "Durvaðir %d alarmar"
 
 #: ../src/alarm-applet.c:80
 #, c-format
@@ -417,17 +432,17 @@ msgstr ""
 #: ../src/alarm-applet.c:133
 #, c-format
 msgid "Stopped %d alarm(s)"
-msgstr ""
+msgstr "Steðgaðir %d alarm(ar)"
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
-msgstr ""
+msgstr "%s koyrir longu, gevist...\n"
 
 #: ../src/alarm-settings.c:79
 #, c-format
 msgid "_Repeat: %s"
-msgstr ""
+msgstr "Endu_rtak: %s"
 
 #: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
 msgid "Select sound file..."
@@ -454,21 +469,55 @@ msgid "Every day"
 msgstr "Hvønn dag"
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
 msgstr "Um %s"
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "Kundi ikki spæla '%s': %s"
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr "Kundi ikki spæla"
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr ""
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr ""
+
+#~ msgid "&#xA9; 2007-2010 Johannes H. Jensen"
+#~ msgstr "&#xA9; 2007-2010 Johannes H. Jensen"
+
+#~ msgid "<b>Alert</b>"
+#~ msgstr "<b>Ávaring</b>"
+
+#~ msgid "<b>Alarm Clock</b>"
+#~ msgstr "<b>Vekjaraklokka</b>"
+
+#~ msgid "<b>General</b>"
+#~ msgstr "<b>Alment</b>"
+
+#~ msgid "<b>Timer</b>"
+#~ msgstr "<b>Tíðarmálari</b>"
+
+#~ msgid "<b>_Repeat:</b>"
+#~ msgstr "<b>_Endurtak:</b>"
+
+#~ msgid "Start automatically"
+#~ msgstr "Sjálvvirkin byrjan"
+
+#~ msgid "Start automatically on log in"
+#~ msgstr "Byrja sjálvvirkið við innritan"
+
+#~ msgid "_Start automatically on log in"
+#~ msgstr "_Byrja sjálvvirki við innritan"
+
+#~ msgid "<b>_Repeat:</b> %s"
+#~ msgstr "<b>_Endurtak:</b> %s"

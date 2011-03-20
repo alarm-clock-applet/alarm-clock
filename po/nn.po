@@ -6,16 +6,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2010-03-16 23:03+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-20 17:50+0100\n"
 "PO-Revision-Date: 2010-03-16 18:22+0000\n"
 "Last-Translator: Johannes H. Jensen <joh@pseudoberries.com>\n"
 "Language-Team: Norwegian Nynorsk <nn@li.org>\n"
+"Language: nn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-05-16 18:32+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
+"X-Generator: Launchpad (build 12617)\n"
 
 #: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
 msgid "Alarm Clock"
@@ -79,24 +80,28 @@ msgstr "Varslingstype"
 msgid "Repeat Sound"
 msgstr "Gjenta lyd"
 
-#: ../data/alarm-clock.schemas.in.h:14
+#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+msgid "Show countdown label"
+msgstr ""
+
+#: ../data/alarm-clock.schemas.in.h:15
 msgid "Sound File"
 msgstr "Lydfil"
 
-#: ../data/alarm-clock.schemas.in.h:15
+#: ../data/alarm-clock.schemas.in.h:16
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr "UNIX-tidsstempel for varslinga. Må settast før varslinga er starta."
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:17
 msgid "The command to run for the \"command\" notification type."
 msgstr "Kommandoen som skal kjøyrast for \"command\"-varsling."
 
-#: ../data/alarm-clock.schemas.in.h:17
+#: ../data/alarm-clock.schemas.in.h:18
 msgid "The sound file to play for the \"sound\" notification type."
 msgstr "Lydfilen som skal spelast for \"sound\"-varsling."
 
-#: ../data/alarm-clock.schemas.in.h:18
+#: ../data/alarm-clock.schemas.in.h:19
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
@@ -104,7 +109,7 @@ msgstr ""
 "Tida for varslinga. Skal vere i GMT for \"clock\"-varslingar eller lengde i "
 "sekund for \"timer\"-varslingar."
 
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:20
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -116,7 +121,7 @@ msgstr ""
 "\"command\" for å køyre ein kommando (spesifisert i \"command\"-"
 "innstillinga)."
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:21
 msgid ""
 "The type of the alarm. Either \"clock\" for an alarm at a specific time of "
 "day, or \"timer\" for an alarm after a specified period of time."
@@ -124,9 +129,15 @@ msgstr ""
 "Varslingstypa. Enten \"clock\" for ei varsling på ei gitt tid av døgnet, "
 "eller \"timer\" for ei varsling etter ei gitt tid."
 
-#: ../data/alarm-clock.schemas.in.h:21
+#: ../data/alarm-clock.schemas.in.h:22
 msgid "Whether to repeat the alarm sound."
 msgstr "Om varslingslyden skal gjentakast."
+
+#: ../data/alarm-clock.schemas.in.h:23
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
 
 #: ../data/alarm-clock.ui.h:1
 msgid "1 minute"
@@ -161,226 +172,230 @@ msgid "Alert"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:10
-msgid "Co_mmand:"
+msgid "Appearance"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:11
-msgid "Custom..."
+msgid "Co_mmand:"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:12
-msgid "Delete"
+msgid "Custom..."
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:13
-msgid "Delete alarm"
+msgid "Delete"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:14
-msgid "Delete the selected alarm"
+msgid "Delete alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:15
-msgid "Edit alarm"
+msgid "Delete the selected alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:16
-msgid "Edit the selected alarm"
+msgid "Edit alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:17
-msgid "Edit..."
+msgid "Edit the selected alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:18
-msgid "Enable"
+msgid "Edit..."
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:19
-msgid "Enable/disable"
+msgid "Enable"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable alarm"
+msgid "Enable/disable"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable the selected alarm"
+msgid "Enable/disable alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:22
-msgid "Fri"
+msgid "Enable/disable the selected alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:23
-msgid "General"
+msgid "Fri"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:24
-msgid "Get up in the morning!"
+msgid "General"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:25
-msgid "Manage your alarms"
+msgid "Get up in the morning!"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:26
-msgid "Mon"
+msgid "Manage your alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:27
-msgid "New"
+msgid "Mon"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:28
-msgid "New alarm"
+msgid "New"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:29
-msgid "New..."
+msgid "New alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:30
-msgid "Play _sound"
+msgid "New..."
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:31
-msgid "Quit Alarm Clock"
+msgid "Play _sound"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:32
-msgid "Repea_t sound"
+msgid "Quit Alarm Clock"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Sat"
+msgid "Repea_t sound"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Show _alarms"
+msgid "Sat"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:35
-msgid "Snooze"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze alarm"
+msgid "Show _alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:37
-msgid "Snooze alarms"
+msgid "Snooze"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze all alarms"
+msgid "Snooze alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze all beeping alarms"
+msgid "Snooze alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze for:"
+msgid "Snooze all alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze the selected alarm"
+msgid "Snooze all beeping alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Start _Application"
+msgid "Snooze for:"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:43
-msgid "Start automatically at login"
+msgid "Snooze the selected alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:44
-msgid "Stop"
+msgid "Start _Application"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:45
-msgid "Stop alarm"
+msgid "Start automatically at login"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:46
-msgid "Stop alarms"
+msgid "Stop"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:47
-msgid "Stop all alarms"
+msgid "Stop alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop all beeping alarms"
+msgid "Stop alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:49
-msgid "Stop the selected alarm"
+msgid "Stop all alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:50
-msgid "Sun"
+msgid "Stop all beeping alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:51
-msgid "Thu"
+msgid "Stop the selected alarm"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:52
-msgid "Timer"
+msgid "Sun"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:53
-msgid "Toggle alarms"
+msgid "Thu"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:54
-msgid "Toggle alarms window"
+msgid "Timer"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:55
-msgid "Toggle the visibility of the alarms window"
+msgid "Toggle alarms"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:56
-msgid "Tue"
+msgid "Toggle alarms window"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:57
-msgid "Wake up sleepy head!"
+msgid "Toggle the visibility of the alarms window"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:58
-msgid "Wed"
+msgid "Tue"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:59
-msgid "_Name:"
+msgid "Wake up sleepy head!"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:60
-msgid "_Preferences"
+msgid "Wed"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:61
-msgid "_Quit"
+msgid "_Name:"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:62
-msgid "_Repeat:"
+msgid "_Preferences"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:63
-msgid "_Snooze"
+msgid "_Quit"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:64
-msgid "_Time:"
+msgid "_Repeat:"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:65
+msgid "_Snooze"
+msgstr ""
+
+#: ../data/alarm-clock.ui.h:66
+msgid "_Time:"
+msgstr ""
+
+#: ../data/alarm-clock.ui.h:67
 msgid "minutes"
 msgstr ""
 
@@ -423,7 +438,7 @@ msgstr ""
 msgid "Stopped %d alarm(s)"
 msgstr ""
 
-#: ../src/alarm-applet.c:672
+#: ../src/alarm-applet.c:632
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr ""
@@ -458,21 +473,34 @@ msgid "Every day"
 msgstr ""
 
 #. About Alarm Clock
-#: ../src/ui.c:342
+#: ../src/ui.c:425
 #, c-format
 msgid "About %s"
 msgstr ""
 
-#: ../src/ui.c:370
+#: ../src/ui.c:453
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr ""
 
-#: ../src/ui.c:371
+#: ../src/ui.c:454
 msgid "Could not play"
 msgstr ""
 
-#: ../src/ui.c:428
+#: ../src/ui.c:511
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr ""
+
+#: ../src/prefs.c:419
+msgid "Requires application indicators"
+msgstr ""
+
+#~ msgid "<b>Alarm Clock</b>"
+#~ msgstr "<b>Varslingsur</b>"
+
+#~ msgid "&#xA9; 2007-2010 Johannes H. Jensen"
+#~ msgstr "&#xA9; 2007-2010 Johannes H. Jensen"
+
+#~ msgid "<b>Alert</b>"
+#~ msgstr "<b>Varsling</b>"
