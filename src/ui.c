@@ -337,14 +337,9 @@ alarm_applet_status_activate (GtkStatusIcon *status_icon,
 {
 #ifndef HAVE_APP_INDICATOR
     AlarmApplet *applet = (AlarmApplet *)user_data;
-
-    // Snooze triggered alarms if any
-    if (applet->n_triggered > 0) {
-        gtk_action_activate (applet->action_snooze_all);
-    } else {
-        // No alarms triggered, toggle list window
-        gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
-    }
+    
+    // Toggle list window
+    gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
 #endif
 }
 
