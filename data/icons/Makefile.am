@@ -18,13 +18,13 @@ icons = 			\
 	alarm-timer.36.png	\
 	alarm-timer.48.png	\
 	alarm-timer.64.png	\
-	alarm-snooze.16.png	\
-	alarm-snooze.22.png	\
-	alarm-snooze.24.png	\
-	alarm-snooze.32.png	\
-	alarm-snooze.36.png	\
-	alarm-snooze.48.png	\
-	alarm-snooze.64.png	
+	alarm-clock-triggered.16.png	\
+	alarm-clock-triggered.22.png	\
+	alarm-clock-triggered.24.png	\
+	alarm-clock-triggered.32.png	\
+	alarm-clock-triggered.36.png	\
+	alarm-clock-triggered.48.png	\
+	alarm-clock-triggered.64.png	
 
 EXTRA_DIST += $(icons)
 

@@ -63,6 +63,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_NAME		 "Alarm Clock"
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
+#define TRIGGERED_ICON	 "alarm-clock-triggered"
 #define ALARM_GCONF_DIR	 "/apps/alarm-clock"
 #define ALARM_STD_SNOOZE 9
 

@@ -297,7 +297,7 @@ alarm_applet_status_init (AlarmApplet *applet)
 	applet->app_indicator = app_indicator_new(PACKAGE_NAME, ALARM_ICON,
 			APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
 	app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ACTIVE);
-	//app_indicator_set_attention_icon (indicator, "indicator-messages-new");
+	app_indicator_set_attention_icon (applet->app_indicator, TRIGGERED_ICON);
 	app_indicator_set_menu (applet->app_indicator, GTK_MENU (applet->status_menu));
 #else
     applet->status_icon = GTK_STATUS_ICON (gtk_builder_get_object (applet->ui, "status_icon"));
@@ -313,8 +313,17 @@ void
 alarm_applet_status_update (AlarmApplet *applet)
 {
 #ifdef HAVE_APP_INDICATOR
-	// TODO: Find appropriate way to attract attention with AppIndicator
+	if (applet->n_triggered > 0) {
+	    app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ATTENTION);
+	} else {
+	    app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ACTIVE);
+	}
 #else
+    if (applet->n_triggered > 0) {
+        gtk_status_icon_set_from_icon_name (applet->status_icon, TRIGGERED_ICON);
+    } else {
+        gtk_status_icon_set_from_icon_name (applet->status_icon, ALARM_ICON);
+    }
     gtk_status_icon_set_blinking (applet->status_icon, applet->n_triggered > 0);
 #endif
 }
