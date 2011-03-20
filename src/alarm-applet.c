@@ -32,7 +32,13 @@
  * DEFINTIIONS {{
  */
 
-const gchar *supported_sound_mime_types [] = { "audio", "video", "application/ogg", NULL };
+static const gchar *supported_sound_mime_types [] = {
+    "audio",
+    "video",
+    "application/ogg",
+    NULL
+};
+
 GHashTable *app_command_map = NULL;
 
 /*

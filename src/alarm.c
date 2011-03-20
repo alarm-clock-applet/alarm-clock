@@ -102,7 +102,7 @@ static GConfEnumStringPair alarm_notify_type_enum_map [] = {
 };
 
 /* Property indexes */
-static enum {
+enum {
 	PROP_ALARM_0,
 	PROP_DIR,
 	PROP_ID,
@@ -117,7 +117,7 @@ static enum {
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
 	PROP_COMMAND
-} AlarmProp;
+};
 
 #define PROP_NAME_DIR			"gconf-dir"
 #define PROP_NAME_ID			"id"
@@ -134,14 +134,14 @@ static enum {
 #define PROP_NAME_COMMAND		"command"
 
 /* Signal indexes */
-static enum
+enum
 {
     SIGNAL_ALARM,
     SIGNAL_CLEARED,
     SIGNAL_ERROR,
     SIGNAL_PLAYER,
     LAST_SIGNAL
-} AlarmSignal;
+};
 
 /* Signal identifier map */
 static guint alarm_signal[LAST_SIGNAL] = {0, 0, 0, 0};
