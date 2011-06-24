@@ -1789,6 +1789,9 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	time (&now);
 	tm = localtime (&now);
 	
+	// Automatically detect Daylight Savings Time (DST)
+	tm->tm_isdst = -1;
+	
 	//i = (today == 6) ? 0 : today + 1;
 	//today--;
 	
