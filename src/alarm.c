@@ -931,6 +931,9 @@ alarm_error_trigger (Alarm *alarm, AlarmErrorCode code, const gchar *msg)
 	GError *err = g_error_new (ALARM_ERROR, code, "%s", msg);
 	
 	g_signal_emit (alarm, alarm_signal[SIGNAL_ERROR], 0, err, NULL);
+	
+	g_error_free (err);
+	err = NULL;
 }
 
 /*
@@ -1676,6 +1679,12 @@ alarm_player_start (Alarm *alarm)
 										 alarm->sound_loop,
 										 alarm_player_state_cb, alarm,
 										 alarm_player_error_cb, alarm);
+		if (priv->player == NULL) {
+			// Unable to create player
+			alarm_error_trigger (alarm, ALARM_ERROR_PLAY, 
+				_("Could not create player! Please check your sound settings."));
+			return;
+		}
 	} else {
 		media_player_set_uri (priv->player, alarm->sound_file);
 	}
