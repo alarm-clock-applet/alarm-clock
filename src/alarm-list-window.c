@@ -131,8 +131,13 @@ alarm_list_window_new (AlarmApplet *applet)
 void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
-	gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
-	gtk_window_move (list_window->window, list_window->window_pos_x, list_window->window_pos_y);
+    // Let the WM decide the initial position of the window (probably not 0,0)
+    gboolean first_time = !gtk_widget_get_realized(list_window->window);
+
+    gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
+    if (!first_time) {
+        gtk_window_move (list_window->window, list_window->window_pos_x, list_window->window_pos_y);
+    }
 }
 
 /**
