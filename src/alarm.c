@@ -654,8 +654,8 @@ alarm_set_property (GObject *object,
 	case PROP_TYPE:
 		alarm->type = g_value_get_uint (value);
 		
-		// If we changed from CLOCK to TIMER we need to update the time
-		if (alarm->type == ALARM_TYPE_TIMER && alarm->active) {
+		if (alarm->active) {
+			// Update timestamp
 			alarm_update_timestamp (alarm);
 		}
 		

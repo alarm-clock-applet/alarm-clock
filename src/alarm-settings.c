@@ -461,26 +461,29 @@ void
 alarm_settings_changed_type (GtkToggleButton *toggle, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
-	AlarmSettingsDialog *dialog = applet->settings_dialog;
-    
-	GtkWidget *toggle2 = (GTK_WIDGET (toggle) == dialog->clock_toggle) ? dialog->timer_toggle : dialog->clock_toggle;
-	gboolean toggled = gtk_toggle_button_get_active(toggle);
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+    gboolean toggled = gtk_toggle_button_get_active(toggle);
 
     g_assert (dialog->alarm != NULL);
-    g_debug ("alarm_settings_changed_type");
-	
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle2), !toggled);
-	
-	if (GTK_WIDGET (toggle) == dialog->clock_toggle && toggled) {
-		g_object_set (dialog->alarm, "type", ALARM_TYPE_CLOCK, NULL);
-        gtk_widget_set_sensitive(dialog->repeat_expand, TRUE);
-	} else {
-		g_object_set (dialog->alarm, "type", ALARM_TYPE_TIMER, NULL);
-        gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
-	}
-    
-    // TODO: Why?
-//	alarm_settings_changed_time (GTK_SPIN_BUTTON (dialog->hour_spin), dialog);
+    g_debug ("alarm_settings_changed_type(%s) -> %s",
+             gtk_buildable_get_name (GTK_BUILDABLE (toggle)),
+             toggled ? "TRUE" : "FALSE");
+
+    if (GTK_WIDGET (toggle) == dialog->clock_toggle) {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->timer_toggle), !toggled);
+        if (toggled) {
+            g_debug ("alarm_settings_changed_type: clock toggled");
+            g_object_set (dialog->alarm, "type", ALARM_TYPE_CLOCK, NULL);
+            gtk_widget_set_sensitive(dialog->repeat_expand, TRUE);
+        }
+    } else {
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->clock_toggle), !toggled);
+        if (toggled) {
+            g_debug ("alarm_settings_changed_type: timer toggled");
+            g_object_set (dialog->alarm, "type", ALARM_TYPE_TIMER, NULL);
+            gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
+        }
+    }
 }
 
 void
