@@ -229,7 +229,6 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 	AlarmListEntry *item;
 	GList *l;
 	gint pos;
-	gint sound_pos = -1;
 
 	pos = gtk_combo_box_get_active (GTK_COMBO_BOX (dialog->notify_sound_combo));
 	item = g_list_nth_data (dialog->applet->sounds, pos);
@@ -250,7 +249,6 @@ alarm_settings_update_sound (AlarmSettingsDialog *dialog)
 		item = (AlarmListEntry *)l->data;
 		if (strcmp (item->data, dialog->alarm->sound_file) == 0) {
 			// Match!
-			sound_pos = pos;
 			gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->notify_sound_combo), pos);
 			break;
 		}
@@ -616,12 +614,9 @@ alarm_settings_changed_sound (GtkComboBox *combo, gpointer data)
 
     g_assert (dialog->alarm != NULL);
 	
-	GtkTreeModel *model;
 	AlarmListEntry *item;
-	guint current_index, len, combo_len;
+	guint current_index, len;
 	
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->notify_sound_combo));
-	combo_len = gtk_tree_model_iter_n_children (model, NULL);
 	current_index = gtk_combo_box_get_active (combo);
 	len = g_list_length (dialog->applet->sounds);
 	
@@ -669,12 +664,9 @@ alarm_settings_changed_app (GtkComboBox *combo, gpointer data)
 		return;
 	}
 	
-	GtkTreeModel *model;
 	AlarmListEntry *item;
-	guint current_index, len, combo_len;
+	guint current_index, len;
 	
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->notify_app_combo));
-	combo_len = gtk_tree_model_iter_n_children (model, NULL);
 	current_index = gtk_combo_box_get_active (combo);
 	len = g_list_length (dialog->applet->apps);
 	

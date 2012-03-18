@@ -132,7 +132,7 @@ void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
     // Let the WM decide the initial position of the window (probably not 0,0)
-    gboolean first_time = !gtk_widget_get_realized(list_window->window);
+    gboolean first_time = !gtk_widget_get_realized (GTK_WIDGET (list_window->window));
 
     gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
     if (!first_time) {
@@ -601,15 +601,11 @@ alarm_list_window_rows_reordered (GtkTreeModel *model,
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
-    Alarm *a;
 
     // Return if list_window is not set. This happens during initialization.
     if (!list_window)
         return;
-    
-    // Retain selected alarm
-    a = alarm_list_window_get_selected_alarm (list_window);
-    
+
     // Signal to selection_changed that the rows have been reordered.
     list_window->reordered = TRUE;
 }
