@@ -296,7 +296,9 @@ alarm_applet_status_init (AlarmApplet *applet)
 #ifdef HAVE_APP_INDICATOR
 	applet->app_indicator = app_indicator_new(PACKAGE_NAME, ALARM_ICON,
 			APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+#   ifdef HAVE_APP_INDICATOR_0_4_90
 	app_indicator_set_title (applet->app_indicator, _("Alarm Clock"));
+#   endif
 	app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ACTIVE);
 	app_indicator_set_attention_icon (applet->app_indicator, TRIGGERED_ICON);
 	app_indicator_set_menu (applet->app_indicator, GTK_MENU (applet->status_menu));

@@ -101,10 +101,16 @@ if test x"$enable_appindicator" = xyes ; then
     PKG_CHECK_EXISTS([appindicator-0.1],,
                      AC_MSG_ERROR([appindicator-0.1 is not installed]))
     PKG_CHECK_MODULES(APP_INDICATOR,
-                    appindicator-0.1 >= $APPINDICATOR_REQUIRED)
+                      [appindicator-0.1 >= 0.4.90],
+                      [have_appindicator_0_4_90=yes],
+                      [have_appindicator_0_4_90=no;
+                       PKG_CHECK_MODULES(APP_INDICATOR, [appindicator-0.1 >= $APPINDICATOR_REQUIRED])])
 #    AC_SUBST(APP_INDICATOR_CFLAGS)
 #    AC_SUBST(APP_INDICATOR_LIBS)
     AC_DEFINE(HAVE_APP_INDICATOR, 1, [Have AppIndicator])
+    if test "$have_appindicator_0_4_90" = "yes"; then
+        AC_DEFINE(HAVE_APP_INDICATOR_0_4_90, 1, [Have AppIndicator 0.4.90])
+    fi
 fi
 AM_CONDITIONAL(HAVE_APP_INDICATOR, test x"$enable_appindicator" = xyes)
 
