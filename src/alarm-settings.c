@@ -646,7 +646,14 @@ alarm_settings_changed_sound_repeat (GtkToggleButton *togglebutton, gpointer dat
 
     g_assert (dialog->alarm != NULL);
 
+    g_debug("alarm_settings_changed_sound_repeat");
+
     g_object_set (dialog->alarm, "sound-repeat", gtk_toggle_button_get_active (togglebutton), NULL);
+
+    if (dialog->player && dialog->player->state == MEDIA_PLAYER_PLAYING) {
+        // Update preview player
+        dialog->player->loop = gtk_toggle_button_get_active (togglebutton);
+    }
 }
 
 void

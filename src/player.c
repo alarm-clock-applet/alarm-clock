@@ -169,35 +169,59 @@ media_player_bus_check_errors (MediaPlayer *player, GstMessage *message)
  */
 static gboolean
 media_player_bus_cb (GstBus     *bus,
-					 GstMessage *message,
-					 MediaPlayer *player)
+                     GstMessage *message,
+                     MediaPlayer *player)
 {
+    GstState state;
 //	g_debug ("Got %s message\n", GST_MESSAGE_TYPE_NAME (message));
-	
-	if (media_player_bus_check_errors (player, message)) {
-		if (GST_MESSAGE_TYPE (message) == GST_MESSAGE_EOS) {
-			// End of Stream, do we loop?
-			if (!player->loop) {
-				media_player_stop (player);
-				return FALSE;
-			}
-			
-			// Loop, seek to start
-            gst_element_seek_simple (player->player, GST_FORMAT_TIME,
-                GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
-                0);
-			
-			media_player_set_state (player, MEDIA_PLAYER_PLAYING);
-		}
-		
-		// Keep notifying us
-		return TRUE;
-	}
-	
-	// There were errors
-	media_player_stop (player);
-	
-	return FALSE;
+
+    if (!media_player_bus_check_errors (player, message)) {
+        // There were errors
+        media_player_stop (player);
+
+        return FALSE;
+    }
+
+    switch (GST_MESSAGE_TYPE(message))
+    {
+        case GST_MESSAGE_ASYNC_DONE:
+            g_debug("GST_MESSAGE_ASYNC_DONE");
+            gst_element_get_state(player->player, &state, NULL, GST_CLOCK_TIME_NONE);
+            if (state == GST_STATE_PAUSED) {
+                gst_element_seek (player->player, 1.0, GST_FORMAT_TIME,
+                                  GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT,
+                                  GST_SEEK_TYPE_SET, 0,
+                                  GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+                gst_element_set_state (player->player, GST_STATE_PLAYING);
+            }
+            break;
+        case GST_MESSAGE_SEGMENT_DONE:
+            g_debug("GST_MESSAGE_SEGMENT_DONE");
+            // End of segment. Do we loop?
+            if (player->loop) {
+                // Perform a segment seek to the beginning of the stream
+                gst_element_seek (player->player, 1.0, GST_FORMAT_TIME,
+                                  GST_SEEK_FLAG_SEGMENT,
+                                  GST_SEEK_TYPE_SET, 0,
+                                  GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+            } else {
+                // Perform a normal seek so we reach EOS
+                gst_element_seek (player->player, 1.0, GST_FORMAT_TIME,
+                                  GST_SEEK_FLAG_NONE,
+                                  GST_SEEK_TYPE_NONE, 0,
+                                  GST_SEEK_TYPE_NONE, GST_CLOCK_TIME_NONE);
+            }
+
+            break;
+        case GST_MESSAGE_EOS:
+            g_debug("GST_MESSAGE_EOS");
+            media_player_stop (player);
+            break;
+        default:
+            break;
+    }
+
+    return TRUE;
 }
 
 /**
@@ -213,7 +237,7 @@ media_player_start (MediaPlayer *player)
 	player->watch_id = gst_bus_add_watch (bus, (GstBusFunc) media_player_bus_cb, player);
 	gst_object_unref (bus);
 	
-	gst_element_set_state (player->player, GST_STATE_PLAYING);
+	gst_element_set_state (player->player, GST_STATE_PAUSED);
 	media_player_set_state (player, MEDIA_PLAYER_PLAYING);
 }
 
