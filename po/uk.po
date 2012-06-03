@@ -7,18 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"POT-Creation-Date: 2012-06-03 16:58+0000\n"
 "PO-Revision-Date: 2011-01-23 20:32+0000\n"
-"Last-Translator: Сергій Матрунчик (SkyMan) <Unknown>\n"
+"Last-Translator: Сергій Матрунчик <Unknown>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
-"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
-"X-Generator: Launchpad (build 12617)\n"
+"X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
+"X-Generator: Launchpad (build 15342)\n"
+"Language: uk\n"
 
-#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
+#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:5
+#: ../src/ui.c:300
 msgid "Alarm Clock"
 msgstr "Будильник"
 
@@ -26,86 +27,44 @@ msgstr "Будильник"
 msgid "Wake up in the morning"
 msgstr "Прокидайтесь вчасно"
 
-#: ../data/alarm-clock.schemas.in.h:1
-msgid ""
-"A list of days when the alarm should be repeated. This settings is only "
-"applicable for \"clock\" alarms."
-msgstr ""
-"Повторювання будильника у певні дні. Має сенс тільки для будильників (не "
-"таймерів)"
-
-#: ../data/alarm-clock.schemas.in.h:2
-msgid "A short message which describes the alarm."
-msgstr "Короткий опис будильника"
-
-#: ../data/alarm-clock.schemas.in.h:3
-msgid "Alarm Message"
-msgstr "Повідомлення будильника"
-
-#: ../data/alarm-clock.schemas.in.h:4
-msgid "Alarm Repeat"
-msgstr "Повторювання"
-
-#: ../data/alarm-clock.schemas.in.h:5
-msgid "Alarm Running State"
-msgstr "Запускання будильника"
-
-#: ../data/alarm-clock.schemas.in.h:6
-msgid "Alarm Time"
-msgstr "Час сигналу"
-
-#: ../data/alarm-clock.schemas.in.h:7
-msgid "Alarm Timestamp"
-msgstr "Часова мітка сигналу"
-
-#: ../data/alarm-clock.schemas.in.h:8
-msgid "Alarm Type"
-msgstr "Тип сигналу"
-
-#: ../data/alarm-clock.schemas.in.h:9
-msgid "Alarm!"
-msgstr "Увага!"
-
-#: ../data/alarm-clock.schemas.in.h:10
-msgid "Command"
-msgstr "Команда"
-
-#: ../data/alarm-clock.schemas.in.h:11
-msgid "Indicates whether the alarm has started."
-msgstr "Будильник увімкнено"
-
-#: ../data/alarm-clock.schemas.in.h:12
-msgid "Notification Type"
-msgstr "Тип сповіщення"
-
-#: ../data/alarm-clock.schemas.in.h:13
-msgid "Repeat Sound"
-msgstr "Повторювати сигнал"
-
-#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+#: ../data/alarm-clock.schemas.in.h:1 ../data/alarm-clock.ui.h:67
 msgid "Show countdown label"
 msgstr "Показати лічильник зворотнього відліку"
 
-#: ../data/alarm-clock.schemas.in.h:15
-msgid "Sound File"
-msgstr "Звуковий файл"
+#: ../data/alarm-clock.schemas.in.h:2
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr "Чи показувати напис зліва від піктограми з часом наступної події"
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:3
+msgid "Alarm Type"
+msgstr "Тип сигналу"
+
+#: ../data/alarm-clock.schemas.in.h:4
+msgid ""
+"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
+"day, or \"timer\" for an alarm after a specified period of time."
+msgstr ""
+"Тип будильника. Саме будильник - налагоджується на конкретний час доби, чи "
+"таймер - активується через певний час."
+
+#: ../data/alarm-clock.schemas.in.h:5
+msgid "Alarm Timestamp"
+msgstr "Часова мітка сигналу"
+
+#: ../data/alarm-clock.schemas.in.h:6
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
 "Часова мітка UNIX для будильника. Має бути встановлена, щоб активувати "
 "будильник."
 
-#: ../data/alarm-clock.schemas.in.h:17
-msgid "The command to run for the \"command\" notification type."
-msgstr "Виконати команду (якщо налагоджено)"
+#: ../data/alarm-clock.schemas.in.h:7
+msgid "Alarm Time"
+msgstr "Час сигналу"
 
-#: ../data/alarm-clock.schemas.in.h:18
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "Звуковий файл для відтворення у режимі «звук»"
-
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:8
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
@@ -113,7 +72,43 @@ msgstr ""
 "Час запуску будильника. Встановіть час доби для будильника або кількість "
 "хвилин для таймера."
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:9
+msgid "Alarm!"
+msgstr "Увага!"
+
+#: ../data/alarm-clock.schemas.in.h:10
+msgid "Alarm Message"
+msgstr "Повідомлення будильника"
+
+#: ../data/alarm-clock.schemas.in.h:11
+msgid "A short message which describes the alarm."
+msgstr "Короткий опис будильника"
+
+#: ../data/alarm-clock.schemas.in.h:12
+msgid "Alarm Running State"
+msgstr "Запускання будильника"
+
+#: ../data/alarm-clock.schemas.in.h:13
+msgid "Indicates whether the alarm has started."
+msgstr "Будильник увімкнено"
+
+#: ../data/alarm-clock.schemas.in.h:14
+msgid "Alarm Repeat"
+msgstr "Повторювання"
+
+#: ../data/alarm-clock.schemas.in.h:15
+msgid ""
+"A list of days when the alarm should be repeated. This settings is only "
+"applicable for \"clock\" alarms."
+msgstr ""
+"Повторювання будильника у певні дні. Має сенс тільки для будильників (не "
+"таймерів)"
+
+#: ../data/alarm-clock.schemas.in.h:16
+msgid "Notification Type"
+msgstr "Тип сповіщення"
+
+#: ../data/alarm-clock.schemas.in.h:17
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -124,324 +119,291 @@ msgstr ""
 "(вказаний у параметрі \"sound_file\" звуковий файл) або виконати команду "
 "(вказану у параметрі \"command\")"
 
-#: ../data/alarm-clock.schemas.in.h:21
-msgid ""
-"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
-"day, or \"timer\" for an alarm after a specified period of time."
-msgstr ""
-"Тип будильника. Саме будильник - налагоджується на конкретний час доби, чи "
-"таймер - активується через певний час."
+#: ../data/alarm-clock.schemas.in.h:18
+msgid "Sound File"
+msgstr "Звуковий файл"
 
-#: ../data/alarm-clock.schemas.in.h:22
+#: ../data/alarm-clock.schemas.in.h:19
+msgid "The sound file to play for the \"sound\" notification type."
+msgstr "Звуковий файл для відтворення у режимі «звук»"
+
+#: ../data/alarm-clock.schemas.in.h:20
+msgid "Repeat Sound"
+msgstr "Повторювати сигнал"
+
+#: ../data/alarm-clock.schemas.in.h:21
 msgid "Whether to repeat the alarm sound."
 msgstr "Повторювати звук будильника"
 
+#: ../data/alarm-clock.schemas.in.h:22
+msgid "Command"
+msgstr "Команда"
+
 #: ../data/alarm-clock.schemas.in.h:23
-msgid ""
-"Whether to show a label on the right side of the icon with the time "
-"remaining to the next alarm."
-msgstr "Чи показувати напис зліва від піктограми з часом наступної події"
+msgid "The command to run for the \"command\" notification type."
+msgstr "Виконати команду (якщо налагоджено)"
 
 #: ../data/alarm-clock.ui.h:1
-msgid "1 minute"
-msgstr "1 хвилина"
-
-#: ../data/alarm-clock.ui.h:2
-msgid "10 minutes"
-msgstr "10 хвилин"
-
-#: ../data/alarm-clock.ui.h:3
-msgid "3 minutes"
-msgstr "3 хвилини"
-
-#: ../data/alarm-clock.ui.h:4
-msgid "5 minutes"
-msgstr "5 хвилин"
-
-#: ../data/alarm-clock.ui.h:5
-msgid "About Alarm Clock"
-msgstr "Про програму"
-
-#: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
 msgstr "Налагодження будильника"
 
-#: ../data/alarm-clock.ui.h:8
-msgid "Alarms"
-msgstr "Будильники"
-
-#: ../data/alarm-clock.ui.h:9
-msgid "Alert"
-msgstr "Сигнал"
-
-#: ../data/alarm-clock.ui.h:10
-msgid "Appearance"
-msgstr "Зовнішній вигляд"
-
-#: ../data/alarm-clock.ui.h:11
-msgid "Co_mmand:"
-msgstr "Ко_манда"
-
-#: ../data/alarm-clock.ui.h:12
-msgid "Custom..."
-msgstr "Інше..."
-
-#: ../data/alarm-clock.ui.h:13
-msgid "Delete"
-msgstr "Видалити"
-
-#: ../data/alarm-clock.ui.h:14
-msgid "Delete alarm"
-msgstr "Видалити будильник"
-
-#: ../data/alarm-clock.ui.h:15
-msgid "Delete the selected alarm"
-msgstr "Видалити обраний будильник"
-
-#: ../data/alarm-clock.ui.h:16
-msgid "Edit alarm"
-msgstr "Редагувати будильник"
-
-#: ../data/alarm-clock.ui.h:17
-msgid "Edit the selected alarm"
-msgstr "Редагувати обраний будильник"
-
-#: ../data/alarm-clock.ui.h:18
-msgid "Edit..."
-msgstr "Редагувати"
-
-#: ../data/alarm-clock.ui.h:19
-msgid "Enable"
-msgstr "Увімкнути"
-
-#: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable"
-msgstr "Увімкнути/вимкнути"
-
-#: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable alarm"
-msgstr "Увімкнути/вимкнути будильник"
-
-#: ../data/alarm-clock.ui.h:22
-msgid "Enable/disable the selected alarm"
-msgstr "Увімкнути/вимкнути обраний будильник"
-
-#: ../data/alarm-clock.ui.h:23
-msgid "Fri"
-msgstr "Пт"
-
-#: ../data/alarm-clock.ui.h:24
+#: ../data/alarm-clock.ui.h:2
 msgid "General"
 msgstr "Загальні"
 
+#: ../data/alarm-clock.ui.h:3
+msgid "Appearance"
+msgstr "Зовнішній вигляд"
+
+#: ../data/alarm-clock.ui.h:4
+msgid "Edit alarm"
+msgstr "Редагувати будильник"
+
+#: ../data/alarm-clock.ui.h:6
+msgid "Timer"
+msgstr "Таймер"
+
+#: ../data/alarm-clock.ui.h:7
+msgid "Wake up sleepy head!"
+msgstr "Прокидайся, спун!"
+
+#: ../data/alarm-clock.ui.h:8
+msgid "_Time:"
+msgstr "_Час:"
+
+#: ../data/alarm-clock.ui.h:9
+msgid "_Name:"
+msgstr "_Назва"
+
+#: ../data/alarm-clock.ui.h:10
+msgid "Mon"
+msgstr "Пн"
+
+#: ../data/alarm-clock.ui.h:11
+msgid "Tue"
+msgstr "Вт"
+
+#: ../data/alarm-clock.ui.h:12
+msgid "Wed"
+msgstr "Ср"
+
+#: ../data/alarm-clock.ui.h:13
+msgid "Thu"
+msgstr "Чт"
+
+#: ../data/alarm-clock.ui.h:14
+msgid "Fri"
+msgstr "Пт"
+
+#: ../data/alarm-clock.ui.h:15
+msgid "Sat"
+msgstr "Сб"
+
+#: ../data/alarm-clock.ui.h:16
+msgid "Sun"
+msgstr "Нд"
+
+#: ../data/alarm-clock.ui.h:17
+msgid "_Repeat:"
+msgstr "_Повторити:"
+
+#: ../data/alarm-clock.ui.h:18
+msgid "Alert"
+msgstr "Сигнал"
+
+#: ../data/alarm-clock.ui.h:19
+msgid "Play _sound"
+msgstr "Відтворити _звук"
+
+#: ../data/alarm-clock.ui.h:20
+msgid "Repea_t sound"
+msgstr "Повторювати звук"
+
+#: ../data/alarm-clock.ui.h:21
+msgid "Start _Application"
+msgstr "Запустити _програму"
+
+#: ../data/alarm-clock.ui.h:22
+msgid "Co_mmand:"
+msgstr "Ко_манда"
+
+#: ../data/alarm-clock.ui.h:23
+msgid "Snooze all beeping alarms"
+msgstr "Відкласти усі звукові будильники"
+
+#: ../data/alarm-clock.ui.h:24
+msgid "Stop all beeping alarms"
+msgstr "Вимкнути усі звукові будильники"
+
 #: ../data/alarm-clock.ui.h:25
-msgid "Get up in the morning!"
-msgstr "Прокидайтесь вчасно!"
+msgid "Show _alarms"
+msgstr "Показати будильники"
 
 #: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "Керування будильниками"
 
 #: ../data/alarm-clock.ui.h:27
-msgid "Mon"
-msgstr "Пн"
+msgid "_Preferences"
+msgstr "На_лаштування"
 
 #: ../data/alarm-clock.ui.h:28
-msgid "New"
-msgstr "Новий"
+msgid "About Alarm Clock"
+msgstr "Про програму"
 
 #: ../data/alarm-clock.ui.h:29
-msgid "New alarm"
-msgstr "Новий будильник"
+msgid "Get up in the morning!"
+msgstr "Прокидайтесь вчасно!"
 
 #: ../data/alarm-clock.ui.h:30
+msgid "Alarms"
+msgstr "Будильники"
+
+#: ../data/alarm-clock.ui.h:31
 msgid "New..."
 msgstr "Новий..."
 
-#: ../data/alarm-clock.ui.h:31
-msgid "Play _sound"
-msgstr "Відтворити _звук"
-
 #: ../data/alarm-clock.ui.h:32
-msgid "Quit Alarm Clock"
-msgstr "Вийти"
+msgid "Edit..."
+msgstr "Редагувати"
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Repea_t sound"
-msgstr "Повторювати звук"
+msgid "Delete"
+msgstr "Видалити"
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Sat"
-msgstr "Сб"
+msgid "Enable"
+msgstr "Увімкнути"
 
 #: ../data/alarm-clock.ui.h:35
-msgid "Show _alarms"
-msgstr "Показати будильники"
+msgid "Stop"
+msgstr "Зупинити"
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:36
 msgid "Snooze"
 msgstr "Відкласти"
 
+#: ../data/alarm-clock.ui.h:37
+msgid "1 minute"
+msgstr "1 хвилина"
+
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze alarm"
-msgstr "Відкласти будильник"
+msgid "3 minutes"
+msgstr "3 хвилини"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze alarms"
-msgstr "Відкласти будильники"
+msgid "5 minutes"
+msgstr "5 хвилин"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze all alarms"
-msgstr "Відкласти усі будильники"
+msgid "10 minutes"
+msgstr "10 хвилин"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze all beeping alarms"
-msgstr "Відкласти усі звукові будильники"
+msgid "Custom..."
+msgstr "Інше..."
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Snooze for:"
-msgstr "Відкласти на:"
+msgid "Snooze alarm"
+msgstr "Відкласти будильник"
 
 #: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr "Відкласти обраний будильник"
 
 #: ../data/alarm-clock.ui.h:44
-msgid "Start _Application"
-msgstr "Запустити _програму"
+msgid "Snooze for:"
+msgstr "Відкласти на:"
 
 #: ../data/alarm-clock.ui.h:45
-msgid "Start automatically at login"
-msgstr "Запускати після входу в систему"
+msgid "minutes"
+msgstr "хвилин(и)"
 
 #: ../data/alarm-clock.ui.h:46
-msgid "Stop"
-msgstr "Зупинити"
+msgid "_Snooze"
+msgstr "Ві_дкласти"
 
 #: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "Вимкнути будильник"
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop alarms"
-msgstr "Вимкнути будильники"
-
-#: ../data/alarm-clock.ui.h:49
-msgid "Stop all alarms"
-msgstr "Вимкнути усі будильники"
-
-#: ../data/alarm-clock.ui.h:50
-msgid "Stop all beeping alarms"
-msgstr "Вимкнути усі звукові будильники"
-
-#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "Вимкнути обраний будильник"
 
+#: ../data/alarm-clock.ui.h:49
+msgid "Delete alarm"
+msgstr "Видалити будильник"
+
+#: ../data/alarm-clock.ui.h:50
+msgid "Delete the selected alarm"
+msgstr "Видалити обраний будильник"
+
+#: ../data/alarm-clock.ui.h:51
+msgid "Edit the selected alarm"
+msgstr "Редагувати обраний будильник"
+
 #: ../data/alarm-clock.ui.h:52
-msgid "Sun"
-msgstr "Нд"
+msgid "New alarm"
+msgstr "Новий будильник"
 
 #: ../data/alarm-clock.ui.h:53
-msgid "Thu"
-msgstr "Чт"
+msgid "New"
+msgstr "Новий"
 
 #: ../data/alarm-clock.ui.h:54
-msgid "Timer"
-msgstr "Таймер"
+msgid "Enable/disable alarm"
+msgstr "Увімкнути/вимкнути будильник"
 
 #: ../data/alarm-clock.ui.h:55
-msgid "Toggle alarms"
-msgstr "Перемкнути будильники"
+msgid "Enable/disable"
+msgstr "Увімкнути/вимкнути"
 
 #: ../data/alarm-clock.ui.h:56
+msgid "Enable/disable the selected alarm"
+msgstr "Увімкнути/вимкнути обраний будильник"
+
+#: ../data/alarm-clock.ui.h:57
+msgid "Snooze all alarms"
+msgstr "Відкласти усі будильники"
+
+#: ../data/alarm-clock.ui.h:58
+msgid "Snooze alarms"
+msgstr "Відкласти будильники"
+
+#: ../data/alarm-clock.ui.h:59
+msgid "Stop all alarms"
+msgstr "Вимкнути усі будильники"
+
+#: ../data/alarm-clock.ui.h:60
+msgid "Stop alarms"
+msgstr "Вимкнути будильники"
+
+#: ../data/alarm-clock.ui.h:61
 msgid "Toggle alarms window"
 msgstr "Перемкнути вікно будильників"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:62
+msgid "Toggle alarms"
+msgstr "Перемкнути будильники"
+
+#: ../data/alarm-clock.ui.h:63
 msgid "Toggle the visibility of the alarms window"
 msgstr "Перемкнути видимість вікна будильників"
 
-#: ../data/alarm-clock.ui.h:58
-msgid "Tue"
-msgstr "Вт"
-
-#: ../data/alarm-clock.ui.h:59
-msgid "Wake up sleepy head!"
-msgstr "Прокидайся, спун!"
-
-#: ../data/alarm-clock.ui.h:60
-msgid "Wed"
-msgstr "Ср"
-
-#: ../data/alarm-clock.ui.h:61
-msgid "_Name:"
-msgstr "_Назва"
-
-#: ../data/alarm-clock.ui.h:62
-msgid "_Preferences"
-msgstr "На_лаштування"
-
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:64
 msgid "_Quit"
 msgstr "_Вийти"
 
-#: ../data/alarm-clock.ui.h:64
-msgid "_Repeat:"
-msgstr "_Повторити:"
-
 #: ../data/alarm-clock.ui.h:65
-msgid "_Snooze"
-msgstr "Ві_дкласти"
+msgid "Quit Alarm Clock"
+msgstr "Вийти"
 
 #: ../data/alarm-clock.ui.h:66
-msgid "_Time:"
-msgstr "_Час:"
+msgid "Start automatically at login"
+msgstr "Запускати після входу в систему"
 
-#: ../data/alarm-clock.ui.h:67
-msgid "minutes"
-msgstr "хвилин(и)"
-
-#. Single alarm snoozed
-#: ../src/alarm-applet.c:73
-#, c-format
-msgid "%s snoozed"
-msgstr "%s відкладено"
-
-#: ../src/alarm-applet.c:74
-#, c-format
-msgid "You can stop the alarm from the Alarm Clock menu."
-msgstr "Вимкнути будильник можна у меню будильника"
-
-#. More than 1 alarm snoozed
-#: ../src/alarm-applet.c:79
-#, c-format
-msgid "Snoozed %d alarms"
-msgstr "Відкладено %d будильників"
-
-#: ../src/alarm-applet.c:80
-#, c-format
-msgid "You can stop alarms from the Alarm Clock menu."
-msgstr "Вимкнути будильник можна у меню будильника"
-
-#. Single alarm stopped
-#: ../src/alarm-applet.c:127
-#, c-format
-msgid "%s stopped"
-msgstr "%s вимкнено"
-
-#: ../src/alarm-applet.c:128 ../src/alarm-applet.c:134
-#, c-format
-msgid "Repeating alarms will still continue according to schedule."
-msgstr "Будильник буде активуватись за розкладом"
-
-#. More than 1 alarm stopped
-#: ../src/alarm-applet.c:133
-#, c-format
-msgid "Stopped %d alarm(s)"
-msgstr "Вимкнено %d будильник(ів)"
-
-#: ../src/alarm-applet.c:632
+#: ../src/alarm-applet.c:592
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s уже працює, виходимо...\n"
@@ -451,46 +413,50 @@ msgstr "%s уже працює, виходимо...\n"
 msgid "_Repeat: %s"
 msgstr "_Повторювати: %s"
 
-#: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
+#: ../src/alarm-settings.c:245 ../src/alarm-settings.c:425
 msgid "Select sound file..."
 msgstr "Обрати звуковий файл..."
 
-#: ../src/alarm-settings.c:297
+#: ../src/alarm-settings.c:295
 msgid "Custom command..."
 msgstr "Інша команда..."
 
-#: ../src/alarm.c:2029
+#: ../src/alarm.c:1685
+msgid "Could not create player! Please check your sound settings."
+msgstr ""
+
+#: ../src/alarm.c:2041
 msgid "Once"
 msgstr "Один раз"
 
-#: ../src/alarm.c:2032
+#: ../src/alarm.c:2044
 msgid "Weekdays"
 msgstr "У будні"
 
-#: ../src/alarm.c:2035
+#: ../src/alarm.c:2047
 msgid "Weekends"
 msgstr "У вихідні"
 
-#: ../src/alarm.c:2038
+#: ../src/alarm.c:2050
 msgid "Every day"
 msgstr "Щодня"
 
 #. About Alarm Clock
-#: ../src/ui.c:425
+#: ../src/ui.c:428
 #, c-format
 msgid "About %s"
 msgstr "Про програму %s"
 
-#: ../src/ui.c:453
+#: ../src/ui.c:456
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "Неможливо відтворити '%s': %s"
 
-#: ../src/ui.c:454
+#: ../src/ui.c:457
 msgid "Could not play"
 msgstr "Неможливо відтворити"
 
-#: ../src/ui.c:511
+#: ../src/ui.c:514
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "Відкласти або вимкнути будильники можна у меню будильника"

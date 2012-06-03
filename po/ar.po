@@ -7,18 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-20 17:50+0100\n"
+"POT-Creation-Date: 2012-06-03 16:58+0000\n"
 "PO-Revision-Date: 2010-10-30 23:01+0000\n"
 "Last-Translator: Ahmed Mohammed <Unknown>\n"
 "Language-Team: Arabic <ar@li.org>\n"
-"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
-"X-Generator: Launchpad (build 12617)\n"
+"X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
+"X-Generator: Launchpad (build 15342)\n"
+"Language: ar\n"
 
-#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
+#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:5
+#: ../src/ui.c:300
 msgid "Alarm Clock"
 msgstr "ساعة منبهة"
 
@@ -26,84 +27,42 @@ msgstr "ساعة منبهة"
 msgid "Wake up in the morning"
 msgstr "استيقظ في الصباح"
 
-#: ../data/alarm-clock.schemas.in.h:1
-msgid ""
-"A list of days when the alarm should be repeated. This settings is only "
-"applicable for \"clock\" alarms."
-msgstr ""
-"سرد الأيام التي يجب أن يتكرر فيها التنبيه.هذا الإعداد فاعل فقط لمنبهات "
-"\"clock\"."
-
-#: ../data/alarm-clock.schemas.in.h:2
-msgid "A short message which describes the alarm."
-msgstr "رسالة قصيرة تصف التنبيه ."
-
-#: ../data/alarm-clock.schemas.in.h:3
-msgid "Alarm Message"
-msgstr "رسالة التنبيه ."
-
-#: ../data/alarm-clock.schemas.in.h:4
-msgid "Alarm Repeat"
-msgstr "تكرار التنبيه ."
-
-#: ../data/alarm-clock.schemas.in.h:5
-msgid "Alarm Running State"
-msgstr "حالة تشغيل التنبيه"
-
-#: ../data/alarm-clock.schemas.in.h:6
-msgid "Alarm Time"
-msgstr "وقت التبيه"
-
-#: ../data/alarm-clock.schemas.in.h:7
-msgid "Alarm Timestamp"
-msgstr "طابع التنبه"
-
-#: ../data/alarm-clock.schemas.in.h:8
-msgid "Alarm Type"
-msgstr "نوع التنبيه"
-
-#: ../data/alarm-clock.schemas.in.h:9
-msgid "Alarm!"
-msgstr "انذار"
-
-#: ../data/alarm-clock.schemas.in.h:10
-msgid "Command"
-msgstr "أمر"
-
-#: ../data/alarm-clock.schemas.in.h:11
-msgid "Indicates whether the alarm has started."
-msgstr "التحقق ما إذا كان المنبه قد بدأ."
-
-#: ../data/alarm-clock.schemas.in.h:12
-msgid "Notification Type"
-msgstr "نوع الاشعار"
-
-#: ../data/alarm-clock.schemas.in.h:13
-msgid "Repeat Sound"
-msgstr "تكرار الصوت"
-
-#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
+#: ../data/alarm-clock.schemas.in.h:1 ../data/alarm-clock.ui.h:67
 msgid "Show countdown label"
 msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:15
-msgid "Sound File"
-msgstr "ملف الصوت"
+#: ../data/alarm-clock.schemas.in.h:2
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:3
+msgid "Alarm Type"
+msgstr "نوع التنبيه"
+
+#: ../data/alarm-clock.schemas.in.h:4
+msgid ""
+"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
+"day, or \"timer\" for an alarm after a specified period of time."
+msgstr ""
+"نوع التنبيه.إما \"ساعة\" للتنبيه في وقت محدد من اليوم,أو \"مؤقت\" للتنبيه "
+"بعد فترة محددة من الزمن."
+
+#: ../data/alarm-clock.schemas.in.h:5
+msgid "Alarm Timestamp"
+msgstr "طابع التنبه"
+
+#: ../data/alarm-clock.schemas.in.h:6
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr "بصمة وقت التنبيه ليونكس.يجب تحديده قبل تغعيل المنبه."
 
-#: ../data/alarm-clock.schemas.in.h:17
-msgid "The command to run for the \"command\" notification type."
-msgstr "نوع الامر المستخدم لتنفيذ نوع التنبيه."
+#: ../data/alarm-clock.schemas.in.h:7
+msgid "Alarm Time"
+msgstr "وقت التبيه"
 
-#: ../data/alarm-clock.schemas.in.h:18
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "نوع ملف الصوت المستخدم للتنبيه."
-
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:8
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
@@ -111,7 +70,43 @@ msgstr ""
 "وقت التنبيه.يجب أن يكون بتوقيت غرينتش لتنبيهات \"ساعة\" أو بصيغة الثواني "
 "لتنبيهات \"مؤقت\"."
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:9
+msgid "Alarm!"
+msgstr "انذار"
+
+#: ../data/alarm-clock.schemas.in.h:10
+msgid "Alarm Message"
+msgstr "رسالة التنبيه ."
+
+#: ../data/alarm-clock.schemas.in.h:11
+msgid "A short message which describes the alarm."
+msgstr "رسالة قصيرة تصف التنبيه ."
+
+#: ../data/alarm-clock.schemas.in.h:12
+msgid "Alarm Running State"
+msgstr "حالة تشغيل التنبيه"
+
+#: ../data/alarm-clock.schemas.in.h:13
+msgid "Indicates whether the alarm has started."
+msgstr "التحقق ما إذا كان المنبه قد بدأ."
+
+#: ../data/alarm-clock.schemas.in.h:14
+msgid "Alarm Repeat"
+msgstr "تكرار التنبيه ."
+
+#: ../data/alarm-clock.schemas.in.h:15
+msgid ""
+"A list of days when the alarm should be repeated. This settings is only "
+"applicable for \"clock\" alarms."
+msgstr ""
+"سرد الأيام التي يجب أن يتكرر فيها التنبيه.هذا الإعداد فاعل فقط لمنبهات "
+"\"clock\"."
+
+#: ../data/alarm-clock.schemas.in.h:16
+msgid "Notification Type"
+msgstr "نوع الاشعار"
+
+#: ../data/alarm-clock.schemas.in.h:17
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -122,324 +117,291 @@ msgstr ""
 "صوت (يحدد في خاصية \"sound_file\".\"أكر\" لتنفيذ أمر ما (يحدد في خاصية "
 "\"command\")"
 
-#: ../data/alarm-clock.schemas.in.h:21
-msgid ""
-"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
-"day, or \"timer\" for an alarm after a specified period of time."
-msgstr ""
-"نوع التنبيه.إما \"ساعة\" للتنبيه في وقت محدد من اليوم,أو \"مؤقت\" للتنبيه "
-"بعد فترة محددة من الزمن."
+#: ../data/alarm-clock.schemas.in.h:18
+msgid "Sound File"
+msgstr "ملف الصوت"
 
-#: ../data/alarm-clock.schemas.in.h:22
+#: ../data/alarm-clock.schemas.in.h:19
+msgid "The sound file to play for the \"sound\" notification type."
+msgstr "نوع ملف الصوت المستخدم للتنبيه."
+
+#: ../data/alarm-clock.schemas.in.h:20
+msgid "Repeat Sound"
+msgstr "تكرار الصوت"
+
+#: ../data/alarm-clock.schemas.in.h:21
 msgid "Whether to repeat the alarm sound."
 msgstr "سواء لإعادة تشغيل صوت التنبيه."
 
+#: ../data/alarm-clock.schemas.in.h:22
+msgid "Command"
+msgstr "أمر"
+
 #: ../data/alarm-clock.schemas.in.h:23
-msgid ""
-"Whether to show a label on the right side of the icon with the time "
-"remaining to the next alarm."
-msgstr ""
+msgid "The command to run for the \"command\" notification type."
+msgstr "نوع الامر المستخدم لتنفيذ نوع التنبيه."
 
 #: ../data/alarm-clock.ui.h:1
-msgid "1 minute"
-msgstr "دقيقة واحدة"
-
-#: ../data/alarm-clock.ui.h:2
-msgid "10 minutes"
-msgstr "١٠ دقائق"
-
-#: ../data/alarm-clock.ui.h:3
-msgid "3 minutes"
-msgstr "٣ دقائق"
-
-#: ../data/alarm-clock.ui.h:4
-msgid "5 minutes"
-msgstr "٥ دقائق"
-
-#: ../data/alarm-clock.ui.h:5
-msgid "About Alarm Clock"
-msgstr "حول المنبه"
-
-#: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
 msgstr "تفضيلات المنبه"
 
-#: ../data/alarm-clock.ui.h:8
-msgid "Alarms"
-msgstr "المنبّهات"
-
-#: ../data/alarm-clock.ui.h:9
-msgid "Alert"
-msgstr "تنبيه"
-
-#: ../data/alarm-clock.ui.h:10
-msgid "Appearance"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:11
-msgid "Co_mmand:"
-msgstr "أ_مر:"
-
-#: ../data/alarm-clock.ui.h:12
-msgid "Custom..."
-msgstr "مخصّص..."
-
-#: ../data/alarm-clock.ui.h:13
-msgid "Delete"
-msgstr "حذف"
-
-#: ../data/alarm-clock.ui.h:14
-msgid "Delete alarm"
-msgstr "حذف المنبه"
-
-#: ../data/alarm-clock.ui.h:15
-msgid "Delete the selected alarm"
-msgstr "حذف المنبهات المختارة"
-
-#: ../data/alarm-clock.ui.h:16
-msgid "Edit alarm"
-msgstr "تعديل المنبه"
-
-#: ../data/alarm-clock.ui.h:17
-msgid "Edit the selected alarm"
-msgstr "تعديل المنبهات المختارة"
-
-#: ../data/alarm-clock.ui.h:18
-msgid "Edit..."
-msgstr "حرّر..."
-
-#: ../data/alarm-clock.ui.h:19
-msgid "Enable"
-msgstr "مكّن"
-
-#: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable"
-msgstr "تفعيل/تعطيل"
-
-#: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable alarm"
-msgstr "تفعيل /تعطيل المنبه"
-
-#: ../data/alarm-clock.ui.h:22
-msgid "Enable/disable the selected alarm"
-msgstr "تفعيلظ/تعطيل المنبهات المختارة"
-
-#: ../data/alarm-clock.ui.h:23
-msgid "Fri"
-msgstr "الجمعة"
-
-#: ../data/alarm-clock.ui.h:24
+#: ../data/alarm-clock.ui.h:2
 msgid "General"
 msgstr "عام"
 
+#: ../data/alarm-clock.ui.h:3
+msgid "Appearance"
+msgstr ""
+
+#: ../data/alarm-clock.ui.h:4
+msgid "Edit alarm"
+msgstr "تعديل المنبه"
+
+#: ../data/alarm-clock.ui.h:6
+msgid "Timer"
+msgstr "المُؤقِت"
+
+#: ../data/alarm-clock.ui.h:7
+msgid "Wake up sleepy head!"
+msgstr "استيقظ أيها النائم!"
+
+#: ../data/alarm-clock.ui.h:8
+msgid "_Time:"
+msgstr "الو_قت:"
+
+#: ../data/alarm-clock.ui.h:9
+msgid "_Name:"
+msgstr "_الاسم:"
+
+#: ../data/alarm-clock.ui.h:10
+msgid "Mon"
+msgstr "الإثنين"
+
+#: ../data/alarm-clock.ui.h:11
+msgid "Tue"
+msgstr "الثلاثاء"
+
+#: ../data/alarm-clock.ui.h:12
+msgid "Wed"
+msgstr "الأربعاء"
+
+#: ../data/alarm-clock.ui.h:13
+msgid "Thu"
+msgstr "الخميس"
+
+#: ../data/alarm-clock.ui.h:14
+msgid "Fri"
+msgstr "الجمعة"
+
+#: ../data/alarm-clock.ui.h:15
+msgid "Sat"
+msgstr "السبت"
+
+#: ../data/alarm-clock.ui.h:16
+msgid "Sun"
+msgstr "الأحد"
+
+#: ../data/alarm-clock.ui.h:17
+msgid "_Repeat:"
+msgstr "_كرر :"
+
+#: ../data/alarm-clock.ui.h:18
+msgid "Alert"
+msgstr "تنبيه"
+
+#: ../data/alarm-clock.ui.h:19
+msgid "Play _sound"
+msgstr "تشغيل _الصوت"
+
+#: ../data/alarm-clock.ui.h:20
+msgid "Repea_t sound"
+msgstr "تكرار الص_وت"
+
+#: ../data/alarm-clock.ui.h:21
+msgid "Start _Application"
+msgstr "بدا _التطبيق"
+
+#: ../data/alarm-clock.ui.h:22
+msgid "Co_mmand:"
+msgstr "أ_مر:"
+
+#: ../data/alarm-clock.ui.h:23
+msgid "Snooze all beeping alarms"
+msgstr "إغفال كل التنبيهات"
+
+#: ../data/alarm-clock.ui.h:24
+msgid "Stop all beeping alarms"
+msgstr "إيقاف جميع التنبهات الفاعلة"
+
 #: ../data/alarm-clock.ui.h:25
-msgid "Get up in the morning!"
-msgstr "استيقظ في الصباح !"
+msgid "Show _alarms"
+msgstr "عرض المنبهات"
 
 #: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "إدارة تنبيهاتك"
 
 #: ../data/alarm-clock.ui.h:27
-msgid "Mon"
-msgstr "الإثنين"
+msgid "_Preferences"
+msgstr "_تفضيلات"
 
 #: ../data/alarm-clock.ui.h:28
-msgid "New"
-msgstr "جديد"
+msgid "About Alarm Clock"
+msgstr "حول المنبه"
 
 #: ../data/alarm-clock.ui.h:29
-msgid "New alarm"
-msgstr "تنبيه جديد"
+msgid "Get up in the morning!"
+msgstr "استيقظ في الصباح !"
 
 #: ../data/alarm-clock.ui.h:30
+msgid "Alarms"
+msgstr "المنبّهات"
+
+#: ../data/alarm-clock.ui.h:31
 msgid "New..."
 msgstr "جديد..."
 
-#: ../data/alarm-clock.ui.h:31
-msgid "Play _sound"
-msgstr "تشغيل _الصوت"
-
 #: ../data/alarm-clock.ui.h:32
-msgid "Quit Alarm Clock"
-msgstr "انهاء المنبه"
+msgid "Edit..."
+msgstr "حرّر..."
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Repea_t sound"
-msgstr "تكرار الص_وت"
+msgid "Delete"
+msgstr "حذف"
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Sat"
-msgstr "السبت"
+msgid "Enable"
+msgstr "مكّن"
 
 #: ../data/alarm-clock.ui.h:35
-msgid "Show _alarms"
-msgstr "عرض المنبهات"
+msgid "Stop"
+msgstr "إيقاف"
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:36
 msgid "Snooze"
 msgstr "قيلولة"
 
+#: ../data/alarm-clock.ui.h:37
+msgid "1 minute"
+msgstr "دقيقة واحدة"
+
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze alarm"
-msgstr "منبه القلولة"
+msgid "3 minutes"
+msgstr "٣ دقائق"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze alarms"
-msgstr "منبهات القلولة"
+msgid "5 minutes"
+msgstr "٥ دقائق"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze all alarms"
-msgstr "كل منبهات القلولة"
+msgid "10 minutes"
+msgstr "١٠ دقائق"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze all beeping alarms"
-msgstr "إغفال كل التنبيهات"
+msgid "Custom..."
+msgstr "مخصّص..."
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Snooze for:"
-msgstr "قلولة لأجل :"
+msgid "Snooze alarm"
+msgstr "منبه القلولة"
 
 #: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr "إغفال التنبيه المحدد"
 
 #: ../data/alarm-clock.ui.h:44
-msgid "Start _Application"
-msgstr "بدا _التطبيق"
+msgid "Snooze for:"
+msgstr "قلولة لأجل :"
 
 #: ../data/alarm-clock.ui.h:45
-msgid "Start automatically at login"
-msgstr "بدء تلقائي عند التشغيل"
+msgid "minutes"
+msgstr "دقائق"
 
 #: ../data/alarm-clock.ui.h:46
-msgid "Stop"
-msgstr "إيقاف"
+msgid "_Snooze"
+msgstr "_غفوة"
 
 #: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "إيقاف التنبه"
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop alarms"
-msgstr "إيقاف التنبهات"
-
-#: ../data/alarm-clock.ui.h:49
-msgid "Stop all alarms"
-msgstr "إيقاف جميع التنبهات"
-
-#: ../data/alarm-clock.ui.h:50
-msgid "Stop all beeping alarms"
-msgstr "إيقاف جميع التنبهات الفاعلة"
-
-#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "إيقاف التنبه المختارة"
 
+#: ../data/alarm-clock.ui.h:49
+msgid "Delete alarm"
+msgstr "حذف المنبه"
+
+#: ../data/alarm-clock.ui.h:50
+msgid "Delete the selected alarm"
+msgstr "حذف المنبهات المختارة"
+
+#: ../data/alarm-clock.ui.h:51
+msgid "Edit the selected alarm"
+msgstr "تعديل المنبهات المختارة"
+
 #: ../data/alarm-clock.ui.h:52
-msgid "Sun"
-msgstr "الأحد"
+msgid "New alarm"
+msgstr "تنبيه جديد"
 
 #: ../data/alarm-clock.ui.h:53
-msgid "Thu"
-msgstr "الخميس"
+msgid "New"
+msgstr "جديد"
 
 #: ../data/alarm-clock.ui.h:54
-msgid "Timer"
-msgstr "المُؤقِت"
+msgid "Enable/disable alarm"
+msgstr "تفعيل /تعطيل المنبه"
 
 #: ../data/alarm-clock.ui.h:55
-msgid "Toggle alarms"
-msgstr "تبديل التنبيهات"
+msgid "Enable/disable"
+msgstr "تفعيل/تعطيل"
 
 #: ../data/alarm-clock.ui.h:56
+msgid "Enable/disable the selected alarm"
+msgstr "تفعيلظ/تعطيل المنبهات المختارة"
+
+#: ../data/alarm-clock.ui.h:57
+msgid "Snooze all alarms"
+msgstr "كل منبهات القلولة"
+
+#: ../data/alarm-clock.ui.h:58
+msgid "Snooze alarms"
+msgstr "منبهات القلولة"
+
+#: ../data/alarm-clock.ui.h:59
+msgid "Stop all alarms"
+msgstr "إيقاف جميع التنبهات"
+
+#: ../data/alarm-clock.ui.h:60
+msgid "Stop alarms"
+msgstr "إيقاف التنبهات"
+
+#: ../data/alarm-clock.ui.h:61
 msgid "Toggle alarms window"
 msgstr "تبديل نافذة التنبيهات"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:62
+msgid "Toggle alarms"
+msgstr "تبديل التنبيهات"
+
+#: ../data/alarm-clock.ui.h:63
 msgid "Toggle the visibility of the alarms window"
 msgstr "تغيير درجة وضوح نافذة التنبيهات"
 
-#: ../data/alarm-clock.ui.h:58
-msgid "Tue"
-msgstr "الثلاثاء"
-
-#: ../data/alarm-clock.ui.h:59
-msgid "Wake up sleepy head!"
-msgstr "استيقظ أيها النائم!"
-
-#: ../data/alarm-clock.ui.h:60
-msgid "Wed"
-msgstr "الأربعاء"
-
-#: ../data/alarm-clock.ui.h:61
-msgid "_Name:"
-msgstr "_الاسم:"
-
-#: ../data/alarm-clock.ui.h:62
-msgid "_Preferences"
-msgstr "_تفضيلات"
-
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:64
 msgid "_Quit"
 msgstr "_خروج"
 
-#: ../data/alarm-clock.ui.h:64
-msgid "_Repeat:"
-msgstr "_كرر :"
-
 #: ../data/alarm-clock.ui.h:65
-msgid "_Snooze"
-msgstr "_غفوة"
+msgid "Quit Alarm Clock"
+msgstr "انهاء المنبه"
 
 #: ../data/alarm-clock.ui.h:66
-msgid "_Time:"
-msgstr "الو_قت:"
+msgid "Start automatically at login"
+msgstr "بدء تلقائي عند التشغيل"
 
-#: ../data/alarm-clock.ui.h:67
-msgid "minutes"
-msgstr "دقائق"
-
-#. Single alarm snoozed
-#: ../src/alarm-applet.c:73
-#, c-format
-msgid "%s snoozed"
-msgstr "غفوة %s"
-
-#: ../src/alarm-applet.c:74
-#, c-format
-msgid "You can stop the alarm from the Alarm Clock menu."
-msgstr "تستطيع أيقاف المنبه من اللائحة الرئيسية."
-
-#. More than 1 alarm snoozed
-#: ../src/alarm-applet.c:79
-#, c-format
-msgid "Snoozed %d alarms"
-msgstr "%d تنبيه مؤخر"
-
-#: ../src/alarm-applet.c:80
-#, c-format
-msgid "You can stop alarms from the Alarm Clock menu."
-msgstr "تستطيع إيقاف التنبيهات من قائمة ساعة التنبيه."
-
-#. Single alarm stopped
-#: ../src/alarm-applet.c:127
-#, c-format
-msgid "%s stopped"
-msgstr "%s اوقف"
-
-#: ../src/alarm-applet.c:128 ../src/alarm-applet.c:134
-#, c-format
-msgid "Repeating alarms will still continue according to schedule."
-msgstr "تكرار التنبيهات مستمر حسب الجدول."
-
-#. More than 1 alarm stopped
-#: ../src/alarm-applet.c:133
-#, c-format
-msgid "Stopped %d alarm(s)"
-msgstr "إيقاف التنبيه/ات %d"
-
-#: ../src/alarm-applet.c:632
+#: ../src/alarm-applet.c:592
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s يعمل,خروج...\n"
@@ -449,46 +411,50 @@ msgstr "%s يعمل,خروج...\n"
 msgid "_Repeat: %s"
 msgstr "_تكرار: %s"
 
-#: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
+#: ../src/alarm-settings.c:245 ../src/alarm-settings.c:425
 msgid "Select sound file..."
 msgstr "اخترِ ملف صوت..."
 
-#: ../src/alarm-settings.c:297
+#: ../src/alarm-settings.c:295
 msgid "Custom command..."
 msgstr "أمر مخصص..."
 
-#: ../src/alarm.c:2029
+#: ../src/alarm.c:1685
+msgid "Could not create player! Please check your sound settings."
+msgstr ""
+
+#: ../src/alarm.c:2041
 msgid "Once"
 msgstr "مرة واحدة"
 
-#: ../src/alarm.c:2032
+#: ../src/alarm.c:2044
 msgid "Weekdays"
 msgstr "أيام الأسبوع"
 
-#: ../src/alarm.c:2035
+#: ../src/alarm.c:2047
 msgid "Weekends"
 msgstr "عُطل نهاية الاسبوع"
 
-#: ../src/alarm.c:2038
+#: ../src/alarm.c:2050
 msgid "Every day"
 msgstr "يوميا"
 
 #. About Alarm Clock
-#: ../src/ui.c:425
+#: ../src/ui.c:428
 #, c-format
 msgid "About %s"
 msgstr "حوْل %s"
 
-#: ../src/ui.c:453
+#: ../src/ui.c:456
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "ﻻ يعمل '%s': %s"
 
-#: ../src/ui.c:454
+#: ../src/ui.c:457
 msgid "Could not play"
 msgstr "ﻻ يعمل"
 
-#: ../src/ui.c:511
+#: ../src/ui.c:514
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "تستطيع إبقاف أو تعطيل المنبهات من قائمة ساعة التنبيه"

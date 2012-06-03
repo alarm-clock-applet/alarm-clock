@@ -7,18 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-20 17:50+0100\n"
-"PO-Revision-Date: 2010-03-16 18:21+0000\n"
-"Last-Translator: Ibrahim Elias <imen802003@netscape.net>\n"
+"POT-Creation-Date: 2012-06-03 16:58+0000\n"
+"PO-Revision-Date: 2011-04-03 17:48+0000\n"
+"Last-Translator: abuyop <Unknown>\n"
 "Language-Team: Malay <ms@li.org>\n"
-"Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2011-03-20 16:40+0000\n"
-"X-Generator: Launchpad (build 12617)\n"
+"X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
+"X-Generator: Launchpad (build 15342)\n"
+"Language: ms\n"
 
-#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:6
+#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:5
+#: ../src/ui.c:300
 msgid "Alarm Clock"
 msgstr "Jam Penggera"
 
@@ -26,85 +27,45 @@ msgstr "Jam Penggera"
 msgid "Wake up in the morning"
 msgstr "Bangun pada waktu pagi"
 
-#: ../data/alarm-clock.schemas.in.h:1
-msgid ""
-"A list of days when the alarm should be repeated. This settings is only "
-"applicable for \"clock\" alarms."
-msgstr ""
-"Senarai hari yang penggera perlu diulang. Keutamaan ini hanya boleh "
-"digunakan untuk penggera \"jam\"."
+#: ../data/alarm-clock.schemas.in.h:1 ../data/alarm-clock.ui.h:67
+msgid "Show countdown label"
+msgstr "Papar label kira detik"
 
 #: ../data/alarm-clock.schemas.in.h:2
-msgid "A short message which describes the alarm."
-msgstr "Mesej ringkas menyatakan tentang penggera."
+msgid ""
+"Whether to show a label on the right side of the icon with the time "
+"remaining to the next alarm."
+msgstr ""
+"Sama ada hendak paparkan label pada bahagian kanan ikon dengan masa berbaki "
+"kepada penggera berikutnya."
 
 #: ../data/alarm-clock.schemas.in.h:3
-msgid "Alarm Message"
-msgstr "Mesej Penggera"
-
-#: ../data/alarm-clock.schemas.in.h:4
-msgid "Alarm Repeat"
-msgstr "Penggera Diulang"
-
-#: ../data/alarm-clock.schemas.in.h:5
-msgid "Alarm Running State"
-msgstr "Keadaan Penggera"
-
-#: ../data/alarm-clock.schemas.in.h:6
-msgid "Alarm Time"
-msgstr "Waktu Penggera"
-
-#: ../data/alarm-clock.schemas.in.h:7
-msgid "Alarm Timestamp"
-msgstr "Timestamp Penggera"
-
-#: ../data/alarm-clock.schemas.in.h:8
 msgid "Alarm Type"
 msgstr "Jenis penggera"
 
-#: ../data/alarm-clock.schemas.in.h:9
-msgid "Alarm!"
-msgstr "Penggera!"
-
-#: ../data/alarm-clock.schemas.in.h:10
-msgid "Command"
-msgstr "Arahan"
-
-#: ../data/alarm-clock.schemas.in.h:11
-msgid "Indicates whether the alarm has started."
-msgstr "Menandakan sama ada penggera telah bermula."
-
-#: ../data/alarm-clock.schemas.in.h:12
-msgid "Notification Type"
-msgstr "Jenis Pemberitahuan"
-
-#: ../data/alarm-clock.schemas.in.h:13
-msgid "Repeat Sound"
-msgstr "Ulang Bunyi"
-
-#: ../data/alarm-clock.schemas.in.h:14 ../data/alarm-clock.ui.h:36
-msgid "Show countdown label"
+#: ../data/alarm-clock.schemas.in.h:4
+msgid ""
+"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
+"day, or \"timer\" for an alarm after a specified period of time."
 msgstr ""
+"Jenis penggera. Sama ada \"clock\" untuk penggera pada waktu tertentu "
+"sehari, atau \"timer\" bagi penggera selepas jangka masa tertentu."
 
-#: ../data/alarm-clock.schemas.in.h:15
-msgid "Sound File"
-msgstr "Fail Bunyi"
+#: ../data/alarm-clock.schemas.in.h:5
+msgid "Alarm Timestamp"
+msgstr "Timestamp Penggera"
 
-#: ../data/alarm-clock.schemas.in.h:16
+#: ../data/alarm-clock.schemas.in.h:6
 msgid ""
 "The UNIX timestamp for the alarm. Must be set before the alarm is activated."
 msgstr ""
 "Timestamp UNIX untuk penggera. Mesti diset sebelum penggera diaktifkan."
 
-#: ../data/alarm-clock.schemas.in.h:17
-msgid "The command to run for the \"command\" notification type."
-msgstr "Perintah untuk jalan bagi jenis notifikasi \"command\""
+#: ../data/alarm-clock.schemas.in.h:7
+msgid "Alarm Time"
+msgstr "Waktu Penggera"
 
-#: ../data/alarm-clock.schemas.in.h:18
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "Fail bunyi untuk main bagi jenis notifikasi \"sound\"."
-
-#: ../data/alarm-clock.schemas.in.h:19
+#: ../data/alarm-clock.schemas.in.h:8
 msgid ""
 "The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
 "seconds for \"timer\" alarms."
@@ -112,7 +73,43 @@ msgstr ""
 "Waktu untuk penggera. Hendaklah dalam GMT untuk penggera \"jam\" atau jangka "
 "masa panjang dalam saat untuk penggera \"pemasa\"."
 
-#: ../data/alarm-clock.schemas.in.h:20
+#: ../data/alarm-clock.schemas.in.h:9
+msgid "Alarm!"
+msgstr "Penggera!"
+
+#: ../data/alarm-clock.schemas.in.h:10
+msgid "Alarm Message"
+msgstr "Mesej Penggera"
+
+#: ../data/alarm-clock.schemas.in.h:11
+msgid "A short message which describes the alarm."
+msgstr "Mesej ringkas menyatakan tentang penggera."
+
+#: ../data/alarm-clock.schemas.in.h:12
+msgid "Alarm Running State"
+msgstr "Keadaan Penggera"
+
+#: ../data/alarm-clock.schemas.in.h:13
+msgid "Indicates whether the alarm has started."
+msgstr "Menandakan sama ada penggera telah bermula."
+
+#: ../data/alarm-clock.schemas.in.h:14
+msgid "Alarm Repeat"
+msgstr "Penggera Diulang"
+
+#: ../data/alarm-clock.schemas.in.h:15
+msgid ""
+"A list of days when the alarm should be repeated. This settings is only "
+"applicable for \"clock\" alarms."
+msgstr ""
+"Senarai hari yang penggera perlu diulang. Keutamaan ini hanya boleh "
+"digunakan untuk penggera \"jam\"."
+
+#: ../data/alarm-clock.schemas.in.h:16
+msgid "Notification Type"
+msgstr "Jenis Pemberitahuan"
+
+#: ../data/alarm-clock.schemas.in.h:17
 msgid ""
 "The type of notification to use when the alarm goes off. This can be one of "
 "the following: \"sound\" to play a sound (specified in the \"sound_file\" "
@@ -124,324 +121,291 @@ msgstr ""
 "\"sound_file\"). \"command\" untuk jalan perintah (dinyatakan dalam properti "
 "\"command\")."
 
-#: ../data/alarm-clock.schemas.in.h:21
-msgid ""
-"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
-"day, or \"timer\" for an alarm after a specified period of time."
-msgstr ""
-"Jenis penggera. Sama ada \"clock\" untuk penggera pada waktu tertentu "
-"sehari, atau \"timer\" bagi penggera selepas jangka masa tertentu."
+#: ../data/alarm-clock.schemas.in.h:18
+msgid "Sound File"
+msgstr "Fail Bunyi"
 
-#: ../data/alarm-clock.schemas.in.h:22
+#: ../data/alarm-clock.schemas.in.h:19
+msgid "The sound file to play for the \"sound\" notification type."
+msgstr "Fail bunyi untuk main bagi jenis notifikasi \"sound\"."
+
+#: ../data/alarm-clock.schemas.in.h:20
+msgid "Repeat Sound"
+msgstr "Ulang Bunyi"
+
+#: ../data/alarm-clock.schemas.in.h:21
 msgid "Whether to repeat the alarm sound."
 msgstr "Sama ada untuk diulangi bunyi penggera."
 
+#: ../data/alarm-clock.schemas.in.h:22
+msgid "Command"
+msgstr "Arahan"
+
 #: ../data/alarm-clock.schemas.in.h:23
-msgid ""
-"Whether to show a label on the right side of the icon with the time "
-"remaining to the next alarm."
-msgstr ""
+msgid "The command to run for the \"command\" notification type."
+msgstr "Perintah untuk jalan bagi jenis notifikasi \"command\""
 
 #: ../data/alarm-clock.ui.h:1
-msgid "1 minute"
-msgstr "1 minit"
-
-#: ../data/alarm-clock.ui.h:2
-msgid "10 minutes"
-msgstr "10 minit"
-
-#: ../data/alarm-clock.ui.h:3
-msgid "3 minutes"
-msgstr "3 minit"
-
-#: ../data/alarm-clock.ui.h:4
-msgid "5 minutes"
-msgstr "5 minit"
-
-#: ../data/alarm-clock.ui.h:5
-msgid "About Alarm Clock"
-msgstr "Perihal Alarm Clock"
-
-#: ../data/alarm-clock.ui.h:7
 msgid "Alarm Clock Preferences"
 msgstr "Keutamaan Alarm Clock"
 
-#: ../data/alarm-clock.ui.h:8
-msgid "Alarms"
-msgstr "Penggera"
-
-#: ../data/alarm-clock.ui.h:9
-msgid "Alert"
-msgstr "Waspada"
-
-#: ../data/alarm-clock.ui.h:10
-msgid "Appearance"
-msgstr ""
-
-#: ../data/alarm-clock.ui.h:11
-msgid "Co_mmand:"
-msgstr "A_rahan:"
-
-#: ../data/alarm-clock.ui.h:12
-msgid "Custom..."
-msgstr "Langganan..."
-
-#: ../data/alarm-clock.ui.h:13
-msgid "Delete"
-msgstr "Hapus"
-
-#: ../data/alarm-clock.ui.h:14
-msgid "Delete alarm"
-msgstr "Hapuskan penggera"
-
-#: ../data/alarm-clock.ui.h:15
-msgid "Delete the selected alarm"
-msgstr "Hapus penggera yang dipilih"
-
-#: ../data/alarm-clock.ui.h:16
-msgid "Edit alarm"
-msgstr "Edit penggera"
-
-#: ../data/alarm-clock.ui.h:17
-msgid "Edit the selected alarm"
-msgstr "Edit penggera yang dipilih"
-
-#: ../data/alarm-clock.ui.h:18
-msgid "Edit..."
-msgstr "Edit..."
-
-#: ../data/alarm-clock.ui.h:19
-msgid "Enable"
-msgstr "Bolehkan"
-
-#: ../data/alarm-clock.ui.h:20
-msgid "Enable/disable"
-msgstr "Enable/disable"
-
-#: ../data/alarm-clock.ui.h:21
-msgid "Enable/disable alarm"
-msgstr "Enable/disable penggera"
-
-#: ../data/alarm-clock.ui.h:22
-msgid "Enable/disable the selected alarm"
-msgstr "Enable/disable penggera yang dipiih"
-
-#: ../data/alarm-clock.ui.h:23
-msgid "Fri"
-msgstr "Jumaat"
-
-#: ../data/alarm-clock.ui.h:24
+#: ../data/alarm-clock.ui.h:2
 msgid "General"
 msgstr "Am"
 
+#: ../data/alarm-clock.ui.h:3
+msgid "Appearance"
+msgstr "Penampilan"
+
+#: ../data/alarm-clock.ui.h:4
+msgid "Edit alarm"
+msgstr "Edit penggera"
+
+#: ../data/alarm-clock.ui.h:6
+msgid "Timer"
+msgstr "Pemasa"
+
+#: ../data/alarm-clock.ui.h:7
+msgid "Wake up sleepy head!"
+msgstr "Bangunlah wahai tuan hamba!"
+
+#: ../data/alarm-clock.ui.h:8
+msgid "_Time:"
+msgstr "_Masa:"
+
+#: ../data/alarm-clock.ui.h:9
+msgid "_Name:"
+msgstr "_Nama:"
+
+#: ../data/alarm-clock.ui.h:10
+msgid "Mon"
+msgstr "Isnin"
+
+#: ../data/alarm-clock.ui.h:11
+msgid "Tue"
+msgstr "Selasa"
+
+#: ../data/alarm-clock.ui.h:12
+msgid "Wed"
+msgstr "Rabu"
+
+#: ../data/alarm-clock.ui.h:13
+msgid "Thu"
+msgstr "Khamis"
+
+#: ../data/alarm-clock.ui.h:14
+msgid "Fri"
+msgstr "Jumaat"
+
+#: ../data/alarm-clock.ui.h:15
+msgid "Sat"
+msgstr "Sabtu"
+
+#: ../data/alarm-clock.ui.h:16
+msgid "Sun"
+msgstr "Ahad"
+
+#: ../data/alarm-clock.ui.h:17
+msgid "_Repeat:"
+msgstr "_Ulang:"
+
+#: ../data/alarm-clock.ui.h:18
+msgid "Alert"
+msgstr "Waspada"
+
+#: ../data/alarm-clock.ui.h:19
+msgid "Play _sound"
+msgstr "Main _bunyi"
+
+#: ../data/alarm-clock.ui.h:20
+msgid "Repea_t sound"
+msgstr "Ulan_g bunyi"
+
+#: ../data/alarm-clock.ui.h:21
+msgid "Start _Application"
+msgstr "Mula _Aplikasi"
+
+#: ../data/alarm-clock.ui.h:22
+msgid "Co_mmand:"
+msgstr "A_rahan:"
+
+#: ../data/alarm-clock.ui.h:23
+msgid "Snooze all beeping alarms"
+msgstr "Tidur semua penggera yang berbunyi"
+
+#: ../data/alarm-clock.ui.h:24
+msgid "Stop all beeping alarms"
+msgstr "Henti semua penggera yang berbunyi"
+
 #: ../data/alarm-clock.ui.h:25
-msgid "Get up in the morning!"
-msgstr "Bangun pada waktu pagi!"
+msgid "Show _alarms"
+msgstr "Papar _penggera"
 
 #: ../data/alarm-clock.ui.h:26
 msgid "Manage your alarms"
 msgstr "Urus penggera anda"
 
 #: ../data/alarm-clock.ui.h:27
-msgid "Mon"
-msgstr "Isnin"
+msgid "_Preferences"
+msgstr "_Keutamaan"
 
 #: ../data/alarm-clock.ui.h:28
-msgid "New"
-msgstr "Baru"
+msgid "About Alarm Clock"
+msgstr "Perihal Alarm Clock"
 
 #: ../data/alarm-clock.ui.h:29
-msgid "New alarm"
-msgstr "Penggera baru"
+msgid "Get up in the morning!"
+msgstr "Bangun pada waktu pagi!"
 
 #: ../data/alarm-clock.ui.h:30
+msgid "Alarms"
+msgstr "Penggera"
+
+#: ../data/alarm-clock.ui.h:31
 msgid "New..."
 msgstr "Baru..."
 
-#: ../data/alarm-clock.ui.h:31
-msgid "Play _sound"
-msgstr "Main _bunyi"
-
 #: ../data/alarm-clock.ui.h:32
-msgid "Quit Alarm Clock"
-msgstr "Keluar dari Alarm Clock"
+msgid "Edit..."
+msgstr "Edit..."
 
 #: ../data/alarm-clock.ui.h:33
-msgid "Repea_t sound"
-msgstr "Ulan_g bunyi"
+msgid "Delete"
+msgstr "Hapus"
 
 #: ../data/alarm-clock.ui.h:34
-msgid "Sat"
-msgstr "Sabtu"
+msgid "Enable"
+msgstr "Bolehkan"
 
 #: ../data/alarm-clock.ui.h:35
-msgid "Show _alarms"
-msgstr "Papar _penggera"
+msgid "Stop"
+msgstr "Berhenti"
 
-#: ../data/alarm-clock.ui.h:37
+#: ../data/alarm-clock.ui.h:36
 msgid "Snooze"
 msgstr "Tidur"
 
+#: ../data/alarm-clock.ui.h:37
+msgid "1 minute"
+msgstr "1 minit"
+
 #: ../data/alarm-clock.ui.h:38
-msgid "Snooze alarm"
-msgstr "Tidur penggera"
+msgid "3 minutes"
+msgstr "3 minit"
 
 #: ../data/alarm-clock.ui.h:39
-msgid "Snooze alarms"
-msgstr "Tidur penggera"
+msgid "5 minutes"
+msgstr "5 minit"
 
 #: ../data/alarm-clock.ui.h:40
-msgid "Snooze all alarms"
-msgstr "Tidur semua penggera"
+msgid "10 minutes"
+msgstr "10 minit"
 
 #: ../data/alarm-clock.ui.h:41
-msgid "Snooze all beeping alarms"
-msgstr "Tidur semua penggera yang berbunyi"
+msgid "Custom..."
+msgstr "Langganan..."
 
 #: ../data/alarm-clock.ui.h:42
-msgid "Snooze for:"
-msgstr "Tidur untuk:"
+msgid "Snooze alarm"
+msgstr "Tidur penggera"
 
 #: ../data/alarm-clock.ui.h:43
 msgid "Snooze the selected alarm"
 msgstr "Tidur penggera yang dipilih"
 
 #: ../data/alarm-clock.ui.h:44
-msgid "Start _Application"
-msgstr "Mula _Aplikasi"
+msgid "Snooze for:"
+msgstr "Tidur untuk:"
 
 #: ../data/alarm-clock.ui.h:45
-msgid "Start automatically at login"
-msgstr "Mula secara automatik pada log masuk"
+msgid "minutes"
+msgstr "minit"
 
 #: ../data/alarm-clock.ui.h:46
-msgid "Stop"
-msgstr "Berhenti"
+msgid "_Snooze"
+msgstr "_Tidur"
 
 #: ../data/alarm-clock.ui.h:47
 msgid "Stop alarm"
 msgstr "Henti penggera"
 
 #: ../data/alarm-clock.ui.h:48
-msgid "Stop alarms"
-msgstr "Henti penggera-penggera"
-
-#: ../data/alarm-clock.ui.h:49
-msgid "Stop all alarms"
-msgstr "Henti semua penggera"
-
-#: ../data/alarm-clock.ui.h:50
-msgid "Stop all beeping alarms"
-msgstr "Henti semua penggera yang berbunyi"
-
-#: ../data/alarm-clock.ui.h:51
 msgid "Stop the selected alarm"
 msgstr "Henti penggera yang dipilih"
 
+#: ../data/alarm-clock.ui.h:49
+msgid "Delete alarm"
+msgstr "Hapuskan penggera"
+
+#: ../data/alarm-clock.ui.h:50
+msgid "Delete the selected alarm"
+msgstr "Hapus penggera yang dipilih"
+
+#: ../data/alarm-clock.ui.h:51
+msgid "Edit the selected alarm"
+msgstr "Edit penggera yang dipilih"
+
 #: ../data/alarm-clock.ui.h:52
-msgid "Sun"
-msgstr "Ahad"
+msgid "New alarm"
+msgstr "Penggera baru"
 
 #: ../data/alarm-clock.ui.h:53
-msgid "Thu"
-msgstr "Khamis"
+msgid "New"
+msgstr "Baru"
 
 #: ../data/alarm-clock.ui.h:54
-msgid "Timer"
-msgstr "Pemasa"
+msgid "Enable/disable alarm"
+msgstr "Enable/disable penggera"
 
 #: ../data/alarm-clock.ui.h:55
-msgid "Toggle alarms"
-msgstr "Togol penggera"
+msgid "Enable/disable"
+msgstr "Enable/disable"
 
 #: ../data/alarm-clock.ui.h:56
+msgid "Enable/disable the selected alarm"
+msgstr "Enable/disable penggera yang dipiih"
+
+#: ../data/alarm-clock.ui.h:57
+msgid "Snooze all alarms"
+msgstr "Tidur semua penggera"
+
+#: ../data/alarm-clock.ui.h:58
+msgid "Snooze alarms"
+msgstr "Tidur penggera"
+
+#: ../data/alarm-clock.ui.h:59
+msgid "Stop all alarms"
+msgstr "Henti semua penggera"
+
+#: ../data/alarm-clock.ui.h:60
+msgid "Stop alarms"
+msgstr "Henti penggera-penggera"
+
+#: ../data/alarm-clock.ui.h:61
 msgid "Toggle alarms window"
 msgstr "Togol tentingkap penggera"
 
-#: ../data/alarm-clock.ui.h:57
+#: ../data/alarm-clock.ui.h:62
+msgid "Toggle alarms"
+msgstr "Togol penggera"
+
+#: ../data/alarm-clock.ui.h:63
 msgid "Toggle the visibility of the alarms window"
 msgstr "Togol darjah penglihatan bagi tetingkap penggera"
 
-#: ../data/alarm-clock.ui.h:58
-msgid "Tue"
-msgstr "Selasa"
-
-#: ../data/alarm-clock.ui.h:59
-msgid "Wake up sleepy head!"
-msgstr "Bangunlah wahai tuan hamba!"
-
-#: ../data/alarm-clock.ui.h:60
-msgid "Wed"
-msgstr "Rabu"
-
-#: ../data/alarm-clock.ui.h:61
-msgid "_Name:"
-msgstr "_Nama:"
-
-#: ../data/alarm-clock.ui.h:62
-msgid "_Preferences"
-msgstr "_Keutamaan"
-
-#: ../data/alarm-clock.ui.h:63
+#: ../data/alarm-clock.ui.h:64
 msgid "_Quit"
 msgstr "_Keluar"
 
-#: ../data/alarm-clock.ui.h:64
-msgid "_Repeat:"
-msgstr "_Ulang:"
-
 #: ../data/alarm-clock.ui.h:65
-msgid "_Snooze"
-msgstr "_Tidur"
+msgid "Quit Alarm Clock"
+msgstr "Keluar dari Alarm Clock"
 
 #: ../data/alarm-clock.ui.h:66
-msgid "_Time:"
-msgstr "_Masa:"
+msgid "Start automatically at login"
+msgstr "Mula secara automatik pada log masuk"
 
-#: ../data/alarm-clock.ui.h:67
-msgid "minutes"
-msgstr "minit"
-
-#. Single alarm snoozed
-#: ../src/alarm-applet.c:73
-#, c-format
-msgid "%s snoozed"
-msgstr "%s telah tidur"
-
-#: ../src/alarm-applet.c:74
-#, c-format
-msgid "You can stop the alarm from the Alarm Clock menu."
-msgstr "Anda boleh hentikan penggera dari menu Alarm Clock."
-
-#. More than 1 alarm snoozed
-#: ../src/alarm-applet.c:79
-#, c-format
-msgid "Snoozed %d alarms"
-msgstr "Telah tidur %d penggera"
-
-#: ../src/alarm-applet.c:80
-#, c-format
-msgid "You can stop alarms from the Alarm Clock menu."
-msgstr "Anda boleh hentikan penggera dari menu Alarm Clock."
-
-#. Single alarm stopped
-#: ../src/alarm-applet.c:127
-#, c-format
-msgid "%s stopped"
-msgstr "%s telah berhenti"
-
-#: ../src/alarm-applet.c:128 ../src/alarm-applet.c:134
-#, c-format
-msgid "Repeating alarms will still continue according to schedule."
-msgstr "Penggera yang berulang akan berjalan sebagaimana dijadualkan."
-
-#. More than 1 alarm stopped
-#: ../src/alarm-applet.c:133
-#, c-format
-msgid "Stopped %d alarm(s)"
-msgstr "Telah berhenti %d penggera"
-
-#: ../src/alarm-applet.c:632
+#: ../src/alarm-applet.c:592
 #, c-format
 msgid "%s is already running, exiting...\n"
 msgstr "%s telah berjalan, keluar...\n"
@@ -451,50 +415,54 @@ msgstr "%s telah berjalan, keluar...\n"
 msgid "_Repeat: %s"
 msgstr "_Ulang: %s"
 
-#: ../src/alarm-settings.c:246 ../src/alarm-settings.c:427
+#: ../src/alarm-settings.c:245 ../src/alarm-settings.c:425
 msgid "Select sound file..."
 msgstr "Pilih fail bunyi..."
 
-#: ../src/alarm-settings.c:297
+#: ../src/alarm-settings.c:295
 msgid "Custom command..."
 msgstr "Perintah langganan..."
 
-#: ../src/alarm.c:2029
+#: ../src/alarm.c:1685
+msgid "Could not create player! Please check your sound settings."
+msgstr ""
+
+#: ../src/alarm.c:2041
 msgid "Once"
 msgstr "Sekali"
 
-#: ../src/alarm.c:2032
+#: ../src/alarm.c:2044
 msgid "Weekdays"
 msgstr "Hari hari bekerja"
 
-#: ../src/alarm.c:2035
+#: ../src/alarm.c:2047
 msgid "Weekends"
 msgstr "Hujung minggu"
 
-#: ../src/alarm.c:2038
+#: ../src/alarm.c:2050
 msgid "Every day"
 msgstr "Setiap hari"
 
 #. About Alarm Clock
-#: ../src/ui.c:425
+#: ../src/ui.c:428
 #, c-format
 msgid "About %s"
 msgstr "Perihal %s"
 
-#: ../src/ui.c:453
+#: ../src/ui.c:456
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "Tidak dapat main '%s': %s"
 
-#: ../src/ui.c:454
+#: ../src/ui.c:457
 msgid "Could not play"
 msgstr "Tidak dapat main"
 
-#: ../src/ui.c:511
+#: ../src/ui.c:514
 #, c-format
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "Anda boleh tidur atau hentikan penggera dari menu Alarm Clock."
 
 #: ../src/prefs.c:419
 msgid "Requires application indicators"
-msgstr ""
+msgstr "Memerlukan penunjuk aplikasi"
