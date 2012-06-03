@@ -799,6 +799,10 @@ alarm_settings_dialog_close (AlarmSettingsDialog *dialog)
 	
 //	gtk_widget_destroy (GTK_WIDGET (dialog->dialog))
 	
+
+    /* Enable the alarm when closing the dialog */
+    alarm_enable (dialog->alarm);
+
     alarm_settings_dialog_clear (dialog);
 
     gtk_widget_hide (dialog->dialog);
