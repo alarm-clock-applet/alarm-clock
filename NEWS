@@ -1,3 +1,19 @@
+Overview of changes in Alarm Clock 0.3.3  "Squish"
+===============================================================
+
+* Set app indicator title
+
+
+Bugs fixed:
+290733 - Automatically detect daylight savings time
+800635 - Let the WM decide the initial position of the list window
+823585 - Check that media player was created successfully
+908636 - Don't show notifications when alarms are stopped/snoozed
+885059 - Update timestamp when type is changed for active alarms
+977110 - Use segment seeks to prevent playback delays when looping
+824337 - Enable alarm when closing the Edit alarm dialog
+
+
 Overview of changes in Alarm Clock 0.3.2  "Indicate this"
 ===============================================================
 

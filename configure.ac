@@ -4,7 +4,7 @@
 
 m4_define([alarm_clock_major_version], [0])
 m4_define([alarm_clock_minor_version], [3])
-m4_define([alarm_clock_micro_version], [2])
+m4_define([alarm_clock_micro_version], [3])
 
 m4_define([alarm_clock_version],
           [alarm_clock_major_version.alarm_clock_minor_version.alarm_clock_micro_version])
