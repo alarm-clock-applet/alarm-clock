@@ -965,7 +965,7 @@ alarm_alarm (Alarm *alarm)
 	// Do we want to repeat this alarm?
 	if (alarm_should_repeat (alarm)) {
 		g_debug ("Alarm(%p) #%d: alarm() Repeating...", alarm, alarm->id);
-		alarm_update_timestamp_full (alarm, FALSE);
+		alarm_update_timestamp (alarm);
 	} else {
 		alarm_disable (alarm);
 	}
@@ -1785,15 +1785,15 @@ alarm_time_is_future (struct tm *tm, guint hour, guint minute, guint second)
  * Set time according to hour, min, sec and alarm->repeat
  */
 static void
-alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gboolean include_today)
+alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second)
 {
 	time_t now, new;
 	gint i, d, wday;
 	AlarmRepeat rep;
 	struct tm *tm;
 	
-	g_debug ("Alarm(%p) #%d: set_timestamp (%d, %d, %d, %d)", alarm, alarm->id,
-        hour, minute, second, include_today);
+	g_debug ("Alarm(%p) #%d: set_timestamp (%d, %d, %d)", alarm, alarm->id,
+        hour, minute, second);
 	
 	time (&now);
 	tm = localtime (&now);
@@ -1801,38 +1801,24 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	// Automatically detect Daylight Savings Time (DST)
 	tm->tm_isdst = -1;
 	
-	//i = (today == 6) ? 0 : today + 1;
-	//today--;
-	
 	if (alarm->repeat == ALARM_REPEAT_NONE) {
 		// Check if the alarm is for tomorrow
 		if (!alarm_time_is_future (tm, hour, minute, second)) {
 			
-			//if (wday < 0) {
-				g_debug("\tAlarm is for tomorrow.");
-				tm->tm_mday++;
-			/*} else {
-				// wday == tm->tm_wday
-				g_debug("alarm_set_time_full: Alarm is in 1 week.");
-				tm->tm_mday += 7;
-			}*/
+			g_debug("\tAlarm is for tomorrow.");
+			tm->tm_mday++;
 		}
 	} else {
 		// REPEAT SET: Find the closest repeat day
 		wday = -1;
 		
 		i = tm->tm_wday;
-		if (!include_today)
-			i++;
 		
 		// Try finding a day in this week
 		for (; i < 7; i++) {
 			rep = 1 << i;
 			if (alarm->repeat & rep) {
 				if (i == tm->tm_wday && !alarm_time_is_future (tm, hour, minute, second)) continue;
-				
-				// FOUND!
-				//g_debug ("\tMATCH");
 				wday = i;
 				break;
 			}
@@ -1842,9 +1828,7 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 		if (wday == -1) {
 			for (i = 0; i <= tm->tm_wday; i++) {
 				rep = 1 << i;
-				if (alarm->repeat & rep/* && alarm_time_is_future (tm, hour, minute, second)*/) {
-					// FOUND!
-					//g_debug ("\tMATCH");
+				if (alarm->repeat & rep) {
 					wday = i;
 					break;
 				}
@@ -1853,16 +1837,14 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 		
 		g_debug ("Closest WDAY = %d", wday);
 		
-		if (wday == tm->tm_wday && (!include_today || !alarm_time_is_future (tm, hour, minute, second)))
+		if (wday == tm->tm_wday && (!alarm_time_is_future (tm, hour, minute, second)))
 			wday = 7;
-		
 		
 		// Calculate distance from now to wday
 		if (wday == 7) {
 			g_debug("\tAlarm is in (forced) 1 week.");
 			d = 7;
 		} else {
-//			g_debug ("\td = tm->tm_wday(%d) - wday(%d)", tm->tm_wday, wday);
 			d = alarm_wday_distance (tm->tm_wday, wday);
 		}
 		
@@ -1875,11 +1857,6 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
 	tm->tm_min  = minute;
 	tm->tm_sec  = second;
 	
-	// DEBUG:
-	char tmp[512];
-	strftime (tmp, sizeof (tmp), "%c", tm);
-	g_debug ("\tAlarm will trigger at %s", tmp);
-	
 	new = mktime (tm);
 	g_debug ("\tSetting to %d", (gint) new);
 	g_object_set (alarm, "timestamp", new, NULL);
@@ -1890,29 +1867,17 @@ alarm_set_timestamp (Alarm *alarm, guint hour, guint minute, guint second, gbool
  * hour/min/sec according to the time value.
  */
 void
-alarm_update_timestamp_full (Alarm *alarm, gboolean include_today)
+alarm_update_timestamp (Alarm *alarm)
 {
 	if (alarm->type == ALARM_TYPE_CLOCK) {
 		struct tm *tm = alarm_get_time (alarm);
 		g_debug ("Alarm(%p) #%d: update_timestamp_full: %d:%d:%d", alarm, alarm->id,
             tm->tm_hour, tm->tm_min, tm->tm_sec);
-		alarm_set_timestamp (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec, include_today);
+		alarm_set_timestamp (alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
 	} else {
 		/* ALARM_TYPE_TIMER */
 		g_object_set (alarm, "timestamp", time(NULL) + alarm->time, NULL);
 	}
-}
-
-/*
- * Update the alarm timestamp to point to the nearest future
- * hour/min/sec according to the time value.
- * 
- * Equivalent to alarm_update_timestamp_full (alarm, TRUE)
- */
-void
-alarm_update_timestamp (Alarm *alarm)
-{
-	alarm_update_timestamp_full (alarm, TRUE);
 }
 
 /*
