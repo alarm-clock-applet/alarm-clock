@@ -745,11 +745,18 @@ alarm_settings_sound_preview (GtkButton *button, gpointer data)
 		media_player_stop (dialog->player);
 	} else {
 		// Start preview player
-		if (dialog->player == NULL)
+		if (dialog->player == NULL) {
 			dialog->player = media_player_new (dialog->alarm->sound_file,
 											   dialog->alarm->sound_loop,
 											   preview_player_state_cb, dialog,
 											   media_player_error_cb, dialog->dialog);
+			if (dialog->player == NULL) {
+				// Unable to create player
+				alarm_error_trigger (dialog->alarm, ALARM_ERROR_PLAY, 
+					_("Could not create player! Please check your sound settings."));
+				return;
+			}
+		}
 	
 		g_debug ("AlarmSettingsDialog: preview_start...");
 		media_player_start (dialog->player);

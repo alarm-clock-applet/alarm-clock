@@ -922,7 +922,7 @@ alarm_error_quark (void)
 static void
 alarm_error (Alarm *alarm, GError *err)
 {
-	g_debug ("Alarm(%p) #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
+	g_critical ("Alarm(%p) #%d: alarm_error: #%d: %s", alarm, alarm->id, err->code, err->message);
 }
 
 void

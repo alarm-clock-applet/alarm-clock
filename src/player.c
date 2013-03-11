@@ -86,6 +86,8 @@ media_player_new (const gchar *uri, gboolean loop,
 void
 media_player_free (MediaPlayer *player)
 {
+	g_assert(player);
+
 	if (player->player)
 		gst_object_unref (GST_OBJECT (player->player));
 	
@@ -98,6 +100,8 @@ media_player_free (MediaPlayer *player)
 void
 media_player_set_uri (MediaPlayer *player, const gchar *uri)
 {
+	g_assert(player);
+
 	g_object_set (player->player, "uri", uri, NULL);
 }
 
@@ -110,6 +114,8 @@ gchar *
 media_player_get_uri (MediaPlayer *player)
 {
 	gchar *uri;
+
+	g_assert(player);
 	
 	g_object_get (player->player, "uri", &uri, NULL);
 	
@@ -122,6 +128,8 @@ media_player_get_uri (MediaPlayer *player)
 void
 media_player_set_state (MediaPlayer *player, MediaPlayerState state)
 {
+	g_assert(player);
+
 	MediaPlayerState old = player->state;
 	
 	player->state = state;
@@ -232,6 +240,8 @@ media_player_start (MediaPlayer *player)
 {
 	GstBus *bus;
 	
+	g_assert(player);
+
 	// Attach bus watcher
 	bus = gst_pipeline_get_bus (GST_PIPELINE (player->player));
 	player->watch_id = gst_bus_add_watch (bus, (GstBusFunc) media_player_bus_cb, player);
@@ -247,6 +257,8 @@ media_player_start (MediaPlayer *player)
 void
 media_player_stop (MediaPlayer *player)
 {
+	g_assert(player);
+
 	if (player->watch_id) {
 		g_source_remove (player->watch_id);
 		
