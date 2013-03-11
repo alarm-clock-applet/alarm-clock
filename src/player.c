@@ -61,9 +61,9 @@ media_player_new (const gchar *uri, gboolean loop,
 	gst_init (NULL, NULL);
 	
 	/* Set up player */
-	player->player	= gst_element_factory_make ("playbin2", "player");
-	audiosink 		= gst_element_factory_make ("gconfaudiosink", "player-audiosink");
-	videosink 		= gst_element_factory_make ("gconfvideosink", "player-videosink");
+	player->player	= gst_element_factory_make ("playbin", "player");
+	audiosink 		= gst_element_factory_make ("autoaudiosink", "player-audiosink");
+	videosink 		= gst_element_factory_make ("autovideosink", "player-videosink");
 	
 	if (!player->player || !audiosink || !videosink) {
 		g_critical ("Could not create player.");
