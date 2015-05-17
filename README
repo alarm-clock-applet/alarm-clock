@@ -13,7 +13,7 @@ You need at least:
     gconf-2.0
     gio-2.0
     gnome-icon-theme
-    gstreamer-0.10.2
+    gstreamer-1.0
     libnotify-0.4.1
     libxml-2.0
     unique-1.0

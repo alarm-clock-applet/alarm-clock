@@ -1,3 +1,11 @@
+Overview of changes in Alarm Clock 0.3.4  "Hipp, hipp"
+===============================================================
+
+Bugs fixed:
+1122500 - Don't cancel the next alarm if alarm triggers a day late
+1137453 - Port to GStreamer 1.0
+
+
 Overview of changes in Alarm Clock 0.3.3  "Squish"
 ===============================================================
 
