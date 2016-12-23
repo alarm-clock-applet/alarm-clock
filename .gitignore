@@ -2,3 +2,5 @@ Makefile
 Makefile.in
 *.gmo
 alarm-clock*tar.gz*
+*.[oa]
+*~
