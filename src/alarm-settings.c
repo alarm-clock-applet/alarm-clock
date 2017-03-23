@@ -49,6 +49,21 @@ void
 alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data);
 
 void
+set_repeat_toggle_buttons(AlarmSettingsDialog *dialog, AlarmRepeat repeat);
+
+void
+alarm_settings_repeat_all (GtkButton *button, gpointer data);
+
+void
+alarm_settings_repeat_weekday (GtkButton *button, gpointer data);
+
+void
+alarm_settings_repeat_weekend (GtkButton *button, gpointer data);
+
+void
+alarm_settings_repeat_clear (GtkButton *button, gpointer data);
+
+void
 alarm_settings_changed_notify_type (GtkToggleButton *togglebutton, gpointer data);
 
 void
@@ -575,6 +590,74 @@ alarm_settings_changed_repeat (GtkToggleButton *togglebutton, gpointer data)
 		new_rep = dialog->alarm->repeat & ~rep;
 	
 	g_object_set (dialog->alarm, "repeat", new_rep, NULL);
+}
+
+
+void
+set_repeat_toggle_buttons(AlarmSettingsDialog *dialog, AlarmRepeat repeat)
+{
+    AlarmRepeat r;
+    gint i;
+    gboolean check;
+
+    for (r = ALARM_REPEAT_SUN, i = 0; r <= ALARM_REPEAT_SAT; r = 1 << ++i) {
+        check = (repeat & r) != 0;
+        g_object_set (dialog->repeat_check[i], "active", check, NULL);
+    }
+}
+
+void
+alarm_settings_repeat_all (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+
+    g_assert (dialog->alarm != NULL);
+    g_debug("Changed repeat to All");
+ 
+    set_repeat_toggle_buttons(dialog, ALARM_REPEAT_ALL);
+    g_object_set (dialog->alarm, "repeat", ALARM_REPEAT_ALL, NULL);
+    
+}
+
+void
+alarm_settings_repeat_weekday (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+
+    g_assert (dialog->alarm != NULL);
+    g_debug("Changed repeat to Weekdays");
+
+    set_repeat_toggle_buttons(dialog, ALARM_REPEAT_WEEKDAYS);
+    g_object_set (dialog->alarm, "repeat", ALARM_REPEAT_WEEKDAYS, NULL);
+}
+
+void
+alarm_settings_repeat_weekend (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+
+    g_assert (dialog->alarm != NULL);
+    
+    g_debug("Changed repeat to Weekends");
+
+    set_repeat_toggle_buttons(dialog, ALARM_REPEAT_WEEKENDS);
+    g_object_set (dialog->alarm, "repeat", ALARM_REPEAT_WEEKENDS, NULL);
+}
+
+void
+alarm_settings_repeat_clear (GtkButton *button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+
+    g_assert (dialog->alarm != NULL);
+    g_debug("Changed repeat to None");
+
+    set_repeat_toggle_buttons(dialog, ALARM_REPEAT_NONE);
+    g_object_set (dialog->alarm, "repeat", ALARM_REPEAT_NONE, NULL);
 }
 
 void
