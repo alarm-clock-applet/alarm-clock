@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 12:32-0700\n"
+"POT-Creation-Date: 2017-03-24 00:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -307,8 +307,8 @@ msgstr ""
 msgid "Sun"
 msgstr ""
 
-#: ../data/alarm-clock.ui.h:47
-msgid "Every Day"
+#: ../data/alarm-clock.ui.h:47 ../src/alarm.c:2015
+msgid "Every day"
 msgstr ""
 
 #: ../data/alarm-clock.ui.h:48 ../src/alarm.c:2009
@@ -427,10 +427,6 @@ msgstr ""
 
 #: ../src/alarm-settings.c:839 ../src/alarm.c:1685
 msgid "Could not create player! Please check your sound settings."
-msgstr ""
-
-#: ../src/alarm.c:2015
-msgid "Every day"
 msgstr ""
 
 #. About Alarm Clock
