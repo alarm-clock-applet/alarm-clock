@@ -127,6 +127,7 @@ struct _AlarmApplet {
     GtkToggleAction *action_toggle_list_win;
     GtkToggleAction *action_toggle_autostart;
     GtkToggleAction *action_toggle_show_label;
+    GtkToggleAction *action_toggle_time_format_12h;
 };
 
 void alarm_applet_sounds_load (AlarmApplet *applet);

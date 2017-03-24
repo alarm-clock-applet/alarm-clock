@@ -26,6 +26,8 @@
 
 #include "alarm-applet.h"
 
+#define TIME_FORMAT_12H_DEFAULT FALSE
+
 void
 prefs_init (AlarmApplet *applet);
 
@@ -43,5 +45,12 @@ prefs_show_label_get (AlarmApplet *applet);
 
 void
 prefs_show_label_set (AlarmApplet *applet, gboolean state);
+
+gboolean
+prefs_time_format_12h_get (AlarmApplet *applet);
+
+void
+prefs_time_format_12h_set (AlarmApplet *applet, gboolean state);
+
 
 #endif /*PREFS_H_*/

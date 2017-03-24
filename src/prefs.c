@@ -26,7 +26,7 @@
 
 #include <config.h>
 #include "prefs.h"
-
+#include "alarm-settings.h"
 
 void
 prefs_autostart_init (AlarmApplet *applet);
@@ -48,6 +48,17 @@ void
 prefs_show_label_changed (GConfClient *client, guint cnxn_id,
 						  GConfEntry *entry, AlarmApplet *applet);
 
+void
+prefs_time_format_12h_init (AlarmApplet *applet);
+
+void
+prefs_time_format_12h_update (AlarmApplet *applet);
+
+void
+prefs_time_format_12h_changed (GConfClient *client, guint cnxn_id,
+                               GConfEntry *entry, AlarmApplet *applet);
+
+
 /**
  * Initialize preferences dialog and friends
  */
@@ -59,6 +70,7 @@ prefs_init (AlarmApplet *applet)
 
 	prefs_autostart_init (applet);
 	prefs_show_label_init (applet);
+    prefs_time_format_12h_init (applet);
 }
 
 // Ordered list of autostart files we watch for
@@ -489,6 +501,115 @@ prefs_show_label_changed (GConfClient  *client,
 
 	prefs_show_label_update (applet);
 }
+
+
+/*
+ * Initialize time format preference
+ */
+void
+prefs_time_format_12h_init (AlarmApplet *applet)
+{
+    GConfClient *client = gconf_client_get_default ();
+    GConfValue *value;
+
+    // create time format in the preferences if it doesn't yet exist
+    value = gconf_client_get(client, ALARM_GCONF_DIR "/time_format_12h", NULL);
+    if (value == NULL)
+        gconf_client_set_bool (client, ALARM_GCONF_DIR "/time_format_12h", 
+                               TIME_FORMAT_12H_DEFAULT, NULL);
+
+    // Monitor gconf key
+    gconf_client_notify_add (
+            client, ALARM_GCONF_DIR "/time_format_12h",
+            (GConfClientNotifyFunc) prefs_time_format_12h_changed,
+            applet, NULL, NULL);
+
+    // Update toggle button state
+    prefs_time_format_12h_update (applet);
+
+    g_object_unref(client);
+}
+
+/*
+ * Get the current time format state from GConf
+ */
+gboolean
+prefs_time_format_12h_get (AlarmApplet *applet)
+{
+    GConfClient *client = gconf_client_get_default ();
+    GConfValue *value;
+    gboolean state;
+
+    // Get config value
+    value = gconf_client_get (client, ALARM_GCONF_DIR "/time_format_12h", NULL);
+    if (value == NULL) {
+        g_warning ("Get %s failed", ALARM_GCONF_DIR "/time_format_12h");
+        g_object_unref(client);
+        // fall back on preferences window setting or, last resort, default
+        if (applet->action_toggle_time_format_12h == NULL)
+            return TIME_FORMAT_12H_DEFAULT;
+        else
+            return gtk_toggle_action_get_active (applet->action_toggle_time_format_12h);
+    }
+
+    state = gconf_value_get_bool (value);
+    gconf_value_free (value);
+    g_object_unref(client);
+
+    return state;
+}
+
+/*
+ * Set time format state in GConf
+ */
+void
+prefs_time_format_12h_set (AlarmApplet *applet, gboolean state)
+{
+    GConfClient *client = gconf_client_get_default ();
+    gboolean current_state = prefs_time_format_12h_get (applet);
+
+    if (current_state == state) {
+        // No change
+        g_object_unref(client);
+        return;
+    }
+
+    // Set config value
+    gconf_client_set_bool (client, ALARM_GCONF_DIR "/time_format_12h", state, NULL);
+    g_object_unref(client);
+}
+
+/*
+ * Update time format toggle button state
+ */
+void
+prefs_time_format_12h_update (AlarmApplet *applet)
+{
+    gboolean state = gtk_toggle_action_get_active (applet->action_toggle_time_format_12h);
+    gboolean new_state = prefs_time_format_12h_get (applet);
+
+    g_debug ("Preferences: Time format update: new state: %d", new_state);
+
+    if (state != new_state) {
+        gtk_toggle_action_set_active (applet->action_toggle_time_format_12h, new_state);
+        // in case a settings dialog is currently open for an alarm
+        if (applet->settings_dialog->alarm != NULL) {
+            alarm_settings_update_time_format (applet->settings_dialog);
+        }
+    }
+}
+
+void
+prefs_time_format_12h_changed (GConfClient  *client,
+                               guint         cnxn_id,
+                               GConfEntry   *entry,
+                               AlarmApplet  *applet)
+{
+    g_debug ("time_format_12h_changed");
+
+    prefs_time_format_12h_update (applet);
+}
+
 
 /**
  * Show preferences dialog

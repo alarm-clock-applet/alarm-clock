@@ -24,6 +24,7 @@
 #include "alarm-actions.h"
 #include "alarm-applet.h"
 #include "alarm-list-window.h"
+#include "alarm-settings.h"
 
 #define GET_ACTION(name) GTK_ACTION (gtk_builder_get_object (builder, (name)))
 
@@ -65,6 +66,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
 
     applet->action_toggle_autostart = GTK_TOGGLE_ACTION (GET_ACTION ("autostart-action"));
     applet->action_toggle_show_label = GTK_TOGGLE_ACTION (GET_ACTION ("show-label-action"));
+    applet->action_toggle_time_format_12h = GTK_TOGGLE_ACTION (GET_ACTION ("hour-format-action"));
 
     gtk_action_group_add_action (applet->actions_global, applet->action_new);
     gtk_action_group_add_action (applet->actions_global, applet->action_stop_all);
@@ -73,6 +75,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
         GTK_ACTION (applet->action_toggle_list_win), "Escape");
     gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_autostart));
     gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_show_label));
+    gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_time_format_12h));
 
     gtk_action_connect_accelerator (GTK_ACTION (applet->action_toggle_list_win));
     
@@ -364,12 +367,28 @@ alarm_action_toggle_show_label (GtkAction *action, gpointer data)
 	}
 }
 
+/*
+ * Toggle time format (24-hour vs 12-hour)
+ */
+void
+alarm_action_toggle_time_format_12h (GtkAction *action, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+    gboolean time_format_state = prefs_time_format_12h_get(applet);
+    AlarmSettingsDialog *settings_dialog = applet->settings_dialog;
 
+    g_debug ("AlarmAction: toggle time_format_12h to %d", active);
 
+    if (active != time_format_state) {
+        g_debug ("AlarmAction: set time_format_12h to %d!", active);
+        prefs_time_format_12h_set (applet, active);
 
-
-
-
+        // update the time display format if a settings dialog is open for an alarm
+        if (settings_dialog->alarm != NULL)
+            alarm_settings_update_time_format (settings_dialog);
+    }
+}
 
 /**
  * Update actions to a consistent state

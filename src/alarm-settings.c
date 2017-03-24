@@ -25,6 +25,7 @@
 #include "alarm-applet.h"
 #include "alarm.h"
 #include "player.h"
+#include "prefs.h"
 
 #include <glib.h>
 #include <glib-object.h>
@@ -41,6 +42,9 @@ alarm_settings_changed_type (GtkToggleButton *toggle, gpointer data);
 
 void
 alarm_settings_changed_label (GtkEditable *editable, gpointer data);
+
+void
+am_pm_button_clicked (GtkButton *am_pm_button, gpointer data);
 
 void
 alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data);
@@ -92,12 +96,30 @@ alarm_settings_changed_app (GtkComboBox *combo, gpointer data);
 
 
 #define REPEAT_LABEL	_("_Repeat: %s")
-
+#define AM_PM_LABEL_24H "24 Hr"
 
 
 /*
  * Utility functions for updating various parts of the settings dialog.
  */
+
+void
+alarm_settings_update_time_format (AlarmSettingsDialog *dialog)
+{
+    gboolean time_format_12h = prefs_time_format_12h_get (dialog->applet);
+
+    // only enable the am/pm button if alarm in 12 hour mode
+    if (dialog->alarm->type == ALARM_TYPE_CLOCK && time_format_12h) {
+        alarm_settings_update_time (dialog);
+        gtk_widget_set_sensitive (dialog->am_pm_button, TRUE);
+        gtk_spin_button_set_range (GTK_SPIN_BUTTON (dialog->hour_spin), 1, 12);
+    } else {
+        gtk_widget_set_sensitive (dialog->am_pm_button, FALSE);
+        gtk_spin_button_set_range (GTK_SPIN_BUTTON (dialog->hour_spin), 0, 23);
+        alarm_settings_update_time (dialog);
+        gtk_button_set_label (GTK_BUTTON (dialog->am_pm_button), AM_PM_LABEL_24H);
+    }
+}
 
 static void
 alarm_settings_update_type (AlarmSettingsDialog *dialog)
@@ -124,7 +146,9 @@ alarm_settings_update_type (AlarmSettingsDialog *dialog)
 		gtk_widget_set_sensitive(dialog->repeat_expand, TRUE);
 	} else {
 		gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
-	}
+    }
+
+    alarm_settings_update_time_format (dialog);
 }
 
 static void
@@ -148,17 +172,38 @@ alarm_settings_update_time (AlarmSettingsDialog *dialog)
 	gint hour = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->hour_spin));
 	gint min = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->min_spin));
 	gint sec = gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (dialog->sec_spin));
+    gboolean time_format_12h = prefs_time_format_12h_get (dialog->applet);
+    const gchar *am_pm_label = gtk_button_get_label (GTK_BUTTON (dialog->am_pm_button));
 
-	if (tm->tm_hour == hour && tm->tm_min == min && tm->tm_sec == sec) {
+    // convert to 24 hour format if this is an alarm clock in 12 hour mode
+    if (dialog->alarm->type == ALARM_TYPE_CLOCK && time_format_12h) {
+        if (!strcmp(am_pm_label, AM_PM_LABEL_24H)) {
+            // switching from a 24 hour clock, update the time
+            hour = -1;
+        } else {
+            int is_pm = !strcmp(am_pm_label, "PM");
+            hour = HOUR_12_TO_24(hour, is_pm);
+        }
+    }
+
+    if (tm->tm_hour == hour && tm->tm_min == min && tm->tm_sec == sec) {
 		// No change
 		return;
 	}
 
-    g_debug ("AlarmSettingsDialog: update_time() to %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
-	
-	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), tm->tm_hour);
+	g_debug ("AlarmSettingsDialog: update_time() to %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->min_spin), tm->tm_min);
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->sec_spin), tm->tm_sec);
+
+    hour = tm->tm_hour;
+    // convert hour to 12 hour format and set am/pm if an alarm clock in 12-hour mode
+    if (dialog->alarm->type == ALARM_TYPE_CLOCK && time_format_12h) {
+        char *am_pm_text;
+        if (IS_HOUR_PM (hour)) am_pm_text = "PM"; else am_pm_text = "AM";
+        hour = HOUR_24_TO_12 (hour);
+        gtk_button_set_label (GTK_BUTTON (dialog->am_pm_button), am_pm_text);
+    }
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (dialog->hour_spin), hour);
 }
 
 static void
@@ -353,7 +398,7 @@ alarm_settings_update (AlarmSettingsDialog *dialog)
 {
 	alarm_settings_update_type (dialog);
     alarm_settings_update_label (dialog);
-	alarm_settings_update_time (dialog);
+    alarm_settings_update_time_format (dialog);
 	alarm_settings_update_repeat (dialog);
 	alarm_settings_update_notify_type (dialog);
 	alarm_settings_update_sound (dialog);
@@ -497,6 +542,8 @@ alarm_settings_changed_type (GtkToggleButton *toggle, gpointer data)
             gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
         }
     }
+
+    alarm_settings_update_time_format (dialog);
 }
 
 void
@@ -517,12 +564,48 @@ alarm_settings_changed_label (GtkEditable *editable,
 }
 
 void
+am_pm_button_clicked (GtkButton *am_pm_button, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmSettingsDialog *dialog = applet->settings_dialog;
+    guint min, sec;
+    struct tm *tm;
+    const gchar *am_pm_label;
+    gboolean is_pm;
+
+    g_assert (dialog->alarm != NULL);
+    
+    tm = alarm_get_time(dialog->alarm);
+    min = tm->tm_min;
+    sec = tm->tm_sec;
+
+    am_pm_label = gtk_button_get_label (GTK_BUTTON (dialog->am_pm_button));
+    is_pm = !strcmp(am_pm_label, "PM");
+
+    // toggle the button label
+    if (is_pm) {
+        gtk_button_set_label (GTK_BUTTON (dialog->am_pm_button), "AM");
+        is_pm = FALSE;
+    } else {
+        gtk_button_set_label (GTK_BUTTON (dialog->am_pm_button), "PM");
+        is_pm = TRUE;
+    }
+
+    // convert time to 24 hour format
+    gint hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
+    hour = HOUR_12_TO_24 (hour, is_pm);
+        
+    alarm_set_time (dialog->alarm, hour, min, sec);
+}
+        
+void
 alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
 	AlarmSettingsDialog *dialog = applet->settings_dialog;
 	guint hour, min, sec;
-	struct tm *tm;
+    struct tm *tm;
+    gboolean time_format_12h = prefs_time_format_12h_get (applet);
 
     g_assert (dialog->alarm != NULL);
     
@@ -533,7 +616,13 @@ alarm_settings_changed_time (GtkSpinButton *spinbutton, gpointer data)
 
     // Check which spin button emitted the signal
     if (GTK_WIDGET (spinbutton) == dialog->hour_spin) {
-		hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
+        hour = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->hour_spin));
+        // convert to 24 hour format if this is an alarm clock in 12 hour format
+        if (dialog->alarm->type == ALARM_TYPE_CLOCK && time_format_12h) {
+            const gchar *am_pm_label = gtk_button_get_label (GTK_BUTTON (dialog->am_pm_button));
+            gboolean is_pm = !strcmp(am_pm_label, "PM");
+            hour = HOUR_12_TO_24 (hour, is_pm);
+        }
     } else if (GTK_WIDGET (spinbutton) == dialog->min_spin) {
     	min = gtk_spin_button_get_value (GTK_SPIN_BUTTON (dialog->min_spin));
     } else if (GTK_WIDGET (spinbutton) == dialog->sec_spin) {
@@ -963,8 +1052,9 @@ alarm_settings_dialog_new (AlarmApplet *applet)
 	dialog->hour_spin = GTK_WIDGET (gtk_builder_get_object (builder, "hour-spin"));
 	dialog->min_spin = GTK_WIDGET (gtk_builder_get_object (builder, "minute-spin"));
 	dialog->sec_spin = GTK_WIDGET (gtk_builder_get_object (builder, "second-spin"));
-	
-	// REPEAT SETTINGS
+	dialog->am_pm_button = GTK_WIDGET (gtk_builder_get_object (builder, "am-pm-button"));
+    
+    // REPEAT SETTINGS
 	dialog->repeat_expand = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-expand"));
 	dialog->repeat_label  = GTK_WIDGET (gtk_builder_get_object (builder, "repeat-label"));
 	
