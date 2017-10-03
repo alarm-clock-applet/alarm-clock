@@ -72,6 +72,11 @@ typedef enum {
 	LABEL_TYPE_REMAIN,
 } LabelType;
 
+typedef enum {
+	UNIQUE_STOP_ALL = 1,
+	UNIQUE_SNOOZE_ALL,
+} UniqueCustomCommandID;
+
 struct _AlarmApplet {
 	/* Unique app */
 	UniqueApp *unique_app;

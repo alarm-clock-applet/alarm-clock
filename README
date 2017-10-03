@@ -40,3 +40,19 @@ Compile with the usual:
 ./configure
 make
 make install
+
+Usage
+-----
+
+```sh
+# start applet
+alarm-clock-applet
+
+# stop all alarms
+alarm-clock-applet --stop-all
+
+# snooze all alarms
+alarm-clock-applet --snooze-all
+
+```
+
