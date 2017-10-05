@@ -549,6 +549,16 @@ unique_app_message_cb (UniqueApp         *app,
             
             res = UNIQUE_RESPONSE_OK;
             break;
+        case UNIQUE_STOP_ALL:
+            g_debug ("AlarmApplet: unique_app_message: STOP_ALARMS");
+            gtk_action_activate (GTK_ACTION (applet->action_stop_all));
+            res = UNIQUE_RESPONSE_OK;
+            break;
+        case UNIQUE_SNOOZE_ALL:
+            g_debug ("AlarmApplet: unique_app_message: SNOOZE_ALARMS");
+            gtk_action_activate (GTK_ACTION (applet->action_snooze_all));
+            res = UNIQUE_RESPONSE_OK;
+            break;
         default:
             g_warning ("AlarmApplet: unique_app_message: Unknown command %d",
                 command);
@@ -576,32 +586,20 @@ alarm_applet_init (int *argc, char ***argv)
 	GOptionContext *context;
 
 	gboolean hidden = FALSE;     // Start hidden
+	gboolean stop_all = FALSE;   // Stop all alarms
+	gboolean snooze_all = FALSE; // Snooze all alarms
 
     // Command line options
 	GOptionEntry entries[] =
 	{
 		{ "hidden", 0, 0, G_OPTION_ARG_NONE, &hidden, "Start hidden", NULL },
+		{ "stop-all", 0, 0, G_OPTION_ARG_NONE, &stop_all, "Stop all alarms",
+			NULL },
+		{ "snooze-all", 0, 0, G_OPTION_ARG_NONE, &snooze_all,
+			"Snooze all alarms", NULL },
 		{ NULL }
 	};
 
-	// Initialize unique app
-	unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
-
-	// Check if we're already running
-	if (unique_app_is_running (unique_app)) {
-		g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
-
-		// Send activate message
-		UniqueMessageData *message = unique_message_data_new ();
-
-		unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
-
-		unique_message_data_free (message);
-		g_object_unref (unique_app);
-
-		exit (EXIT_SUCCESS);
-	}
-	
 	// Parse command-line arguments
 	context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
@@ -612,6 +610,31 @@ alarm_applet_init (int *argc, char ***argv)
 		exit (EXIT_FAILURE);
 	}
 
+	// Initialize unique app
+	unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
+	unique_app_add_command(unique_app, "StopAllAlarms", UNIQUE_STOP_ALL);
+	unique_app_add_command(unique_app, "SnoozeAllAlarms", UNIQUE_SNOOZE_ALL);
+
+	// Check if we're already running
+	if (unique_app_is_running (unique_app)) {
+		// Send activate message
+		UniqueMessageData *message = unique_message_data_new ();
+
+		if (stop_all) {
+			unique_app_send_message (unique_app, UNIQUE_STOP_ALL, message);
+		} else if (snooze_all) {
+			unique_app_send_message (unique_app, UNIQUE_SNOOZE_ALL, message);
+		} else {
+			g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
+			unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
+		}
+
+		unique_message_data_free (message);
+		g_object_unref (unique_app);
+
+		exit (EXIT_SUCCESS);
+	}
+	
 	// Initialize applet struct
 	applet = g_new0 (AlarmApplet, 1);
 
