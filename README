@@ -44,15 +44,15 @@ make install
 Usage
 -----
 
-```sh
 # start applet
 alarm-clock-applet
+
+# start applet with main window hidden
+alarm-clock-applet --hidden
 
 # stop all alarms
 alarm-clock-applet --stop-all
 
 # snooze all alarms
 alarm-clock-applet --snooze-all
-
-```
 
