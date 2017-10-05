@@ -612,8 +612,8 @@ alarm_applet_init (int *argc, char ***argv)
 
 	// Initialize unique app
 	unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
-	unique_app_add_command(unique_app, "stop all alarms", UNIQUE_STOP_ALL);
-	unique_app_add_command(unique_app, "snooze all alarms", UNIQUE_SNOOZE_ALL);
+	unique_app_add_command(unique_app, "StopAllAlarms", UNIQUE_STOP_ALL);
+	unique_app_add_command(unique_app, "SnoozeAllAlarms", UNIQUE_SNOOZE_ALL);
 
 	// Check if we're already running
 	if (unique_app_is_running (unique_app)) {
