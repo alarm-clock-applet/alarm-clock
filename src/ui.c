@@ -37,6 +37,7 @@ enum
 };
 
 static void alarm_applet_status_init (AlarmApplet *applet);
+static gchar* gen_triggered_alarm_tooltip (AlarmApplet *applet);
 
 /*
  * Load a user interface by name
@@ -233,6 +234,34 @@ alarm_applet_label_update (AlarmApplet *applet)
 #endif
 }
 
+/**
+ * Generate tooltip message of trigged alarms
+ */
+static gchar*
+gen_triggered_alarm_tooltip (AlarmApplet *applet)
+{
+    GList *l;
+    Alarm *a;
+    gchar **msg;
+    gchar *result;
+    GPtrArray *msg_array = g_ptr_array_new();
+
+    // Loop through alarms and collect messages
+    for (l = applet->alarms; l; l = l->next) {
+        a = ALARM (l->data);
+        if (a->triggered) {
+            g_ptr_array_add(msg_array, a->message);
+        }
+    }
+    g_ptr_array_add(msg_array, NULL);
+    msg = (gchar **) g_ptr_array_free(msg_array, FALSE);
+
+    result = g_strjoinv("\n", msg);
+    g_free(msg);
+
+    return result;
+}
+
 /*
  * Updates label etc
  */
@@ -245,10 +274,6 @@ alarm_applet_ui_update (AlarmApplet *applet)
 
 	return TRUE;
 }
-
-
-
-
 
 void
 alarm_applet_ui_init (AlarmApplet *applet)
@@ -322,13 +347,20 @@ alarm_applet_status_update (AlarmApplet *applet)
 	    app_indicator_set_status (applet->app_indicator, APP_INDICATOR_STATUS_ACTIVE);
 	}
 #else
+    gchar *tooltip;
+
     if (applet->n_triggered > 0) {
         gtk_status_icon_set_from_icon_name (applet->status_icon, TRIGGERED_ICON);
     } else {
         gtk_status_icon_set_from_icon_name (applet->status_icon, ALARM_ICON);
     }
+    tooltip = gen_triggered_alarm_tooltip(applet);
+    gtk_status_icon_set_tooltip(applet->status_icon, tooltip);
+    g_free(tooltip);
+
     gtk_status_icon_set_blinking (applet->status_icon, applet->n_triggered > 0);
 #endif
+
 }
 
 /*
