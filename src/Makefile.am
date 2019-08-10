@@ -9,7 +9,8 @@ AM_CFLAGS =	                        \
 	-DALARM_CLOCK_DATADIR=\"$(datadir)\"            \
 	-DALARM_CLOCK_PKGDATADIR=\"$(pkgdatadir)\"      \
 	@BASE_CFLAGS@ @GTK_CFLAGS@ @GSTREAMER_CFLAGS@   \
-	@GNOME_CFLAGS@ @APP_INDICATOR_CFLAGS@ @WARN_CFLAGS@
+	@GNOME_CFLAGS@ @APP_INDICATOR_CFLAGS@ @WARN_CFLAGS@ \
+ 	-Wno-format-y2k
 
 LDADD =		\
 	@BASE_LIBS@ @GTK_LIBS@ @GSTREAMER_LIBS@         \
