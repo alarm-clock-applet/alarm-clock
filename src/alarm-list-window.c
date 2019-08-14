@@ -236,7 +236,6 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     struct tm *tm;
     
     const gchar *type_col;
-    const gchar *time_format;    
     GString *time_col;
     gchar *label_col;
 
@@ -254,15 +253,13 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     
     if (a->type == ALARM_TYPE_CLOCK) {
         type_col = ALARM_ICON;
-        time_format = TIME_COL_CLOCK_FORMAT;
+        strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, tm);
     } else {
         type_col = TIMER_ICON;
-        time_format = TIME_COL_TIMER_FORMAT;
+        strftime(tmp, sizeof(tmp), TIME_COL_TIMER_FORMAT, tm);
     }
 
     // Create time column
-    strftime(tmp, sizeof(tmp), time_format, tm);
-
     time_col = g_string_new (tmp);
     if (a->type == ALARM_TYPE_CLOCK && a->repeat != ALARM_REPEAT_NONE) {
         tmp2 = alarm_repeat_to_pretty (a->repeat);
