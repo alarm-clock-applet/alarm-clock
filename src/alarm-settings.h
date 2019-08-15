@@ -42,8 +42,8 @@ struct _AlarmSettingsDialog {
 	GtkWidget *dialog;
 	GtkWidget *clock_toggle, *timer_toggle;
 	GtkWidget *label_entry;
-	GtkWidget *hour_spin, *min_spin, *sec_spin;
-	
+	GtkWidget *hour_spin, *min_spin, *sec_spin, *am_pm_button;
+
 	/* Repeat */
 	GtkWidget *repeat_expand;
 	GtkWidget *repeat_label;
@@ -85,5 +85,8 @@ alarm_settings_sound_preview (GtkButton *button, gpointer data);
 
 void
 alarm_settings_dialog_response (GtkDialog *dialog, gint rid, gpointer data);
+
+void
+alarm_settings_update_time_format (AlarmSettingsDialog *dialog);
 
 #endif /*EDITALARM_H_*/

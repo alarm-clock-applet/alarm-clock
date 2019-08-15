@@ -26,6 +26,7 @@
 #include "alarm-list-window.h"
 #include "alarm-settings.h"
 #include "alarm-actions.h"
+#include "prefs.h"
 
 gboolean
 alarm_list_window_delete_event (GtkWidget *window, GdkEvent *event, gpointer data);
@@ -251,9 +252,15 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
         tm = alarm_get_time (a);
     }
     
+    gboolean time_format_12h = prefs_time_format_12h_get (list_window->applet);
+
     if (a->type == ALARM_TYPE_CLOCK) {
         type_col = ALARM_ICON;
-        strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, tm);
+        // show 12 hour format if enabled and not counting down
+        if (time_format_12h && !a->active)
+            strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT_12HR, tm);
+        else
+            strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, tm);
     } else {
         type_col = TIMER_ICON;
         strftime(tmp, sizeof(tmp), TIME_COL_TIMER_FORMAT, tm);
