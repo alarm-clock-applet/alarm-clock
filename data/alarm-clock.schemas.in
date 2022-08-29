@@ -19,6 +19,19 @@
             </locale>
         </schema>
     	
+        <schema>
+            <key>/schemas/apps/alarm-clock/time_format_12h</key>
+            <applyto>/apps/alarm-clock/time_format_12h</applyto>
+            <owner>alarm-clock</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C">
+                <short>Use AM/PM format for alarms</short>
+                <long>Whether to use 12 hour (am/pm) or 24 hour format when
+                      setting alarm times.</long>
+            </locale>
+        </schema>
+
     	<!--
     	Alarm specific:
     	-->
@@ -162,5 +175,3 @@
 		-->
 	</schemalist>
 </gconfschemafile>
-		
-		

@@ -76,4 +76,16 @@ unblock_list (GList *instances, gpointer func);
                                        G_SIGNAL_MATCH_FUNC,   \
                                        0, 0, NULL, (func), NULL)
 
+/* Converts hour from 12 hour format (am/pm) to 24 hour format */
+#define HOUR_12_TO_24(hour, is_pm) \
+    is_pm ? (hour != 12 ? hour + 12 : hour) : (hour == 12 ? 0 : hour)
+
+/* Converts hour from 24 hour format to 12 hour format (am/pm) */
+#define HOUR_24_TO_12(hour) \
+    hour > 12 ? hour - 12 : (hour < 1 ? 12 : hour);
+
+/* True if the hour (in 24 hour format) is in the PM, false if AM */
+# define IS_HOUR_PM(hour) \
+    hour > 12 ? TRUE : (hour < 12 ? FALSE : TRUE)
+
 #endif /*UTIL_H_*/
