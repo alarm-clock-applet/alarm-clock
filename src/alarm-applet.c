@@ -684,7 +684,7 @@ alarm_applet_quit (AlarmApplet *applet)
 {
     g_debug ("AlarmApplet: Quitting...");
 
-    g_object_unref (applet->unique_app);
+    //g_object_unref (applet->unique_app);
 }
 
 /**
