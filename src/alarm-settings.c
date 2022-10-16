@@ -440,8 +440,8 @@ open_sound_file_chooser (AlarmSettingsDialog *dialog)
 	chooser = gtk_file_chooser_dialog_new (_("Select sound file..."),
 										   GTK_WINDOW (dialog->dialog),
 										   GTK_FILE_CHOOSER_ACTION_OPEN,
-										   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-										   GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+										   _("_Cancel"), GTK_RESPONSE_CANCEL,
+										   _("_Open"), GTK_RESPONSE_ACCEPT,
 										   NULL);
 
 	gtk_file_chooser_set_uri (GTK_FILE_CHOOSER (chooser), dialog->alarm->sound_file);
