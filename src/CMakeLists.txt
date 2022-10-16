@@ -21,8 +21,10 @@ add_executable(alarm-clock-applet
 )
 set_property(TARGET alarm-clock-applet PROPERTY C_STANDARD 11)
 
-#target_compile_definitions(alarm-clock-applet PRIVATE ${GTK3_CFLAGS_OTHER})
+target_compile_options(alarm-clock-applet PRIVATE ${GTK3_CFLAGS_OTHER})
+
 target_link_options(alarm-clock-applet PRIVATE "-rdynamic")
+
 target_link_libraries(alarm-clock-applet PRIVATE
     ${GTK3_LIBRARIES}
     ${GCONF2_LIBRARIES}
