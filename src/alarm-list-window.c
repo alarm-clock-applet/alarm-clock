@@ -673,9 +673,9 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
 
     g_debug ("AlarmListWindow: menu_update to %d", applet->snooze_mins);
 
-    block_list (gtk_container_get_children(menu), alarm_list_window_snooze_menu_activated);
+    block_list (gtk_container_get_children(GTK_CONTAINER(menu)), alarm_list_window_snooze_menu_activated);
 
-    for (l = gtk_container_get_children(menu); l != NULL; l = l->next) {
+    for (l = gtk_container_get_children(GTK_CONTAINER(menu)); l != NULL; l = l->next) {
         item = GTK_MENU_ITEM (l->data);
         name = gtk_buildable_get_name (GTK_BUILDABLE (item));
         if (g_strcmp0 (name, target_name) == 0) {
@@ -685,7 +685,7 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
         }
     }
 
-    unblock_list (gtk_container_get_children(menu), alarm_list_window_snooze_menu_activated);
+    unblock_list (gtk_container_get_children(GTK_CONTAINER(menu)), alarm_list_window_snooze_menu_activated);
 
     g_free (target_name);
 }
