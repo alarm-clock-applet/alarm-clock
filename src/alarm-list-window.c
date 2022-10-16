@@ -151,19 +151,6 @@ alarm_list_window_hide (AlarmListWindow *list_window)
 }
 
 /**
- * Toggle visibility of list window
- */
-void
-alarm_list_window_toggle (AlarmListWindow *list_window)
-{
-	if (gtk_widget_get_visible (list_window->window)) {
-		alarm_list_window_hide (list_window);
-	} else {
-		alarm_list_window_show (list_window);
-	}
-}
-
-/**
  * Delete-event handler for list-window
  */
 gboolean

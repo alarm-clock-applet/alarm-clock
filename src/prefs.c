@@ -487,7 +487,7 @@ prefs_show_label_changed (GConfClient  *client,
 void
 prefs_dialog_show (AlarmApplet *applet)
 {
-	if (gtk_widget_get_visible(applet->prefs_dialog)) {
+	if (gtk_widget_get_visible(GTK_WIDGET(applet->prefs_dialog))) {
 		gtk_window_present_with_time (GTK_WINDOW (applet->prefs_dialog), gtk_get_current_event_time());
 	} else {
 		gtk_dialog_run (applet->prefs_dialog);

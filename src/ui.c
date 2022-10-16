@@ -428,7 +428,7 @@ alarm_applet_alarm_changed (GObject *object,  GParamSpec *pspec, gpointer data)
     }
 
     // Update List Window
-    if (applet->list_window && gtk_widget_get_visible (applet->list_window->window)) {
+    if (applet->list_window && gtk_widget_get_visible (GTK_WIDGET(applet->list_window->window))) {
         // Should really check that the changed param is relevant...
         alarm_list_window_alarm_update (applet->list_window, alarm);
     }
