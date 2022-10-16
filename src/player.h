@@ -1,8 +1,8 @@
 /*
  * player.h - Simple media player based on GStreamer
- * 
+ *
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * Authors:
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
@@ -53,19 +53,19 @@ struct _MediaPlayer {
 	GstElement *player;
 	gboolean loop;
 	MediaPlayerState state;
-	
+
 	guint watch_id;
-	
+
 	MediaPlayerStateChangeCallback state_changed;
 	MediaPlayerErrorHandler error_handler;
-	
+
 	gpointer state_changed_data;
 	gpointer error_handler_data;
 };
 
 /**
  * Create a new media player.
- * 
+ *
  * @uri				The file to play.
  * @loop			Wether to loop or not.
  * @state_callback	An optional #MediaPlayerStateChangeCallback which will be
@@ -95,7 +95,7 @@ media_player_set_uri (MediaPlayer *player, const gchar *uri);
 
 /**
  * Get the uri of player.
- * 
+ *
  * Free with g_free()
  */
 gchar *
