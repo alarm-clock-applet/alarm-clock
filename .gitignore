@@ -1,6 +1,3 @@
-Makefile
-Makefile.in
-*.gmo
+CMakeLists.txt.user
+build/
 alarm-clock*tar.gz*
-*.[oa]
-*~

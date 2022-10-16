@@ -74,7 +74,7 @@ alarm_applet_alarms_snooze (AlarmApplet *applet)
 
     // Update status icon
     alarm_applet_status_update (applet);
-    
+
     return n_snoozed;
 }
 
@@ -87,7 +87,7 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 	GList *l;
 	Alarm *a;
     guint n_stopped = 0;
-    
+
 	g_debug ("Stopping alarms...");
 
 	// Loop through alarms and clear all of 'em
@@ -105,7 +105,7 @@ alarm_applet_alarms_stop (AlarmApplet *applet)
 
     // Update status icon
     alarm_applet_status_update (applet);
-    
+
     return n_stopped;
 }
 
@@ -407,7 +407,7 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 {
 	GList *list = NULL;
     GList *l = NULL;
-    
+
 	if (applet->alarms != NULL) {
 		// Free old alarm objects
 		for (l = applet->alarms; l != NULL; l = l->next) {
@@ -455,7 +455,7 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
 		gtk_list_store_clear (applet->list_alarms_store);*/
 
 	g_debug ("alarm_applet_alarms_remove (..., %p): refcount = %d", alarm, G_OBJECT (alarm)->ref_count);
-    
+
 	// Remove any signal handlers for this alarm instance.
 	g_signal_handlers_disconnect_matched (alarm, 0, 0, 0, NULL, NULL, NULL);
 
@@ -463,7 +463,7 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
     if (applet->list_window) {
         alarm_list_window_alarm_remove (applet->list_window, alarm);
     }
-    
+
 	// Dereference alarm
 	g_object_unref (alarm);
 }
@@ -525,7 +525,7 @@ alarm_applet_destroy (AlarmApplet *applet)
 }*/
 
 
-static UniqueResponse
+/*static UniqueResponse
 unique_app_message_cb (UniqueApp         *app,
                        UniqueCommand      command,
                        UniqueMessageData *message,
@@ -546,7 +546,7 @@ unique_app_message_cb (UniqueApp         *app,
                 // Toggle list window visibility
                 gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
             }
-            
+
             res = UNIQUE_RESPONSE_OK;
             break;
         case UNIQUE_STOP_ALL:
@@ -562,13 +562,13 @@ unique_app_message_cb (UniqueApp         *app,
         default:
             g_warning ("AlarmApplet: unique_app_message: Unknown command %d",
                 command);
-            
+
             res = UNIQUE_RESPONSE_INVALID;
             break;
     }
 
     return res;
-}
+}*/
 
 
 
@@ -580,7 +580,7 @@ static AlarmApplet*
 alarm_applet_init (int *argc, char ***argv)
 {
 	AlarmApplet *applet;
-	UniqueApp *unique_app;
+	GList *unique_app;
 
 	GError *error = NULL;
 	GOptionContext *context;
@@ -611,7 +611,7 @@ alarm_applet_init (int *argc, char ***argv)
 	}
 
 	// Initialize unique app
-	unique_app = unique_app_new ("com.pseudoberries.AlarmClock", NULL);
+	/*unique_app = gtk_application_get_windows (app);
 	unique_app_add_command(unique_app, "StopAllAlarms", UNIQUE_STOP_ALL);
 	unique_app_add_command(unique_app, "SnoozeAllAlarms", UNIQUE_SNOOZE_ALL);
 
@@ -633,17 +633,17 @@ alarm_applet_init (int *argc, char ***argv)
 		g_object_unref (unique_app);
 
 		exit (EXIT_SUCCESS);
-	}
-	
+	}*/
+
 	// Initialize applet struct
 	applet = g_new0 (AlarmApplet, 1);
 
 	// Set up unique app
-	applet->unique_app = unique_app;
+	/*applet->unique_app = unique_app;
 
 	g_signal_connect (unique_app, "message-received",
-		G_CALLBACK (unique_app_message_cb), applet);
-    
+		G_CALLBACK (unique_app_message_cb), applet);*/
+
 	//applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
 
 	// Preferences (defaults).
@@ -658,7 +658,7 @@ alarm_applet_init (int *argc, char ***argv)
 
 	// Load alarms
 	alarm_applet_alarms_load (applet);
-    
+
 	// Load sounds from alarms
 	alarm_applet_sounds_load (applet);
 
@@ -708,10 +708,10 @@ main (int argc, char *argv[])
 
 	// Initialize applet
 	applet = alarm_applet_init (&argc, &argv);
-    
+
 	// Start main loop
 	gtk_main ();
-	
+
 	// Clean up
 	alarm_applet_quit (applet);
 

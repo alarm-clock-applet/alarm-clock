@@ -34,13 +34,10 @@
 #include <gdk/gdkkeysyms.h>
 #include <gconf/gconf-client.h>
 #include <gst/gst.h>
-#include <unique/unique.h>
 
 #include <config.h>
 
-#ifdef HAVE_APP_INDICATOR
 #include <libappindicator/app-indicator.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -79,22 +76,17 @@ typedef enum {
 
 struct _AlarmApplet {
 	/* Unique app */
-	UniqueApp *unique_app;
+	GList *unique_app;
 
     /* User Interface */
     GtkBuilder *ui;
 
-#ifdef HAVE_APP_INDICATOR
     /* App Indicator */
     AppIndicator *app_indicator;
-#else
-	/* Status Icon */
-	GtkStatusIcon *status_icon;
-#endif
 
 	/* Status menu */
     GtkWidget *status_menu;
-    
+
 	/* Alarms */
 	GList	*alarms;
     guint   n_triggered;        // Number of triggered alarms
@@ -108,16 +100,16 @@ struct _AlarmApplet {
 
     /* Alarm settings dialog */
     AlarmSettingsDialog *settings_dialog;
-    
+
 	/* Preferences */
 	GtkDialog *prefs_dialog;
 	GtkWidget *prefs_autostart_check;
-    
+
     guint snooze_mins;
 
     // Actions on one alarm
     GtkActionGroup *actions_alarm;
-    
+
     GtkAction *action_edit;
     GtkAction *action_delete;
     GtkToggleAction *action_enabled;

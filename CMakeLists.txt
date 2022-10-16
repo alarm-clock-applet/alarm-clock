@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.2)
+project("alarm-clock" VERSION 0.4.0)
+include_directories("${CMAKE_BINARY_DIR}")
+include(GNUInstallDirs)
+add_subdirectory("src")

@@ -1,8 +1,8 @@
 /*
  * prefs.c -- Alarm Clock global preferences
- * 
+ *
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * Authors:
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
@@ -400,7 +400,6 @@ prefs_autostart_update (AlarmApplet *applet)
 void
 prefs_show_label_init (AlarmApplet *applet)
 {
-#ifdef HAVE_APP_INDICATOR
 	GConfClient *client = gconf_client_get_default ();
 
 	// Monitor gconf key
@@ -412,14 +411,6 @@ prefs_show_label_init (AlarmApplet *applet)
 	// Update state
 	prefs_show_label_update (applet);
 
-#else
-	// No AppIndicator support, disable option
-	GtkWidget *show_label_check = GTK_WIDGET (gtk_builder_get_object (applet->ui, "show-label-check"));
-	gtk_widget_set_sensitive (show_label_check, FALSE);
-	gtk_widget_set_tooltip_text (show_label_check, _("Requires application indicators"));
-
-	gtk_toggle_action_set_active (applet->action_toggle_show_label, FALSE);
-#endif
 }
 
 /**
@@ -496,7 +487,7 @@ prefs_show_label_changed (GConfClient  *client,
 void
 prefs_dialog_show (AlarmApplet *applet)
 {
-	if (GTK_WIDGET_VISIBLE(applet->prefs_dialog)) {
+	if (gtk_widget_get_visible(applet->prefs_dialog)) {
 		gtk_window_present_with_time (GTK_WINDOW (applet->prefs_dialog), gtk_get_current_event_time());
 	} else {
 		gtk_dialog_run (applet->prefs_dialog);
