@@ -130,7 +130,6 @@ alarm_applet_get_data_path (const char *name)
 {
     char *filename;
 
-#ifdef ALARM_CLOCK_RUN_IN_SOURCE_TREE
     /* Try the file in the source tree first */
     filename = g_build_filename ("..", "data", name, NULL);
     g_debug("filename: %s", filename);
@@ -146,9 +145,6 @@ alarm_applet_get_data_path (const char *name)
             return NULL;
         }
     }
-#else
-    filename = g_build_filename (ALARM_CLOCK_PKGDATADIR, name, NULL);
-#endif
 
     return filename;
 }
