@@ -1,8 +1,8 @@
 /*
  * alarms-list.h -- Alarm list window
- * 
+ *
  * Copyright (C) 2007-2008 Johannes H. Jensen <joh@pseudoberries.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
  * Authors:
  * 		Johannes H. Jensen <joh@pseudoberries.com>
  */
@@ -48,11 +48,11 @@ typedef enum {
 
 struct _AlarmListWindow {
 	AlarmApplet *applet;
-    
+
     Alarm *selected_alarm;
     gboolean reordered;         // Indicates that rows have just been reordered
     gboolean toggled;           // Indicates that an alarm has just been toggled
-	
+
 	GtkWindow *window;
 	GtkListStore *model;
 	GtkTreeView *tree_view;
@@ -66,9 +66,6 @@ struct _AlarmListWindow {
     GtkWidget *snooze_menu;
 
     GtkAccelGroup *accel_group;
-
-    gint window_pos_x;
-    gint window_pos_y;
 };
 
 //#define TIME_COL_FORMAT "<span font='Bold 11'>%H:%M:%S</span>"
