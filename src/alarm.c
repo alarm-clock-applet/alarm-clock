@@ -27,7 +27,18 @@
 
 #include "alarm.h"
 
-G_DEFINE_TYPE (Alarm, alarm, G_TYPE_OBJECT);
+typedef struct _AlarmPrivate AlarmPrivate;
+
+struct _AlarmPrivate
+{
+	GConfClient *gconf_client;
+	guint gconf_listener;
+	guint timer_id;
+	MediaPlayer *player;
+	guint player_timer_id;
+};
+
+G_DEFINE_TYPE_WITH_PRIVATE (Alarm, alarm, G_TYPE_OBJECT);
 
 /* Prototypes and constants for property manipulation */
 static void alarm_set_property(GObject *object,
@@ -63,20 +74,9 @@ static void alarm_player_start (Alarm *alarm);
 static void alarm_player_stop (Alarm *alarm);
 static void alarm_command_run (Alarm *alarm);
 
-#define ALARM_PRIVATE(o) \
-  (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_ALARM, AlarmPrivate))
+#define ALARM_PRIVATE(o) (alarm_get_instance_private (o))
 
-typedef struct _AlarmPrivate AlarmPrivate;
-
-struct _AlarmPrivate
-{
-	GConfClient *gconf_client;
-	guint gconf_listener;
-	guint timer_id;
-	MediaPlayer *player;
-	guint player_timer_id;
-};
-
+#define ALARM_CAST(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), alarm_get_type (), Alarm))
 
 static GConfEnumStringPair alarm_type_enum_map [] = {
 	{ ALARM_TYPE_CLOCK,		"clock" },
@@ -290,8 +290,6 @@ alarm_class_init (AlarmClass *class)
 	g_object_class_install_property (g_object_class, PROP_SOUND_FILE, sound_file_param);
 	g_object_class_install_property (g_object_class, PROP_SOUND_LOOP, sound_loop_param);
 	g_object_class_install_property (g_object_class, PROP_COMMAND, command_param);
-
-	g_type_class_add_private (class, sizeof (AlarmPrivate));
 
 	/* set signal handlers */
 	class->alarm = alarm_alarm;
@@ -575,7 +573,7 @@ alarm_set_property (GObject *object,
 					GParamSpec *pspec)
 {
 	Alarm *alarm;
-	AlarmPrivate *priv = ALARM_PRIVATE (object);
+	AlarmPrivate *priv = ALARM_PRIVATE (ALARM_CAST (object));
 
 	GConfClient *client;
 	GError 		*err = NULL;
