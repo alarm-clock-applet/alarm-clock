@@ -53,6 +53,55 @@ target_link_directories(alarm-clock-applet PRIVATE
 )
 
 configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/config.h.in
-    ${CMAKE_BINARY_DIR}/config.h
+    "${CMAKE_SOURCE_DIR}/src/config.h.in"
+    "${CMAKE_BINARY_DIR}/config.h"
+)
+
+# Binary
+install(
+    TARGETS alarm-clock-applet
+    DESTINATION "bin"
+)
+
+# ui and css
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/data/alarm-clock.ui"
+        "${CMAKE_SOURCE_DIR}/data/alarm-clock.css"
+    DESTINATION "share/alarm-clock-applet/"
+)
+
+# Desktop shortcut
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/data/alarm-clock-applet.desktop"
+    DESTINATION "share/applications/"
+)
+
+# Gconf schema
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/data/alarm-clock.schemas"
+    DESTINATION "etc/gconf/schemas/"
+)
+
+# Icons
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/icons/icons"
+    DESTINATION "share"
+    FILE_PERMISSIONS
+    OWNER_READ OWNER_WRITE
+    GROUP_READ
+    WORLD_READ
+    DIRECTORY_PERMISSIONS
+    OWNER_READ OWNER_WRITE OWNER_EXECUTE
+    GROUP_READ GROUP_EXECUTE
+    WORLD_READ WORLD_EXECUTE
+)
+
+# Needed to regenerate the icon cache
+# 3.12 first introduced TOUCH, and Ubuntu 18.04 has 3.10
+install(
+    CODE
+    "file(WRITE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\" \"\")
+    file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\")"
 )
