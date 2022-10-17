@@ -4,7 +4,7 @@ pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 pkg_check_modules(GCONF2 REQUIRED gconf-2.0)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
 pkg_check_modules(LIBNOTIFY REQUIRED libnotify)
-pkg_check_modules(APPINDICATOR REQUIRED appindicator3-0.1)
+pkg_check_modules(APPINDICATOR REQUIRED ayatana-appindicator3-0.1)
 
 add_executable(alarm-clock-applet
     alarm-applet.c alarm-applet.h

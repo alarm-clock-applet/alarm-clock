@@ -37,7 +37,7 @@
 
 #include <config.h>
 
-#include <libappindicator/app-indicator.h>
+#include <libayatana-appindicator/app-indicator.h>
 
 G_BEGIN_DECLS
 
