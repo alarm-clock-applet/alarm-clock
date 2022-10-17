@@ -98,6 +98,17 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->accel_group = gtk_accel_group_new ();
     gtk_window_add_accel_group (list_window->window, list_window->accel_group);
 
+    // Set up icons for the list
+    // FIXME: Listen to icon theme changes and update these
+    // First: get the appropriate size
+    gint icon_size;
+    if(!gtk_icon_size_lookup(GTK_ICON_SIZE_LARGE_TOOLBAR, &icon_size, NULL))
+        icon_size = 64;
+    list_window->alarm_icon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+        ALARM_ICON, icon_size, GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
+    list_window->timer_icon = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+        TIMER_ICON, icon_size, GTK_ICON_LOOKUP_USE_BUILTIN, NULL);
+
     // Connect some signals
     selection = gtk_tree_view_get_selection (list_window->tree_view);
     g_signal_connect (selection, "changed",
@@ -215,7 +226,7 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     gchar *tmp2;
     struct tm *tm;
 
-    const gchar *type_col;
+    GdkPixbuf *type_col;
     GString *time_col;
     gchar *label_col;
 
@@ -232,10 +243,10 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
     }
 
     if (a->type == ALARM_TYPE_CLOCK) {
-        type_col = ALARM_ICON;
+        type_col = list_window->alarm_icon;
         strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, tm);
     } else {
-        type_col = TIMER_ICON;
+        type_col = list_window->timer_icon;
         strftime(tmp, sizeof(tmp), TIME_COL_TIMER_FORMAT, tm);
     }
 

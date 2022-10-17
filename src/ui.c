@@ -269,6 +269,13 @@ alarm_applet_ui_init (AlarmApplet *applet)
     /* Initialize alarm settings dialog */
     applet->settings_dialog = alarm_settings_dialog_new (applet);
 
+    /* Load CSS */
+    GtkCssProvider *css = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(css, alarm_applet_get_data_path("alarm-clock.css"), NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+        GTK_STYLE_PROVIDER(css),
+        GTK_STYLE_PROVIDER_PRIORITY_USER);
+
     /* Connect signals */
     //gtk_builder_connect_signals (applet->ui, applet);
 

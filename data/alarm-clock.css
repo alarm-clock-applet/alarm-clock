@@ -1,0 +1,7 @@
+image {
+	-gtk-icon-style: regular;
+}
+
+.titlebar image {
+	-gtk-icon-style: requested;
+}

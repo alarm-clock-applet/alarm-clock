@@ -806,66 +806,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkListStore" id="alarms-liststore">
-    <columns>
-      <!-- column-name Alarm -->
-      <column type="GObject"/>
-      <!-- column-name Type -->
-      <column type="gchararray"/>
-      <!-- column-name Time -->
-      <column type="gchararray"/>
-      <!-- column-name Label -->
-      <column type="gchararray"/>
-      <!-- column-name Enabled -->
-      <column type="gboolean"/>
-      <!-- column-name Triggered -->
-      <column type="gboolean"/>
-      <!-- column-name Show -->
-      <column type="gboolean"/>
-    </columns>
-    <signal name="rows-reordered" handler="alarm_list_window_rows_reordered" swapped="no"/>
-  </object>
-  <object class="GtkToggleAction" id="autostart-action">
-    <property name="label" translatable="yes">Start automatically at login</property>
-    <property name="short_label" translatable="yes">Start automatically at login</property>
-    <signal name="activate" handler="alarm_action_toggle_autostart" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="delete-action">
-    <property name="label" translatable="yes">Delete alarm</property>
-    <property name="short_label" translatable="yes">Delete</property>
-    <property name="tooltip" translatable="yes">Delete the selected alarm</property>
-    <property name="stock_id">gtk-delete</property>
-    <signal name="activate" handler="alarm_action_delete" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="edit-action">
-    <property name="label" translatable="yes">Edit alarm</property>
-    <property name="short_label" translatable="yes">Edit...</property>
-    <property name="tooltip" translatable="yes">Edit the selected alarm</property>
-    <property name="stock_id">gtk-edit</property>
-    <signal name="activate" handler="alarm_action_edit" swapped="no"/>
-  </object>
-  <object class="GtkToggleAction" id="enabled-action">
-    <property name="label" translatable="yes">Enable/disable alarm</property>
-    <property name="short_label" translatable="yes">Enable/disable</property>
-    <property name="tooltip" translatable="yes">Enable/disable the selected alarm</property>
-    <property name="stock_id">gtk-yes</property>
-    <signal name="activate" handler="alarm_action_enabled" swapped="no"/>
-  </object>
-  <object class="GtkImage" id="image3">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-edit</property>
-  </object>
-  <object class="GtkImage" id="image4">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-properties</property>
-  </object>
-  <object class="GtkImage" id="image9">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">weather-few-clouds-night</property>
-  </object>
   <object class="GtkDialog" id="snooze-dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -909,7 +849,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="image">image9</property>
                 <property name="use_underline">True</property>
               </object>
               <packing>
@@ -1019,6 +958,51 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       <action-widget response="0">button2</action-widget>
       <action-widget response="-5">snooze-dialog-button</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkListStore" id="alarms-liststore">
+    <columns>
+      <!-- column-name Alarm -->
+      <column type="GObject"/>
+      <!-- column-name Type -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name Time -->
+      <column type="gchararray"/>
+      <!-- column-name Label -->
+      <column type="gchararray"/>
+      <!-- column-name Enabled -->
+      <column type="gboolean"/>
+      <!-- column-name Triggered -->
+      <column type="gboolean"/>
+      <!-- column-name Show -->
+      <column type="gboolean"/>
+    </columns>
+    <signal name="rows-reordered" handler="alarm_list_window_rows_reordered" swapped="no"/>
+  </object>
+  <object class="GtkToggleAction" id="autostart-action">
+    <property name="label" translatable="yes">Start automatically at login</property>
+    <property name="short_label" translatable="yes">Start automatically at login</property>
+    <signal name="activate" handler="alarm_action_toggle_autostart" swapped="no"/>
+  </object>
+  <object class="GtkAction" id="delete-action">
+    <property name="label" translatable="yes">Delete alarm</property>
+    <property name="short_label" translatable="yes">Delete</property>
+    <property name="tooltip" translatable="yes">Delete the selected alarm</property>
+    <property name="stock_id">gtk-delete</property>
+    <signal name="activate" handler="alarm_action_delete" swapped="no"/>
+  </object>
+  <object class="GtkAction" id="edit-action">
+    <property name="label" translatable="yes">Edit alarm</property>
+    <property name="short_label" translatable="yes">Edit...</property>
+    <property name="tooltip" translatable="yes">Edit the selected alarm</property>
+    <property name="stock_id">gtk-edit</property>
+    <signal name="activate" handler="alarm_action_edit" swapped="no"/>
+  </object>
+  <object class="GtkToggleAction" id="enabled-action">
+    <property name="label" translatable="yes">Enable/disable alarm</property>
+    <property name="short_label" translatable="yes">Enable/disable</property>
+    <property name="tooltip" translatable="yes">Enable/disable the selected alarm</property>
+    <property name="stock_id">gtk-yes</property>
+    <signal name="activate" handler="alarm_action_enabled" swapped="no"/>
   </object>
   <object class="GtkAction" id="new-action">
     <property name="label" translatable="yes">New alarm</property>
@@ -1285,6 +1269,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">New...</property>
+                <property name="stock_id">gtk-add</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1297,6 +1282,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Edit...</property>
+                <property name="stock_id">gtk-edit</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1309,6 +1295,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Delete</property>
+                <property name="stock_id">gtk-delete</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1332,6 +1319,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
+                <property name="stock_id">gtk-apply</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1345,6 +1333,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
+                <property name="stock_id">gtk-cancel</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1358,6 +1347,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
+                <property name="icon_name">weather-few-clouds-night</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1399,7 +1389,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       </object>
                       <attributes>
                         <attribute name="visible">6</attribute>
-                        <attribute name="icon-name">1</attribute>
+                        <attribute name="gicon">1</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -1476,7 +1466,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
@@ -1486,7 +1475,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
@@ -1499,12 +1487,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_edit">
         <property name="label" translatable="yes">Show _alarms</property>
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Manage your alarms</property>
         <property name="use_underline">True</property>
-        <property name="image">image3</property>
         <property name="use_stock">False</property>
         <signal name="activate" handler="alarm_applet_status_menu_edit_cb" swapped="no"/>
       </object>
@@ -1512,11 +1498,9 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_prefs">
         <property name="label" translatable="yes">_Preferences</property>
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
-        <property name="image">image4</property>
         <property name="use_stock">False</property>
         <signal name="activate" handler="alarm_applet_status_menu_prefs_cb" swapped="no"/>
       </object>
@@ -1524,7 +1508,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_about">
         <property name="label">gtk-about</property>
-        <property name="use_action_appearance">False</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
@@ -1543,7 +1526,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <property name="related_action">quit-action</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
