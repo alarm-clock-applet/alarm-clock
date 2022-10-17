@@ -114,7 +114,7 @@ alarm_list_window_new (AlarmApplet *applet)
     g_signal_connect (selection, "changed",
                       G_CALLBACK (alarm_list_window_selection_changed), applet);
 
-    // Update view every second for pretty countdowns
+    // Update view every half a second for pretty countdowns
     g_timeout_add (500, (GSourceFunc) alarm_list_window_update_timer, applet);
 
     // Set up sorting
@@ -351,7 +351,7 @@ alarm_list_window_alarms_add (AlarmListWindow *list_window, GList *alarms)
 }
 
 /**
- * Update the alarm view every second
+ * Update the alarm view every half a second
  */
 static gboolean
 alarm_list_window_update_timer (gpointer data)
@@ -362,6 +362,10 @@ alarm_list_window_update_timer (gpointer data)
     Alarm *a;
     gboolean show_icon;
     gboolean valid;
+
+    // Don't attempt to update if the window is not mapped
+    if(!gtk_widget_get_mapped(GTK_WIDGET(applet->list_window->window)))
+        return TRUE;
 
     valid = gtk_tree_model_get_iter_first (model, &iter);
 
