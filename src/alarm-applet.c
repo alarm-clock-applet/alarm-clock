@@ -671,7 +671,7 @@ void alarm_applet_activate(GtkApplication *app, gpointer user_data)
 
 	// Show alarms window, unless --hidden
 	if (!hidden) {
-		gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
+		g_action_activate(G_ACTION(applet->action_toggle_list_win), NULL);
 	}
 }
 

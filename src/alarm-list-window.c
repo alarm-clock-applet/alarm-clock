@@ -94,10 +94,6 @@ alarm_list_window_new (AlarmApplet *applet)
     list_window->snooze_button = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-button"));
     list_window->snooze_menu = GTK_WIDGET (gtk_builder_get_object (builder, "snooze-menu"));
 
-    // Set up window accelerator group
-    list_window->accel_group = gtk_accel_group_new ();
-    gtk_window_add_accel_group (list_window->window, list_window->accel_group);
-
     // Set up icons for the list
     // FIXME: Listen to icon theme changes and update these
     // First: get the appropriate size
@@ -165,7 +161,7 @@ alarm_list_window_delete_event (GtkWidget *window, GdkEvent *event, gpointer dat
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
 
-	gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
+	g_action_activate(G_ACTION(applet->action_toggle_list_win), NULL);
 
 	return TRUE;
 }

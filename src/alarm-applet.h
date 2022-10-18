@@ -120,8 +120,7 @@ struct _AlarmApplet {
     GtkActionGroup *actions_global;
     GtkAction *action_new;
     GtkAction *action_stop_all;
-    GtkAction *action_snooze_all;
-    GtkToggleAction *action_toggle_list_win;
+    GSimpleAction *action_toggle_list_win;
     GtkToggleAction *action_toggle_autostart;
     GtkToggleAction *action_toggle_show_label;
 };

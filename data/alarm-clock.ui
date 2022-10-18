@@ -1011,13 +1011,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="stock_id">gtk-new</property>
     <signal name="activate" handler="alarm_action_new" swapped="no"/>
   </object>
-  <object class="GtkAction" id="quit-action">
-    <property name="label" translatable="yes">_Quit</property>
-    <property name="short_label" translatable="yes">_Quit</property>
-    <property name="tooltip" translatable="yes">Quit Alarm Clock</property>
-    <property name="stock_id">gtk-quit</property>
-    <signal name="activate" handler="alarm_action_quit" swapped="no"/>
-  </object>
   <object class="GtkToggleAction" id="show-label-action">
     <property name="label" translatable="yes">Show countdown label</property>
     <property name="short_label" translatable="yes">Show countdown label</property>
@@ -1165,6 +1158,11 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       <action-widget response="-7">closebutton1</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkImage" id="show_alarms_icon">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">alarm-clock</property>
+  </object>
   <object class="GtkAction" id="snooze-action">
     <property name="label" translatable="yes">Snooze alarm</property>
     <property name="short_label" translatable="yes">Snooze</property>
@@ -1172,13 +1170,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="icon_name">weather-few-clouds-night</property>
     <property name="is_important">True</property>
     <signal name="activate" handler="alarm_action_snooze" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="snooze-all-action">
-    <property name="label" translatable="yes">Snooze all alarms</property>
-    <property name="short_label" translatable="yes">Snooze alarms</property>
-    <property name="tooltip" translatable="yes">Snooze all beeping alarms</property>
-    <property name="icon_name">weather-few-clouds-night</property>
-    <signal name="activate" handler="alarm_action_snooze_all" swapped="no"/>
   </object>
   <object class="GtkMenu" id="snooze-menu">
     <property name="visible">True</property>
@@ -1236,6 +1227,11 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_custom_activated" swapped="no"/>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="snooze_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">weather-few-clouds-night</property>
   </object>
   <object class="GtkAction" id="stop-action">
     <property name="label" translatable="yes">Stop alarm</property>
@@ -1451,34 +1447,34 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       </object>
     </child>
   </object>
-  <object class="GtkAction" id="stop-all-action">
-    <property name="label" translatable="yes">Stop all alarms</property>
-    <property name="short_label" translatable="yes">Stop alarms</property>
-    <property name="tooltip" translatable="yes">Stop all beeping alarms</property>
-    <property name="stock_id">gtk-stop</property>
-    <signal name="activate" handler="alarm_action_stop_all" swapped="no"/>
+  <object class="GtkImage" id="stop_all_image">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-cancel</property>
   </object>
   <object class="GtkMenu" id="status_menu">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_snooze">
-        <property name="related_action">snooze-all-action</property>
+        <property name="label" translatable="yes">Snooze all alarms</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="action_name">app.snooze_all</property>
+        <property name="image">snooze_image</property>
+        <property name="use_stock">False</property>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_stop">
-        <property name="related_action">stop-all-action</property>
+        <property name="label" translatable="yes">Stop all alarms</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="action_name">app.stop_all</property>
+        <property name="image">stop_all_image</property>
+        <property name="use_stock">False</property>
       </object>
     </child>
     <child>
@@ -1493,18 +1489,20 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="tooltip_text" translatable="yes">Manage your alarms</property>
+        <property name="action_name">app.show_alarms_list</property>
         <property name="use_underline">True</property>
+        <property name="image">show_alarms_icon</property>
         <property name="use_stock">False</property>
         <signal name="activate" handler="alarm_applet_status_menu_edit_cb" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_prefs">
-        <property name="label" translatable="yes">_Preferences</property>
+        <property name="label">gtk-preferences</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_underline">True</property>
-        <property name="use_stock">False</property>
+        <property name="use_stock">True</property>
         <signal name="activate" handler="alarm_applet_status_menu_prefs_cb" swapped="no"/>
       </object>
     </child>
@@ -1526,18 +1524,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_quit">
-        <property name="related_action">quit-action</property>
+        <property name="label">gtk-quit</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="action_name">app.quit</property>
         <property name="use_underline">True</property>
         <property name="use_stock">True</property>
       </object>
     </child>
-  </object>
-  <object class="GtkToggleAction" id="toggle-list-win-action">
-    <property name="label" translatable="yes">Toggle alarms window</property>
-    <property name="short_label" translatable="yes">Toggle alarms</property>
-    <property name="tooltip" translatable="yes">Toggle the visibility of the alarms window</property>
-    <signal name="activate" handler="alarm_action_toggle_list_win" swapped="no"/>
   </object>
 </interface>

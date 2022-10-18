@@ -298,6 +298,9 @@ alarm_applet_status_init (AlarmApplet *applet)
 {
 	applet->status_menu = GTK_WIDGET (gtk_builder_get_object (applet->ui, "status_menu"));
 
+    // WARNING: The following line is required to get AppIndicator to function correctly with GActions
+    gtk_widget_insert_action_group(applet->status_menu, "app", G_ACTION_GROUP(applet->application));
+
 	applet->app_indicator = app_indicator_new(PACKAGE_NAME, ALARM_ICON,
 			APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
 	app_indicator_set_title (applet->app_indicator, _("Alarm Clock"));
@@ -319,39 +322,16 @@ alarm_applet_status_update (AlarmApplet *applet)
 	}
 }
 
-/*
- * Menu callbacks:
- */
-/*
-G_MODULE_EXPORT void
-status_menu_snooze_cb (GtkMenuItem *menuitem,
-                       gpointer     user_data)
-{
-    AlarmApplet *applet = (AlarmApplet *)user_data;
-
-	alarm_applet_alarms_snooze (applet);
-}
-
-G_MODULE_EXPORT void
-status_menu_stop_cb (GtkMenuItem *menuitem,
-                      gpointer     user_data)
-{
-    AlarmApplet *applet = (AlarmApplet *)user_data;
-
-	alarm_applet_alarms_stop (applet);
-}
-*/
-
 void
 alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
                      gpointer     user_data)
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
 
-    if (gtk_toggle_action_get_active (applet->action_toggle_list_win)) {
+    if (g_action_get_enabled(G_ACTION(applet->action_toggle_list_win))) {
         alarm_list_window_show (applet->list_window);
     } else {
-        gtk_toggle_action_set_active (applet->action_toggle_list_win, TRUE);
+        g_simple_action_set_enabled(applet->action_toggle_list_win, TRUE);
     }
 }
 

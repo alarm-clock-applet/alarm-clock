@@ -65,8 +65,6 @@ struct _AlarmListWindow {
     GtkWidget *snooze_button;
     GtkWidget *snooze_menu;
 
-    GtkAccelGroup *accel_group;
-
     GdkPixbuf *alarm_icon;
     GdkPixbuf *timer_icon;
 };
