@@ -959,6 +959,219 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       <action-widget response="-5">snooze-dialog-button</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkWindow" id="alarm-list-window">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Alarms</property>
+    <property name="default_width">350</property>
+    <property name="default_height">200</property>
+    <property name="icon_name">alarm-clock</property>
+    <signal name="delete-event" handler="alarm_list_window_delete_event" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkToolbar" id="alarm-toolbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkToolButton" id="new-button">
+                <property name="related_action">new-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">New...</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-add</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="edit-button">
+                <property name="related_action">edit-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Edit...</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-edit</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="delete-button">
+                <property name="related_action">delete-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Delete</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-delete</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="toolbar-sep">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToggleToolButton" id="enable-button">
+                <property name="related_action">enabled-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Enable</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-apply</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="stop-button">
+                <property name="related_action">stop-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="is_important">True</property>
+                <property name="label" translatable="yes">Stop</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-cancel</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkMenuToolButton" id="snooze-button">
+                <property name="related_action">snooze-action</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="is_important">True</property>
+                <property name="label" translatable="yes">Snooze</property>
+                <property name="use_underline">True</property>
+                <property name="icon_name">weather-few-clouds-night</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkScrolledWindow" id="list-alarms-scroll">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="alarm-list-view">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <property name="model">alarms-liststore</property>
+                <property name="headers_visible">False</property>
+                <property name="headers_clickable">False</property>
+                <property name="rules_hint">True</property>
+                <property name="search_column">2</property>
+                <signal name="row-activated" handler="gtk_action_activate" object="edit-action" swapped="yes"/>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="type-col">
+                    <property name="title">Type</property>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
+                        <property name="xpad">6</property>
+                        <property name="stock_size">3</property>
+                      </object>
+                      <attributes>
+                        <attribute name="visible">6</attribute>
+                        <attribute name="gicon">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="time-col">
+                    <property name="sizing">autosize</property>
+                    <property name="title">Time</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext4">
+                        <property name="height">36</property>
+                        <property name="xalign">0</property>
+                      </object>
+                      <attributes>
+                        <attribute name="markup">2</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="label-col">
+                    <property name="sizing">autosize</property>
+                    <property name="title">Label</property>
+                    <property name="expand">True</property>
+                    <child>
+                      <object class="GtkCellRendererText" id="cellrenderertext5"/>
+                      <attributes>
+                        <attribute name="markup">3</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn" id="actions-col">
+                    <property name="spacing">6</property>
+                    <property name="sizing">autosize</property>
+                    <property name="title">Actions</property>
+                    <child>
+                      <object class="GtkCellRendererToggle" id="enable-toggle">
+                        <property name="xpad">10</property>
+                        <property name="xalign">1</property>
+                        <signal name="toggled" handler="alarm_list_window_enable_toggled" swapped="no"/>
+                      </object>
+                      <attributes>
+                        <attribute name="active">4</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="alarms-liststore">
     <columns>
       <!-- column-name Alarm -->
@@ -1240,212 +1453,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="stock_id">gtk-stop</property>
     <property name="is_important">True</property>
     <signal name="activate" handler="alarm_action_stop" swapped="no"/>
-  </object>
-  <object class="GtkWindow" id="alarm-list-window">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Alarms</property>
-    <property name="default_width">350</property>
-    <property name="default_height">200</property>
-    <property name="icon_name">alarm-clock</property>
-    <signal name="delete-event" handler="alarm_list_window_delete_event" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkVBox" id="vbox2">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkToolbar" id="alarm-toolbar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkToolButton" id="new-button">
-                <property name="related_action">new-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">New...</property>
-                <property name="stock_id">gtk-add</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="edit-button">
-                <property name="related_action">edit-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Edit...</property>
-                <property name="stock_id">gtk-edit</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="delete-button">
-                <property name="related_action">delete-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Delete</property>
-                <property name="stock_id">gtk-delete</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSeparatorToolItem" id="toolbar-sep">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToggleToolButton" id="enable-button">
-                <property name="related_action">enabled-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Enable</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-apply</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="stop-button">
-                <property name="related_action">stop-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Stop</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-cancel</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkMenuToolButton" id="snooze-button">
-                <property name="related_action">snooze-action</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Snooze</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">weather-few-clouds-night</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="list-alarms-scroll">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
-            <child>
-              <object class="GtkTreeView" id="alarm-list-view">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="model">alarms-liststore</property>
-                <property name="headers_visible">False</property>
-                <property name="headers_clickable">False</property>
-                <property name="rules_hint">True</property>
-                <signal name="row-activated" handler="gtk_action_activate" object="edit-action" swapped="yes"/>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="type-col">
-                    <property name="title">Type</property>
-                    <child>
-                      <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
-                        <property name="xpad">6</property>
-                        <property name="stock_size">3</property>
-                      </object>
-                      <attributes>
-                        <attribute name="visible">6</attribute>
-                        <attribute name="gicon">1</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="time-col">
-                    <property name="sizing">autosize</property>
-                    <property name="title">Time</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext4">
-                        <property name="height">36</property>
-                        <property name="xalign">0</property>
-                      </object>
-                      <attributes>
-                        <attribute name="markup">2</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="label-col">
-                    <property name="sizing">autosize</property>
-                    <property name="title">Label</property>
-                    <property name="expand">True</property>
-                    <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext5"/>
-                      <attributes>
-                        <attribute name="markup">3</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn" id="actions-col">
-                    <property name="spacing">6</property>
-                    <property name="sizing">autosize</property>
-                    <property name="title">Actions</property>
-                    <child>
-                      <object class="GtkCellRendererToggle" id="enable-toggle">
-                        <property name="xpad">10</property>
-                        <property name="xalign">1</property>
-                        <signal name="toggled" handler="alarm_list_window_enable_toggled" swapped="no"/>
-                      </object>
-                      <attributes>
-                        <attribute name="active">4</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkImage" id="stop_all_image">
     <property name="visible">True</property>
