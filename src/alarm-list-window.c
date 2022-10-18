@@ -133,6 +133,9 @@ alarm_list_window_new (AlarmApplet *applet)
     // Update snooze menu
     alarm_list_window_snooze_menu_update (list_window);
 
+    // Add toplevel window to GtkApplication
+    gtk_window_set_application (list_window->window, applet->application);
+
 	return list_window;
 }
 

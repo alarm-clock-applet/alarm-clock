@@ -75,8 +75,8 @@ typedef enum {
 } UniqueCustomCommandID;
 
 struct _AlarmApplet {
-	/* Unique app */
-	GList *unique_app;
+	/* Gtk App */
+	GtkApplication *application;
 
     /* User Interface */
     GtkBuilder *ui;

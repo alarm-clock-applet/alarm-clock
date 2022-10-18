@@ -576,10 +576,10 @@ unique_app_message_cb (UniqueApp         *app,
  * INIT {{
  */
 
-static AlarmApplet*
-alarm_applet_init (int *argc, char ***argv)
+void alarm_applet_activate(GtkApplication *app, gpointer user_data)
 {
 	AlarmApplet *applet;
+    AlarmApplet **ret_applet = user_data;
 	GList *unique_app;
 
 	GError *error = NULL;
@@ -601,14 +601,14 @@ alarm_applet_init (int *argc, char ***argv)
 	};
 
 	// Parse command-line arguments
-	context = g_option_context_new (NULL);
+	/*context = g_option_context_new (NULL);
 	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
 	if (!g_option_context_parse (context, argc, argv, &error)) {
 		g_printerr ("%s\n", error->message);
 		exit (EXIT_FAILURE);
-	}
+	}*/
 
 	// Initialize unique app
 	/*unique_app = gtk_application_get_windows (app);
@@ -636,7 +636,8 @@ alarm_applet_init (int *argc, char ***argv)
 	}*/
 
 	// Initialize applet struct
-	applet = g_new0 (AlarmApplet, 1);
+	*ret_applet = applet = g_new0 (AlarmApplet, 1);
+    applet->application = app;
 
 	// Set up unique app
 	/*applet->unique_app = unique_app;
@@ -672,8 +673,6 @@ alarm_applet_init (int *argc, char ***argv)
 	if (!hidden) {
 		gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
 	}
-
-	return applet;
 }
 
 /**
@@ -693,7 +692,7 @@ alarm_applet_quit (AlarmApplet *applet)
 int
 main (int argc, char *argv[])
 {
-	AlarmApplet *applet;
+	AlarmApplet *applet = NULL;
 
     // Internationalization
     bindtextdomain (GETTEXT_PACKAGE, ALARM_CLOCK_DATADIR "/locale");
@@ -704,18 +703,15 @@ main (int argc, char *argv[])
     //g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	// Initialize GTK+
-	gtk_init (&argc, &argv);
-
-	// Initialize applet
-	applet = alarm_applet_init (&argc, &argv);
-
-	// Start main loop
-	gtk_main ();
-
+	GtkApplication* application = gtk_application_new("com.pseudoberries.AlarmClock", G_APPLICATION_FLAGS_NONE);
+    g_signal_connect(application, "activate", G_CALLBACK(alarm_applet_activate), &applet);
+    gint ret = g_application_run(G_APPLICATION(application), argc, argv);
 	// Clean up
+    // FIXME: check for null?
 	alarm_applet_quit (applet);
+    g_object_unref(application);
 
-	return 0;
+	return ret;
 }
 
 /*

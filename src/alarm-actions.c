@@ -319,12 +319,12 @@ alarm_action_toggle_list_win (GtkAction *action, gpointer data)
 void
 alarm_action_quit (GtkAction *action, gpointer data)
 {
-//    AlarmApplet *applet = (AlarmApplet *)data;
+    AlarmApplet *applet = (AlarmApplet *)data;
 
     g_debug ("AlarmAction: Quit!");
 
-    // TODO: Free up resources - maybe use gtk_quit_add() & friends
-    gtk_main_quit ();
+    // TODO: Free up resources
+    g_application_quit(G_APPLICATION(applet->application));
 }
 
 /*
