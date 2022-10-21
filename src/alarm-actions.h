@@ -37,25 +37,25 @@ void
 alarm_action_update_enabled (AlarmApplet *applet);
 
 void
-alarm_action_edit (GtkAction *action, gpointer data);
+alarm_action_edit (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_delete (GtkAction *action, gpointer data);
+alarm_action_delete (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_enabled (GtkToggleAction *action, gpointer data);
+alarm_action_enable (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_stop (GtkAction *action, gpointer data);
+alarm_action_stop (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
 alarm_action_stop_all (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_new (GtkAction *action, gpointer data);
+alarm_action_new (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_snooze (GtkAction *action, gpointer data);
+alarm_action_snooze (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
 alarm_action_snooze_all (GSimpleAction *action, GVariant *parameter, gpointer data);
@@ -67,9 +67,9 @@ void
 alarm_action_quit (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_toggle_autostart (GtkAction *action, gpointer data);
+alarm_action_toggle_autostart (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 void
-alarm_action_toggle_show_label (GtkAction *action, gpointer data);
+alarm_action_toggle_show_label (GSimpleAction *action, GVariant *parameter, gpointer data);
 
 #endif // ALARM_ACTIONS_H

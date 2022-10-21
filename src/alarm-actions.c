@@ -25,7 +25,7 @@
 #include "alarm-applet.h"
 #include "alarm-list-window.h"
 
-#define GET_ACTION(name) GTK_ACTION (gtk_builder_get_object (builder, (name)))
+#define GET_ACTION(map, name) G_SIMPLE_ACTION(g_action_map_lookup_action(G_ACTION_MAP(map), (name)))
 
 /**
  * Initialize the various actions
@@ -36,46 +36,44 @@ alarm_applet_actions_init (AlarmApplet *applet)
     GtkBuilder *builder = applet->ui;
 
     // Actions on one alarm
-    applet->actions_alarm = gtk_action_group_new ("alarm");
+    const GActionEntry win_action_entries[] = {
+        { "alarm_new", alarm_action_new, },
+        { "alarm_edit", alarm_action_edit, },
+        { "alarm_delete", alarm_action_delete, },
+        { "alarm_stop", alarm_action_stop, },
+        { "alarm_snooze", alarm_action_snooze, },
+        { "alarm_enable", alarm_action_enable, NULL, "false"},
+    };
+    g_action_map_add_action_entries(G_ACTION_MAP(applet->list_window->window), win_action_entries, G_N_ELEMENTS(win_action_entries), applet);
 
-    applet->action_edit = GET_ACTION ("edit-action");
-    applet->action_delete = GET_ACTION ("delete-action");
-    applet->action_enabled = GTK_TOGGLE_ACTION (GET_ACTION ("enabled-action"));
-    applet->action_stop = GET_ACTION ("stop-action");
-    applet->action_snooze = GET_ACTION ("snooze-action");
-
-    gtk_action_group_add_action (applet->actions_alarm, applet->action_edit);
-    gtk_action_group_add_action (applet->actions_alarm, applet->action_delete);
-    gtk_action_group_add_action (applet->actions_alarm, GTK_ACTION (applet->action_enabled));
-    gtk_action_group_add_action (applet->actions_alarm, applet->action_stop);
-    gtk_action_group_add_action (applet->actions_alarm, applet->action_snooze);
+    applet->action_edit = GET_ACTION(applet->list_window->window, "alarm_edit");
+    applet->action_delete = GET_ACTION(applet->list_window->window, "alarm_delete");
+    applet->action_enable = GET_ACTION(applet->list_window->window, "alarm_enable");
+    applet->action_stop = GET_ACTION(applet->list_window->window, "alarm_stop");
+    applet->action_snooze = GET_ACTION(applet->list_window->window, "alarm_snooze");
 
     // Global actions
-    applet->actions_global = gtk_action_group_new ("global");
-
-    applet->action_new = GET_ACTION ("new-action");
-    const GActionEntry entries[] = {
+    const GActionEntry app_action_entries[] = {
         { "snooze_all", alarm_action_snooze_all, },
         { "stop_all", alarm_action_stop_all, },
         { "quit", alarm_action_quit, },
         { "show_alarms_list", alarm_action_toggle_list_win, },
+        { "autostart", alarm_action_toggle_autostart, NULL, "false"},
+        { "show_countdown", alarm_action_toggle_show_label, NULL, "false"},
     };
-    g_action_map_add_action_entries (G_ACTION_MAP (applet->application), entries, G_N_ELEMENTS (entries), applet);
+    g_action_map_add_action_entries(G_ACTION_MAP(applet->application), app_action_entries, G_N_ELEMENTS(app_action_entries), applet);
 
-    applet->action_toggle_list_win = G_SIMPLE_ACTION(g_action_map_lookup_action(G_ACTION_MAP(applet->application), "show_alarms_list"));
+    applet->action_toggle_list_win = GET_ACTION(applet->application, "show_alarms_list");
+    applet->action_toggle_autostart = GET_ACTION(applet->application, "autostart");
+    applet->action_toggle_show_label = GET_ACTION(applet->application, "show_countdown");
+    g_simple_action_set_enabled(applet->action_toggle_show_label, TRUE);
 
-    applet->action_toggle_autostart = GTK_TOGGLE_ACTION (GET_ACTION ("autostart-action"));
-    applet->action_toggle_show_label = GTK_TOGGLE_ACTION (GET_ACTION ("show-label-action"));
-
-    gtk_action_group_add_action (applet->actions_global, applet->action_new);
-
+    // FIXME: Add more such as Ctrl Q, Ctrl N, etc etc
     const gchar* const toggle_list_win_accel[] = {
         "Escape",
         NULL
     };
     gtk_application_set_accels_for_action(applet->application, "app.show_alarms_list", toggle_list_win_accel);
-    gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_autostart));
-    gtk_action_group_add_action (applet->actions_global, GTK_ACTION (applet->action_toggle_show_label));
 
     // Update actions
     alarm_applet_actions_update_sensitive (applet);
@@ -90,7 +88,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
  * Edit alarm action
  */
 void
-alarm_action_edit (GtkAction *action, gpointer data)
+alarm_action_edit (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
@@ -114,7 +112,7 @@ alarm_action_edit (GtkAction *action, gpointer data)
  * Delete alarm action
  */
 void
-alarm_action_delete (GtkAction *action, gpointer data)
+alarm_action_delete (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
@@ -147,12 +145,17 @@ alarm_action_delete (GtkAction *action, gpointer data)
  * Enable alarm action
  */
 void
-alarm_action_enabled (GtkToggleAction *action, gpointer data)
+alarm_action_enable (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
 	Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-    gboolean active = gtk_toggle_action_get_active(action);
+    GVariant* state = g_action_get_state(G_ACTION(action));
+    if(!state)
+        return;
+
+    gboolean active = !g_variant_get_boolean(state);
+    g_variant_unref(state);
 
 	if (!a || a->active == active) {
 		// No alarms selected or no change
@@ -171,21 +174,27 @@ void
 alarm_action_update_enabled (AlarmApplet *applet)
 {
     Alarm *a = alarm_list_window_get_selected_alarm (applet->list_window);
-    gboolean active = gtk_toggle_action_get_active(applet->action_enabled);
+    GVariant* state = g_action_get_state(G_ACTION(applet->action_enable));
+    if(!state)
+        return;
 
-	if (!a || a->active == active) {
-		// No alarms selected or no change
-		return;
-	}
+    gboolean active = g_variant_get_boolean(state);
+    g_variant_unref(state);
 
-    gtk_toggle_action_set_active (applet->action_enabled, a->active);
+    if (!a || a->active == active) {
+        // No alarms selected or no change
+        return;
+    }
+
+    state = g_variant_new("b", a->active);
+    g_simple_action_set_state(applet->action_enable, state);
 }
 
 /**
  * Stop alarm action
  */
 void
-alarm_action_stop (GtkAction *action, gpointer data)
+alarm_action_stop (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
@@ -202,7 +211,7 @@ alarm_action_stop (GtkAction *action, gpointer data)
  * Snooze alarm action
  */
 void
-alarm_action_snooze (GtkAction *action, gpointer data)
+alarm_action_snooze (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
@@ -224,7 +233,7 @@ alarm_action_snooze (GtkAction *action, gpointer data)
  * New alarm action
  */
 void
-alarm_action_new (GtkAction *action, gpointer data)
+alarm_action_new (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
@@ -332,11 +341,16 @@ alarm_action_quit (GSimpleAction *action, GVariant *parameter, gpointer data)
  * Toggle autostart action
  */
 void
-alarm_action_toggle_autostart (GtkAction *action, gpointer data)
+alarm_action_toggle_autostart (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
-	gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+    GVariant* state = g_action_get_state(G_ACTION(action));
+    if(!state)
+        return;
+
+    gboolean active = !g_variant_get_boolean(state);
+    g_variant_unref(state);
+
 	gboolean autostart_state = prefs_autostart_get_state();
-	//gboolean check_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (applet->pref_autostart_check));
 
 	g_debug ("AlarmAction: toggle autostart to %d", active);
 
@@ -350,10 +364,15 @@ alarm_action_toggle_autostart (GtkAction *action, gpointer data)
  * Toggle show_label action
  */
 void
-alarm_action_toggle_show_label (GtkAction *action, gpointer data)
+alarm_action_toggle_show_label (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
 	AlarmApplet *applet = (AlarmApplet *)data;
-	gboolean active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+    GVariant* state = g_action_get_state(G_ACTION(action));
+    if(!state)
+        return;
+
+    gboolean active = !g_variant_get_boolean(state);
+    g_variant_unref(state);
 	gboolean show_label_state = prefs_show_label_get(applet);
 	//gboolean check_active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (applet->pref_autostart_check));
 
@@ -379,13 +398,11 @@ alarm_applet_actions_update_sensitive (AlarmApplet *applet)
     Alarm *a = alarm_list_window_get_selected_alarm (applet->list_window);
     gboolean selected = (a != NULL);
 
-    g_object_set (applet->actions_alarm, "sensitive", selected, NULL);
-
-    g_object_set (applet->action_stop,
-        "sensitive", selected && a->triggered, NULL);
-
-    g_object_set (applet->action_snooze,
-        "sensitive", selected && a->triggered, NULL);
+    g_simple_action_set_enabled(applet->action_enable, selected);
+    g_simple_action_set_enabled(applet->action_edit, selected);
+    g_simple_action_set_enabled(applet->action_delete, selected);
+    g_simple_action_set_enabled(applet->action_stop, selected && a->triggered);
+    g_simple_action_set_enabled(applet->action_snooze, selected && a->triggered);
 
 
     //
@@ -393,6 +410,10 @@ alarm_applet_actions_update_sensitive (AlarmApplet *applet)
     //
 
     // If there are alarms triggered, snooze_all and stop_all should be sensitive
-    g_simple_action_set_enabled(G_SIMPLE_ACTION(g_action_map_lookup_action(G_ACTION_MAP(applet->application), "stop_all")), applet->n_triggered > 0);
-    g_simple_action_set_enabled(G_SIMPLE_ACTION(g_action_map_lookup_action(G_ACTION_MAP(applet->application), "snooze_all")), applet->n_triggered > 0);
+    g_simple_action_set_enabled(GET_ACTION(applet->application, "stop_all"), applet->n_triggered > 0);
+    g_simple_action_set_enabled(GET_ACTION(applet->application, "snooze_all"), applet->n_triggered > 0);
+
+    // Perhaps not the best place for this (as it's not an action)
+    // This is needed because the action being disabled does not affect the GtkMenuButton
+    gtk_widget_set_sensitive(applet->list_window->snooze_button, selected && a->triggered);
 }

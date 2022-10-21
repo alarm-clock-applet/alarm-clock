@@ -6,6 +6,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">About Alarm Clock</property>
+    <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">normal</property>
@@ -80,6 +81,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Edit alarm</property>
     <property name="resizable">False</property>
+    <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="icon_name">alarm-clock</property>
@@ -811,6 +813,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Snooze alarm</property>
     <property name="resizable">False</property>
+    <property name="modal">True</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">normal</property>
     <child type="titlebar">
@@ -959,7 +962,26 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       <action-widget response="-5">snooze-dialog-button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkWindow" id="alarm-list-window">
+  <object class="GtkListStore" id="alarms-liststore">
+    <columns>
+      <!-- column-name Alarm -->
+      <column type="GObject"/>
+      <!-- column-name Type -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name Time -->
+      <column type="gchararray"/>
+      <!-- column-name Label -->
+      <column type="gchararray"/>
+      <!-- column-name Enabled -->
+      <column type="gboolean"/>
+      <!-- column-name Triggered -->
+      <column type="gboolean"/>
+      <!-- column-name Show -->
+      <column type="gboolean"/>
+    </columns>
+    <signal name="rows-reordered" handler="alarm_list_window_rows_reordered" swapped="no"/>
+  </object>
+  <object class="GtkApplicationWindow" id="alarm-list-window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Alarms</property>
     <property name="default_width">350</property>
@@ -980,9 +1002,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <property name="can_focus">False</property>
             <child>
               <object class="GtkToolButton" id="new-button">
-                <property name="related_action">new-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">New alarm</property>
+                <property name="action_name">win.alarm_new</property>
                 <property name="label" translatable="yes">New...</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-add</property>
@@ -994,9 +1017,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             </child>
             <child>
               <object class="GtkToolButton" id="edit-button">
-                <property name="related_action">edit-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Edit the selected alarm</property>
+                <property name="action_name">win.alarm_edit</property>
                 <property name="label" translatable="yes">Edit...</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-edit</property>
@@ -1008,12 +1032,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             </child>
             <child>
               <object class="GtkToolButton" id="delete-button">
-                <property name="related_action">delete-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Delete the selected alarm</property>
+                <property name="action_name">win.alarm_delete</property>
                 <property name="label" translatable="yes">Delete</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-delete</property>
+                <property name="stock_id">gtk-remove</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1032,9 +1057,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             </child>
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
-                <property name="related_action">enabled-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Enable/disable the selected alarm</property>
+                <property name="action_name">win.alarm_enable</property>
                 <property name="label" translatable="yes">Enable</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-apply</property>
@@ -1046,10 +1072,11 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             </child>
             <child>
               <object class="GtkToolButton" id="stop-button">
-                <property name="related_action">stop-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Stop the selected alarm</property>
                 <property name="is_important">True</property>
+                <property name="action_name">win.alarm_stop</property>
                 <property name="label" translatable="yes">Stop</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-cancel</property>
@@ -1061,10 +1088,11 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             </child>
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
-                <property name="related_action">snooze-action</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Snooze the selected alarm</property>
                 <property name="is_important">True</property>
+                <property name="action_name">win.alarm_snooze</property>
                 <property name="label" translatable="yes">Snooze</property>
                 <property name="use_underline">True</property>
                 <property name="icon_name">weather-few-clouds-night</property>
@@ -1096,7 +1124,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="headers_clickable">False</property>
                 <property name="rules_hint">True</property>
                 <property name="search_column">2</property>
-                <signal name="row-activated" handler="gtk_action_activate" object="edit-action" swapped="yes"/>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
@@ -1172,68 +1199,12 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
       </object>
     </child>
   </object>
-  <object class="GtkListStore" id="alarms-liststore">
-    <columns>
-      <!-- column-name Alarm -->
-      <column type="GObject"/>
-      <!-- column-name Type -->
-      <column type="GdkPixbuf"/>
-      <!-- column-name Time -->
-      <column type="gchararray"/>
-      <!-- column-name Label -->
-      <column type="gchararray"/>
-      <!-- column-name Enabled -->
-      <column type="gboolean"/>
-      <!-- column-name Triggered -->
-      <column type="gboolean"/>
-      <!-- column-name Show -->
-      <column type="gboolean"/>
-    </columns>
-    <signal name="rows-reordered" handler="alarm_list_window_rows_reordered" swapped="no"/>
-  </object>
-  <object class="GtkToggleAction" id="autostart-action">
-    <property name="label" translatable="yes">Start automatically at login</property>
-    <property name="short_label" translatable="yes">Start automatically at login</property>
-    <signal name="activate" handler="alarm_action_toggle_autostart" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="delete-action">
-    <property name="label" translatable="yes">Delete alarm</property>
-    <property name="short_label" translatable="yes">Delete</property>
-    <property name="tooltip" translatable="yes">Delete the selected alarm</property>
-    <property name="stock_id">gtk-delete</property>
-    <signal name="activate" handler="alarm_action_delete" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="edit-action">
-    <property name="label" translatable="yes">Edit alarm</property>
-    <property name="short_label" translatable="yes">Edit...</property>
-    <property name="tooltip" translatable="yes">Edit the selected alarm</property>
-    <property name="stock_id">gtk-edit</property>
-    <signal name="activate" handler="alarm_action_edit" swapped="no"/>
-  </object>
-  <object class="GtkToggleAction" id="enabled-action">
-    <property name="label" translatable="yes">Enable/disable alarm</property>
-    <property name="short_label" translatable="yes">Enable/disable</property>
-    <property name="tooltip" translatable="yes">Enable/disable the selected alarm</property>
-    <property name="stock_id">gtk-yes</property>
-    <signal name="activate" handler="alarm_action_enabled" swapped="no"/>
-  </object>
-  <object class="GtkAction" id="new-action">
-    <property name="label" translatable="yes">New alarm</property>
-    <property name="short_label" translatable="yes">New</property>
-    <property name="tooltip" translatable="yes">New alarm</property>
-    <property name="stock_id">gtk-new</property>
-    <signal name="activate" handler="alarm_action_new" swapped="no"/>
-  </object>
-  <object class="GtkToggleAction" id="show-label-action">
-    <property name="label" translatable="yes">Show countdown label</property>
-    <property name="short_label" translatable="yes">Show countdown label</property>
-    <signal name="activate" handler="alarm_action_toggle_show_label" swapped="no"/>
-  </object>
   <object class="GtkDialog" id="preferences">
     <property name="width_request">290</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Alarm Clock Preferences</property>
     <property name="resizable">False</property>
+    <property name="modal">True</property>
     <property name="icon_name">alarm-clock</property>
     <property name="type_hint">dialog</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
@@ -1304,10 +1275,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkCheckButton" id="autostart-check">
                     <property name="label" translatable="yes">Start automatically at login</property>
-                    <property name="related_action">autostart-action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="action_name">app.autostart</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -1343,10 +1314,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkCheckButton" id="show-label-check">
                     <property name="label" translatable="yes">Show countdown label</property>
-                    <property name="related_action">show-label-action</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="action_name">app.show_countdown</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -1375,14 +1346,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">alarm-clock</property>
-  </object>
-  <object class="GtkAction" id="snooze-action">
-    <property name="label" translatable="yes">Snooze alarm</property>
-    <property name="short_label" translatable="yes">Snooze</property>
-    <property name="tooltip" translatable="yes">Snooze the selected alarm</property>
-    <property name="icon_name">weather-few-clouds-night</property>
-    <property name="is_important">True</property>
-    <signal name="activate" handler="alarm_action_snooze" swapped="no"/>
   </object>
   <object class="GtkMenu" id="snooze-menu">
     <property name="visible">True</property>
@@ -1445,14 +1408,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="icon_name">weather-few-clouds-night</property>
-  </object>
-  <object class="GtkAction" id="stop-action">
-    <property name="label" translatable="yes">Stop alarm</property>
-    <property name="short_label" translatable="yes">Stop</property>
-    <property name="tooltip" translatable="yes">Stop the selected alarm</property>
-    <property name="stock_id">gtk-stop</property>
-    <property name="is_important">True</property>
-    <signal name="activate" handler="alarm_action_stop" swapped="no"/>
   </object>
   <object class="GtkImage" id="stop_all_image">
     <property name="visible">True</property>

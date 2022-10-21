@@ -55,6 +55,8 @@ void
 prefs_init (AlarmApplet *applet)
 {
 	applet->prefs_dialog = GTK_DIALOG (gtk_builder_get_object(applet->ui, "preferences"));
+    // ...Why?
+    gtk_widget_insert_action_group(GTK_WIDGET(applet->prefs_dialog), "app", G_ACTION_GROUP(applet->application));
 	applet->prefs_autostart_check = GTK_WIDGET (gtk_builder_get_object (applet->ui, "autostart-check"));
 
 	prefs_autostart_init (applet);
@@ -298,7 +300,7 @@ prefs_autostart_set_state (gboolean state)
 			if (fstream) {
 				str = g_key_file_to_data (kf, &length, NULL);
 
-				g_print ("Writing str: %s", str);
+				//g_print ("Writing str: %s", str);
 				g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
 				g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
 
@@ -339,7 +341,7 @@ prefs_autostart_set_state (gboolean state)
 				if (fstream) {
 					str = g_key_file_to_data (kf, &length, NULL);
 
-					g_print ("Writing str: %s", str);
+					//g_print ("Writing str: %s", str);
 					g_output_stream_write_all (G_OUTPUT_STREAM (fstream), str, length, NULL, NULL, &err);
 					g_output_stream_close (G_OUTPUT_STREAM (fstream), NULL, &err);
 
@@ -384,13 +386,20 @@ prefs_autostart_set_state (gboolean state)
 void
 prefs_autostart_update (AlarmApplet *applet)
 {
-	gboolean state = gtk_toggle_action_get_active (applet->action_toggle_autostart);
+    GVariant* act_state = g_action_get_state(G_ACTION(applet->action_toggle_autostart));
+    if(!act_state)
+        return;
+
+    gboolean state = g_variant_get_boolean(act_state);
+    g_variant_unref(act_state);
+
 	gboolean new_state = prefs_autostart_get_state();
 
 	g_debug ("Preferences: Autostart update: new state: %d", new_state);
 
 	if (state != new_state) {
-		gtk_toggle_action_set_active (applet->action_toggle_autostart, new_state);
+        act_state = g_variant_new("b", new_state);
+        g_simple_action_set_state(applet->action_toggle_autostart, act_state);
 	}
 }
 
@@ -427,7 +436,13 @@ prefs_show_label_get (AlarmApplet *applet)
 	value = gconf_client_get(client, ALARM_GCONF_DIR "/show_label", NULL);
 	if (value == NULL) {
 		g_warning ("Get %s failed", ALARM_GCONF_DIR "/show_label");
-		return gtk_toggle_action_get_active (applet->action_toggle_show_label);
+        GVariant* act_state = g_action_get_state(G_ACTION(applet->action_toggle_show_label));
+        if(!act_state)
+            return FALSE;
+
+        state = g_variant_get_boolean(act_state);
+        g_variant_unref(act_state);
+        return state;
 	}
 
 	state = gconf_value_get_bool (value);
@@ -460,13 +475,19 @@ prefs_show_label_set (AlarmApplet *applet, gboolean state)
 void
 prefs_show_label_update (AlarmApplet *applet)
 {
-	gboolean state = gtk_toggle_action_get_active (applet->action_toggle_show_label);
+    GVariant* act_state = g_action_get_state(G_ACTION(applet->action_toggle_show_label));
+    if(!act_state)
+        return;
+
+    gboolean state = g_variant_get_boolean(act_state);
+    g_variant_unref(act_state);
 	gboolean new_state = prefs_show_label_get (applet);
 
 	g_debug ("Preferences: Show_label update: new state: %d", new_state);
 
 	if (state != new_state) {
-		gtk_toggle_action_set_active (applet->action_toggle_show_label, new_state);
+        act_state = g_variant_new("b", new_state);
+        g_simple_action_set_state(applet->action_toggle_show_label, act_state);
 	}
 }
 
@@ -490,7 +511,7 @@ prefs_dialog_show (AlarmApplet *applet)
 	if (gtk_widget_get_visible(GTK_WIDGET(applet->prefs_dialog))) {
 		gtk_window_present_with_time (GTK_WINDOW (applet->prefs_dialog), gtk_get_current_event_time());
 	} else {
-		gtk_dialog_run (applet->prefs_dialog);
+		gtk_widget_show (GTK_WIDGET(applet->prefs_dialog));
 	}
 }
 
@@ -502,7 +523,7 @@ autostart_monitor_changed (GFileMonitor     *monitor,
                  gpointer          user_data)
 {
 	AlarmApplet *applet = (AlarmApplet *)user_data;
-	gchar *s = g_file_get_path (file);
+	/*gchar *s = g_file_get_path (file);
 	g_print ("Monitor changed on %s: ", s);
 
 	switch (event_type) {
@@ -534,7 +555,7 @@ autostart_monitor_changed (GFileMonitor     *monitor,
 
 	g_print ("\n");
 
-	g_free (s);
+	g_free (s);*/
 
 	prefs_autostart_update (applet);
 }

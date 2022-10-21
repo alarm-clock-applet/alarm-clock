@@ -65,6 +65,8 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window);
 static void
 alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter);
 
+static void alarm_list_window_row_activated (GtkTreeView* self, GtkTreePath* path, GtkTreeViewColumn* column, gpointer user_data);
+
 /**
  * Create a new Alarm List Window
  */
@@ -83,6 +85,7 @@ alarm_list_window_new (AlarmApplet *applet)
 
     // Widgets
 	list_window->window = GTK_WINDOW (gtk_builder_get_object (builder, "alarm-list-window"));
+    g_object_set(list_window->window, "application", applet->application, NULL);
 	list_window->model = GTK_LIST_STORE (gtk_builder_get_object (builder, "alarms-liststore"));
 	list_window->tree_view = GTK_TREE_VIEW (gtk_builder_get_object (builder, "alarm-list-view"));
 
@@ -109,6 +112,8 @@ alarm_list_window_new (AlarmApplet *applet)
     selection = gtk_tree_view_get_selection (list_window->tree_view);
     g_signal_connect (selection, "changed",
                       G_CALLBACK (alarm_list_window_selection_changed), applet);
+    g_signal_connect(list_window->tree_view, "row-activated",
+                      G_CALLBACK(alarm_list_window_row_activated), applet);
 
     // Update view every half a second for pretty countdowns
     g_timeout_add (500, (GSourceFunc) alarm_list_window_update_timer, applet);
@@ -576,7 +581,7 @@ alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
         list_window->toggled = TRUE;
 
         // Activate the enabled action
-        gtk_action_activate (GTK_ACTION (applet->action_enabled));
+        g_action_activate(G_ACTION(applet->action_enable), NULL);
     }
 }
 
@@ -635,7 +640,7 @@ alarm_list_window_snooze_menu_activated (GtkMenuItem *menuitem,
 
         applet->snooze_mins = mins;
 
-        gtk_action_activate (applet->action_snooze);
+        g_action_activate(G_ACTION(applet->action_snooze), NULL);
     }
 }
 
@@ -702,4 +707,10 @@ alarm_list_window_snooze_menu_update (AlarmListWindow *list_window)
     unblock_list (gtk_container_get_children(GTK_CONTAINER(menu)), alarm_list_window_snooze_menu_activated);
 
     g_free (target_name);
+}
+
+static void alarm_list_window_row_activated(GtkTreeView* self, GtkTreePath* path, GtkTreeViewColumn* column, gpointer data)
+{
+    AlarmApplet *applet = (AlarmApplet *)data;
+    g_action_activate(G_ACTION(applet->action_edit), NULL);
 }

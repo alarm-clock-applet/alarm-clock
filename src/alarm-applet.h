@@ -107,22 +107,16 @@ struct _AlarmApplet {
 
     guint snooze_mins;
 
-    // Actions on one alarm
-    GtkActionGroup *actions_alarm;
-
-    GtkAction *action_edit;
-    GtkAction *action_delete;
-    GtkToggleAction *action_enabled;
-    GtkAction *action_stop;
-    GtkAction *action_snooze;
+    GSimpleAction *action_edit;
+    GSimpleAction *action_delete;
+    GSimpleAction *action_stop;
+    GSimpleAction *action_snooze;
+    GSimpleAction *action_enable;
 
     // Global actions
-    GtkActionGroup *actions_global;
-    GtkAction *action_new;
-    GtkAction *action_stop_all;
     GSimpleAction *action_toggle_list_win;
-    GtkToggleAction *action_toggle_autostart;
-    GtkToggleAction *action_toggle_show_label;
+    GSimpleAction *action_toggle_autostart;
+    GSimpleAction *action_toggle_show_label;
 };
 
 void alarm_applet_sounds_load (AlarmApplet *applet);

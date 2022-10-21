@@ -176,12 +176,7 @@ alarm_applet_notification_show (AlarmApplet *applet,
     NotifyNotification *n;
     GError *error = NULL;
 
-    // Gotta love API breakage...
-#ifdef HAVE_LIBNOTIFY_0_7
     n = notify_notification_new (summary, body, icon);
-#else
-    n = notify_notification_new (summary, body, icon, NULL);
-#endif
 
     if (!notify_notification_show (n, &error)) {
         g_warning ("Failed to send notification: %s", error->message);
@@ -199,7 +194,14 @@ alarm_applet_label_update (AlarmApplet *applet)
 	Alarm *next_alarm = NULL;
 	struct tm *tm;
 	gchar *tmp;
-	gboolean show_label = gtk_toggle_action_get_active (applet->action_toggle_show_label);
+
+    GVariant* state = g_action_get_state(G_ACTION(applet->action_toggle_show_label));
+    if(!state)
+        return;
+
+    gboolean show_label = g_variant_get_boolean(state);
+    g_variant_unref(state);
+
 
 	if (!show_label) {
 		app_indicator_set_label (applet->app_indicator, NULL, NULL);
@@ -328,11 +330,7 @@ alarm_applet_status_menu_edit_cb (GtkMenuItem *menuitem,
 {
     AlarmApplet *applet = (AlarmApplet *)user_data;
 
-    if (g_action_get_enabled(G_ACTION(applet->action_toggle_list_win))) {
-        alarm_list_window_show (applet->list_window);
-    } else {
-        g_simple_action_set_enabled(applet->action_toggle_list_win, TRUE);
-    }
+    alarm_list_window_show (applet->list_window);
 }
 
 void
