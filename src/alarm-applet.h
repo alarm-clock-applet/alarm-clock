@@ -114,9 +114,14 @@ struct _AlarmApplet {
     GSimpleAction *action_enable;
 
     // Global actions
+    GSimpleAction *action_snooze_all;
+    GSimpleAction *action_stop_all;
     GSimpleAction *action_toggle_list_win;
     GSimpleAction *action_toggle_autostart;
     GSimpleAction *action_toggle_show_label;
+
+    // Args
+    gboolean hidden;     // Start hidden
 };
 
 void alarm_applet_sounds_load (AlarmApplet *applet);

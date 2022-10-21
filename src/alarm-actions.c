@@ -63,6 +63,8 @@ alarm_applet_actions_init (AlarmApplet *applet)
     };
     g_action_map_add_action_entries(G_ACTION_MAP(applet->application), app_action_entries, G_N_ELEMENTS(app_action_entries), applet);
 
+    applet->action_snooze_all = GET_ACTION(applet->application, "snooze_all");
+    applet->action_stop_all = GET_ACTION(applet->application, "stop_all");
     applet->action_toggle_list_win = GET_ACTION(applet->application, "show_alarms_list");
     applet->action_toggle_autostart = GET_ACTION(applet->application, "autostart");
     applet->action_toggle_show_label = GET_ACTION(applet->application, "show_countdown");

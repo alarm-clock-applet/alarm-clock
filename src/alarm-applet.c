@@ -524,155 +524,47 @@ alarm_applet_destroy (AlarmApplet *applet)
 	g_free (applet);
 }*/
 
-
-/*static UniqueResponse
-unique_app_message_cb (UniqueApp         *app,
-                       UniqueCommand      command,
-                       UniqueMessageData *message,
-                       guint              time_,
-                       gpointer           user_data)
-{
-    AlarmApplet *applet = (AlarmApplet *)user_data;
-
-    UniqueResponse res;
-
-    switch (command) {
-        case UNIQUE_ACTIVATE:
-            g_debug ("AlarmApplet: unique_app_message: ACTIVATE");
-            if (gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (applet->action_toggle_list_win))) {
-                // Already visible, present to user
-                alarm_list_window_show (applet->list_window);
-            } else {
-                // Toggle list window visibility
-                gtk_action_activate (GTK_ACTION (applet->action_toggle_list_win));
-            }
-
-            res = UNIQUE_RESPONSE_OK;
-            break;
-        case UNIQUE_STOP_ALL:
-            g_debug ("AlarmApplet: unique_app_message: STOP_ALARMS");
-            gtk_action_activate (GTK_ACTION (applet->action_stop_all));
-            res = UNIQUE_RESPONSE_OK;
-            break;
-        case UNIQUE_SNOOZE_ALL:
-            g_debug ("AlarmApplet: unique_app_message: SNOOZE_ALARMS");
-            gtk_action_activate (GTK_ACTION (applet->action_snooze_all));
-            res = UNIQUE_RESPONSE_OK;
-            break;
-        default:
-            g_warning ("AlarmApplet: unique_app_message: Unknown command %d",
-                command);
-
-            res = UNIQUE_RESPONSE_INVALID;
-            break;
-    }
-
-    return res;
-}*/
-
-
-
 /*
  * INIT {{
  */
 
 void alarm_applet_activate(GtkApplication *app, gpointer user_data)
 {
-	AlarmApplet *applet;
-    AlarmApplet **ret_applet = user_data;
-	GList *unique_app;
+    AlarmApplet *applet = user_data;
 
-	GError *error = NULL;
-	GOptionContext *context;
+    // Check if there's another instance running
+    GList* gtk_windows = gtk_application_get_windows(app);
+    if(gtk_windows) {
+        gtk_window_present(GTK_WINDOW(gtk_windows->data));
+        return;
+    }
 
-	gboolean hidden = FALSE;     // Start hidden
-	gboolean stop_all = FALSE;   // Stop all alarms
-	gboolean snooze_all = FALSE; // Snooze all alarms
+    // Preferences (defaults).
+    // ...gconf_get_string can return NULL if the key is not found. We can't
+    // assume the schema provides the default values for strings.
 
-    // Command line options
-	GOptionEntry entries[] =
-	{
-		{ "hidden", 0, 0, G_OPTION_ARG_NONE, &hidden, "Start hidden", NULL },
-		{ "stop-all", 0, 0, G_OPTION_ARG_NONE, &stop_all, "Stop all alarms",
-			NULL },
-		{ "snooze-all", 0, 0, G_OPTION_ARG_NONE, &snooze_all,
-			"Snooze all alarms", NULL },
-		{ NULL }
-	};
+    // TODO: Add to gconf
+    applet->snooze_mins = 5;
 
-	// Parse command-line arguments
-	/*context = g_option_context_new (NULL);
-	g_option_context_add_main_entries (context, entries, GETTEXT_PACKAGE);
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+    // Initialize gconf
+    alarm_applet_gconf_init (applet);
 
-	if (!g_option_context_parse (context, argc, argv, &error)) {
-		g_printerr ("%s\n", error->message);
-		exit (EXIT_FAILURE);
-	}*/
+    // Load alarms
+    alarm_applet_alarms_load (applet);
 
-	// Initialize unique app
-	/*unique_app = gtk_application_get_windows (app);
-	unique_app_add_command(unique_app, "StopAllAlarms", UNIQUE_STOP_ALL);
-	unique_app_add_command(unique_app, "SnoozeAllAlarms", UNIQUE_SNOOZE_ALL);
+    // Load sounds from alarms
+    alarm_applet_sounds_load (applet);
 
-	// Check if we're already running
-	if (unique_app_is_running (unique_app)) {
-		// Send activate message
-		UniqueMessageData *message = unique_message_data_new ();
+    // Load apps for alarms
+    alarm_applet_apps_load (applet);
 
-		if (stop_all) {
-			unique_app_send_message (unique_app, UNIQUE_STOP_ALL, message);
-		} else if (snooze_all) {
-			unique_app_send_message (unique_app, UNIQUE_SNOOZE_ALL, message);
-		} else {
-			g_printerr(_("%s is already running, exiting...\n"), PACKAGE);
-			unique_app_send_message (unique_app, UNIQUE_ACTIVATE, message);
-		}
+    // Set up applet UI
+    alarm_applet_ui_init (applet);
 
-		unique_message_data_free (message);
-		g_object_unref (unique_app);
+    // Show alarms window, unless --hidden
+    if(!applet->hidden)
+        g_action_activate(G_ACTION(applet->action_toggle_list_win), NULL);
 
-		exit (EXIT_SUCCESS);
-	}*/
-
-	// Initialize applet struct
-	*ret_applet = applet = g_new0 (AlarmApplet, 1);
-    applet->application = app;
-
-	// Set up unique app
-	/*applet->unique_app = unique_app;
-
-	g_signal_connect (unique_app, "message-received",
-		G_CALLBACK (unique_app_message_cb), applet);*/
-
-	//applet->edit_alarm_dialogs = g_hash_table_new (NULL, NULL);
-
-	// Preferences (defaults).
-	// ...gconf_get_string can return NULL if the key is not found. We can't
-	// assume the schema provides the default values for strings.
-
-	// TODO: Add to gconf
-	applet->snooze_mins = 5;
-
-	// Initialize gconf
-	alarm_applet_gconf_init (applet);
-
-	// Load alarms
-	alarm_applet_alarms_load (applet);
-
-	// Load sounds from alarms
-	alarm_applet_sounds_load (applet);
-
-	// Load apps for alarms
-	alarm_applet_apps_load (applet);
-
-	// Set up applet UI
-	alarm_applet_ui_init (applet);
-
-	// Show alarms window, unless --hidden
-	if (!hidden) {
-		g_action_activate(G_ACTION(applet->action_toggle_list_win), NULL);
-	}
 }
 
 /**
@@ -682,8 +574,37 @@ static void
 alarm_applet_quit (AlarmApplet *applet)
 {
     g_debug ("AlarmApplet: Quitting...");
+}
 
-    //g_object_unref (applet->unique_app);
+static gint handle_local_options(GApplication *application, GVariantDict *options, gpointer user_data)
+{
+    guint32 count;
+    if(g_variant_dict_lookup(options, "version", "b", &count)) {
+        g_print(PACKAGE_NAME " " VERSION "\n");
+        return 0;
+    }
+
+    return -1;
+}
+
+static gint handle_command_line(GApplication *application, GApplicationCommandLine *cmdline, gpointer user_data)
+{
+    AlarmApplet *applet = user_data;
+    gboolean stop_all = FALSE;
+    gboolean snooze_all = FALSE;
+
+    GVariantDict* options = g_application_command_line_get_options_dict(cmdline);
+
+    if(g_variant_dict_lookup(options, "stop-all", "b", &stop_all))
+        g_action_activate(G_ACTION(applet->action_stop_all), NULL);
+
+    if (g_variant_dict_lookup(options, "snooze-all", "b", &snooze_all))
+        g_action_activate(G_ACTION(applet->action_snooze_all), NULL);
+
+    if(!(stop_all || snooze_all))
+        g_application_activate(G_APPLICATION(application));
+
+    return 0;
 }
 
 /**
@@ -703,9 +624,33 @@ main (int argc, char *argv[])
     //g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL);
 
 	// Initialize GTK+
-	GtkApplication* application = gtk_application_new("com.pseudoberries.AlarmClock", G_APPLICATION_FLAGS_NONE);
-    g_signal_connect(application, "activate", G_CALLBACK(alarm_applet_activate), &applet);
+    GtkApplication* application = gtk_application_new("io.github.alarm-clock-applet", G_APPLICATION_HANDLES_COMMAND_LINE);
+
+    // Initialize applet struct
+    applet = g_new0 (AlarmApplet, 1);
+    applet->application = application;
+
+    g_signal_connect(application, "activate", G_CALLBACK(alarm_applet_activate), applet);
+
+    // Command line options
+    applet->hidden = FALSE;     // Start hidden
+
+    GOptionEntry entries[] =
+    {
+        { "hidden", 'h', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, &applet->hidden, _("Start hidden"), NULL },
+        { "stop-all", 's', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, _("Stop all alarms"), NULL },
+        { "snooze-all", 'z', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, _("Snooze all alarms"), NULL },
+        { "version", 'v', G_OPTION_FLAG_NONE, G_OPTION_ARG_NONE, NULL, _("Display version information"), NULL },
+        { NULL }
+    };
+    g_application_add_main_option_entries(G_APPLICATION(application), entries);
+
+    g_signal_connect(application, "handle-local-options", G_CALLBACK(handle_local_options), NULL);
+    g_signal_connect(application, "command-line", G_CALLBACK(handle_command_line), applet);
+
+    // Run the main loop
     gint ret = g_application_run(G_APPLICATION(application), argc, argv);
+
 	// Clean up
     // FIXME: check for null?
 	alarm_applet_quit (applet);
