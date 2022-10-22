@@ -38,7 +38,14 @@ struct _AlarmPrivate
 	guint player_timer_id;
 };
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+#endif
 G_DEFINE_TYPE_WITH_PRIVATE (Alarm, alarm, G_TYPE_OBJECT);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 /* Prototypes and constants for property manipulation */
 static void alarm_set_property(GObject *object,
