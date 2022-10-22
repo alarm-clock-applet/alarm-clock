@@ -717,6 +717,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
+                    <property name="group">sound-radio</property>
                     <signal name="toggled" handler="alarm_settings_changed_notify_type" swapped="no"/>
                   </object>
                   <packing>
