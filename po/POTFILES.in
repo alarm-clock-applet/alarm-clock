@@ -1,6 +1,6 @@
 data/alarm-clock-applet.desktop.in
-data/alarm-clock.schemas.in
-[type: gettext/glade]data/alarm-clock.ui
+#data/alarm-clock.schemas.in
+data/alarm-clock.ui
 src/alarm-applet.c
 src/alarm-settings.c
 src/alarm.c

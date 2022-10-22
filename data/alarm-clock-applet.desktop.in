@@ -1,6 +1,6 @@
 [Desktop Entry]
-_Name=Alarm Clock
-_Comment=Wake up in the morning
+Name=Alarm Clock
+Comment=Wake up in the morning
 Icon=alarm-clock
 Exec=alarm-clock-applet
 Terminal=false
