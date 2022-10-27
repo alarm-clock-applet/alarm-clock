@@ -44,4 +44,7 @@ prefs_show_label_get (AlarmApplet *applet);
 void
 prefs_show_label_set (AlarmApplet *applet, gboolean state);
 
+void
+prefs_show_label_update (AlarmApplet *applet);
+
 #endif /*PREFS_H_*/

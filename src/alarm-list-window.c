@@ -199,10 +199,12 @@ alarm_list_window_find_alarm (GtkTreeModel *model,
             if (iter) {
                 *iter = it;
             }
+            g_object_unref(a);
             return TRUE;
         }
 
         valid = gtk_tree_model_iter_next(model, &it);
+        g_object_unref(a);
     }
 
     return FALSE;
@@ -284,7 +286,7 @@ alarm_list_window_update_row (AlarmListWindow *list_window, GtkTreeIter *iter)
         gtk_list_store_set (GTK_LIST_STORE (model), iter, COLUMN_SHOW_ICON, TRUE, -1);
     }
 
-
+    g_object_unref(a);
     g_string_free (time_col, TRUE);
     g_free (label_col);
 }
@@ -386,6 +388,7 @@ alarm_list_window_update_timer (gpointer data)
         }
 
         valid = gtk_tree_model_iter_next(model, &iter);
+        g_object_unref(a);
     }
 
     // Keep updating
@@ -438,6 +441,8 @@ alarm_list_window_sort_iter_compare (GtkTreeModel *model,
             g_return_val_if_reached (0);
     }
 
+    g_object_unref(a1);
+    g_object_unref(a2);
     return ret;
 }
 
@@ -448,6 +453,7 @@ alarm_list_window_sort_iter_compare (GtkTreeModel *model,
 
 /**
  * Get the selected alarm
+ * Returned alarm must be unref'd
  */
 Alarm *
 alarm_list_window_get_selected_alarm (AlarmListWindow *list_window)
@@ -474,7 +480,6 @@ alarm_list_window_get_selected_alarm (AlarmListWindow *list_window)
 	// of the alarms each time it's called. We dereference it
 	// here so they can be properly freed later with g_object_unref()
     // Ugh, we use gtk_tree_model_get a lot, is there no other way?
-	//g_object_unref (a);
 
 	return a;
 }
@@ -549,6 +554,9 @@ alarm_list_window_selection_changed (GtkTreeSelection *selection, gpointer data)
         (a) ? a->message : "<none>", a,
         (list_window->selected_alarm) ? list_window->selected_alarm->message : "<none>",
         list_window->selected_alarm);
+
+    if(list_window->selected_alarm)
+        g_object_unref(list_window->selected_alarm);
 }
 
 /**
@@ -582,6 +590,7 @@ alarm_list_window_enable_toggled (GtkCellRendererToggle *cell_renderer,
 
         // Activate the enabled action
         g_action_activate(G_ACTION(applet->action_enable), NULL);
+        g_object_unref(a);
     }
 }
 
@@ -672,6 +681,7 @@ alarm_list_window_snooze_menu_custom_activated (GtkMenuItem *menuitem,
         if ((a = alarm_list_window_get_selected_alarm (list_window))) {
             g_debug ("AlarmListWindow: Snooze Custom: %s for %d mins", a->message, mins);
             alarm_snooze (a, mins * 60);
+            g_object_unref(a);
         }
     }
 }

@@ -41,13 +41,6 @@ autostart_monitor_changed(GFileMonitor *monitor, GFile *file,
 void
 prefs_show_label_init (AlarmApplet *applet);
 
-void
-prefs_show_label_update (AlarmApplet *applet);
-
-void
-prefs_show_label_changed (GConfClient *client, guint cnxn_id,
-						  GConfEntry *entry, AlarmApplet *applet);
-
 /**
  * Initialize preferences dialog and friends
  */
@@ -409,17 +402,8 @@ prefs_autostart_update (AlarmApplet *applet)
 void
 prefs_show_label_init (AlarmApplet *applet)
 {
-	GConfClient *client = gconf_client_get_default ();
-
-	// Monitor gconf key
-	gconf_client_notify_add (
-			client, ALARM_GCONF_DIR "/show_label",
-			(GConfClientNotifyFunc) prefs_show_label_changed,
-			applet, NULL, NULL);
-
-	// Update state
+    // Update state
 	prefs_show_label_update (applet);
-
 }
 
 /**
@@ -428,36 +412,15 @@ prefs_show_label_init (AlarmApplet *applet)
 gboolean
 prefs_show_label_get (AlarmApplet *applet)
 {
-	GConfClient *client = gconf_client_get_default ();
-	GConfValue *value;
-	gboolean state;
-
-	// Get config value
-	value = gconf_client_get(client, ALARM_GCONF_DIR "/show_label", NULL);
-	if (value == NULL) {
-		g_warning ("Get %s failed", ALARM_GCONF_DIR "/show_label");
-        GVariant* act_state = g_action_get_state(G_ACTION(applet->action_toggle_show_label));
-        if(!act_state)
-            return FALSE;
-
-        state = g_variant_get_boolean(act_state);
-        g_variant_unref(act_state);
-        return state;
-	}
-
-	state = gconf_value_get_bool (value);
-	gconf_value_free (value);
-
-	return state;
+    return g_settings_get_boolean(applet->settings_global, "show-label");
 }
 
 /**
- * Set show_label state in GConf
+ * Set show_label state in GSettings
  */
 void
 prefs_show_label_set (AlarmApplet *applet, gboolean state)
 {
-	GConfClient *client = gconf_client_get_default ();
 	gboolean current_state = prefs_show_label_get (applet);
 
 	if (current_state == state) {
@@ -466,7 +429,7 @@ prefs_show_label_set (AlarmApplet *applet, gboolean state)
 	}
 
 	// Set config value
-	gconf_client_set_bool (client, ALARM_GCONF_DIR "/show_label", state, NULL);
+    g_settings_set_boolean(applet->settings_global, "show-label", state);
 }
 
 /**
@@ -489,17 +452,6 @@ prefs_show_label_update (AlarmApplet *applet)
         act_state = g_variant_new("b", new_state);
         g_simple_action_set_state(applet->action_toggle_show_label, act_state);
 	}
-}
-
-void
-prefs_show_label_changed (GConfClient  *client,
-					      guint         cnxn_id,
-					      GConfEntry   *entry,
-					      AlarmApplet  *applet)
-{
-	g_debug ("show_label_changed");
-
-	prefs_show_label_update (applet);
 }
 
 /**

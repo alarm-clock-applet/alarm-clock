@@ -68,7 +68,6 @@ alarm_applet_actions_init (AlarmApplet *applet)
     applet->action_toggle_list_win = GET_ACTION(applet->application, "show_alarms_list");
     applet->action_toggle_autostart = GET_ACTION(applet->application, "autostart");
     applet->action_toggle_show_label = GET_ACTION(applet->application, "show_countdown");
-    g_simple_action_set_enabled(applet->action_toggle_show_label, TRUE);
 
     // FIXME: Add more such as Ctrl Q, Ctrl N, etc etc
     const gchar* const toggle_list_win_accel[] = {
@@ -108,6 +107,7 @@ alarm_action_edit (GSimpleAction *action, GVariant *parameter, gpointer data)
 
     // Show settings dialog for alarm
     alarm_settings_dialog_show (applet->settings_dialog, a);
+    g_object_unref(a);
 }
 
 /**
@@ -118,7 +118,6 @@ alarm_action_delete (GSimpleAction *action, GVariant *parameter, gpointer data)
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
-    AlarmSettingsDialog *sdialog = applet->settings_dialog;
 
 	Alarm *a = alarm_list_window_get_selected_alarm (list_window);
 
@@ -129,18 +128,17 @@ alarm_action_delete (GSimpleAction *action, GVariant *parameter, gpointer data)
 
     g_debug ("AlarmAction: delete '%s'", a->message);
 
-    // If there's a settings dialog open for this alarm, close it.
-    if (sdialog->alarm == a) {
-        alarm_settings_dialog_close (sdialog);
-    }
-
     // Disable, clear and delete alarm
     alarm_disable (a);
     alarm_clear (a);
-    alarm_delete (a);
 
-    // Remove from applet list
-    alarm_applet_alarms_remove (applet, a);
+    // Not the best, but we do this here
+    g_object_unref(a);
+
+    // Remove from applet list and delete
+    alarm_applet_alarms_remove_and_delete (applet, a);
+
+    alarm_update_gsettings_alarm_list(applet->settings_global, applet->alarms);
 }
 
 /**
@@ -152,21 +150,28 @@ alarm_action_enable (GSimpleAction *action, GVariant *parameter, gpointer data)
     AlarmApplet *applet = (AlarmApplet *)data;
     AlarmListWindow *list_window = applet->list_window;
 	Alarm *a = alarm_list_window_get_selected_alarm (list_window);
-    GVariant* state = g_action_get_state(G_ACTION(action));
-    if(!state)
+    if(!a)
         return;
+
+    GVariant* state = g_action_get_state(G_ACTION(action));
+    if(!state){
+        g_object_unref(a);
+        return;
+    }
 
     gboolean active = !g_variant_get_boolean(state);
     g_variant_unref(state);
 
-	if (!a || a->active == active) {
+    if (a->active == active) {
 		// No alarms selected or no change
+        g_object_unref(a);
 		return;
 	}
 
     g_debug ("AlarmAction: enabled(%d) '%s'", active, a->message);
 
     alarm_set_enabled (a, active);
+    g_object_unref(a);
 }
 
 /**
@@ -176,19 +181,25 @@ void
 alarm_action_update_enabled (AlarmApplet *applet)
 {
     Alarm *a = alarm_list_window_get_selected_alarm (applet->list_window);
-    GVariant* state = g_action_get_state(G_ACTION(applet->action_enable));
-    if(!state)
+    if(!a)
         return;
+    GVariant* state = g_action_get_state(G_ACTION(applet->action_enable));
+    if(!state) {
+        g_object_unref(a);
+        return;
+    }
 
     gboolean active = g_variant_get_boolean(state);
     g_variant_unref(state);
 
-    if (!a || a->active == active) {
+    if (a->active == active) {
         // No alarms selected or no change
+        g_object_unref(a);
         return;
     }
 
     state = g_variant_new("b", a->active);
+    g_object_unref(a);
     g_simple_action_set_state(applet->action_enable, state);
 }
 
@@ -206,6 +217,7 @@ alarm_action_stop (GSimpleAction *action, GVariant *parameter, gpointer data)
         g_debug ("AlarmAction: stop '%s'", a->message);
 
         alarm_clear (a);
+        g_object_unref(a);
     }
 }
 
@@ -223,6 +235,7 @@ alarm_action_snooze (GSimpleAction *action, GVariant *parameter, gpointer data)
         g_debug ("AlarmAction: snooze '%s'", a->message);
 
         alarm_applet_alarm_snooze (applet, a);
+        g_object_unref(a);
     }
 }
 
@@ -247,7 +260,7 @@ alarm_action_new (GSimpleAction *action, GVariant *parameter, gpointer data)
     g_debug ("AlarmAction: new");
 
 	// Create new alarm, will fall back to defaults.
-	alarm = alarm_new (ALARM_GCONF_DIR, -1);
+    alarm = alarm_new (applet->settings_global, -1);
 
 	// Set first sound / app in list
 	if (applet->sounds != NULL) {
@@ -269,6 +282,8 @@ alarm_action_new (GSimpleAction *action, GVariant *parameter, gpointer data)
         selection = gtk_tree_view_get_selection (list_window->tree_view);
         gtk_tree_selection_select_iter (selection, &iter);
     }
+
+    alarm_update_gsettings_alarm_list(applet->settings_global, applet->alarms);
 
 	// Show edit alarm dialog
     alarm_settings_dialog_show (applet->settings_dialog, alarm);
@@ -418,4 +433,6 @@ alarm_applet_actions_update_sensitive (AlarmApplet *applet)
     // Perhaps not the best place for this (as it's not an action)
     // This is needed because the action being disabled does not affect the GtkMenuButton
     gtk_widget_set_sensitive(applet->list_window->snooze_button, selected && a->triggered);
+    if(a)
+        g_object_unref(a);
 }

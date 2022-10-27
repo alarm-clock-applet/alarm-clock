@@ -27,7 +27,7 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gi18n.h>
-#include <gconf/gconf-client.h>
+#include <gio/gio.h>
 
 #include "player.h"
 
@@ -58,32 +58,11 @@ G_BEGIN_DECLS
  * Structure definitions
  */
 
-typedef enum {
-	ALARM_TYPE_INVALID = 0,
-	ALARM_TYPE_CLOCK,		/* Alarm at specific time */
-	ALARM_TYPE_TIMER		/* Alarm in X mins */
-} AlarmType;
-
-typedef enum {
-	ALARM_REPEAT_NONE = 0,
-	ALARM_REPEAT_SUN  = 1 << 0,
-	ALARM_REPEAT_MON  = 1 << 1,
-	ALARM_REPEAT_TUE  = 1 << 2,
-	ALARM_REPEAT_WED  = 1 << 3,
-	ALARM_REPEAT_THU  = 1 << 4,
-	ALARM_REPEAT_FRI  = 1 << 5,
-	ALARM_REPEAT_SAT  = 1 << 6,
-} AlarmRepeat;
+#include "alarm-enums.h"
 
 #define ALARM_REPEAT_WEEKDAYS	(ALARM_REPEAT_MON | ALARM_REPEAT_TUE | ALARM_REPEAT_WED | ALARM_REPEAT_THU | ALARM_REPEAT_FRI)
 #define ALARM_REPEAT_WEEKENDS	(ALARM_REPEAT_SAT | ALARM_REPEAT_SUN)
 #define ALARM_REPEAT_ALL		(ALARM_REPEAT_WEEKDAYS | ALARM_REPEAT_WEEKENDS)
-
-typedef enum {
-	ALARM_NOTIFY_INVALID = 0,
-	ALARM_NOTIFY_SOUND,		/* Notification by sound */
-	ALARM_NOTIFY_COMMAND,	/* Notification by command */
-} AlarmNotifyType;
 
 typedef struct _Alarm Alarm;
 typedef struct _AlarmClass AlarmClass;
@@ -91,7 +70,6 @@ typedef struct _AlarmClass AlarmClass;
 struct _Alarm {
 	GObject parent;
 
-	gchar *gconf_dir;		/* GConf directory */
 	gint id;				/* Alarm ID */
 
     gboolean triggered;     // Whether the alarm has been triggered
@@ -151,8 +129,8 @@ typedef enum {
 /*
  * GConf settings
  */
-#define ALARM_GCONF_DIR_PREFIX		"alarm"
-#define ALARM_GCONF_SCHEMA_DIR		"/schemas/apps/alarm-clock/alarm"
+#define ALARM_G_SETTINGS_DIR_PREFIX		"alarm-"
+#define ALARM_G_SETTINGS_BASE_DIR		"/io/github/alarm-clock-applet/"
 
 /*
  * Player backoff timeout.
@@ -169,23 +147,13 @@ GType
 alarm_get_type (void);
 
 Alarm *
-alarm_new (const gchar *gconf_dir, gint id);
+alarm_new (GSettings* settings, gint id);
 
 guint
-alarm_gen_id_dir (const gchar *gconf_dir);
-
-guint
-alarm_gen_id (Alarm *alarm);
+alarm_gen_id (GSettings* settings);
 
 gchar *
-alarm_gconf_get_dir (Alarm *alarm);
-
-gint
-alarm_gconf_dir_get_id (const gchar *dir);
-
-gchar *
-alarm_gconf_get_full_key (Alarm *alarm, const gchar *key);
-
+alarm_gsettings_get_dir (Alarm *alarm);
 
 const gchar *
 alarm_type_to_string (AlarmType type);
@@ -201,7 +169,7 @@ AlarmNotifyType
 alarm_notify_type_from_string (const gchar *type);
 
 GList *
-alarm_get_list (const gchar *gconf_dir);
+alarm_get_list (GSettings* settings);
 
 void
 alarm_signal_connect_list (GList *instances,
@@ -227,11 +195,15 @@ alarm_disable (Alarm *alarm);
 void
 alarm_delete (Alarm *alarm);
 
+void alarm_unref(Alarm* alarm);
+
 void
 alarm_snooze (Alarm *alarm, guint seconds);
 
 gboolean
 alarm_is_playing (Alarm *alarm);
+
+void alarm_update_gsettings_alarm_list(GSettings* settings, GList* alarms);
 
 void
 alarm_set_time (Alarm *alarm, guint hour, guint minute, guint second);

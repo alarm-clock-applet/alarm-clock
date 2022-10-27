@@ -26,12 +26,14 @@
 #include <string.h>
 
 #include "alarm.h"
+#include "alarm-glib-enums.h"
+#include <gio/gio.h>
 
 typedef struct _AlarmPrivate AlarmPrivate;
 
 struct _AlarmPrivate
 {
-	GConfClient *gconf_client;
+	GSettings *settings;
 	guint gconf_listener;
 	guint timer_id;
 	MediaPlayer *player;
@@ -58,20 +60,9 @@ static void alarm_get_property(GObject *object,
                                GValue *value,
                                GParamSpec *pspec);
 
-static void alarm_constructed (GObject *object);
-
 static void alarm_dispose (GObject *object);
 
-static void alarm_gconf_associate_schemas (Alarm *alarm);
-
-static void alarm_gconf_connect (Alarm *alarm);
-
-static void alarm_gconf_disconnect (Alarm *alarm);
-
-static void alarm_gconf_dir_changed (GConfClient *client,
-									 guint cnxn_id,
-									 GConfEntry *entry,
-									 gpointer data);
+static void alarm_gsettings_connect (Alarm *alarm);
 
 static void alarm_timer_start (Alarm *alarm);
 static void alarm_timer_remove (Alarm *alarm);
@@ -85,33 +76,38 @@ static void alarm_command_run (Alarm *alarm);
 
 #define ALARM_CAST(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), alarm_get_type (), Alarm))
 
-static GConfEnumStringPair alarm_type_enum_map [] = {
-	{ ALARM_TYPE_CLOCK,		"clock" },
-	{ ALARM_TYPE_TIMER,		"timer" },
-	{ 0, NULL }
+// FIXME: Eventually remove these
+typedef struct {
+    gint enum_val;
+    const gchar* str;
+} EnumStringPair;
+
+static EnumStringPair alarm_type_enum_map [] = {
+       { ALARM_TYPE_CLOCK,             "clock" },
+       { ALARM_TYPE_TIMER,             "timer" },
+       { 0, NULL }
 };
 
-static GConfEnumStringPair alarm_repeat_enum_map [] = {
-	{ ALARM_REPEAT_SUN,	"sun" },
-	{ ALARM_REPEAT_MON,	"mon" },
-	{ ALARM_REPEAT_TUE,	"tue" },
-	{ ALARM_REPEAT_WED,	"wed" },
-	{ ALARM_REPEAT_THU,	"thu" },
-	{ ALARM_REPEAT_FRI,	"fri" },
-	{ ALARM_REPEAT_SAT,	"sat" },
-	{ 0, NULL }
+static EnumStringPair alarm_repeat_enum_map [] = {
+       { ALARM_REPEAT_SUN,     "sun" },
+       { ALARM_REPEAT_MON,     "mon" },
+       { ALARM_REPEAT_TUE,     "tue" },
+       { ALARM_REPEAT_WED,     "wed" },
+       { ALARM_REPEAT_THU,     "thu" },
+       { ALARM_REPEAT_FRI,     "fri" },
+       { ALARM_REPEAT_SAT,     "sat" },
+       { 0, NULL }
 };
 
-static GConfEnumStringPair alarm_notify_type_enum_map [] = {
-	{ ALARM_NOTIFY_SOUND,	"sound"  },
-	{ ALARM_NOTIFY_COMMAND,	"command" },
-	{ 0, NULL }
+static EnumStringPair alarm_notify_type_enum_map [] = {
+       { ALARM_NOTIFY_SOUND,   "sound"  },
+       { ALARM_NOTIFY_COMMAND, "command" },
+       { 0, NULL }
 };
 
 /* Property indexes */
 enum {
 	PROP_ALARM_0,
-	PROP_DIR,
 	PROP_ID,
     PROP_TRIGGERED,
 	PROP_TYPE,
@@ -126,7 +122,6 @@ enum {
 	PROP_COMMAND
 };
 
-#define PROP_NAME_DIR			"gconf-dir"
 #define PROP_NAME_ID			"id"
 #define PROP_NAME_TRIGGERED     "triggered"
 #define PROP_NAME_TYPE			"type"
@@ -159,12 +154,34 @@ static void alarm_cleared (Alarm *alarm);
 static void alarm_error (Alarm *alarm, GError *err);
 static void alarm_player_changed (Alarm *alarm, MediaPlayerState state);
 
+static gboolean alarm_string_to_enum(EnumStringPair lut[], const gchar* str, gint* ret)
+{
+    for(int i = 0; lut[i].str; i++) {
+        if (g_ascii_strcasecmp(lut[i].str, str) == 0) {
+            *ret = lut[i].enum_val;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+const gchar* alarm_enum_to_string(EnumStringPair lut[], gint enum_val)
+{
+    for(int i = 0; lut[i].str; i++) {
+        if(lut[i].enum_val == enum_val)
+            return lut[i].str;
+    }
+
+    return NULL;
+}
+
+
 
 /* Initialize the Alarm class */
 static void
 alarm_class_init (AlarmClass *class)
 {
-	GParamSpec *dir_param;
 	GParamSpec *id_param;
     GParamSpec *triggered_param;
 	GParamSpec *type_param;
@@ -185,13 +202,6 @@ alarm_class_init (AlarmClass *class)
 
 	/* << miscellaneous initialization >> */
 
-	/* create GParamSpec descriptions for properties */
-	dir_param = g_param_spec_string (PROP_NAME_DIR,
-									 "GConf dir",
-									 "GConf base directory",
-									 NULL,
-									 G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
-
 	id_param = g_param_spec_uint (PROP_NAME_ID,
 								  "alarm id",
 								  "id of the alarm",
@@ -206,28 +216,27 @@ alarm_class_init (AlarmClass *class)
                                             FALSE,
 							                G_PARAM_READABLE);
 
-	type_param = g_param_spec_uint (PROP_NAME_TYPE,
+    type_param = g_param_spec_enum (PROP_NAME_TYPE,
 									"alarm type",
 									"type of the alarm",
-									ALARM_TYPE_CLOCK,
-									ALARM_TYPE_TIMER,
-									ALARM_DEFAULT_TYPE,
+                                    ALARM_TYPE_TYPE,
+                                    ALARM_DEFAULT_TYPE,
 									G_PARAM_READWRITE);
 
 
-	time_param = g_param_spec_uint (PROP_NAME_TIME,
+    time_param = g_param_spec_int64 (PROP_NAME_TIME,
 									 "alarm time",
 									 "time when the alarm should trigger",
 									 0,						/* min */
-									 UINT_MAX,				/* max */
+                                     G_MAXINT64,				/* max */
 									 ALARM_DEFAULT_TIME,	/* default */
 									 G_PARAM_READWRITE);
 
-	timestamp_param = g_param_spec_uint (PROP_NAME_TIMESTAMP,
+    timestamp_param = g_param_spec_int64 (PROP_NAME_TIMESTAMP,
 										 "alarm timestamp",
 										 "UNIX timestamp when the alarm should trigger",
 										 0,						/* min */
-										 UINT_MAX,				/* max */
+                                         G_MAXINT64,				/* max */
 										 ALARM_DEFAULT_TIME,	/* default */
 										 G_PARAM_READWRITE);
 
@@ -243,19 +252,17 @@ alarm_class_init (AlarmClass *class)
 										 ALARM_DEFAULT_MESSAGE,
 										 G_PARAM_READWRITE);
 
-	repeat_param = g_param_spec_uint (PROP_NAME_REPEAT,
+    repeat_param = g_param_spec_flags (PROP_NAME_REPEAT,
 									  "repeat",
 									  "repeat the alarm",
-									  ALARM_REPEAT_NONE,	/* min */
-									  ALARM_REPEAT_ALL,		/* max */
+                                      ALARM_TYPE_REPEAT,
 									  ALARM_DEFAULT_REPEAT,	/* default */
 									  G_PARAM_READWRITE);
 
-	notify_type_param = g_param_spec_uint (PROP_NAME_NOTIFY_TYPE,
+    notify_type_param = g_param_spec_enum (PROP_NAME_NOTIFY_TYPE,
 										"notification type",
 										"what kind of notification should be used",
-										ALARM_NOTIFY_SOUND,
-										ALARM_NOTIFY_COMMAND,
+                                        ALARM_TYPE_NOTIFY_TYPE,
 										ALARM_DEFAULT_NOTIFY_TYPE,
 										G_PARAM_READWRITE);
 
@@ -280,11 +287,10 @@ alarm_class_init (AlarmClass *class)
 	/* override base object methods */
 	g_object_class->set_property = alarm_set_property;
 	g_object_class->get_property = alarm_get_property;
-	g_object_class->constructed	 = alarm_constructed;
+    //g_object_class->constructed	 = alarm_constructed;
 	g_object_class->dispose		 = alarm_dispose;
 
 	/* install properties */
-	g_object_class_install_property (g_object_class, PROP_DIR, dir_param);
 	g_object_class_install_property (g_object_class, PROP_ID, id_param);
     g_object_class_install_property (g_object_class, PROP_TRIGGERED, triggered_param);
 	g_object_class_install_property (g_object_class, PROP_TYPE, type_param);
@@ -348,228 +354,12 @@ alarm_class_init (AlarmClass *class)
 												G_TYPE_UINT);
 }
 
-/*
- * Utility function for extracting the strings out of a GConfValue of type
- * GCONF_VALUE_LIST and placing them in a plan GSList of strings.
- *
- * Note: You should free the GSList returned but NOT the string contents.
- */
-static GSList *
-alarm_gconf_extract_list_string (GConfValue *val)
-{
-	GSList *list, *new_list, *l;
-
-	g_assert (GCONF_VALUE_STRING == gconf_value_get_list_type (val));
-
-	/* Fetch GSList of GConfValues. Extract them and put into a plain list of strings.
-	 * Note that the returned string from gconf_value_get_string() is owned by the GConfValue
-	 * and should thus NOT be freed.
-	 */
-	list = gconf_value_get_list (val);
-	new_list = NULL;
-	for (l = list; l; l = l->next) {
-		new_list = g_slist_append (new_list, (gpointer) gconf_value_get_string ((GConfValue *)l->data));
-	}
-
-	return new_list;
-}
-
-static void
-alarm_gconf_load (Alarm *alarm)
-{
-	AlarmPrivate *priv	= ALARM_PRIVATE (alarm);
-	GConfClient *client = priv->gconf_client;
-	GConfValue *val;
-	gchar *key, *tmp;
-	GSList *list;
-	guint i;
-
-	/*
-	 * TYPE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TYPE);
-	tmp = gconf_client_get_string (client, key, NULL);
-	g_free (key);
-
-	i = alarm_type_from_string (tmp);
-
-	if (i > 0) {
-		alarm->type = i;
-	} else {
-		// Not found in GConf, fall back to defaults
-		alarm->type = ALARM_DEFAULT_TYPE;
-		g_object_set (alarm, PROP_NAME_TYPE, ALARM_DEFAULT_TYPE, NULL);
-	}
-
-	if (tmp)
-		g_free (tmp);
-
-	/*
-	 * TIME
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIME);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		alarm->time = (time_t)gconf_value_get_int (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_TIME, ALARM_DEFAULT_TIME, NULL);
-	}
-
-	/*
-	 * TIMESTAMP
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMESTAMP);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		alarm->timestamp = (time_t)gconf_value_get_int (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_TIMESTAMP, ALARM_DEFAULT_TIMESTAMP, NULL);
-	}
-
-	/*
-	 * ACTIVE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_ACTIVE);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		// We g_object_set here so the timer will be started for
-		// active alarms
-		g_object_set (alarm, "active", gconf_value_get_bool (val), NULL);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_ACTIVE, ALARM_DEFAULT_ACTIVE, NULL);
-	}
-
-	/*
-	 * MESSAGE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_MESSAGE);
-	tmp = gconf_client_get_string (client, key, NULL);
-	g_free (key);
-
-	if (tmp) {
-		alarm->message = tmp;
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_MESSAGE, ALARM_DEFAULT_MESSAGE, NULL);
-	}
-
-	/*
-	 * REPEAT
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		list = alarm_gconf_extract_list_string (val);
-
-		alarm->repeat = alarm_repeat_from_list (list);
-
-		g_slist_free (list);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_REPEAT, ALARM_DEFAULT_REPEAT, NULL);
-	}
-
-	/*
-	 * NOTIFY TYPE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_TYPE);
-	tmp = gconf_client_get_string (client, key, NULL);
-	g_free (key);
-
-	i = alarm_notify_type_from_string (tmp);
-
-	if (i > 0) {
-		alarm->notify_type = i;
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_NOTIFY_TYPE, ALARM_DEFAULT_NOTIFY_TYPE, NULL);
-	}
-
-	if (tmp)
-		g_free (tmp);
-
-	/*
-	 * SOUND FILE
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_SOUND_FILE);
-	tmp = gconf_client_get_string (client, key, NULL);
-	g_free (key);
-
-	if (tmp) {
-		alarm->sound_file = tmp;
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_SOUND_FILE, ALARM_DEFAULT_SOUND_FILE, NULL);
-	}
-
-	/*
-	 * SOUND LOOP
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_SOUND_LOOP);
-	val = gconf_client_get (client, key, NULL);
-	g_free (key);
-
-	if (val) {
-		alarm->sound_loop = gconf_value_get_bool (val);
-		gconf_value_free (val);
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_SOUND_LOOP, ALARM_DEFAULT_SOUND_LOOP, NULL);
-	}
-
-
-	/*
-	 * COMMAND
-	 */
-	key = alarm_gconf_get_full_key (alarm, PROP_NAME_COMMAND);
-	tmp = gconf_client_get_string (client, key, NULL);
-	g_free (key);
-
-	if (tmp) {
-		alarm->command = tmp;
-	} else {
-		// Not found in GConf, fall back to defaults
-		g_object_set (alarm, PROP_NAME_COMMAND, ALARM_DEFAULT_COMMAND, NULL);
-	}
-}
-
 static void
 alarm_init (Alarm *self)
 {
-	AlarmPrivate *priv = ALARM_PRIVATE (self);
+    AlarmPrivate *priv = ALARM_PRIVATE (self);
 
-	self->gconf_dir = NULL;
-	self->id = -1;
-
-	priv->gconf_listener = 0;
-	priv->gconf_client = gconf_client_get_default ();
-}
-
-static void
-alarm_constructed (GObject *object)
-{
-	Alarm *alarm = ALARM (object);
-
-	// Load gconf settings
-	alarm_gconf_load (alarm);
-
-	// Connect gconf listener
-	//alarm_gconf_connect (alarm);
+    self->id = -1;
 }
 
 /* set an Alarm property */
@@ -582,18 +372,10 @@ alarm_set_property (GObject *object,
 	Alarm *alarm;
 	AlarmPrivate *priv = ALARM_PRIVATE (ALARM_CAST (object));
 
-	GConfClient *client;
-	GError 		*err = NULL;
-
-	const gchar	*str;
 	guint		 d;
 	gboolean	 b;
-	GSList		*list;
-
-	gchar *key, *tmp;
 
 	alarm = ALARM (object);
-	client = priv->gconf_client;
 
     // DEBUGGING INFO
     GValue strval = {0};
@@ -603,46 +385,18 @@ alarm_set_property (GObject *object,
         g_value_get_string(&strval));
 
 	switch (prop_id) {
-	case PROP_DIR:
-		str = g_value_get_string (value);
-
-		/* Validate */
-		if (!str) {
-			g_critical ("Invalid gconf-dir value: \"%s\": NULL", str);
-			return;
-		}
-
-		if (!gconf_valid_key (str, &tmp)) {
-			g_critical ("Invalid gconf-dir value: \"%s\": %s", str, tmp);
-			g_free (tmp);
-			return;
-		}
-
-		if (!alarm->gconf_dir || strcmp (str, alarm->gconf_dir) != 0) {
-			// Changed, remove old gconf listeners
-			alarm_gconf_disconnect (alarm);
-
-			if (alarm->gconf_dir != NULL)
-				g_free (alarm->gconf_dir);
-			alarm->gconf_dir = g_strdup (str);
-
-			// Associate schemas
-			alarm_gconf_associate_schemas (alarm);
-
-			alarm_gconf_connect (alarm);
-		}
-		break;
 	case PROP_ID:
+        // FIXME: This should be int64 to account for -1
 		d = g_value_get_uint (value);
-
-		if (d != alarm->id) {
-			alarm_gconf_disconnect (alarm);
+        if (d != alarm->id) {
+            if(priv->settings && alarm->id != -1) {
+                g_object_unref(priv->settings);
+            }
 			alarm->id = d;
 
-			alarm_gconf_associate_schemas (alarm);
+            priv->settings = g_settings_new_with_path("io.github.alarm-clock-applet.alarm", alarm_gsettings_get_dir(alarm));
 
-			alarm_gconf_load (alarm);
-			alarm_gconf_connect (alarm);
+            alarm_gsettings_connect (alarm);
 		}
 		break;
     case PROP_TRIGGERED:
@@ -657,65 +411,27 @@ alarm_set_property (GObject *object,
         }
 
 	case PROP_TYPE:
-		alarm->type = g_value_get_uint (value);
+        alarm->type = g_value_get_enum(value);
 
 		if (alarm->active) {
 			// Update timestamp
 			alarm_update_timestamp (alarm);
 		}
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TYPE);
-
-		if (!gconf_client_set_string (client, key,
-									  alarm_type_to_string (alarm->type),
-									  &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
 		break;
 	case PROP_TIME:
-		alarm->time = g_value_get_uint (value);
+        alarm->time = g_value_get_int64(value);
 
 		if (alarm->active) {
 			// Update timestamp
 			alarm_update_timestamp (alarm);
 		}
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIME);
-
-		if (!gconf_client_set_int (client, key, alarm->time, &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
 		break;
 	case PROP_TIMESTAMP:
-		alarm->timestamp = g_value_get_uint (value);
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_TIMESTAMP);
-
-		if (!gconf_client_set_int (client, key, alarm->timestamp, &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
+        alarm->timestamp = g_value_get_int64(value);
 		break;
 	case PROP_ACTIVE:
 		b = alarm->active;
-		alarm->active = g_value_get_boolean (value);
+        alarm->active = g_value_get_boolean(value);
 
 		//g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, b, alarm->active);
 		if (alarm->active && !alarm_timer_is_started(alarm)) {
@@ -726,133 +442,31 @@ alarm_set_property (GObject *object,
 			// Stop timer
 			alarm_timer_remove (alarm);
 		}
-
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_ACTIVE);
-
-		if (!gconf_client_set_bool (client, key, alarm->active, &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
 		break;
 	case PROP_MESSAGE:
 		if (alarm->message)
 			g_free (alarm->message);
 
 		alarm->message = g_strdup (g_value_get_string (value));
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_MESSAGE);
-
-		if (!gconf_client_set_string (client, key,
-									  alarm->message,
-									  &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
-
 		break;
 	case PROP_REPEAT:
-		alarm->repeat = g_value_get_uint (value);
+        alarm->repeat = g_value_get_flags(value);
 
 		if (alarm->active) {
 			alarm_update_timestamp (alarm);
 		}
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_REPEAT);
-		list = alarm_repeat_to_list (alarm->repeat);
-
-		if (!gconf_client_set_list(client, key,
-								   GCONF_VALUE_STRING, list,
-								   &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_slist_free (list);
-		g_free (key);
-
 		break;
 	case PROP_NOTIFY_TYPE:
-		alarm->notify_type = g_value_get_uint (value);
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_NOTIFY_TYPE);
-
-		if (!gconf_client_set_string (client, key,
-									  alarm_notify_type_to_string (alarm->notify_type),
-									  &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
-
+        alarm->notify_type = g_value_get_enum(value);
 		break;
 	case PROP_SOUND_FILE:
 		alarm->sound_file = g_strdup (g_value_get_string (value));
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_SOUND_FILE);
-
-		if (!gconf_client_set_string (client, key,
-									  alarm->sound_file,
-									  &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
-
 		break;
 	case PROP_SOUND_LOOP:
 		alarm->sound_loop = g_value_get_boolean (value);
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_SOUND_LOOP);
-
-		if (!gconf_client_set_bool (client, key, alarm->sound_loop, &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
 		break;
 	case PROP_COMMAND:
 		alarm->command = g_strdup (g_value_get_string (value));
-
-		key = alarm_gconf_get_full_key (alarm, PROP_NAME_COMMAND);
-
-		if (!gconf_client_set_string (client, key,
-									  alarm->command,
-									  &err)) {
-
-			g_critical ("Could not set %s (gconf): %s",
-						key, err->message);
-
-			g_error_free (err);
-		}
-
-		g_free (key);
-
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -870,9 +484,6 @@ alarm_get_property (GObject *object,
 	Alarm *alarm = ALARM (object);
 
 	switch (prop_id) {
-	case PROP_DIR:
-		g_value_set_string (value, alarm->gconf_dir);
-		break;
 	case PROP_ID:
 		g_value_set_uint (value, alarm->id);
 		break;
@@ -880,13 +491,13 @@ alarm_get_property (GObject *object,
         g_value_set_boolean (value, alarm->triggered);
         break;
 	case PROP_TYPE:
-		g_value_set_uint (value, alarm->type);
+        g_value_set_enum(value, alarm->type);
 		break;
 	case PROP_TIME:
-		g_value_set_uint (value, alarm->time);
+        g_value_set_int64(value, alarm->time);
 		break;
 	case PROP_TIMESTAMP:
-		g_value_set_uint (value, alarm->timestamp);
+        g_value_set_int64(value, alarm->timestamp);
 		break;
 	case PROP_ACTIVE:
 		g_value_set_boolean (value, alarm->active);
@@ -895,10 +506,10 @@ alarm_get_property (GObject *object,
 		g_value_set_string (value, alarm->message);
 		break;
 	case PROP_REPEAT:
-		g_value_set_uint (value, alarm->repeat);
+        g_value_set_flags(value, alarm->repeat);
 		break;
 	case PROP_NOTIFY_TYPE:
-		g_value_set_uint (value, alarm->notify_type);
+        g_value_set_enum(value, alarm->notify_type);
 		break;
 	case PROP_SOUND_FILE:
 		g_value_set_string (value, alarm->sound_file);
@@ -1033,18 +644,24 @@ void
 alarm_delete (Alarm *alarm)
 {
 	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
-	GConfClient *client = priv->gconf_client;
-	gchar *key;
 
-	// Disconnect gconf listeners
-	alarm_gconf_disconnect (alarm);
+    g_settings_reset(priv->settings, PROP_NAME_TYPE);
+    g_settings_reset(priv->settings, PROP_NAME_TIME);
+    g_settings_reset(priv->settings, PROP_NAME_TIMESTAMP);
+    g_settings_reset(priv->settings, PROP_NAME_ACTIVE);
+    g_settings_reset(priv->settings, PROP_NAME_MESSAGE);
+    g_settings_reset(priv->settings, PROP_NAME_REPEAT);
+    g_settings_reset(priv->settings, PROP_NAME_NOTIFY_TYPE);
+    g_settings_reset(priv->settings, PROP_NAME_SOUND_FILE);
+    g_settings_reset(priv->settings, PROP_NAME_SOUND_LOOP);
+    g_settings_reset(priv->settings, PROP_NAME_COMMAND);
+}
 
-	// Remove configuration
-	key = alarm_gconf_get_dir (alarm);
-	g_debug ("Alarm(%p) #%d: alarm_delete() recursive unset on %s", alarm, alarm->id, key);
-	gconf_client_recursive_unset (client, key, GCONF_UNSET_INCLUDING_SCHEMA_NAMES, NULL);
-	gconf_client_suggest_sync (client, NULL);
-	g_free (key);
+void alarm_unref(Alarm* alarm)
+{
+    // This should be the final unref call
+    g_assert(G_OBJECT(alarm)->ref_count == 1);
+    g_object_unref(alarm);
 }
 
 /*
@@ -1172,214 +789,28 @@ alarm_timer_remove (Alarm *alarm)
  * }} ALARM signal
  */
 
-/*
- * Taken from panel-applet.c
- */
 static void
-alarm_gconf_associate_schemas (Alarm *alarm)
+alarm_gsettings_connect (Alarm *alarm)
 {
-	AlarmPrivate *priv  = ALARM_PRIVATE (alarm);
-	GConfClient *client = priv->gconf_client;
-	GSList *list, *l;
-	GError *error = NULL;
-
-	if (alarm->id < 0)
-		return;
-
-	list = gconf_client_all_entries (client, ALARM_GCONF_SCHEMA_DIR, &error);
-
-	g_return_if_fail (error == NULL);
-
-	for (l = list; l; l = l->next) {
-		GConfEntry *entry = l->data;
-		gchar	   *key;
-		gchar	   *tmp;
-
-		tmp = g_path_get_basename (gconf_entry_get_key (entry));
-
-		if (strchr (tmp, '-'))
-			g_warning ("Applet key '%s' contains a hyphen. Please "
-					   "use underscores in gconf keys\n", tmp);
-
-		key = alarm_gconf_get_full_key (alarm, tmp);
-
-		g_free (tmp);
-
-		gconf_engine_associate_schema (
-				client->engine, key, gconf_entry_get_key (entry), &error);
-
-		g_free (key);
-
-		gconf_entry_free (entry);
-
-		if (error) {
-			g_slist_free (list);
-			return;
-		}
-	}
-
-	g_slist_free (list);
-}
-
-static void
-alarm_gconf_connect (Alarm *alarm)
-{
-	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
-	gchar *dir;
-	GError *err = NULL;
-
-//	g_debug ("gconf_connect (%p) ? %d", alarm, IS_ALARM ((gpointer)alarm));
-
-	if (alarm->id < 0)
-		return;
-
-	dir = alarm_gconf_get_dir (alarm);
-
-//	g_debug ("alarm_gconf_connect (%p) to dir %s", alarm, dir);
-
-	gconf_client_add_dir (priv->gconf_client, dir,
-						  GCONF_CLIENT_PRELOAD_ONELEVEL, &err);
-
-	if (err) {
-		g_warning ("alarm_gconf_connect (%p): gconf_client_add_dir (%s) failed: %s", alarm, dir, err->message);
-		g_error_free (err);
-		err = NULL;
-	}
-
-	priv->gconf_listener =
-		gconf_client_notify_add (
-			priv->gconf_client, dir,
-			(GConfClientNotifyFunc) alarm_gconf_dir_changed,
-			alarm, NULL, &err);
-
-	if (err) {
-		g_warning ("alarm_gconf_connect (%p): gconf_client_notify_add (%s) failed: %s", alarm, dir, err->message);
-		g_error_free (err);
-		err = NULL;
-	}
-
-//	g_debug ("alarm_gconf_connect: Added listener %d to alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
-
-	g_free (dir);
-}
-
-static void
-alarm_gconf_disconnect (Alarm *alarm)
-{
-	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
-	gchar *dir;
-
-	if (priv->gconf_listener) {
-		//g_debug ("alarm_gconf_disconnect: Removing listener %d from alarm #%d %p", priv->gconf_listener, alarm->id, alarm);
-		gconf_client_notify_remove (priv->gconf_client, priv->gconf_listener);
-		priv->gconf_listener = 0;
-
-		dir = alarm_gconf_get_dir (alarm);
-		gconf_client_remove_dir (priv->gconf_client, dir, NULL);
-		g_free (dir);
-	}
-}
-
-/*
- * Updates the local copy with the new value if it has changed.
- */
-static void
-alarm_gconf_dir_changed (GConfClient *client,
-						 guint cnxn_id,
-						 GConfEntry *entry,
-						 gpointer data)
-{
-	Alarm *alarm = ALARM (data);
-	GParamSpec *param;
-	gchar *name;
-
-	guint i;
-	gboolean b;
-	const gchar *str;
-	GSList *list;
-
-	name = g_path_get_basename (entry->key);
-	param = g_object_class_find_property (G_OBJECT_GET_CLASS (alarm), name);
-
-	if (!param) {
-		g_free (name);
-		return;
-	}
-
-	g_debug ("Alarm(%p) #%d: gconf_dir_changed(): %s", alarm, alarm->id, name);
-
-	switch (param->param_id) {
-	case PROP_TYPE:
-		str = gconf_value_get_string (entry->value);
-		i = alarm_type_from_string (str);
-		if (i > 0 && i != alarm->type)
-			g_object_set (alarm, name, i, NULL);
-		break;
-	case PROP_TIME:
-		i = gconf_value_get_int (entry->value);
-		if (i != alarm->time)
-			g_object_set (alarm, name, i, NULL);
-		break;
-	case PROP_TIMESTAMP:
-		i = gconf_value_get_int (entry->value);
-		if (i != alarm->timestamp)
-			g_object_set (alarm, name, i, NULL);
-		break;
-	case PROP_ACTIVE:
-		b = gconf_value_get_bool (entry->value);
-		if (b != alarm->active) {
-			g_object_set (alarm, name, b, NULL);
-		}
-		break;
-	case PROP_MESSAGE:
-		str = gconf_value_get_string (entry->value);
-		if (strcmp (str, alarm->message) != 0)
-			g_object_set (alarm, name, str, NULL);
-		break;
-	case PROP_REPEAT:
-		list = alarm_gconf_extract_list_string (entry->value);
-
-		i = alarm_repeat_from_list (list);
-		if (i != alarm->repeat)
-			g_object_set (alarm, name, i, NULL);
-
-		g_slist_free (list);
-		break;
-	case PROP_NOTIFY_TYPE:
-		str = gconf_value_get_string (entry->value);
-		i = alarm_notify_type_from_string (str);
-		if (i > 0 && i != alarm->notify_type)
-			g_object_set (alarm, name, i, NULL);
-		break;
-	case PROP_SOUND_FILE:
-		str = gconf_value_get_string (entry->value);
-		if (strcmp (str, alarm->sound_file) != 0)
-			g_object_set (alarm, name, str, NULL);
-		break;
-	case PROP_SOUND_LOOP:
-		b = gconf_value_get_bool (entry->value);
-		if (b != alarm->sound_loop)
-			g_object_set (alarm, name, b, NULL);
-		break;
-	case PROP_COMMAND:
-		str = gconf_value_get_string (entry->value);
-		if (strcmp (str, alarm->command) != 0)
-			g_object_set (alarm, name, str, NULL);
-		break;
-	default:
-		g_warning ("Alarm(%p) #%d: gconf_dir_changed(): Property ID %d not handled!",
-            alarm, alarm->id, param->param_id);
-		break;
-	}
-
-	g_free (name);
+    AlarmPrivate *priv = ALARM_PRIVATE (alarm);
+    //g_settings_bind(priv->settings, PROP_NAME_TRIGGERED, alarm, PROP_NAME_TRIGGERED, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_TYPE, alarm, PROP_NAME_TYPE, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_TIME, alarm, PROP_NAME_TIME, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_TIMESTAMP, alarm, PROP_NAME_TIMESTAMP, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_ACTIVE, alarm, PROP_NAME_ACTIVE, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_MESSAGE, alarm, PROP_NAME_MESSAGE, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_REPEAT, alarm, PROP_NAME_REPEAT, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_NOTIFY_TYPE, alarm, PROP_NAME_NOTIFY_TYPE, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_SOUND_FILE, alarm, PROP_NAME_SOUND_FILE, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_SOUND_LOOP, alarm, PROP_NAME_SOUND_LOOP, G_SETTINGS_BIND_DEFAULT);
+    g_settings_bind(priv->settings, PROP_NAME_COMMAND, alarm, PROP_NAME_COMMAND, G_SETTINGS_BIND_DEFAULT);
 }
 
 static void
 alarm_dispose (GObject *object)
 {
 	Alarm *alarm = ALARM (object);
-//	AlarmPrivate *priv = ALARM_PRIVATE (object);
+	AlarmPrivate *priv = ALARM_PRIVATE (alarm);
 	GObjectClass *parent = (GObjectClass *)alarm_parent_class;
 
 	g_debug ("Alarm(%p) #%d: dispose()", alarm, alarm->id);
@@ -1387,9 +818,25 @@ alarm_dispose (GObject *object)
 	if (parent->dispose)
 		parent->dispose (object);
 
-	alarm_gconf_disconnect (alarm);
+    g_object_unref(priv->settings);
 	alarm_timer_remove(alarm);
 	alarm_clear (alarm);
+}
+
+// Called every time an alarm is created or deleted
+void alarm_update_gsettings_alarm_list(GSettings* settings, GList* alarms)
+{
+    guint32* newvalues = malloc(((size_t)g_list_length(alarms)) * sizeof(guint32));
+    gsize i;
+    GList* l;
+    for(i = 0, l = alarms; l; i++, l = l->next) {
+        const Alarm* a = ALARM(l->data);
+        newvalues[i] = a->id;
+    }
+
+    GVariant* v = g_variant_new_fixed_array(G_VARIANT_TYPE_UINT32, newvalues, i, sizeof(guint32));
+    g_settings_set_value(settings, "alarms",  v);
+    free(newvalues);
 }
 
 /*
@@ -1397,122 +844,56 @@ alarm_dispose (GObject *object)
  * Passing -1 as the id will generate a new ID with alarm_gen_id
  */
 Alarm *
-alarm_new (const gchar *gconf_dir, gint id)
+alarm_new (GSettings* settings, gint id)
 {
-	Alarm *alarm;
+    Alarm *alarm;
 
-	if (id < 0) {
-		id = alarm_gen_id_dir (gconf_dir);
-	}
-
-	alarm = g_object_new (TYPE_ALARM,
-						  "gconf-dir", gconf_dir,
-						  "id", id,
+    if (id < 0) {
+        id = alarm_gen_id (settings);
+    }
+    alarm = g_object_new (TYPE_ALARM,
+                          "id", id,
 						  NULL);
 
 	return alarm;
 }
 
+static inline gboolean in_alarm_array(const guint32* values, const gsize count, const guint32 val)
+{
+    for(gsize i = 0; i < count; i++)
+        if(values[i] == val)
+            return TRUE;
+    return FALSE;
+}
+
 guint
-alarm_gen_id_dir (const gchar *gconf_dir)
+alarm_gen_id(GSettings* settings)
 {
-	GConfClient *client;
-	gchar *key = NULL;
-	gint id;
+    GVariant* var = g_settings_get_value(settings, "alarms");
+    gsize count = 0;
+    const guint32* values = g_variant_get_fixed_array(var, &count, sizeof(guint32));
+    guint32 i = 0;
+    if(values) {
+        for(i = 0; i < G_MAXUINT32; i++)
+            if(!in_alarm_array(values, count, i))
+                break;
+    }
+    g_variant_unref(var);
 
-	client = gconf_client_get_default ();
-
-	id = 0;
-	do {
-		if (key)
-			g_free (key);
-
-		key = g_strdup_printf("%s/" ALARM_GCONF_DIR_PREFIX "%d", gconf_dir, id);
-		id++;
-
-	} while (gconf_client_dir_exists (client, key, NULL));
-
-	g_free (key);
-
-	return (guint)(id-1);
-}
-
-/*
- * Will try to find the first available ID in gconf_dir
- */
-guint
-alarm_gen_id (Alarm *alarm)
-{
-	return alarm_gen_id_dir (alarm->gconf_dir);
-}
-
-const gchar *alarm_type_to_string (AlarmType type)
-{
-	return gconf_enum_to_string (alarm_type_enum_map, type);
-}
-
-AlarmType alarm_type_from_string (const gchar *type)
-{
-	AlarmType ret = ALARM_TYPE_INVALID;
-
-	if (!type)
-		return ret;
-
-	gconf_string_to_enum (alarm_type_enum_map, type, (gint *)&ret);
-
-	return ret;
-}
-
-const gchar *alarm_notify_type_to_string (AlarmNotifyType type)
-{
-	return gconf_enum_to_string (alarm_notify_type_enum_map, type);
-}
-
-AlarmNotifyType alarm_notify_type_from_string (const gchar *type)
-{
-	AlarmNotifyType ret = ALARM_NOTIFY_INVALID;
-
-	if (!type)
-		return ret;
-
-	gconf_string_to_enum (alarm_notify_type_enum_map, type, (gint *)&ret);
-
-	return ret;
+    g_assert(i != G_MAXUINT32);
+    return i;
 }
 
 gchar *
-alarm_gconf_get_dir (Alarm *alarm)
+alarm_gsettings_get_dir (Alarm *alarm)
 {
 	gchar *key;
 
 	g_return_val_if_fail (IS_ALARM (alarm), NULL);
 
-	key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d", alarm->gconf_dir, alarm->id);
+    key = g_strdup_printf (ALARM_G_SETTINGS_BASE_DIR ALARM_G_SETTINGS_DIR_PREFIX "%d/", alarm->id);
 
 	return key;
-}
-
-gchar *
-alarm_gconf_get_full_key (Alarm *alarm, const gchar *key)
-{
-    gchar *gconf_key;
-	gchar *full_key;
-
-	g_return_val_if_fail (IS_ALARM (alarm), NULL);
-
-	if (!key)
-		return NULL;
-
-    // Replace dashes with underscores
-    gconf_key = g_strdup (key);
-    g_strcanon (gconf_key, "abcdefghijklmnopqrstuvwxyz", '_');
-
-	full_key = g_strdup_printf ("%s/" ALARM_GCONF_DIR_PREFIX "%d/%s",
-        alarm->gconf_dir, alarm->id, gconf_key);
-
-    g_free (gconf_key);
-
-	return full_key;
 }
 
 /**
@@ -1528,66 +909,29 @@ alarm_list_item_compare (gconstpointer a, gconstpointer b)
 }
 
 /*
- * Check if a gconf directory is a valid alarm dir.
- *
- * Returns >= 0 for valid alarm directory, -1 otherwise.
- */
-gint
-alarm_gconf_dir_get_id (const gchar *dir)
-{
-	gint id;
-	gchar *d;
-
-	d = g_path_get_basename (dir);
-
-	if (sscanf (d, ALARM_GCONF_DIR_PREFIX "%d", &id) <= 0 || id < 0) {
-		// INVALID
-		id = -1;
-	}
-
-	g_free (d);
-
-	return id;
-}
-
-/*
- * Get list of alarms in gconf_dir
+ * Get list of alarms in gsettings
  */
 GList *
-alarm_get_list (const gchar *gconf_dir)
+alarm_get_list (GSettings* settings)
 {
-	GConfClient *client;
-	GSList *dirs = NULL;
-	GSList *l = NULL;
-	gchar *tmp;
-
 	GList *ret = NULL;
-	Alarm *alarm;
-	gint id;
 
-	client = gconf_client_get_default ();
-	dirs = gconf_client_all_dirs (client, gconf_dir, NULL);
+    GVariant* var = g_settings_get_value(settings, "alarms");
+    gsize count = 0;
+    const guint32* values = g_variant_get_fixed_array(var, &count, sizeof(guint32));
 
-	if (!dirs)
-		return NULL;
+    if(values) {
+        for(guint32 i = 0; i < count; i++) {
+            const guint32 id = values[i];
+            g_debug ("Alarm: get_list() found #%" G_GUINT32_FORMAT, id);
 
-	for (l = dirs; l; l = l->next) {
-		tmp = (gchar *)l->data;
-
-		id = alarm_gconf_dir_get_id (tmp);
-		if (id >= 0) {
-			g_debug ("Alarm: get_list() found '%s' #%d", tmp, id);
-
-			alarm = alarm_new (gconf_dir, id);
+            Alarm* alarm = alarm_new(settings, id);
 //			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
-			ret = g_list_insert_sorted (ret, alarm, alarm_list_item_compare);
+            ret = g_list_insert_sorted (ret, alarm, alarm_list_item_compare);
 //			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);
-		}
-
-		g_free (tmp);
-	}
-
-	g_slist_free (dirs);
+        }
+    }
+    g_variant_unref(var);
 
 	return ret;
 }
@@ -1940,7 +1284,7 @@ alarm_get_remain_seconds (Alarm *alarm)
 const gchar *
 alarm_repeat_to_string (AlarmRepeat repeat)
 {
-	return gconf_enum_to_string (alarm_repeat_enum_map, repeat);
+    return alarm_enum_to_string (alarm_repeat_enum_map, repeat);
 }
 
 AlarmRepeat
@@ -1951,7 +1295,7 @@ alarm_repeat_from_string (const gchar *str)
 	if (!str)
 		return ret;
 
-	gconf_string_to_enum (alarm_repeat_enum_map, str, (gint *)&ret);
+    alarm_string_to_enum (alarm_repeat_enum_map, str, (gint *)&ret);
 
 	return ret;
 }

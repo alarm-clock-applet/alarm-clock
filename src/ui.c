@@ -419,9 +419,9 @@ alarm_applet_alarm_changed (GObject *object,  GParamSpec *pspec, gpointer data)
     }
 
     // Update Settings
-    if (applet->settings_dialog && applet->settings_dialog->alarm == alarm) {
+    /*if (applet->settings_dialog && applet->settings_dialog->alarm == alarm) {
         g_debug ("TODO: Update settings dialog");
-    }
+    }*/
 }
 
 /**

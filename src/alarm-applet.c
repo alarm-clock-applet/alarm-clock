@@ -420,7 +420,7 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 
 	// Fetch list of alarms and add them
     applet->alarms = NULL;
-	list = alarm_get_list (ALARM_GCONF_DIR);
+    list = alarm_get_list(applet->settings_global);
 
     for (l = list; l != NULL; l = l->next) {
         alarm_applet_alarms_add (applet, ALARM (l->data));
@@ -445,8 +445,17 @@ alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm)
 }
 
 void
-alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
+alarm_applet_alarms_remove_and_delete (AlarmApplet *applet, Alarm *alarm)
 {
+    AlarmSettingsDialog *sdialog = applet->settings_dialog;
+
+    // If there's a settings dialog open for this alarm, close it.
+    if (sdialog->alarm == alarm) {
+        alarm_settings_dialog_close (sdialog);
+    }
+
+    alarm_delete(alarm);
+
 	// Remove from list
 	applet->alarms = g_list_remove (applet->alarms, alarm);
 
@@ -464,8 +473,8 @@ alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm)
         alarm_list_window_alarm_remove (applet->list_window, alarm);
     }
 
-	// Dereference alarm
-	g_object_unref (alarm);
+    // Dereference alarm
+    alarm_unref(alarm);
 }
 
 /*
@@ -539,15 +548,17 @@ void alarm_applet_activate(GtkApplication *app, gpointer user_data)
         return;
     }
 
-    // Preferences (defaults).
-    // ...gconf_get_string can return NULL if the key is not found. We can't
-    // assume the schema provides the default values for strings.
+#if 1
+    // Call the GConf -> GSettings migration utility
+    if(!g_spawn_command_line_sync("alarm-clock-applet-gconf-migration", NULL, NULL, NULL, NULL))
+        g_spawn_command_line_sync("./gconf-migration/alarm-clock-applet-gconf-migration", NULL, NULL, NULL, NULL);
+#endif
 
-    // TODO: Add to gconf
+    // TODO: Add to gsettings
     applet->snooze_mins = 5;
 
-    // Initialize gconf
-    alarm_applet_gconf_init (applet);
+    // Initialize gsettings
+    alarm_applet_gsettings_init (applet);
 
     // Load alarms
     alarm_applet_alarms_load (applet);

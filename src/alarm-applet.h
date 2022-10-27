@@ -32,7 +32,6 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
-#include <gconf/gconf-client.h>
 #include <gst/gst.h>
 
 #include <config.h>
@@ -50,7 +49,7 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 
 #include "alarm.h"
 #include "prefs.h"
-#include "alarm-gconf.h"
+#include "alarm-gsettings.h"
 #include "player.h"
 #include "util.h"
 #include "list-entry.h"
@@ -60,7 +59,6 @@ void alarm_applet_clear_alarms (AlarmApplet *applet);
 #define ALARM_ICON 		 "alarm-clock"
 #define TIMER_ICON		 "alarm-timer"
 #define TRIGGERED_ICON	 "alarm-clock-triggered"
-#define ALARM_GCONF_DIR	 "/apps/alarm-clock"
 #define ALARM_STD_SNOOZE 9
 
 typedef enum {
@@ -122,6 +120,9 @@ struct _AlarmApplet {
 
     // Args
     gboolean hidden;     // Start hidden
+
+    // GSettings
+    GSettings* settings_global;
 };
 
 void alarm_applet_sounds_load (AlarmApplet *applet);
@@ -132,7 +133,7 @@ void alarm_applet_alarms_load (AlarmApplet *applet);
 
 void alarm_applet_alarms_add (AlarmApplet *applet, Alarm *alarm);
 
-void alarm_applet_alarms_remove (AlarmApplet *applet, Alarm *alarm);
+void alarm_applet_alarms_remove_and_delete (AlarmApplet *applet, Alarm *alarm);
 
 guint alarm_applet_alarms_snooze (AlarmApplet *applet);
 

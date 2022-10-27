@@ -1,0 +1,58 @@
+/*
+ * Virt Viewer: A virtual machine console viewer
+ *
+ * Copyright (C) 2007-2012 Red Hat, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Author: Marc-André Lureau <marcandre.lureau@redhat.com>
+ */
+/*** BEGIN file-header ***/
+/*** END file-header ***/
+
+/*** BEGIN file-production ***/
+#include "@filename@"
+#include "alarm-glib-enums.h"
+/*** END file-production ***/
+
+
+/*** BEGIN value-header ***/
+
+GType
+@enum_name@_get_type(void)
+{
+    static gsize g_define_type_id__cache = 0;
+
+    if (g_once_init_enter(&g_define_type_id__cache))
+    {
+        static const G@Type@Value values[] = {
+/*** END value-header ***/
+
+/*** BEGIN value-production ***/
+            { @VALUENAME@, "@VALUENAME@", "@valuenick@" },
+/*** END value-production ***/
+
+/*** BEGIN value-tail ***/
+            { 0, NULL, NULL }
+        };
+        GType g_define_type_id =
+            g_@type@_register_static(g_intern_static_string("@EnumName@"), values);
+        g_once_init_leave(&g_define_type_id__cache, g_define_type_id);
+    }
+
+    return g_define_type_id__cache;
+}
+
+/*** END value-tail ***/
