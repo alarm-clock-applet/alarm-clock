@@ -1124,11 +1124,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="headers_clickable">False</property>
                 <property name="rules_hint">True</property>
                 <property name="search_column">2</property>
+                <property name="fixed_height_mode">True</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="type-col">
+                    <property name="sizing">fixed</property>
                     <property name="title">Type</property>
                     <child>
                       <object class="GtkCellRendererPixbuf" id="cellrendererpixbuf2">
@@ -1144,7 +1146,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="time-col">
-                    <property name="sizing">autosize</property>
+                    <property name="sizing">fixed</property>
                     <property name="title">Time</property>
                     <child>
                       <object class="GtkCellRendererText" id="cellrenderertext4">
@@ -1159,7 +1161,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 </child>
                 <child>
                   <object class="GtkTreeViewColumn" id="label-col">
-                    <property name="sizing">autosize</property>
+                    <property name="sizing">fixed</property>
+                    <property name="fixed_width">50</property>
                     <property name="title">Label</property>
                     <property name="expand">True</property>
                     <child>
@@ -1173,7 +1176,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkTreeViewColumn" id="actions-col">
                     <property name="spacing">6</property>
-                    <property name="sizing">autosize</property>
+                    <property name="sizing">fixed</property>
                     <property name="title">Actions</property>
                     <child>
                       <object class="GtkCellRendererToggle" id="enable-toggle">

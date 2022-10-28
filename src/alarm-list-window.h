@@ -117,4 +117,6 @@ alarm_list_window_contains (AlarmListWindow *list_window, Alarm *alarm);
 Alarm *
 alarm_list_window_get_selected_alarm (AlarmListWindow *list_window);
 
+void alarm_list_request_resize(AlarmListWindow* list_window);
+
 #endif /*ALARM_LIST_WINDOW_H_*/

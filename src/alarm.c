@@ -29,6 +29,8 @@
 #include "alarm-glib-enums.h"
 #include <gio/gio.h>
 
+extern void alarm_applet_request_resize(struct _AlarmApplet* applet);
+
 typedef struct _AlarmPrivate AlarmPrivate;
 
 struct _AlarmPrivate
@@ -839,21 +841,27 @@ void alarm_update_gsettings_alarm_list(GSettings* settings, GList* alarms)
     free(newvalues);
 }
 
+static void prop_repeat_notify(GObject* self, GParamSpec* pspec, gpointer user_data)
+{
+    alarm_applet_request_resize(user_data);
+}
+
 /*
  * Convenience function for creating a new alarm instance.
  * Passing -1 as the id will generate a new ID with alarm_gen_id
  */
 Alarm *
-alarm_new (GSettings* settings, gint id)
+alarm_new (struct _AlarmApplet* applet, GSettings* settings, gint id)
 {
-    Alarm *alarm;
-
-    if (id < 0) {
+    if (id < 0)
         id = alarm_gen_id (settings);
-    }
-    alarm = g_object_new (TYPE_ALARM,
+
+    Alarm* alarm = g_object_new (TYPE_ALARM,
                           "id", id,
 						  NULL);
+
+    // Ask for a resize when a property has changed that might require more space
+    g_signal_connect(alarm, "notify::" PROP_NAME_REPEAT, G_CALLBACK(prop_repeat_notify), applet);
 
 	return alarm;
 }
@@ -912,7 +920,7 @@ alarm_list_item_compare (gconstpointer a, gconstpointer b)
  * Get list of alarms in gsettings
  */
 GList *
-alarm_get_list (GSettings* settings)
+alarm_get_list (struct _AlarmApplet* applet, GSettings* settings)
 {
 	GList *ret = NULL;
 
@@ -925,7 +933,7 @@ alarm_get_list (GSettings* settings)
             const guint32 id = values[i];
             g_debug ("Alarm: get_list() found #%" G_GUINT32_FORMAT, id);
 
-            Alarm* alarm = alarm_new(settings, id);
+            Alarm* alarm = alarm_new(applet, settings, id);
 //			g_debug ("\tref = %d", G_OBJECT (alarm)->ref_count);
             ret = g_list_insert_sorted (ret, alarm, alarm_list_item_compare);
 //			g_debug ("\tappend ref = %d", G_OBJECT (alarm)->ref_count);

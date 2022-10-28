@@ -145,6 +145,8 @@ void alarm_applet_alarm_stop (AlarmApplet *applet, Alarm *alarm);
 
 void alarm_applet_destroy (AlarmApplet *applet);
 
+void alarm_applet_request_resize(AlarmApplet* applet);
+
 G_END_DECLS
 
 #endif /*ALARMAPPLET_H_*/

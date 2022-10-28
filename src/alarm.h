@@ -33,6 +33,8 @@
 
 G_BEGIN_DECLS
 
+struct _AlarmApplet;
+
 /*
  * Utility macros
  */
@@ -147,7 +149,7 @@ GType
 alarm_get_type (void);
 
 Alarm *
-alarm_new (GSettings* settings, gint id);
+alarm_new (struct _AlarmApplet* applet, GSettings* settings, gint id);
 
 guint
 alarm_gen_id (GSettings* settings);
@@ -169,7 +171,7 @@ AlarmNotifyType
 alarm_notify_type_from_string (const gchar *type);
 
 GList *
-alarm_get_list (GSettings* settings);
+alarm_get_list (struct _AlarmApplet* applet, GSettings* settings);
 
 void
 alarm_signal_connect_list (GList *instances,

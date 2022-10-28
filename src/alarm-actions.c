@@ -260,7 +260,7 @@ alarm_action_new (GSimpleAction *action, GVariant *parameter, gpointer data)
     g_debug ("AlarmAction: new");
 
 	// Create new alarm, will fall back to defaults.
-    alarm = alarm_new (applet->settings_global, -1);
+    alarm = alarm_new (applet, applet->settings_global, -1);
 
 	// Set first sound / app in list
 	if (applet->sounds != NULL) {

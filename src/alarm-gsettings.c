@@ -61,7 +61,7 @@ void alarm_list_changed(GSettings* self, gchar* key, gpointer user_data)
         const guint32 settings_id = values[i];
         // Add the alarm if it doesn't exist
         if(!alarm_in_alarm_list(settings_id, applet->alarms)) {
-            Alarm* a = alarm_new(self, settings_id);
+            Alarm* a = alarm_new(applet, self, settings_id);
 
             g_debug("\tADD alarm #%d %p", settings_id, a);
 

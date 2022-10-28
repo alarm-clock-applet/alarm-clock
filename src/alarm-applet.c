@@ -420,7 +420,7 @@ alarm_applet_alarms_load (AlarmApplet *applet)
 
 	// Fetch list of alarms and add them
     applet->alarms = NULL;
-    list = alarm_get_list(applet->settings_global);
+    list = alarm_get_list(applet, applet->settings_global);
 
     for (l = list; l != NULL; l = l->next) {
         alarm_applet_alarms_add (applet, ALARM (l->data));
@@ -575,7 +575,6 @@ void alarm_applet_activate(GtkApplication *app, gpointer user_data)
     // Show alarms window, unless --hidden
     if(!applet->hidden)
         g_action_activate(G_ACTION(applet->action_toggle_list_win), NULL);
-
 }
 
 /**
@@ -673,3 +672,10 @@ main (int argc, char *argv[])
 /*
  * }} INIT
  */
+
+void alarm_applet_request_resize(AlarmApplet* applet)
+{
+    if(!applet->list_window)
+        g_error("list_window is NULL in alarm_applet_request_resize()");
+    alarm_list_request_resize(applet->list_window);
+}

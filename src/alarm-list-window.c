@@ -147,6 +147,7 @@ void
 alarm_list_window_show (AlarmListWindow *list_window)
 {
     gtk_window_present_with_time (list_window->window, gtk_get_current_event_time());
+    alarm_list_request_resize(list_window);
 }
 
 /**
@@ -723,4 +724,9 @@ static void alarm_list_window_row_activated(GtkTreeView* self, GtkTreePath* path
 {
     AlarmApplet *applet = (AlarmApplet *)data;
     g_action_activate(G_ACTION(applet->action_edit), NULL);
+}
+
+void alarm_list_request_resize(AlarmListWindow* list_window)
+{
+    gtk_tree_view_columns_autosize(list_window->tree_view);
 }
