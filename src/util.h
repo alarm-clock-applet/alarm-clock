@@ -32,48 +32,33 @@
 /**
  * Calculates the alarm timestamp given hour, min and secs.
  */
-time_t
-get_alarm_timestamp (guint hour, guint minute, guint second);
+time_t get_alarm_timestamp(guint hour, guint minute, guint second);
 
 /**
  * Construct a Uppercased name of filename without the extension.
  */
-gchar *
-to_basename (const gchar *filename);
+gchar* to_basename(const gchar* filename);
 
 /*
  * Run Command
  */
-gboolean
-command_run (const gchar *command);
+gboolean command_run(const gchar* command);
 
-gboolean
-is_executable_valid (gchar *executable);
+gboolean is_executable_valid(gchar* executable);
 
 /* Get full path of a data file */
-char *
-alarm_applet_get_data_path (const char *name);
+char* alarm_applet_get_data_path(const char* name);
 
-guint
-block_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
+guint block_signal_handlers_by_name(gpointer instance, const gchar* signal_name);
 
-guint
-unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name);
+guint unblock_signal_handlers_by_name(gpointer instance, const gchar* signal_name);
 
-guint
-block_list (GList *instances, gpointer func);
+guint block_list(GList* instances, gpointer func);
 
-guint
-unblock_list (GList *instances, gpointer func);
+guint unblock_list(GList* instances, gpointer func);
 
-#define BLOCK(instance, func)   \
-    g_signal_handlers_block_matched ((instance),            \
-                                     G_SIGNAL_MATCH_FUNC,   \
-                                     0, 0, NULL, (func), NULL)
+#define BLOCK(instance, func) g_signal_handlers_block_matched((instance), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (func), NULL)
 
-#define UNBLOCK(instance, func)   \
-    g_signal_handlers_unblock_matched ((instance),            \
-                                       G_SIGNAL_MATCH_FUNC,   \
-                                       0, 0, NULL, (func), NULL)
+#define UNBLOCK(instance, func) g_signal_handlers_unblock_matched((instance), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, (func), NULL)
 
 #endif /*UTIL_H_*/

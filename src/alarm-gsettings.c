@@ -95,17 +95,16 @@ void alarm_list_changed(GSettings* self, gchar* key, gpointer user_data)
 
 void alarm_show_label_changed(GSettings* self, gchar* key, gpointer user_data)
 {
-    g_debug ("alarm_show_label_changed");
+    g_debug("alarm_show_label_changed");
     prefs_show_label_update(user_data);
 }
 
 /*
  * Init
  */
-void
-alarm_applet_gsettings_init (AlarmApplet *applet)
+void alarm_applet_gsettings_init(AlarmApplet* applet)
 {
-	applet->settings_global = g_settings_new("io.github.alarm-clock-applet");
+    applet->settings_global = g_settings_new("io.github.alarm-clock-applet");
     g_signal_connect(applet->settings_global, "changed::alarms", G_CALLBACK(alarm_list_changed), applet);
     // Maybe GSettingsAction would work better here. If one can figure out how to use it, that is.
     g_signal_connect(applet->settings_global, "changed::show-label", G_CALLBACK(alarm_show_label_changed), applet);

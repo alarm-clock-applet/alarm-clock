@@ -30,11 +30,9 @@
 
 G_BEGIN_DECLS
 
-void
-alarm_applet_gsettings_init (AlarmApplet *applet);
+void alarm_applet_gsettings_init(AlarmApplet* applet);
 
-void
-alarm_applet_gsettings_load (AlarmApplet *applet);
+void alarm_applet_gsettings_load(AlarmApplet* applet);
 
 G_END_DECLS
 

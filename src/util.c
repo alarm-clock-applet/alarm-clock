@@ -30,92 +30,87 @@
 /**
  * Calculates the alarm timestamp given hour, min and secs.
  */
-time_t
-get_alarm_timestamp (guint hour, guint minute, guint second)
+time_t get_alarm_timestamp(guint hour, guint minute, guint second)
 {
-	time_t now;
-	struct tm *tm;
+    time_t now;
+    struct tm* tm;
 
-	time (&now);
-	tm = localtime (&now);
+    time(&now);
+    tm = localtime(&now);
 
-	// Check if the alarm is for tomorrow
-	if (hour < tm->tm_hour ||
-		(hour == tm->tm_hour && minute < tm->tm_min) ||
-		(hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
+    // Check if the alarm is for tomorrow
+    if(hour < tm->tm_hour || (hour == tm->tm_hour && minute < tm->tm_min) || (hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
 
-		g_debug("Alarm is for tomorrow.");
-		tm->tm_mday++;
-	}
+        g_debug("Alarm is for tomorrow.");
+        tm->tm_mday++;
+    }
 
-	tm->tm_hour = hour;
-	tm->tm_min = minute;
-	tm->tm_sec = second;
+    tm->tm_hour = hour;
+    tm->tm_min = minute;
+    tm->tm_sec = second;
 
-	// DEBUG:
-	char tmp[512];
-	strftime (tmp, sizeof (tmp), "%c", tm);
-	g_debug ("Alarm will trigger at %s", tmp);
+    // DEBUG:
+    char tmp[512];
+    strftime(tmp, sizeof(tmp), "%c", tm);
+    g_debug("Alarm will trigger at %s", tmp);
 
-	return mktime (tm);
+    return mktime(tm);
 }
 
 /**
  * Construct a Uppercased name of filename without the extension.
  */
-gchar *
-to_basename (const gchar *filename)
+gchar* to_basename(const gchar* filename)
 {
-	gint i, len;
-	gchar *result;
+    gint i, len;
+    gchar* result;
 
-	len = strlen (filename);
-	// Remove extension
-	for (i = len-1; i > 0; i--) {
-		if (filename[i] == '.') {
-			break;
-		}
-	}
+    len = strlen(filename);
+    // Remove extension
+    for(i = len - 1; i > 0; i--) {
+        if(filename[i] == '.') {
+            break;
+        }
+    }
 
-	if (i == 0)
-		// Extension not found
-		i = len;
+    if(i == 0)
+        // Extension not found
+        i = len;
 
-	result = g_strndup (filename, i);
+    result = g_strndup(filename, i);
 
-	// Make first character Uppercase
-	result[0] = g_utf8_strup (result, 1)[0];
+    // Make first character Uppercase
+    result[0] = g_utf8_strup(result, 1)[0];
 
-	return result;
+    return result;
 }
 
 /*
  * Run Command
  */
-gboolean
-command_run (const gchar *command) {
-	GError *err = NULL;
+gboolean command_run(const gchar* command)
+{
+    GError* err = NULL;
 
-	if (!g_spawn_command_line_async (command, &err)) {
-		g_critical ("Could not launch `%s': %s", command, err->message);
-		g_error_free (err);
+    if(!g_spawn_command_line_async(command, &err)) {
+        g_critical("Could not launch `%s': %s", command, err->message);
+        g_error_free(err);
 
-		return FALSE;
-	}
+        return FALSE;
+    }
 
-	return TRUE;
+    return TRUE;
 }
 
-gboolean
-is_executable_valid (gchar *executable)
+gboolean is_executable_valid(gchar* executable)
 {
-    gchar *path;
+    gchar* path;
 
-    path = g_find_program_in_path (executable);
+    path = g_find_program_in_path(executable);
 
-    if (path) {
-		g_free (path);
-		return TRUE;
+    if(path) {
+        g_free(path);
+        return TRUE;
     }
 
     return FALSE;
@@ -125,23 +120,20 @@ is_executable_valid (gchar *executable)
 /*
  * Get full path to a data file
  */
-char *
-alarm_applet_get_data_path (const char *name)
+char* alarm_applet_get_data_path(const char* name)
 {
-    char *filename;
+    char* filename;
 
     /* Try the file in the source tree first */
-    filename = g_build_filename ("..", "data", name, NULL);
+    filename = g_build_filename("..", "data", name, NULL);
     g_debug("filename: %s", filename);
-    if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
-    {
-        g_free (filename);
+    if(g_file_test(filename, G_FILE_TEST_EXISTS) == FALSE) {
+        g_free(filename);
         /* Try the local file */
-        filename = g_build_filename (ALARM_CLOCK_PKGDATADIR, name, NULL);
+        filename = g_build_filename(ALARM_CLOCK_PKGDATADIR, name, NULL);
 
-        if (g_file_test (filename, G_FILE_TEST_EXISTS) == FALSE)
-        {
-            g_free (filename);
+        if(g_file_test(filename, G_FILE_TEST_EXISTS) == FALSE) {
+            g_free(filename);
             return NULL;
         }
     }
@@ -152,58 +144,52 @@ alarm_applet_get_data_path (const char *name)
 /**
  * Block signal handlers by signal name
  */
-guint
-block_signal_handlers_by_name (gpointer instance, const gchar *signal_name)
+guint block_signal_handlers_by_name(gpointer instance, const gchar* signal_name)
 {
     guint signal_id;
 
-    signal_id = g_signal_lookup (signal_name, G_OBJECT_TYPE (instance));
+    signal_id = g_signal_lookup(signal_name, G_OBJECT_TYPE(instance));
 
-    g_warn_if_fail (signal_id);
-    g_return_val_if_fail (signal_id, 0);
+    g_warn_if_fail(signal_id);
+    g_return_val_if_fail(signal_id, 0);
 
-    return g_signal_handlers_block_matched (instance, G_SIGNAL_MATCH_ID,
-        signal_id, 0, NULL, NULL, NULL);
+    return g_signal_handlers_block_matched(instance, G_SIGNAL_MATCH_ID, signal_id, 0, NULL, NULL, NULL);
 }
 
 /**
  * Unblock signal handlers by signal name
  */
-guint
-unblock_signal_handlers_by_name (gpointer instance, const gchar *signal_name)
+guint unblock_signal_handlers_by_name(gpointer instance, const gchar* signal_name)
 {
     guint signal_id;
 
-    signal_id = g_signal_lookup (signal_name, G_OBJECT_TYPE (instance));
+    signal_id = g_signal_lookup(signal_name, G_OBJECT_TYPE(instance));
 
-    g_warn_if_fail (signal_id);
-    g_return_val_if_fail (signal_id, 0);
+    g_warn_if_fail(signal_id);
+    g_return_val_if_fail(signal_id, 0);
 
-    return g_signal_handlers_unblock_matched (instance, G_SIGNAL_MATCH_ID,
-        signal_id, 0, NULL, NULL, NULL);
+    return g_signal_handlers_unblock_matched(instance, G_SIGNAL_MATCH_ID, signal_id, 0, NULL, NULL, NULL);
 }
 
-guint
-block_list (GList *instances, gpointer func)
+guint block_list(GList* instances, gpointer func)
 {
     guint blocked = 0;
-    GList *l = NULL;
+    GList* l = NULL;
 
-    for (l = instances; l != NULL; l = l->next) {
-        blocked += BLOCK (l->data, func);
+    for(l = instances; l != NULL; l = l->next) {
+        blocked += BLOCK(l->data, func);
     }
 
     return blocked;
 }
 
-guint
-unblock_list (GList *instances, gpointer func)
+guint unblock_list(GList* instances, gpointer func)
 {
     guint unblocked = 0;
-    GList *l = NULL;
+    GList* l = NULL;
 
-    for (l = instances; l != NULL; l = l->next) {
-        unblocked += UNBLOCK (l->data, func);
+    for(l = instances; l != NULL; l = l->next) {
+        unblocked += UNBLOCK(l->data, func);
     }
 
     return unblocked;

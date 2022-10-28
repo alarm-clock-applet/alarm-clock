@@ -32,26 +32,21 @@
 G_BEGIN_DECLS
 
 typedef struct {
-	gchar *name;
-	gchar *data;
-	gchar *icon;
+    gchar* name;
+    gchar* data;
+    gchar* icon;
 } AlarmListEntry;
 
 
-AlarmListEntry *
-alarm_list_entry_new (const gchar *name, const gchar *data, const gchar *icon);
+AlarmListEntry* alarm_list_entry_new(const gchar* name, const gchar* data, const gchar* icon);
 
-void
-alarm_list_entry_free (AlarmListEntry *e);
+void alarm_list_entry_free(AlarmListEntry* e);
 
-AlarmListEntry *
-alarm_list_entry_new_file (const gchar *uri, gchar **mime_ret, GError **error);
+AlarmListEntry* alarm_list_entry_new_file(const gchar* uri, gchar** mime_ret, GError** error);
 
-GList *
-alarm_list_entry_list_new (const gchar *dir_uri, const gchar *supported_types[]);
+GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_types[]);
 
-void
-alarm_list_entry_list_free (GList **list);
+void alarm_list_entry_list_free(GList** list);
 
 G_END_DECLS
 

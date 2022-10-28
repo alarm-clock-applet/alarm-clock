@@ -3,9 +3,10 @@
 #include <gconf/gconf-client.h>
 #include <stdio.h>
 
-#define MIGRATED_KEY "gconf-migrated"
-#define ALARM_GCONF_DIR "/apps/alarm-clock"
+#define MIGRATED_KEY         "gconf-migrated"
+#define ALARM_GCONF_DIR      "/apps/alarm-clock"
 #define GSETTINGS_ALARM_BASE "/io/github/alarm-clock-applet/"
+
 
 // Because gsettings-data-convert is absolutely broken on Ubuntu (at least 20.04)...
 int main()
@@ -119,7 +120,7 @@ int main()
             if(repeat_list) {
                 int i = 0;
                 // Max 7 days + NULL item at the end
-                const gchar* repeat[8] = {NULL};
+                const gchar* repeat[8] = { NULL };
                 for(GSList* ri = repeat_list; ri && i < 7; ri = ri->next, i++) {
                     repeat[i] = ri->data;
                 }
@@ -143,7 +144,7 @@ int main()
 
         // Store the array of alarm ids
         GVariant* v = g_variant_new_fixed_array(G_VARIANT_TYPE_UINT32, alarm_ids, i, sizeof(guint32));
-        g_settings_set_value(settings, "alarms",  v);
+        g_settings_set_value(settings, "alarms", v);
 
         free(alarm_ids);
 

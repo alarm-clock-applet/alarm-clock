@@ -26,25 +26,18 @@
 
 #include "alarm-applet.h"
 
-void
-prefs_init (AlarmApplet *applet);
+void prefs_init(AlarmApplet* applet);
 
-void
-prefs_dialog_show (AlarmApplet *applet);
+void prefs_dialog_show(AlarmApplet* applet);
 
-gboolean
-prefs_autostart_get_state (void);
+gboolean prefs_autostart_get_state(void);
 
-void
-prefs_autostart_set_state (gboolean state);
+void prefs_autostart_set_state(gboolean state);
 
-gboolean
-prefs_show_label_get (AlarmApplet *applet);
+gboolean prefs_show_label_get(AlarmApplet* applet);
 
-void
-prefs_show_label_set (AlarmApplet *applet, gboolean state);
+void prefs_show_label_set(AlarmApplet* applet, gboolean state);
 
-void
-prefs_show_label_update (AlarmApplet *applet);
+void prefs_show_label_update(AlarmApplet* applet);
 
 #endif /*PREFS_H_*/
