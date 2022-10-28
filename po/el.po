@@ -1,0 +1,319 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-10-28 12:54+0300\n"
+"PO-Revision-Date: 2022-10-28 13:07+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: data/alarm-clock.ui:302 data/alarm-clock.ui:324 data/alarm-clock.ui:346
+msgid "0"
+msgstr ""
+
+#: data/alarm-clock.ui:1358
+msgid "1 minute"
+msgstr "1 λεπτό"
+
+#: data/alarm-clock.ui:1391
+msgid "10 minutes"
+msgstr "10 λεπτά"
+
+#: data/alarm-clock.ui:1369
+msgid "3 minutes"
+msgstr "3 λεπτά"
+
+#: data/alarm-clock.ui:919
+msgid "5"
+msgstr ""
+
+#: data/alarm-clock.ui:1380
+msgid "5 minutes"
+msgstr "5 λεπτά"
+
+#. About Alarm Clock
+#: src/ui.c:360
+#, c-format
+msgid "About %s"
+msgstr "Σχετικά %s"
+
+#: data/alarm-clock.ui:8
+msgid "About Alarm Clock"
+msgstr "Σχετικά με το Ξυπνητήρι"
+
+#: data/alarm-clock-applet.desktop.in:3 data/alarm-clock.ui:164 src/ui.c:308
+msgid "Alarm Clock"
+msgstr "Ξυπνητήρι"
+
+#: data/alarm-clock.ui:1206
+msgid "Alarm Clock Preferences"
+msgstr "Προτιμήσεις Ξυπνητηριού"
+
+#: data/alarm-clock.ui:987
+msgid "Alarms"
+msgstr "Ξυπνητήρια"
+
+#: data/alarm-clock.ui:606
+msgid "Alert"
+msgstr "Ειδοποίηση"
+
+#: data/alarm-clock.ui:1298
+msgid "Appearance"
+msgstr "Εμφάνιση"
+
+#: data/alarm-clock.ui:758
+msgid "Co_mmand:"
+msgstr "Ε_ντολή:"
+
+#: src/alarm-settings.c:839 src/alarm.c:1034
+msgid "Could not create player! Please check your sound settings."
+msgstr "Αδυναμία αναπαραγωγής! Παρακαλώ ελέγξτε τις ρυθμίσεις ήχου."
+
+#: src/ui.c:389
+msgid "Could not play"
+msgstr "Αδυναμία αναπαραγωγής"
+
+#: src/ui.c:388
+#, c-format
+msgid "Could not play '%s': %s"
+msgstr "Αδυναμία αναπαραγωγής '%s': %s"
+
+#: src/alarm-settings.c:310
+msgid "Custom command..."
+msgstr "Προσαρμοσμένη εντολή..."
+
+#: data/alarm-clock.ui:1402
+msgid "Custom..."
+msgstr "Προσαρμοσμένο..."
+
+#: data/alarm-clock.ui:1040
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: data/alarm-clock.ui:1038
+msgid "Delete the selected alarm"
+msgstr "Διαγραφή του επιλεγμένου ξυπνητηριού"
+
+#: src/alarm-applet.c:653
+msgid "Display version information"
+msgstr "Εμφάνιση πληροφοριών έκδοσης"
+
+#: data/alarm-clock.ui:82
+msgid "Edit alarm"
+msgstr "Επεξεργασία ξυπνητηριού"
+
+#: data/alarm-clock.ui:1023
+msgid "Edit the selected alarm"
+msgstr "Επεξεργασία του επιλεγμένου ξυπνητηριού"
+
+#: data/alarm-clock.ui:1025
+msgid "Edit..."
+msgstr "Επεξεργασία..."
+
+#: data/alarm-clock.ui:1065
+msgid "Enable"
+msgstr "Ενεργοποίηση"
+
+#: data/alarm-clock.ui:1063
+msgid "Enable/disable the selected alarm"
+msgstr "Ενεργοποίηση/απενεργοποίηση του επιλεγμένου ξυπνητηριού"
+
+#: data/alarm-clock.ui:522 src/alarm.c:1364
+msgid "Every day"
+msgstr "Καθημερινά"
+
+#: data/alarm-clock.ui:452
+msgid "Fri"
+msgstr "Παρ"
+
+#: data/alarm-clock.ui:1259
+msgid "General"
+msgstr "Γενικά"
+
+#: data/alarm-clock.ui:16
+msgid "Get up in the morning!"
+msgstr "Σηκωθείτε το πρωί!"
+
+#: data/alarm-clock.ui:1454
+msgid "Manage your alarms"
+msgstr "Διαχείριση των ξυπνητηριών"
+
+#: data/alarm-clock.ui:388
+msgid "Mon"
+msgstr "Δευ"
+
+#: data/alarm-clock.ui:1008
+msgid "New alarm"
+msgstr "Νέο ξυπνητήρι"
+
+#: data/alarm-clock.ui:1010
+msgid "New..."
+msgstr "Νέο..."
+
+#: data/alarm-clock.ui:564 src/alarm.c:1355
+msgid "Once"
+msgstr "Μια φορά"
+
+#: data/alarm-clock.ui:631
+msgid "Play _sound"
+msgstr "Αναπαραγωγή _ήχου"
+
+#: data/alarm-clock.ui:686
+msgid "Repea_t sound"
+msgstr "Ε_πανάληψη ήχου"
+
+#: data/alarm-clock.ui:468
+msgid "Sat"
+msgstr "Σάβ"
+
+#: src/alarm-settings.c:260 src/alarm-settings.c:440
+msgid "Select sound file..."
+msgstr "Επιλογή αρχείου ήχου..."
+
+#: data/alarm-clock.ui:1451
+msgid "Show _alarms"
+msgstr "Εμφάνιση _Ξυπνητηριών"
+
+#: data/alarm-clock.ui:1317
+msgid "Show countdown label"
+msgstr "Εμφάνιση ετικέτας αντίστροφης μέτρησης"
+
+#: data/alarm-clock.ui:1097
+msgid "Snooze"
+msgstr "Αναστολή"
+
+#: data/alarm-clock.ui:815
+msgid "Snooze alarm"
+msgstr "Αναστολή"
+
+#: data/alarm-clock.ui:1423 src/alarm-applet.c:652
+msgid "Snooze all alarms"
+msgstr "Αναστολή όλων των ξυπνητηριών"
+
+#: data/alarm-clock.ui:1426
+msgid "Snooze all beeping alarms"
+msgstr "Αναστολή όλων των ξυπνητηριών"
+
+#: data/alarm-clock.ui:900
+msgid "Snooze for:"
+msgstr "Αναστολή για:"
+
+#: data/alarm-clock.ui:1094
+msgid "Snooze the selected alarm"
+msgstr "Αναστολή του επιλεγμένου ξυπνητηριού"
+
+#: data/alarm-clock.ui:712
+msgid "Start _Application"
+msgstr "Εκκίνηση Ε_φαρμογής"
+
+#: data/alarm-clock.ui:1278
+msgid "Start automatically at login"
+msgstr "Αυτόματη εκκίνηση κατά την είσοδο"
+
+#: src/alarm-applet.c:650
+msgid "Start hidden"
+msgstr "Κυφή εκκίνηση"
+
+#: data/alarm-clock.ui:1081
+msgid "Stop"
+msgstr "Διακοπή"
+
+#: data/alarm-clock.ui:1434 src/alarm-applet.c:651
+msgid "Stop all alarms"
+msgstr "Διακοπή όλων των ξυπνητηριών"
+
+#: data/alarm-clock.ui:1437
+msgid "Stop all beeping alarms"
+msgstr "Διακοπή όλων των ξυπνητηριών"
+
+#: data/alarm-clock.ui:1078
+msgid "Stop the selected alarm"
+msgstr "Διακοπή του επιλεγμένου ξυπνητηριού"
+
+#: data/alarm-clock.ui:484
+msgid "Sun"
+msgstr "Κυρ"
+
+#: data/alarm-clock.ui:436
+msgid "Thu"
+msgstr "Πέμ"
+
+#: data/alarm-clock.ui:215
+msgid "Timer"
+msgstr "Αντίστροφη Μέτρηση"
+
+#: data/alarm-clock.ui:404
+msgid "Tue"
+msgstr "Τρί"
+
+#: data/alarm-clock-applet.desktop.in:4
+msgid "Wake up in the morning"
+msgstr "Ξυπνήστε το πρωί"
+
+#: data/alarm-clock.ui:255
+msgid "Wake up sleepy head!"
+msgstr ""
+
+#: data/alarm-clock.ui:420
+msgid "Wed"
+msgstr "Τετ"
+
+#: data/alarm-clock.ui:536 src/alarm.c:1358
+msgid "Weekdays"
+msgstr "Καθημερινές"
+
+#: data/alarm-clock.ui:550 src/alarm.c:1361
+msgid "Weekends"
+msgstr "Σαββατοκύρια"
+
+#: src/ui.c:446
+msgid "You can snooze or stop alarms from the Alarm Clock menu."
+msgstr "Μπορείτε να αναβάλλετε ή να διακόψετε ξυπνητήρια από το μενού."
+
+#: src/alarm-settings.c:443
+msgid "_Cancel"
+msgstr "Ά_κυρο"
+
+#: data/alarm-clock.ui:285
+msgid "_Name:"
+msgstr "_Όνομα:"
+
+#: src/alarm-settings.c:444
+msgid "_Open"
+msgstr "_Άνοιγμα"
+
+#: data/alarm-clock.ui:591
+msgid "_Repeat:"
+msgstr "_Επανάληψη:"
+
+#: src/alarm-settings.c:94
+#, c-format
+msgid "_Repeat: %s"
+msgstr "_Επανάληψη: %s"
+
+#: data/alarm-clock.ui:850
+msgid "_Snooze"
+msgstr "_Αναστολή"
+
+#: data/alarm-clock.ui:270
+msgid "_Time:"
+msgstr "_Χρόνος:"
+
+#: data/alarm-clock-applet.desktop.in:5
+msgid "alarm-clock"
+msgstr ""
+
+#: data/alarm-clock.ui:937
+msgid "minutes"
+msgstr "λεπτά"
