@@ -985,7 +985,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
   <object class="GtkApplicationWindow" id="alarm-list-window">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Alarms</property>
-    <property name="default_width">350</property>
     <property name="default_height">200</property>
     <property name="icon_name">alarm-clock</property>
     <signal name="delete-event" handler="alarm_list_window_delete_event" swapped="no"/>
