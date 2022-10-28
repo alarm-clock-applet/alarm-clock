@@ -32,7 +32,7 @@ typedef enum {
 	MEDIA_PLAYER_INVALID = 0,
 	MEDIA_PLAYER_STOPPED,
 	MEDIA_PLAYER_PLAYING,
-	MEDIA_PLAYER_ERROR
+	MEDIA_PLAYER_ERROR,
 } MediaPlayerState;
 
 typedef struct _MediaPlayer MediaPlayer;

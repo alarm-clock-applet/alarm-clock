@@ -1,7 +1,7 @@
 typedef enum {
 	ALARM_TYPE_INVALID = 0,
 	ALARM_TYPE_CLOCK,		/* Alarm at specific time */
-	ALARM_TYPE_TIMER		/* Alarm in X mins */
+	ALARM_TYPE_TIMER,		/* Alarm in X mins */
 } AlarmType;
 
 typedef enum {

@@ -33,7 +33,7 @@ enum
 {
     GICON_COL,
     TEXT_COL,
-    N_COLUMNS
+    N_COLUMNS,
 };
 
 static void alarm_applet_status_init (AlarmApplet *applet);

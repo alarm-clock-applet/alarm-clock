@@ -37,11 +37,11 @@ alarm_applet_actions_init (AlarmApplet *applet)
 
     // Actions on one alarm
     const GActionEntry win_action_entries[] = {
-        { "alarm_new", alarm_action_new, },
-        { "alarm_edit", alarm_action_edit, },
-        { "alarm_delete", alarm_action_delete, },
-        { "alarm_stop", alarm_action_stop, },
-        { "alarm_snooze", alarm_action_snooze, },
+        { "alarm_new", alarm_action_new },
+        { "alarm_edit", alarm_action_edit },
+        { "alarm_delete", alarm_action_delete },
+        { "alarm_stop", alarm_action_stop },
+        { "alarm_snooze", alarm_action_snooze },
         { "alarm_enable", alarm_action_enable, NULL, "false"},
     };
     g_action_map_add_action_entries(G_ACTION_MAP(applet->list_window->window), win_action_entries, G_N_ELEMENTS(win_action_entries), applet);
@@ -54,10 +54,10 @@ alarm_applet_actions_init (AlarmApplet *applet)
 
     // Global actions
     const GActionEntry app_action_entries[] = {
-        { "snooze_all", alarm_action_snooze_all, },
-        { "stop_all", alarm_action_stop_all, },
-        { "quit", alarm_action_quit, },
-        { "show_alarms_list", alarm_action_toggle_list_win, },
+        { "snooze_all", alarm_action_snooze_all },
+        { "stop_all", alarm_action_stop_all },
+        { "quit", alarm_action_quit },
+        { "show_alarms_list", alarm_action_toggle_list_win },
         { "autostart", alarm_action_toggle_autostart, NULL, "false"},
         { "show_countdown", alarm_action_toggle_show_label, NULL, "false"},
     };
@@ -72,7 +72,7 @@ alarm_applet_actions_init (AlarmApplet *applet)
     // FIXME: Add more such as Ctrl Q, Ctrl N, etc etc
     const gchar* const toggle_list_win_accel[] = {
         "Escape",
-        NULL
+        NULL,
     };
     gtk_application_set_accels_for_action(applet->application, "app.show_alarms_list", toggle_list_win_accel);
 

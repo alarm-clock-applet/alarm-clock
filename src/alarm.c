@@ -121,7 +121,7 @@ enum {
 	PROP_NOTIFY_TYPE,
 	PROP_SOUND_FILE,
 	PROP_SOUND_LOOP,
-	PROP_COMMAND
+	PROP_COMMAND,
 };
 
 #define PROP_NAME_ID			"id"
@@ -144,7 +144,7 @@ enum
     SIGNAL_CLEARED,
     SIGNAL_ERROR,
     SIGNAL_PLAYER,
-    LAST_SIGNAL
+    LAST_SIGNAL,
 };
 
 /* Signal identifier map */

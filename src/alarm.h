@@ -108,7 +108,7 @@ struct _AlarmClass {
 typedef enum {
 	ALARM_ERROR_NONE,
 	ALARM_ERROR_PLAY,		/* Error playing sound */
-	ALARM_ERROR_COMMAND		/* Error launching command */
+	ALARM_ERROR_COMMAND,		/* Error launching command */
 } AlarmErrorCode;
 
 

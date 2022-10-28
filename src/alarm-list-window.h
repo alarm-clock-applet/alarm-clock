@@ -39,7 +39,7 @@ typedef enum {
     COLUMN_ACTIVE,
     COLUMN_TRIGGERED,
     COLUMN_SHOW_ICON,
-    ALARMS_N_COLUMNS
+    ALARMS_N_COLUMNS,
 } AlarmListColumn;
 
 typedef enum {
