@@ -7,454 +7,443 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-03 16:58+0000\n"
+"POT-Creation-Date: 2022-10-28 12:54+0300\n"
 "PO-Revision-Date: 2012-05-25 09:24+0000\n"
 "Last-Translator: පසිඳු කාවින්ද <info@pk-soft.tk>\n"
 "Language-Team: Sinhalese <si@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
 "X-Generator: Launchpad (build 15342)\n"
-"Language: \n"
 
-#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:5
-#: ../src/ui.c:300
-msgid "Alarm Clock"
-msgstr "සංඳාකිරීමේ ඔරලෝසුව"
-
-#: ../data/alarm-clock-applet.desktop.in.h:2
-msgid "Wake up in the morning"
-msgstr "උදෑසන පිබිදීම"
-
-#: ../data/alarm-clock.schemas.in.h:1 ../data/alarm-clock.ui.h:67
-msgid "Show countdown label"
-msgstr "ගණන ලේබලය දැක්වීම"
-
-#: ../data/alarm-clock.schemas.in.h:2
-msgid ""
-"Whether to show a label on the right side of the icon with the time "
-"remaining to the next alarm."
-msgstr "ඊලග සංඥා සලකුණේ නිවැරදි පැත්ත දැක්වීම"
-
-#: ../data/alarm-clock.schemas.in.h:3
-msgid "Alarm Type"
-msgstr "සංඥා වර්ගය"
-
-#: ../data/alarm-clock.schemas.in.h:4
-msgid ""
-"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
-"day, or \"timer\" for an alarm after a specified period of time."
+#: data/alarm-clock.ui:302 data/alarm-clock.ui:324 data/alarm-clock.ui:346
+msgid "0"
 msgstr ""
-"සංඥා වර්ගය අනුව දවසක විශේෂිත වේලාව දැක්වීම සදහා \"ඔරලෝසුව\" හෝ  සද විශේෂිත "
-"කාලයකට  පසුව සංඥා දැක්වීමට \"කාලගණනය\" යොදාගැනේ."
 
-#: ../data/alarm-clock.schemas.in.h:5
-msgid "Alarm Timestamp"
-msgstr "සම්මත සංඥාව"
-
-#: ../data/alarm-clock.schemas.in.h:6
-msgid ""
-"The UNIX timestamp for the alarm. Must be set before the alarm is activated."
-msgstr "සංඥාව සදහා යුනික්ස් සලකුණ.සංඥාව ක්‍රියාත්මක කිරීමට පෙර සැකසිය යුතුය."
-
-#: ../data/alarm-clock.schemas.in.h:7
-msgid "Alarm Time"
-msgstr "සංඥා කාලය"
-
-#: ../data/alarm-clock.schemas.in.h:8
-msgid ""
-"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
-"seconds for \"timer\" alarms."
-msgstr ""
-"සංඥා සදහා කාලය.සම්මත කාලය ඔරලෝසු සංඥා හෝ කාල පරාසය අනුව කාලගණන සංඥාටද යෙදිය "
-"යුතුය."
-
-#: ../data/alarm-clock.schemas.in.h:9
-msgid "Alarm!"
-msgstr "සංඥාව!"
-
-#: ../data/alarm-clock.schemas.in.h:10
-msgid "Alarm Message"
-msgstr "සංඥා පණිවිඩය"
-
-#: ../data/alarm-clock.schemas.in.h:11
-msgid "A short message which describes the alarm."
-msgstr "කෙටි සංඥා පණිවිඩයක්"
-
-#: ../data/alarm-clock.schemas.in.h:12
-msgid "Alarm Running State"
-msgstr "සංඥා ක්‍රියාත්මක තත්වය"
-
-#: ../data/alarm-clock.schemas.in.h:13
-msgid "Indicates whether the alarm has started."
-msgstr "සංඥාවේ ආරම්භය දැක්වීම හෝ"
-
-#: ../data/alarm-clock.schemas.in.h:14
-msgid "Alarm Repeat"
-msgstr "සංඥා නැවත කිරිම"
-
-#: ../data/alarm-clock.schemas.in.h:15
-msgid ""
-"A list of days when the alarm should be repeated. This settings is only "
-"applicable for \"clock\" alarms."
-msgstr ""
-"දවස අනුව සංඥාව නැවත දැක්විය යුතුය. කට්ටල අංග යෙදිය හැකිවන්නේ ඔරලෝසුවට පමණි."
-
-#: ../data/alarm-clock.schemas.in.h:16
-msgid "Notification Type"
-msgstr "නිවේදන වර්ගය"
-
-#: ../data/alarm-clock.schemas.in.h:17
-msgid ""
-"The type of notification to use when the alarm goes off. This can be one of "
-"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
-"property.) \"command\" to run a command (specified in the \"command\" "
-"property.)"
-msgstr "නිවේදන වර්ගය අනුව සංඥාව පැමිණීම."
-
-#: ../data/alarm-clock.schemas.in.h:18
-msgid "Sound File"
-msgstr "ශබ්ද ගොනුව"
-
-#: ../data/alarm-clock.schemas.in.h:19
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "ශබ්ද ගොනුව ශබ්ද නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට"
-
-#: ../data/alarm-clock.schemas.in.h:20
-msgid "Repeat Sound"
-msgstr "ශබ්ද නැවත කියවීම"
-
-#: ../data/alarm-clock.schemas.in.h:21
-msgid "Whether to repeat the alarm sound."
-msgstr "එක්කෝ සංඥා ශබ්දය නැවත කියවීම"
-
-#: ../data/alarm-clock.schemas.in.h:22
-msgid "Command"
-msgstr "විධානය"
-
-#: ../data/alarm-clock.schemas.in.h:23
-msgid "The command to run for the \"command\" notification type."
-msgstr "\"විධානය\" නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට"
-
-#: ../data/alarm-clock.ui.h:1
-msgid "Alarm Clock Preferences"
-msgstr "සංඥා ඔරලෝසු වර්ග"
-
-#: ../data/alarm-clock.ui.h:2
-msgid "General"
-msgstr "පොදු"
-
-#: ../data/alarm-clock.ui.h:3
-msgid "Appearance"
-msgstr "මුහුණුවර"
-
-#: ../data/alarm-clock.ui.h:4
-msgid "Edit alarm"
-msgstr "සංඥා සංස්කරණය"
-
-#: ../data/alarm-clock.ui.h:6
-msgid "Timer"
-msgstr "වේලා ගණකය"
-
-#: ../data/alarm-clock.ui.h:7
-msgid "Wake up sleepy head!"
-msgstr "නැගිටීම"
-
-#: ../data/alarm-clock.ui.h:8
-msgid "_Time:"
-msgstr "වේලාව (_වේ):"
-
-#: ../data/alarm-clock.ui.h:9
-msgid "_Name:"
-msgstr "නම (_N):"
-
-#: ../data/alarm-clock.ui.h:10
-msgid "Mon"
-msgstr "සඳුදා"
-
-#: ../data/alarm-clock.ui.h:11
-msgid "Tue"
-msgstr "අගහරුවාදා"
-
-#: ../data/alarm-clock.ui.h:12
-msgid "Wed"
-msgstr "බදාදා"
-
-#: ../data/alarm-clock.ui.h:13
-msgid "Thu"
-msgstr "බ්‍රහස්පතින්දා"
-
-#: ../data/alarm-clock.ui.h:14
-msgid "Fri"
-msgstr "සිකුරාදා"
-
-#: ../data/alarm-clock.ui.h:15
-msgid "Sat"
-msgstr "සෙනසුරාදා"
-
-#: ../data/alarm-clock.ui.h:16
-msgid "Sun"
-msgstr "ඉරිදා"
-
-#: ../data/alarm-clock.ui.h:17
-msgid "_Repeat:"
-msgstr "_නැවත කියවීම"
-
-#: ../data/alarm-clock.ui.h:18
-msgid "Alert"
-msgstr "අවධානය"
-
-#: ../data/alarm-clock.ui.h:19
-msgid "Play _sound"
-msgstr "ක්‍රියාත්මක ශබ්දය"
-
-#: ../data/alarm-clock.ui.h:20
-msgid "Repea_t sound"
-msgstr "නැවත කියවීමේ _ශබ්දය"
-
-#: ../data/alarm-clock.ui.h:21
-msgid "Start _Application"
-msgstr "නියැලුම _ආරම්භය"
-
-#: ../data/alarm-clock.ui.h:22
-msgid "Co_mmand:"
-msgstr "විධානය"
-
-#: ../data/alarm-clock.ui.h:23
-msgid "Snooze all beeping alarms"
-msgstr "සියලුම නාද ශබ්දයන් මදවේලාවක් නිදීම"
-
-#: ../data/alarm-clock.ui.h:24
-msgid "Stop all beeping alarms"
-msgstr "සියලුම නාද ශබ්දයන් නැවැත්වීම"
-
-#: ../data/alarm-clock.ui.h:25
-msgid "Show _alarms"
-msgstr "සංඥා _දැක්වීම"
-
-#: ../data/alarm-clock.ui.h:26
-msgid "Manage your alarms"
-msgstr "ඔබගේ සංඥා කළමණාකරනය"
-
-#: ../data/alarm-clock.ui.h:27
-msgid "_Preferences"
-msgstr "රුචි අරුචි"
-
-#: ../data/alarm-clock.ui.h:28
-msgid "About Alarm Clock"
-msgstr "සංඥා ඔරලෝසුව ගැන"
-
-#: ../data/alarm-clock.ui.h:29
-msgid "Get up in the morning!"
-msgstr "උදෑසන පිබිදීම"
-
-#: ../data/alarm-clock.ui.h:30
-msgid "Alarms"
-msgstr "සංඥා"
-
-#: ../data/alarm-clock.ui.h:31
-msgid "New..."
-msgstr "නව..."
-
-#: ../data/alarm-clock.ui.h:32
-msgid "Edit..."
-msgstr "සකසන්න..."
-
-#: ../data/alarm-clock.ui.h:33
-msgid "Delete"
-msgstr "මකන්න"
-
-#: ../data/alarm-clock.ui.h:34
-msgid "Enable"
-msgstr "සක්‍රීය කරන්න"
-
-#: ../data/alarm-clock.ui.h:35
-msgid "Stop"
-msgstr "නවත්වන්න"
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze"
-msgstr "මද වේලාවක් නිදීම"
-
-#: ../data/alarm-clock.ui.h:37
+#: data/alarm-clock.ui:1358
 msgid "1 minute"
 msgstr "මිනිත්තුවක්"
 
-#: ../data/alarm-clock.ui.h:38
-msgid "3 minutes"
-msgstr "මිනිත්තු 3 ක්"
-
-#: ../data/alarm-clock.ui.h:39
-msgid "5 minutes"
-msgstr "මිනිත්තු 5 ක්"
-
-#: ../data/alarm-clock.ui.h:40
+#: data/alarm-clock.ui:1391
 msgid "10 minutes"
 msgstr "මිනිත්තු 10 ක්"
 
-#: ../data/alarm-clock.ui.h:41
-msgid "Custom..."
-msgstr "භාවිතාව"
+#: data/alarm-clock.ui:1369
+msgid "3 minutes"
+msgstr "මිනිත්තු 3 ක්"
 
-#: ../data/alarm-clock.ui.h:42
-msgid "Snooze alarm"
-msgstr "විරාම සංඥාව"
+#: data/alarm-clock.ui:919
+msgid "5"
+msgstr ""
 
-#: ../data/alarm-clock.ui.h:43
-msgid "Snooze the selected alarm"
-msgstr "කෙටි විරාමයක් සදහා තෝරාගන්නා ලද සංඥාව"
-
-#: ../data/alarm-clock.ui.h:44
-msgid "Snooze for:"
-msgstr "කෙටි විරාමයක්  සදහා"
-
-#: ../data/alarm-clock.ui.h:45
-msgid "minutes"
-msgstr "මිනිත්තු"
-
-#: ../data/alarm-clock.ui.h:46
-msgid "_Snooze"
-msgstr "_කෙටි විරාමය"
-
-#: ../data/alarm-clock.ui.h:47
-msgid "Stop alarm"
-msgstr "සංඥාව නැවතීම"
-
-#: ../data/alarm-clock.ui.h:48
-msgid "Stop the selected alarm"
-msgstr "තෝරාගන්නා ලද සංඥාව නතර කිරිම"
-
-#: ../data/alarm-clock.ui.h:49
-msgid "Delete alarm"
-msgstr "සංඥාව ඉවත් කිරීම"
-
-#: ../data/alarm-clock.ui.h:50
-msgid "Delete the selected alarm"
-msgstr "තොරගන්නා ලද සංඥාව ඉවත් කිරීම"
-
-#: ../data/alarm-clock.ui.h:51
-msgid "Edit the selected alarm"
-msgstr "තොරගන්නා ලද සංඥාව සංස්කරණය"
-
-#: ../data/alarm-clock.ui.h:52
-msgid "New alarm"
-msgstr "නව සංඥාව"
-
-#: ../data/alarm-clock.ui.h:53
-msgid "New"
-msgstr "නව"
-
-#: ../data/alarm-clock.ui.h:54
-msgid "Enable/disable alarm"
-msgstr "සංඥා ඔරලෝසුව ක්‍රියත්මක කරවන්න/ක්‍රියත්මක කරවන්න එපා"
-
-#: ../data/alarm-clock.ui.h:55
-msgid "Enable/disable"
-msgstr "සැකසිමේ/ක්‍රියාවිරහිත කිරිමේ"
-
-#: ../data/alarm-clock.ui.h:56
-msgid "Enable/disable the selected alarm"
-msgstr "තෝරගන්නා ලද සංඥාව සැකසිමේ/ක්‍රියාවිරහිත කිරීම"
-
-#: ../data/alarm-clock.ui.h:57
-msgid "Snooze all alarms"
-msgstr "සියලු සංඥා ඔරලෝසු විරාම ගන්වන්න"
-
-#: ../data/alarm-clock.ui.h:58
-msgid "Snooze alarms"
-msgstr "සංඥා ඔරලෝසු විරාම ගන්වන්න"
-
-#: ../data/alarm-clock.ui.h:59
-msgid "Stop all alarms"
-msgstr "සියලු සංඥා ඔරලෝසු නවත්වන්න"
-
-#: ../data/alarm-clock.ui.h:60
-msgid "Stop alarms"
-msgstr "සංඥා ඔරලෝසු නවත්වන්න"
-
-#: ../data/alarm-clock.ui.h:61
-msgid "Toggle alarms window"
-msgstr "සංඥා ඔරලෝසු කවුළුව ටොගල් කරන්න"
-
-#: ../data/alarm-clock.ui.h:62
-msgid "Toggle alarms"
-msgstr "සංඥා ඔරලෝසු ටොගල් කරන්න"
-
-#: ../data/alarm-clock.ui.h:63
-msgid "Toggle the visibility of the alarms window"
-msgstr "සංඥා ඔරලෝසු කවුළු වල දර්ශනීය බව ටොගල් කරන්න"
-
-#: ../data/alarm-clock.ui.h:64
-msgid "_Quit"
-msgstr "ඉවත් වෙන්න (_Q)"
-
-#: ../data/alarm-clock.ui.h:65
-msgid "Quit Alarm Clock"
-msgstr "සංඥා ඔරලෝසුවෙන් ඉවත් වන්න"
-
-#: ../data/alarm-clock.ui.h:66
-msgid "Start automatically at login"
-msgstr "ලොගින් එකෙ සිට ස්වයංක්‍රීයව ආරම්භ කරන්න"
-
-#: ../src/alarm-applet.c:592
-#, c-format
-msgid "%s is already running, exiting...\n"
-msgstr "%s දැනටමත් ක්‍රියත්මකවෙමින් පවතී, ...නවතිමින් ඇත\n"
-
-#: ../src/alarm-settings.c:79
-#, c-format
-msgid "_Repeat: %s"
-msgstr "නැවත කියාකරවන්න(_k): %s"
-
-#: ../src/alarm-settings.c:245 ../src/alarm-settings.c:425
-msgid "Select sound file..."
-msgstr "සංගීත ගොනුව තෝරගන්න..."
-
-#: ../src/alarm-settings.c:295
-msgid "Custom command..."
-msgstr "පුරුදු නියෝගය..."
-
-#: ../src/alarm.c:1685
-msgid "Could not create player! Please check your sound settings."
-msgstr "දාවකයක් සැදීමට නොහැක.කරුණාකර ඔබගේ සංගීත විදාන පරීක්ශා කරන්න"
-
-#: ../src/alarm.c:2041
-msgid "Once"
-msgstr "එක් වරක්"
-
-#: ../src/alarm.c:2044
-msgid "Weekdays"
-msgstr "සතියේ දින"
-
-#: ../src/alarm.c:2047
-msgid "Weekends"
-msgstr "සති අන්තයන්"
-
-#: ../src/alarm.c:2050
-msgid "Every day"
-msgstr "සෑම දිනකම"
+#: data/alarm-clock.ui:1380
+msgid "5 minutes"
+msgstr "මිනිත්තු 5 ක්"
 
 #. About Alarm Clock
-#: ../src/ui.c:428
+#: src/ui.c:360
 #, c-format
 msgid "About %s"
 msgstr "%s සම්බන්ධව"
 
-#: ../src/ui.c:456
+#: data/alarm-clock.ui:8
+msgid "About Alarm Clock"
+msgstr "සංඥා ඔරලෝසුව ගැන"
+
+#: data/alarm-clock-applet.desktop.in:3 data/alarm-clock.ui:164 src/ui.c:308
+msgid "Alarm Clock"
+msgstr "සංඳාකිරීමේ ඔරලෝසුව"
+
+#: data/alarm-clock.ui:1206
+msgid "Alarm Clock Preferences"
+msgstr "සංඥා ඔරලෝසු වර්ග"
+
+#: data/alarm-clock.ui:987
+msgid "Alarms"
+msgstr "සංඥා"
+
+#: data/alarm-clock.ui:606
+msgid "Alert"
+msgstr "අවධානය"
+
+#: data/alarm-clock.ui:1298
+msgid "Appearance"
+msgstr "මුහුණුවර"
+
+#: data/alarm-clock.ui:758
+msgid "Co_mmand:"
+msgstr "විධානය"
+
+#: src/alarm-settings.c:839 src/alarm.c:1034
+msgid "Could not create player! Please check your sound settings."
+msgstr "දාවකයක් සැදීමට නොහැක.කරුණාකර ඔබගේ සංගීත විදාන පරීක්ශා කරන්න"
+
+#: src/ui.c:389
+msgid "Could not play"
+msgstr "ක්‍රියාත්මක කිරීමට නොහැක"
+
+#: src/ui.c:388
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "ක්‍රියාත්මක කිරීමට නොහැක '%s': %s"
 
-#: ../src/ui.c:457
-msgid "Could not play"
-msgstr "ක්‍රියාත්මක කිරීමට නොහැක"
+#: src/alarm-settings.c:310
+msgid "Custom command..."
+msgstr "පුරුදු නියෝගය..."
 
-#: ../src/ui.c:514
-#, c-format
+#: data/alarm-clock.ui:1402
+msgid "Custom..."
+msgstr "භාවිතාව"
+
+#: data/alarm-clock.ui:1040
+msgid "Delete"
+msgstr "මකන්න"
+
+#: data/alarm-clock.ui:1038
+msgid "Delete the selected alarm"
+msgstr "තොරගන්නා ලද සංඥාව ඉවත් කිරීම"
+
+#: src/alarm-applet.c:653
+msgid "Display version information"
+msgstr ""
+
+#: data/alarm-clock.ui:82
+msgid "Edit alarm"
+msgstr "සංඥා සංස්කරණය"
+
+#: data/alarm-clock.ui:1023
+msgid "Edit the selected alarm"
+msgstr "තොරගන්නා ලද සංඥාව සංස්කරණය"
+
+#: data/alarm-clock.ui:1025
+msgid "Edit..."
+msgstr "සකසන්න..."
+
+#: data/alarm-clock.ui:1065
+msgid "Enable"
+msgstr "සක්‍රීය කරන්න"
+
+#: data/alarm-clock.ui:1063
+msgid "Enable/disable the selected alarm"
+msgstr "තෝරගන්නා ලද සංඥාව සැකසිමේ/ක්‍රියාවිරහිත කිරීම"
+
+#: data/alarm-clock.ui:522 src/alarm.c:1364
+msgid "Every day"
+msgstr "සෑම දිනකම"
+
+#: data/alarm-clock.ui:452
+msgid "Fri"
+msgstr "සිකුරාදා"
+
+#: data/alarm-clock.ui:1259
+msgid "General"
+msgstr "පොදු"
+
+#: data/alarm-clock.ui:16
+msgid "Get up in the morning!"
+msgstr "උදෑසන පිබිදීම"
+
+#: data/alarm-clock.ui:1454
+msgid "Manage your alarms"
+msgstr "ඔබගේ සංඥා කළමණාකරනය"
+
+#: data/alarm-clock.ui:388
+msgid "Mon"
+msgstr "සඳුදා"
+
+#: data/alarm-clock.ui:1008
+msgid "New alarm"
+msgstr "නව සංඥාව"
+
+#: data/alarm-clock.ui:1010
+msgid "New..."
+msgstr "නව..."
+
+#: data/alarm-clock.ui:564 src/alarm.c:1355
+msgid "Once"
+msgstr "එක් වරක්"
+
+#: data/alarm-clock.ui:631
+msgid "Play _sound"
+msgstr "ක්‍රියාත්මක ශබ්දය"
+
+#: data/alarm-clock.ui:686
+msgid "Repea_t sound"
+msgstr "නැවත කියවීමේ _ශබ්දය"
+
+#: data/alarm-clock.ui:468
+msgid "Sat"
+msgstr "සෙනසුරාදා"
+
+#: src/alarm-settings.c:260 src/alarm-settings.c:440
+msgid "Select sound file..."
+msgstr "සංගීත ගොනුව තෝරගන්න..."
+
+#: data/alarm-clock.ui:1451
+msgid "Show _alarms"
+msgstr "සංඥා _දැක්වීම"
+
+#: data/alarm-clock.ui:1317
+msgid "Show countdown label"
+msgstr "ගණන ලේබලය දැක්වීම"
+
+#: data/alarm-clock.ui:1097
+msgid "Snooze"
+msgstr "මද වේලාවක් නිදීම"
+
+#: data/alarm-clock.ui:815
+msgid "Snooze alarm"
+msgstr "විරාම සංඥාව"
+
+#: data/alarm-clock.ui:1423 src/alarm-applet.c:652
+msgid "Snooze all alarms"
+msgstr "සියලු සංඥා ඔරලෝසු විරාම ගන්වන්න"
+
+#: data/alarm-clock.ui:1426
+msgid "Snooze all beeping alarms"
+msgstr "සියලුම නාද ශබ්දයන් මදවේලාවක් නිදීම"
+
+#: data/alarm-clock.ui:900
+msgid "Snooze for:"
+msgstr "කෙටි විරාමයක්  සදහා"
+
+#: data/alarm-clock.ui:1094
+msgid "Snooze the selected alarm"
+msgstr "කෙටි විරාමයක් සදහා තෝරාගන්නා ලද සංඥාව"
+
+#: data/alarm-clock.ui:712
+msgid "Start _Application"
+msgstr "නියැලුම _ආරම්භය"
+
+#: data/alarm-clock.ui:1278
+msgid "Start automatically at login"
+msgstr "ලොගින් එකෙ සිට ස්වයංක්‍රීයව ආරම්භ කරන්න"
+
+#: src/alarm-applet.c:650
+msgid "Start hidden"
+msgstr ""
+
+#: data/alarm-clock.ui:1081
+msgid "Stop"
+msgstr "නවත්වන්න"
+
+#: data/alarm-clock.ui:1434 src/alarm-applet.c:651
+msgid "Stop all alarms"
+msgstr "සියලු සංඥා ඔරලෝසු නවත්වන්න"
+
+#: data/alarm-clock.ui:1437
+msgid "Stop all beeping alarms"
+msgstr "සියලුම නාද ශබ්දයන් නැවැත්වීම"
+
+#: data/alarm-clock.ui:1078
+msgid "Stop the selected alarm"
+msgstr "තෝරාගන්නා ලද සංඥාව නතර කිරිම"
+
+#: data/alarm-clock.ui:484
+msgid "Sun"
+msgstr "ඉරිදා"
+
+#: data/alarm-clock.ui:436
+msgid "Thu"
+msgstr "බ්‍රහස්පතින්දා"
+
+#: data/alarm-clock.ui:215
+msgid "Timer"
+msgstr "වේලා ගණකය"
+
+#: data/alarm-clock.ui:404
+msgid "Tue"
+msgstr "අගහරුවාදා"
+
+#: data/alarm-clock-applet.desktop.in:4
+msgid "Wake up in the morning"
+msgstr "උදෑසන පිබිදීම"
+
+#: data/alarm-clock.ui:255
+msgid "Wake up sleepy head!"
+msgstr "නැගිටීම"
+
+#: data/alarm-clock.ui:420
+msgid "Wed"
+msgstr "බදාදා"
+
+#: data/alarm-clock.ui:536 src/alarm.c:1358
+msgid "Weekdays"
+msgstr "සතියේ දින"
+
+#: data/alarm-clock.ui:550 src/alarm.c:1361
+msgid "Weekends"
+msgstr "සති අන්තයන්"
+
+#: src/ui.c:446
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr "සංඥා ඔරලෝසුව නැවත්වීම හෝ විරාම ගැන්වීම ඔරලෝසු මෙනුවෙන් කල හැකිය"
 
-#: ../src/prefs.c:419
-msgid "Requires application indicators"
-msgstr "යෙදවුම් දර්ශකයන් අවශ්‍ය වේ."
+#: src/alarm-settings.c:443
+msgid "_Cancel"
+msgstr ""
+
+#: data/alarm-clock.ui:285
+msgid "_Name:"
+msgstr "නම (_N):"
+
+#: src/alarm-settings.c:444
+msgid "_Open"
+msgstr ""
+
+#: data/alarm-clock.ui:591
+msgid "_Repeat:"
+msgstr "_නැවත කියවීම"
+
+#: src/alarm-settings.c:94
+#, c-format
+msgid "_Repeat: %s"
+msgstr "නැවත කියාකරවන්න(_k): %s"
+
+#: data/alarm-clock.ui:850
+msgid "_Snooze"
+msgstr "_කෙටි විරාමය"
+
+#: data/alarm-clock.ui:270
+msgid "_Time:"
+msgstr "වේලාව (_වේ):"
+
+#: data/alarm-clock-applet.desktop.in:5
+#, fuzzy
+msgid "alarm-clock"
+msgstr "සංඳාකිරීමේ ඔරලෝසුව"
+
+#: data/alarm-clock.ui:937
+msgid "minutes"
+msgstr "මිනිත්තු"
+
+#~ msgid "%s is already running, exiting...\n"
+#~ msgstr "%s දැනටමත් ක්‍රියත්මකවෙමින් පවතී, ...නවතිමින් ඇත\n"
+
+#~ msgid ""
+#~ "A list of days when the alarm should be repeated. This settings is only "
+#~ "applicable for \"clock\" alarms."
+#~ msgstr "දවස අනුව සංඥාව නැවත දැක්විය යුතුය. කට්ටල අංග යෙදිය හැකිවන්නේ ඔරලෝසුවට පමණි."
+
+#~ msgid "A short message which describes the alarm."
+#~ msgstr "කෙටි සංඥා පණිවිඩයක්"
+
+#~ msgid "Alarm Message"
+#~ msgstr "සංඥා පණිවිඩය"
+
+#~ msgid "Alarm Repeat"
+#~ msgstr "සංඥා නැවත කිරිම"
+
+#~ msgid "Alarm Running State"
+#~ msgstr "සංඥා ක්‍රියාත්මක තත්වය"
+
+#~ msgid "Alarm Time"
+#~ msgstr "සංඥා කාලය"
+
+#~ msgid "Alarm Timestamp"
+#~ msgstr "සම්මත සංඥාව"
+
+#~ msgid "Alarm Type"
+#~ msgstr "සංඥා වර්ගය"
+
+#~ msgid "Alarm!"
+#~ msgstr "සංඥාව!"
+
+#~ msgid "Command"
+#~ msgstr "විධානය"
+
+#~ msgid "Delete alarm"
+#~ msgstr "සංඥාව ඉවත් කිරීම"
+
+#~ msgid "Enable/disable"
+#~ msgstr "සැකසිමේ/ක්‍රියාවිරහිත කිරිමේ"
+
+#~ msgid "Enable/disable alarm"
+#~ msgstr "සංඥා ඔරලෝසුව ක්‍රියත්මක කරවන්න/ක්‍රියත්මක කරවන්න එපා"
+
+#~ msgid "Indicates whether the alarm has started."
+#~ msgstr "සංඥාවේ ආරම්භය දැක්වීම හෝ"
+
+#~ msgid "New"
+#~ msgstr "නව"
+
+#~ msgid "Notification Type"
+#~ msgstr "නිවේදන වර්ගය"
+
+#~ msgid "Quit Alarm Clock"
+#~ msgstr "සංඥා ඔරලෝසුවෙන් ඉවත් වන්න"
+
+#~ msgid "Repeat Sound"
+#~ msgstr "ශබ්ද නැවත කියවීම"
+
+#~ msgid "Requires application indicators"
+#~ msgstr "යෙදවුම් දර්ශකයන් අවශ්‍ය වේ."
+
+#~ msgid "Snooze alarms"
+#~ msgstr "සංඥා ඔරලෝසු විරාම ගන්වන්න"
+
+#~ msgid "Sound File"
+#~ msgstr "ශබ්ද ගොනුව"
+
+#~ msgid "Stop alarm"
+#~ msgstr "සංඥාව නැවතීම"
+
+#~ msgid "Stop alarms"
+#~ msgstr "සංඥා ඔරලෝසු නවත්වන්න"
+
+#~ msgid ""
+#~ "The UNIX timestamp for the alarm. Must be set before the alarm is "
+#~ "activated."
+#~ msgstr "සංඥාව සදහා යුනික්ස් සලකුණ.සංඥාව ක්‍රියාත්මක කිරීමට පෙර සැකසිය යුතුය."
+
+#~ msgid "The command to run for the \"command\" notification type."
+#~ msgstr "\"විධානය\" නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට"
+
+#~ msgid "The sound file to play for the \"sound\" notification type."
+#~ msgstr "ශබ්ද ගොනුව ශබ්ද නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට"
+
+#~ msgid ""
+#~ "The time for the alarm. Should be in GMT for \"clock\" alarms or length "
+#~ "in seconds for \"timer\" alarms."
+#~ msgstr ""
+#~ "සංඥා සදහා කාලය.සම්මත කාලය ඔරලෝසු සංඥා හෝ කාල පරාසය අනුව කාලගණන සංඥාටද යෙදිය "
+#~ "යුතුය."
+
+#~ msgid ""
+#~ "The type of notification to use when the alarm goes off. This can be one "
+#~ "of the following: \"sound\" to play a sound (specified in the \"sound_file"
+#~ "\" property.) \"command\" to run a command (specified in the \"command\" "
+#~ "property.)"
+#~ msgstr "නිවේදන වර්ගය අනුව සංඥාව පැමිණීම."
+
+#~ msgid ""
+#~ "The type of the alarm. Either \"clock\" for an alarm at a specific time "
+#~ "of day, or \"timer\" for an alarm after a specified period of time."
+#~ msgstr ""
+#~ "සංඥා වර්ගය අනුව දවසක විශේෂිත වේලාව දැක්වීම සදහා \"ඔරලෝසුව\" හෝ  සද විශේෂිත කාලයකට  "
+#~ "පසුව සංඥා දැක්වීමට \"කාලගණනය\" යොදාගැනේ."
+
+#~ msgid "Toggle alarms"
+#~ msgstr "සංඥා ඔරලෝසු ටොගල් කරන්න"
+
+#~ msgid "Toggle alarms window"
+#~ msgstr "සංඥා ඔරලෝසු කවුළුව ටොගල් කරන්න"
+
+#~ msgid "Toggle the visibility of the alarms window"
+#~ msgstr "සංඥා ඔරලෝසු කවුළු වල දර්ශනීය බව ටොගල් කරන්න"
+
+#~ msgid "Whether to repeat the alarm sound."
+#~ msgstr "එක්කෝ සංඥා ශබ්දය නැවත කියවීම"
+
+#~ msgid ""
+#~ "Whether to show a label on the right side of the icon with the time "
+#~ "remaining to the next alarm."
+#~ msgstr "ඊලග සංඥා සලකුණේ නිවැරදි පැත්ත දැක්වීම"
+
+#~ msgid "_Preferences"
+#~ msgstr "රුචි අරුචි"
+
+#~ msgid "_Quit"
+#~ msgstr "ඉවත් වෙන්න (_Q)"

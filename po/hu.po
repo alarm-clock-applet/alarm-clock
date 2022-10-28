@@ -7,463 +7,454 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-06-03 16:58+0000\n"
+"POT-Creation-Date: 2022-10-28 12:54+0300\n"
 "PO-Revision-Date: 2011-01-30 16:12+0000\n"
 "Last-Translator: Papp Bence <papp.bence89@gmail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
 "X-Generator: Launchpad (build 15342)\n"
-"Language: hu\n"
 
-#: ../data/alarm-clock-applet.desktop.in.h:1 ../data/alarm-clock.ui.h:5
-#: ../src/ui.c:300
-msgid "Alarm Clock"
-msgstr "Ébresztőóra"
-
-#: ../data/alarm-clock-applet.desktop.in.h:2
-msgid "Wake up in the morning"
-msgstr "Reggeli ébresztő"
-
-#: ../data/alarm-clock.schemas.in.h:1 ../data/alarm-clock.ui.h:67
-msgid "Show countdown label"
-msgstr "Mutassa a visszaszámláló feliratot"
-
-#: ../data/alarm-clock.schemas.in.h:2
-msgid ""
-"Whether to show a label on the right side of the icon with the time "
-"remaining to the next alarm."
+#: data/alarm-clock.ui:302 data/alarm-clock.ui:324 data/alarm-clock.ui:346
+msgid "0"
 msgstr ""
-"Mutassa-e a hátralevő idő a következő riasztásig feliratot a jobb oldali "
-"ikonon ."
 
-#: ../data/alarm-clock.schemas.in.h:3
-msgid "Alarm Type"
-msgstr "Riasztás típusa"
-
-#: ../data/alarm-clock.schemas.in.h:4
-msgid ""
-"The type of the alarm. Either \"clock\" for an alarm at a specific time of "
-"day, or \"timer\" for an alarm after a specified period of time."
-msgstr ""
-"Riasztás típusa. \"Ébresztőóra\" egy bizonyos időpontban riaszt, vagy "
-"\"Időzítő\" egy bizonyos idő múlva riaszt."
-
-#: ../data/alarm-clock.schemas.in.h:5
-msgid "Alarm Timestamp"
-msgstr "Riasztás időbélyege"
-
-#: ../data/alarm-clock.schemas.in.h:6
-msgid ""
-"The UNIX timestamp for the alarm. Must be set before the alarm is activated."
-msgstr ""
-"UNIX időbélyeg a riasztáshoz. A riasztás aktiválása előtt be kell állítani."
-
-#: ../data/alarm-clock.schemas.in.h:7
-msgid "Alarm Time"
-msgstr "Figyelmeztetés időpontja"
-
-#: ../data/alarm-clock.schemas.in.h:8
-msgid ""
-"The time for the alarm. Should be in GMT for \"clock\" alarms or length in "
-"seconds for \"timer\" alarms."
-msgstr ""
-"A riasztás ideje. \"Ébresztőóra\"-hoz az időt GMT-ben vagy \"Időzítő\"-nek a "
-"hosszat másodpercben kell megadni."
-
-#: ../data/alarm-clock.schemas.in.h:9
-msgid "Alarm!"
-msgstr "Ébresztő!"
-
-#: ../data/alarm-clock.schemas.in.h:10
-msgid "Alarm Message"
-msgstr "Figyelmeztető üzenet"
-
-#: ../data/alarm-clock.schemas.in.h:11
-msgid "A short message which describes the alarm."
-msgstr "Egy rövid üzenet a riasztásról."
-
-#: ../data/alarm-clock.schemas.in.h:12
-msgid "Alarm Running State"
-msgstr "Riasztás állapota"
-
-#: ../data/alarm-clock.schemas.in.h:13
-msgid "Indicates whether the alarm has started."
-msgstr "Jelzi, hogy a riasztás aktív-e."
-
-#: ../data/alarm-clock.schemas.in.h:14
-msgid "Alarm Repeat"
-msgstr "Figyelmeztetés ismétlése"
-
-#: ../data/alarm-clock.schemas.in.h:15
-msgid ""
-"A list of days when the alarm should be repeated. This settings is only "
-"applicable for \"clock\" alarms."
-msgstr ""
-"A napok listája amikor a riasztások ismétlődni fognak. Ez a beállítás csak "
-"az \"ébresztőóra\" riasztásokhoz érhető el."
-
-#: ../data/alarm-clock.schemas.in.h:16
-msgid "Notification Type"
-msgstr "Figyelmeztetés típusa"
-
-#: ../data/alarm-clock.schemas.in.h:17
-msgid ""
-"The type of notification to use when the alarm goes off. This can be one of "
-"the following: \"sound\" to play a sound (specified in the \"sound_file\" "
-"property.) \"command\" to run a command (specified in the \"command\" "
-"property.)"
-msgstr ""
-"Figyelmeztetés típusa, amikor a riasztás elkezdődik. Ezek a következők "
-"lehetnek: \"hang \" valamilyen hang lejátszásához (paraméterezve a "
-"\"sound_file\"-ban.), \"parancs\" valamilyen parancs futtatásához "
-"(paraméterezve a \"command\"-ban)"
-
-#: ../data/alarm-clock.schemas.in.h:18
-msgid "Sound File"
-msgstr "Hangfájl"
-
-#: ../data/alarm-clock.schemas.in.h:19
-msgid "The sound file to play for the \"sound\" notification type."
-msgstr "Hang fájl beállítása a \"hang\" riasztás típushoz."
-
-#: ../data/alarm-clock.schemas.in.h:20
-msgid "Repeat Sound"
-msgstr "Hang ismétlése"
-
-#: ../data/alarm-clock.schemas.in.h:21
-msgid "Whether to repeat the alarm sound."
-msgstr "Ismételje-e a riasztási hangot."
-
-#: ../data/alarm-clock.schemas.in.h:22
-msgid "Command"
-msgstr "Parancs"
-
-#: ../data/alarm-clock.schemas.in.h:23
-msgid "The command to run for the \"command\" notification type."
-msgstr "Parancs szerkesztése a \"parancs\" riasztás típus futtatásához."
-
-#: ../data/alarm-clock.ui.h:1
-msgid "Alarm Clock Preferences"
-msgstr "Ébresztőóra beállításai"
-
-#: ../data/alarm-clock.ui.h:2
-msgid "General"
-msgstr "Általános"
-
-#: ../data/alarm-clock.ui.h:3
-msgid "Appearance"
-msgstr "Megjelenés"
-
-#: ../data/alarm-clock.ui.h:4
-msgid "Edit alarm"
-msgstr "Riasztás módosítása"
-
-#: ../data/alarm-clock.ui.h:6
-msgid "Timer"
-msgstr "Időzítő"
-
-#: ../data/alarm-clock.ui.h:7
-msgid "Wake up sleepy head!"
-msgstr "Kelj fel lustaság!"
-
-#: ../data/alarm-clock.ui.h:8
-msgid "_Time:"
-msgstr "_Idő:"
-
-#: ../data/alarm-clock.ui.h:9
-msgid "_Name:"
-msgstr "_Név:"
-
-#: ../data/alarm-clock.ui.h:10
-msgid "Mon"
-msgstr "Hét"
-
-#: ../data/alarm-clock.ui.h:11
-msgid "Tue"
-msgstr "Ked"
-
-#: ../data/alarm-clock.ui.h:12
-msgid "Wed"
-msgstr "Sze"
-
-#: ../data/alarm-clock.ui.h:13
-msgid "Thu"
-msgstr "Csü"
-
-#: ../data/alarm-clock.ui.h:14
-msgid "Fri"
-msgstr "Pén"
-
-#: ../data/alarm-clock.ui.h:15
-msgid "Sat"
-msgstr "Szo"
-
-#: ../data/alarm-clock.ui.h:16
-msgid "Sun"
-msgstr "Vas"
-
-#: ../data/alarm-clock.ui.h:17
-msgid "_Repeat:"
-msgstr "_Ismétlés:"
-
-#: ../data/alarm-clock.ui.h:18
-msgid "Alert"
-msgstr "Figyelmeztetés"
-
-#: ../data/alarm-clock.ui.h:19
-msgid "Play _sound"
-msgstr "_Hang lejátszása"
-
-#: ../data/alarm-clock.ui.h:20
-msgid "Repea_t sound"
-msgstr "Hang ismé_tlése"
-
-#: ../data/alarm-clock.ui.h:21
-msgid "Start _Application"
-msgstr "Alkalmazás _futtatása"
-
-#: ../data/alarm-clock.ui.h:22
-msgid "Co_mmand:"
-msgstr "Pa_rancs:"
-
-#: ../data/alarm-clock.ui.h:23
-msgid "Snooze all beeping alarms"
-msgstr "Az összes sípoló riasztás szüneteltetése"
-
-#: ../data/alarm-clock.ui.h:24
-msgid "Stop all beeping alarms"
-msgstr "Az összes sípoló riasztás leállítása"
-
-#: ../data/alarm-clock.ui.h:25
-msgid "Show _alarms"
-msgstr "Ria_sztások listája"
-
-#: ../data/alarm-clock.ui.h:26
-msgid "Manage your alarms"
-msgstr "Riasztások kezelése"
-
-#: ../data/alarm-clock.ui.h:27
-msgid "_Preferences"
-msgstr "_Beállítások"
-
-#: ../data/alarm-clock.ui.h:28
-msgid "About Alarm Clock"
-msgstr "Ébresztőóra névjegye"
-
-#: ../data/alarm-clock.ui.h:29
-msgid "Get up in the morning!"
-msgstr "Kelts fel reggel!"
-
-#: ../data/alarm-clock.ui.h:30
-msgid "Alarms"
-msgstr "Riasztások"
-
-#: ../data/alarm-clock.ui.h:31
-msgid "New..."
-msgstr "Új…"
-
-#: ../data/alarm-clock.ui.h:32
-msgid "Edit..."
-msgstr "Szerkesztés…"
-
-#: ../data/alarm-clock.ui.h:33
-msgid "Delete"
-msgstr "Törlés"
-
-#: ../data/alarm-clock.ui.h:34
-msgid "Enable"
-msgstr "Engedélyezés"
-
-#: ../data/alarm-clock.ui.h:35
-msgid "Stop"
-msgstr "Leállítás"
-
-#: ../data/alarm-clock.ui.h:36
-msgid "Snooze"
-msgstr "Szundi"
-
-#: ../data/alarm-clock.ui.h:37
+#: data/alarm-clock.ui:1358
 msgid "1 minute"
 msgstr "1 perc"
 
-#: ../data/alarm-clock.ui.h:38
-msgid "3 minutes"
-msgstr "3 perc"
-
-#: ../data/alarm-clock.ui.h:39
-msgid "5 minutes"
-msgstr "5 perc"
-
-#: ../data/alarm-clock.ui.h:40
+#: data/alarm-clock.ui:1391
 msgid "10 minutes"
 msgstr "10 perc"
 
-#: ../data/alarm-clock.ui.h:41
-msgid "Custom..."
-msgstr "Egyedi…"
+#: data/alarm-clock.ui:1369
+msgid "3 minutes"
+msgstr "3 perc"
 
-#: ../data/alarm-clock.ui.h:42
-msgid "Snooze alarm"
-msgstr "Riasztás szüneteltetése"
-
-#: ../data/alarm-clock.ui.h:43
-msgid "Snooze the selected alarm"
-msgstr "A kíválasztott riasztás szüneteltetése"
-
-#: ../data/alarm-clock.ui.h:44
-msgid "Snooze for:"
-msgstr "Szüneteltetés:"
-
-#: ../data/alarm-clock.ui.h:45
-msgid "minutes"
-msgstr "perc"
-
-#: ../data/alarm-clock.ui.h:46
-msgid "_Snooze"
-msgstr "_Szundi"
-
-#: ../data/alarm-clock.ui.h:47
-msgid "Stop alarm"
-msgstr "Riasztás leállítása"
-
-#: ../data/alarm-clock.ui.h:48
-msgid "Stop the selected alarm"
-msgstr "A kiválasztott riasztás leállítása"
-
-#: ../data/alarm-clock.ui.h:49
-msgid "Delete alarm"
-msgstr "A riasztás törlése"
-
-#: ../data/alarm-clock.ui.h:50
-msgid "Delete the selected alarm"
-msgstr "A kiválasztott riasztás törlése"
-
-#: ../data/alarm-clock.ui.h:51
-msgid "Edit the selected alarm"
-msgstr "A kiválasztott riasztás módosítása"
-
-#: ../data/alarm-clock.ui.h:52
-msgid "New alarm"
-msgstr "Új riasztás"
-
-#: ../data/alarm-clock.ui.h:53
-msgid "New"
-msgstr "Új"
-
-#: ../data/alarm-clock.ui.h:54
-msgid "Enable/disable alarm"
-msgstr "Riasztás engedélyezése/tiltása"
-
-#: ../data/alarm-clock.ui.h:55
-msgid "Enable/disable"
-msgstr "Engedélyezés/Tiltás"
-
-#: ../data/alarm-clock.ui.h:56
-msgid "Enable/disable the selected alarm"
-msgstr "Kiválasztott riasztás engedélyezése/tiltása"
-
-#: ../data/alarm-clock.ui.h:57
-msgid "Snooze all alarms"
-msgstr "Összes riasztás szüneteltetése"
-
-#: ../data/alarm-clock.ui.h:58
-msgid "Snooze alarms"
-msgstr "Riasztások szüneteltetése"
-
-#: ../data/alarm-clock.ui.h:59
-msgid "Stop all alarms"
-msgstr "Összes riasztás leállítása"
-
-#: ../data/alarm-clock.ui.h:60
-msgid "Stop alarms"
-msgstr "Riasztások leállítása"
-
-#: ../data/alarm-clock.ui.h:61
-msgid "Toggle alarms window"
-msgstr "Riasztási ablak kiválasztása"
-
-#: ../data/alarm-clock.ui.h:62
-msgid "Toggle alarms"
-msgstr "Riasztás kiválasztása"
-
-#: ../data/alarm-clock.ui.h:63
-msgid "Toggle the visibility of the alarms window"
-msgstr "Riasztási ablak kinézetének kiválasztása"
-
-#: ../data/alarm-clock.ui.h:64
-msgid "_Quit"
-msgstr "_Kilépés"
-
-#: ../data/alarm-clock.ui.h:65
-msgid "Quit Alarm Clock"
-msgstr "Kilépés az Ébresztőórából"
-
-#: ../data/alarm-clock.ui.h:66
-msgid "Start automatically at login"
-msgstr "Automatikus indítás bejelentkezéskor"
-
-#: ../src/alarm-applet.c:592
-#, c-format
-msgid "%s is already running, exiting...\n"
-msgstr "%s épp fut, kilépés...\n"
-
-#: ../src/alarm-settings.c:79
-#, c-format
-msgid "_Repeat: %s"
-msgstr "_Ismétlés: %s"
-
-#: ../src/alarm-settings.c:245 ../src/alarm-settings.c:425
-msgid "Select sound file..."
-msgstr "Válasszon hangfájlt…"
-
-#: ../src/alarm-settings.c:295
-msgid "Custom command..."
-msgstr "Saját parancs..."
-
-#: ../src/alarm.c:1685
-msgid "Could not create player! Please check your sound settings."
+#: data/alarm-clock.ui:919
+msgid "5"
 msgstr ""
 
-#: ../src/alarm.c:2041
-msgid "Once"
-msgstr "Egyszer"
-
-#: ../src/alarm.c:2044
-msgid "Weekdays"
-msgstr "Hétköznap"
-
-#: ../src/alarm.c:2047
-msgid "Weekends"
-msgstr "Hétvége"
-
-#: ../src/alarm.c:2050
-msgid "Every day"
-msgstr "Minden nap"
+#: data/alarm-clock.ui:1380
+msgid "5 minutes"
+msgstr "5 perc"
 
 #. About Alarm Clock
-#: ../src/ui.c:428
+#: src/ui.c:360
 #, c-format
 msgid "About %s"
 msgstr "%s névjegye"
 
-#: ../src/ui.c:456
+#: data/alarm-clock.ui:8
+msgid "About Alarm Clock"
+msgstr "Ébresztőóra névjegye"
+
+#: data/alarm-clock-applet.desktop.in:3 data/alarm-clock.ui:164 src/ui.c:308
+msgid "Alarm Clock"
+msgstr "Ébresztőóra"
+
+#: data/alarm-clock.ui:1206
+msgid "Alarm Clock Preferences"
+msgstr "Ébresztőóra beállításai"
+
+#: data/alarm-clock.ui:987
+msgid "Alarms"
+msgstr "Riasztások"
+
+#: data/alarm-clock.ui:606
+msgid "Alert"
+msgstr "Figyelmeztetés"
+
+#: data/alarm-clock.ui:1298
+msgid "Appearance"
+msgstr "Megjelenés"
+
+#: data/alarm-clock.ui:758
+msgid "Co_mmand:"
+msgstr "Pa_rancs:"
+
+#: src/alarm-settings.c:839 src/alarm.c:1034
+msgid "Could not create player! Please check your sound settings."
+msgstr ""
+
+#: src/ui.c:389
+msgid "Could not play"
+msgstr "Nem játszható le"
+
+#: src/ui.c:388
 #, c-format
 msgid "Could not play '%s': %s"
 msgstr "Nem tudom lejátszani '%s': %s"
 
-#: ../src/ui.c:457
-msgid "Could not play"
-msgstr "Nem játszható le"
+#: src/alarm-settings.c:310
+msgid "Custom command..."
+msgstr "Saját parancs..."
 
-#: ../src/ui.c:514
-#, c-format
+#: data/alarm-clock.ui:1402
+msgid "Custom..."
+msgstr "Egyedi…"
+
+#: data/alarm-clock.ui:1040
+msgid "Delete"
+msgstr "Törlés"
+
+#: data/alarm-clock.ui:1038
+msgid "Delete the selected alarm"
+msgstr "A kiválasztott riasztás törlése"
+
+#: src/alarm-applet.c:653
+msgid "Display version information"
+msgstr ""
+
+#: data/alarm-clock.ui:82
+msgid "Edit alarm"
+msgstr "Riasztás módosítása"
+
+#: data/alarm-clock.ui:1023
+msgid "Edit the selected alarm"
+msgstr "A kiválasztott riasztás módosítása"
+
+#: data/alarm-clock.ui:1025
+msgid "Edit..."
+msgstr "Szerkesztés…"
+
+#: data/alarm-clock.ui:1065
+msgid "Enable"
+msgstr "Engedélyezés"
+
+#: data/alarm-clock.ui:1063
+msgid "Enable/disable the selected alarm"
+msgstr "Kiválasztott riasztás engedélyezése/tiltása"
+
+#: data/alarm-clock.ui:522 src/alarm.c:1364
+msgid "Every day"
+msgstr "Minden nap"
+
+#: data/alarm-clock.ui:452
+msgid "Fri"
+msgstr "Pén"
+
+#: data/alarm-clock.ui:1259
+msgid "General"
+msgstr "Általános"
+
+#: data/alarm-clock.ui:16
+msgid "Get up in the morning!"
+msgstr "Kelts fel reggel!"
+
+#: data/alarm-clock.ui:1454
+msgid "Manage your alarms"
+msgstr "Riasztások kezelése"
+
+#: data/alarm-clock.ui:388
+msgid "Mon"
+msgstr "Hét"
+
+#: data/alarm-clock.ui:1008
+msgid "New alarm"
+msgstr "Új riasztás"
+
+#: data/alarm-clock.ui:1010
+msgid "New..."
+msgstr "Új…"
+
+#: data/alarm-clock.ui:564 src/alarm.c:1355
+msgid "Once"
+msgstr "Egyszer"
+
+#: data/alarm-clock.ui:631
+msgid "Play _sound"
+msgstr "_Hang lejátszása"
+
+#: data/alarm-clock.ui:686
+msgid "Repea_t sound"
+msgstr "Hang ismé_tlése"
+
+#: data/alarm-clock.ui:468
+msgid "Sat"
+msgstr "Szo"
+
+#: src/alarm-settings.c:260 src/alarm-settings.c:440
+msgid "Select sound file..."
+msgstr "Válasszon hangfájlt…"
+
+#: data/alarm-clock.ui:1451
+msgid "Show _alarms"
+msgstr "Ria_sztások listája"
+
+#: data/alarm-clock.ui:1317
+msgid "Show countdown label"
+msgstr "Mutassa a visszaszámláló feliratot"
+
+#: data/alarm-clock.ui:1097
+msgid "Snooze"
+msgstr "Szundi"
+
+#: data/alarm-clock.ui:815
+msgid "Snooze alarm"
+msgstr "Riasztás szüneteltetése"
+
+#: data/alarm-clock.ui:1423 src/alarm-applet.c:652
+msgid "Snooze all alarms"
+msgstr "Összes riasztás szüneteltetése"
+
+#: data/alarm-clock.ui:1426
+msgid "Snooze all beeping alarms"
+msgstr "Az összes sípoló riasztás szüneteltetése"
+
+#: data/alarm-clock.ui:900
+msgid "Snooze for:"
+msgstr "Szüneteltetés:"
+
+#: data/alarm-clock.ui:1094
+msgid "Snooze the selected alarm"
+msgstr "A kíválasztott riasztás szüneteltetése"
+
+#: data/alarm-clock.ui:712
+msgid "Start _Application"
+msgstr "Alkalmazás _futtatása"
+
+#: data/alarm-clock.ui:1278
+msgid "Start automatically at login"
+msgstr "Automatikus indítás bejelentkezéskor"
+
+#: src/alarm-applet.c:650
+msgid "Start hidden"
+msgstr ""
+
+#: data/alarm-clock.ui:1081
+msgid "Stop"
+msgstr "Leállítás"
+
+#: data/alarm-clock.ui:1434 src/alarm-applet.c:651
+msgid "Stop all alarms"
+msgstr "Összes riasztás leállítása"
+
+#: data/alarm-clock.ui:1437
+msgid "Stop all beeping alarms"
+msgstr "Az összes sípoló riasztás leállítása"
+
+#: data/alarm-clock.ui:1078
+msgid "Stop the selected alarm"
+msgstr "A kiválasztott riasztás leállítása"
+
+#: data/alarm-clock.ui:484
+msgid "Sun"
+msgstr "Vas"
+
+#: data/alarm-clock.ui:436
+msgid "Thu"
+msgstr "Csü"
+
+#: data/alarm-clock.ui:215
+msgid "Timer"
+msgstr "Időzítő"
+
+#: data/alarm-clock.ui:404
+msgid "Tue"
+msgstr "Ked"
+
+#: data/alarm-clock-applet.desktop.in:4
+msgid "Wake up in the morning"
+msgstr "Reggeli ébresztő"
+
+#: data/alarm-clock.ui:255
+msgid "Wake up sleepy head!"
+msgstr "Kelj fel lustaság!"
+
+#: data/alarm-clock.ui:420
+msgid "Wed"
+msgstr "Sze"
+
+#: data/alarm-clock.ui:536 src/alarm.c:1358
+msgid "Weekdays"
+msgstr "Hétköznap"
+
+#: data/alarm-clock.ui:550 src/alarm.c:1361
+msgid "Weekends"
+msgstr "Hétvége"
+
+#: src/ui.c:446
 msgid "You can snooze or stop alarms from the Alarm Clock menu."
 msgstr ""
 "A riasztásokat az Ébresztőóra menüjében tudja szüneteltetni vagy leállítani."
 
-#: ../src/prefs.c:419
-msgid "Requires application indicators"
-msgstr "Alkalmazás indikátorok szükségesek"
+#: src/alarm-settings.c:443
+msgid "_Cancel"
+msgstr ""
+
+#: data/alarm-clock.ui:285
+msgid "_Name:"
+msgstr "_Név:"
+
+#: src/alarm-settings.c:444
+msgid "_Open"
+msgstr ""
+
+#: data/alarm-clock.ui:591
+msgid "_Repeat:"
+msgstr "_Ismétlés:"
+
+#: src/alarm-settings.c:94
+#, c-format
+msgid "_Repeat: %s"
+msgstr "_Ismétlés: %s"
+
+#: data/alarm-clock.ui:850
+msgid "_Snooze"
+msgstr "_Szundi"
+
+#: data/alarm-clock.ui:270
+msgid "_Time:"
+msgstr "_Idő:"
+
+#: data/alarm-clock-applet.desktop.in:5
+#, fuzzy
+msgid "alarm-clock"
+msgstr "Ébresztőóra"
+
+#: data/alarm-clock.ui:937
+msgid "minutes"
+msgstr "perc"
+
+#~ msgid "%s is already running, exiting...\n"
+#~ msgstr "%s épp fut, kilépés...\n"
+
+#~ msgid ""
+#~ "A list of days when the alarm should be repeated. This settings is only "
+#~ "applicable for \"clock\" alarms."
+#~ msgstr ""
+#~ "A napok listája amikor a riasztások ismétlődni fognak. Ez a beállítás "
+#~ "csak az \"ébresztőóra\" riasztásokhoz érhető el."
+
+#~ msgid "A short message which describes the alarm."
+#~ msgstr "Egy rövid üzenet a riasztásról."
+
+#~ msgid "Alarm Message"
+#~ msgstr "Figyelmeztető üzenet"
+
+#~ msgid "Alarm Repeat"
+#~ msgstr "Figyelmeztetés ismétlése"
+
+#~ msgid "Alarm Running State"
+#~ msgstr "Riasztás állapota"
+
+#~ msgid "Alarm Time"
+#~ msgstr "Figyelmeztetés időpontja"
+
+#~ msgid "Alarm Timestamp"
+#~ msgstr "Riasztás időbélyege"
+
+#~ msgid "Alarm Type"
+#~ msgstr "Riasztás típusa"
+
+#~ msgid "Alarm!"
+#~ msgstr "Ébresztő!"
+
+#~ msgid "Command"
+#~ msgstr "Parancs"
+
+#~ msgid "Delete alarm"
+#~ msgstr "A riasztás törlése"
+
+#~ msgid "Enable/disable"
+#~ msgstr "Engedélyezés/Tiltás"
+
+#~ msgid "Enable/disable alarm"
+#~ msgstr "Riasztás engedélyezése/tiltása"
+
+#~ msgid "Indicates whether the alarm has started."
+#~ msgstr "Jelzi, hogy a riasztás aktív-e."
+
+#~ msgid "New"
+#~ msgstr "Új"
+
+#~ msgid "Notification Type"
+#~ msgstr "Figyelmeztetés típusa"
+
+#~ msgid "Quit Alarm Clock"
+#~ msgstr "Kilépés az Ébresztőórából"
+
+#~ msgid "Repeat Sound"
+#~ msgstr "Hang ismétlése"
+
+#~ msgid "Requires application indicators"
+#~ msgstr "Alkalmazás indikátorok szükségesek"
+
+#~ msgid "Snooze alarms"
+#~ msgstr "Riasztások szüneteltetése"
+
+#~ msgid "Sound File"
+#~ msgstr "Hangfájl"
+
+#~ msgid "Stop alarm"
+#~ msgstr "Riasztás leállítása"
+
+#~ msgid "Stop alarms"
+#~ msgstr "Riasztások leállítása"
+
+#~ msgid ""
+#~ "The UNIX timestamp for the alarm. Must be set before the alarm is "
+#~ "activated."
+#~ msgstr ""
+#~ "UNIX időbélyeg a riasztáshoz. A riasztás aktiválása előtt be kell "
+#~ "állítani."
+
+#~ msgid "The command to run for the \"command\" notification type."
+#~ msgstr "Parancs szerkesztése a \"parancs\" riasztás típus futtatásához."
+
+#~ msgid "The sound file to play for the \"sound\" notification type."
+#~ msgstr "Hang fájl beállítása a \"hang\" riasztás típushoz."
+
+#~ msgid ""
+#~ "The time for the alarm. Should be in GMT for \"clock\" alarms or length "
+#~ "in seconds for \"timer\" alarms."
+#~ msgstr ""
+#~ "A riasztás ideje. \"Ébresztőóra\"-hoz az időt GMT-ben vagy \"Időzítő\"-"
+#~ "nek a hosszat másodpercben kell megadni."
+
+#~ msgid ""
+#~ "The type of notification to use when the alarm goes off. This can be one "
+#~ "of the following: \"sound\" to play a sound (specified in the \"sound_file"
+#~ "\" property.) \"command\" to run a command (specified in the \"command\" "
+#~ "property.)"
+#~ msgstr ""
+#~ "Figyelmeztetés típusa, amikor a riasztás elkezdődik. Ezek a következők "
+#~ "lehetnek: \"hang \" valamilyen hang lejátszásához (paraméterezve a "
+#~ "\"sound_file\"-ban.), \"parancs\" valamilyen parancs futtatásához "
+#~ "(paraméterezve a \"command\"-ban)"
+
+#~ msgid ""
+#~ "The type of the alarm. Either \"clock\" for an alarm at a specific time "
+#~ "of day, or \"timer\" for an alarm after a specified period of time."
+#~ msgstr ""
+#~ "Riasztás típusa. \"Ébresztőóra\" egy bizonyos időpontban riaszt, vagy "
+#~ "\"Időzítő\" egy bizonyos idő múlva riaszt."
+
+#~ msgid "Toggle alarms"
+#~ msgstr "Riasztás kiválasztása"
+
+#~ msgid "Toggle alarms window"
+#~ msgstr "Riasztási ablak kiválasztása"
+
+#~ msgid "Toggle the visibility of the alarms window"
+#~ msgstr "Riasztási ablak kinézetének kiválasztása"
+
+#~ msgid "Whether to repeat the alarm sound."
+#~ msgstr "Ismételje-e a riasztási hangot."
+
+#~ msgid ""
+#~ "Whether to show a label on the right side of the icon with the time "
+#~ "remaining to the next alarm."
+#~ msgstr ""
+#~ "Mutassa-e a hátralevő idő a következő riasztásig feliratot a jobb oldali "
+#~ "ikonon ."
+
+#~ msgid "_Preferences"
+#~ msgstr "_Beállítások"
+
+#~ msgid "_Quit"
+#~ msgstr "_Kilépés"
