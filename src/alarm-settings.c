@@ -440,6 +440,7 @@ void alarm_settings_changed_type(GtkToggleButton* toggle, gpointer data)
             g_debug("alarm_settings_changed_type: timer toggled");
             g_object_set(dialog->alarm, "type", ALARM_TYPE_TIMER, NULL);
             gtk_widget_set_sensitive(dialog->repeat_expand, FALSE);
+            gtk_expander_set_expanded(GTK_EXPANDER(dialog->repeat_expand), FALSE);
         }
     }
 }
