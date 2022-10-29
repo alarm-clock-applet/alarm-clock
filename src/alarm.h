@@ -83,6 +83,8 @@ struct _Alarm {
     gchar* sound_file;
     gboolean sound_loop;
     gchar* command;
+
+    gboolean changed; // Set to TRUE when a property has been changed to request a UI update
 };
 
 struct _AlarmClass {

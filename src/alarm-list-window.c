@@ -331,13 +331,17 @@ static gboolean alarm_list_window_update_timer(gpointer data)
     valid = gtk_tree_model_get_iter_first(model, &iter);
 
     while(valid) {
-        alarm_list_window_update_row(applet->list_window, &iter);
-
         gtk_tree_model_get(model, &iter, COLUMN_ALARM, &a, COLUMN_SHOW_ICON, &show_icon, -1);
 
-        // Blink icon on triggered alarms
-        if(a->triggered) {
-            gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_SHOW_ICON, !show_icon, -1);
+        // Always update active alarms regardless of the changed state
+        if(a->active || a->changed) {
+            alarm_list_window_update_row(applet->list_window, &iter);
+
+            // Blink icon on triggered alarms
+            if(a->triggered) {
+                gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_SHOW_ICON, !show_icon, -1);
+            }
+            a->changed = FALSE;
         }
 
         valid = gtk_tree_model_iter_next(model, &iter);

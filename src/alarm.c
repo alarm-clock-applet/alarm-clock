@@ -305,6 +305,8 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
     g_value_transform(value, &strval);
     g_debug("Alarm(%p) #%d: set %s=%s", alarm, alarm->id, pspec->name, g_value_get_string(&strval));
 
+    alarm->changed = TRUE; // Do this for all properties for now (not too much overhead, anyway)
+
     switch(prop_id) {
     case PROP_ID:
         // FIXME: This should be int64 to account for -1

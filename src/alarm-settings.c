@@ -268,7 +268,7 @@ static void alarm_settings_update_app(AlarmSettingsDialog* dialog)
     g_debug("AlarmSettingsDialog: update_app()");
 
     //	g_debug ("alarm_settings_update_app (%p): app_combo: %p, applet: %p, apps: %p", dialog, dialog->notify_app_combo, dialog->applet,
-    //dialog->applet->apps); 	g_debug ("alarm_settings_update_app setting entry to %s", dialog->alarm->command);
+    // dialog->applet->apps); 	g_debug ("alarm_settings_update_app setting entry to %s", dialog->alarm->command);
 
     /* Fill apps list */
     fill_combo_box(GTK_COMBO_BOX(dialog->notify_app_combo), dialog->applet->apps, _("Custom command..."));
