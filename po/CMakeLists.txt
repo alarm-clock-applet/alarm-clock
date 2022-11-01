@@ -1,5 +1,3 @@
-find_package(Gettext REQUIRED)
-
 set(POTFILE "alarm-clock-applet.pot")
 
 # Dummy target for LINGUAS to force regeneration
