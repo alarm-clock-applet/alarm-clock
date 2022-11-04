@@ -1,0 +1,1955 @@
+<?xml version="1.0"?>
+<gconfschemafile>
+	<schemalist>
+	
+    	<!--
+    	Global preferences:
+    	-->
+    	
+    	<schema>
+            <key>/schemas/apps/alarm-clock/show_label</key>
+            <applyto>/apps/alarm-clock/show_label</applyto>
+            <owner>alarm-clock</owner>
+            <type>bool</type>
+            <default>false</default>
+            <locale name="C">
+                <short>Show countdown label</short>
+                <long>Whether to show a label on the right side of the icon
+                      with the time remaining to the next alarm.</long>
+            </locale>
+
+            <locale name="ast">
+                <short>Amosar etiqueta de cuenta atrás</short>
+                <long>Si se tien d&apos;amosar una etiqueta a mandrecha del iconu col tiempu que falta pa la siguiente alarma.</long>
+            </locale>
+
+            <locale name="bg">
+                <short>Показване на отброяване</short>
+                <long>Дали да се показва надпис от дясната страна на иконата с оставащо време до следващата аларма.</long>
+            </locale>
+
+            <locale name="de">
+                <short>Zeige Countdown Anzeige an</short>
+                <long>Ob eine Beschriftung mit der Zeit zum nächsten Alarm, rechts vom Icon angezeigt wird.</long>
+            </locale>
+
+            <locale name="es">
+                <short>Mostrar la etiqueta de cuenta regresiva</short>
+                <long>Mostrar o no una etiqueta en el lado derecho del icono con el tiempo restante hasta la próxima alarma.</long>
+            </locale>
+
+            <locale name="fr">
+                <short>Afficher une étiquette de décompte</short>
+                <long>S&apos;il faut afficher une étiquette à droite de l’icône avec le temps restant jusqu’à la prochaine alarme.</long>
+            </locale>
+
+            <locale name="gl">
+                <short>Mostrar a etiqueta de conta atrás</short>
+                <long>Para mostrar unha etiqueta no lado dereito da icona co tempo restante ata a próxima alarma.</long>
+            </locale>
+
+            <locale name="he">
+                <short>הצגת תווית ספירה לאחור</short>
+                <long>Whether to show a label on the right side of the icon with the time remaining to the next alarm.</long>
+            </locale>
+
+            <locale name="hu">
+                <short>Mutassa a visszaszámláló feliratot</short>
+                <long>Mutassa-e a hátralevő idő a következő riasztásig feliratot a jobb oldali ikonon .</long>
+            </locale>
+
+            <locale name="ka">
+                <short>უკუთვლის წარწერის ჩვენება</short>
+                <long>ხატულის მარჯვენა მხარეს წარწერა დროით შემდეგი მაღვიძარის ჩართვამდე.</long>
+            </locale>
+
+            <locale name="ms">
+                <short>Papar label kira detik</short>
+                <long>Sama ada hendak paparkan label pada bahagian kanan ikon dengan masa berbaki kepada penggera berikutnya.</long>
+            </locale>
+
+            <locale name="nb">
+                <short>Vis nedtelling</short>
+                <long>Vis en nedtelling ved siden av ikonet som angir gjenstående tid til neste alarm.</long>
+            </locale>
+
+            <locale name="nl">
+                <short>Toon aftelling</short>
+                <long>Of een label getoond moet worden rechts van het pictogram met de resterende tijd tot het volgende alarm.</long>
+            </locale>
+
+            <locale name="pl">
+                <short>Wyświetl etykietę odliczania</short>
+                
+            </locale>
+
+            <locale name="pt_BR">
+                <short>Mostrar rótulo de contagem regressiva</short>
+                <long>Se mostra rótulo no lado direito do ícone com o tempo faltando para o próximo alarme.</long>
+            </locale>
+
+            <locale name="ru">
+                <short>Показывать счетчик обратного отсчета</short>
+                <long>Показывать надпись слева от значка со временем следующего будильника</long>
+            </locale>
+
+            <locale name="si">
+                <short>ගණන ලේබලය දැක්වීම</short>
+                <long>ඊලග සංඥා සලකුණේ නිවැරදි පැත්ත දැක්වීම</long>
+            </locale>
+
+            <locale name="sv">
+                <short>Visa nedräkning</short>
+                
+            </locale>
+
+            <locale name="tr">
+                <short>Geri sayım etiketini göster</short>
+                <long>İkonun sağ tarafında bir sonraki alarm için kalan sürenin gösterilip gösterilmeyeceği</long>
+            </locale>
+
+            <locale name="uk">
+                <short>Показати лічильник зворотнього відліку</short>
+                <long>Чи показувати напис зліва від піктограми з часом наступної події</long>
+            </locale>
+
+            <locale name="zh_CN">
+                <short>查看倒计时标签</short>
+                <long>是否在图标右侧显示距离下次闹铃的剩余时间。</long>
+            </locale>
+
+            <locale name="zh_TW">
+                <short>顯示倒數標籤</short>
+                <long>是否要在圖示的右邊顯示距離下次吵鬧還剩多久的標籤</long>
+            </locale>
+        </schema>
+    	
+    	<!--
+    	Alarm specific:
+    	-->
+    	
+    	<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/type</key>
+	      	<owner>alarm-clock</owner>
+			<type>string</type>
+			<default>clock</default>
+			<locale name="C">
+				<short>Alarm Type</short>
+				<long>The type of the alarm. Either "clock" for an alarm at a 
+				      specific time of day, or "timer" for an alarm after a 
+				      specified period of time.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>نوع التنبيه</short>
+				<long>نوع التنبيه.إما &quot;ساعة&quot; للتنبيه في وقت محدد من اليوم,أو &quot;مؤقت&quot; للتنبيه بعد فترة محددة من الزمن.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Triba d&apos;alarma</short>
+				<long>Triba d&apos;alarma. O «reló» pa una alarma a determinada hora del día, o «temporizador» pa una alarma en pasando un periodu de tiempu.</long>
+			</locale>
+
+			<locale name="be">
+				<short>Тып нагадваньня</short>
+				<long>Тып будзільніка. «Гадзіньнік» — у вызначаны час дня альбо «тамер» — па сканчэньні вызначанага пэрыяда.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Тип на алармата</short>
+				<long>Вид на алармата. Може да бъде &quot;будилник&quot; за аларма в определено време на деня или &quot;таймер&quot; за аларма след определен период от време.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Tipus d&apos;alarma</short>
+				<long>Tipus d&apos;alarma. Qualsevol &quot;clock&quot; per una alarma per una hora específica del dia, o &quot;timer&quot;  per a una alarma transcorregut un període de temps determinat.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Typ budíku</short>
+				
+			</locale>
+
+			<locale name="da">
+				<short>Alarmtype</short>
+				<long>Alarmtypen. Enten &quot;clock&quot; for en alarm på et angivet tidspunkt på dagen, eller &quot;timer&quot; for en alarm efter en angivet tidsperiode.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Alarm-Typ</short>
+				<long>Der Typ des Alarms. Entweder &quot;Wecker&quot;  für einen Alarm zu einer bestimmten Uhrzeit des Tages oder &quot;Timer&quot; für einen Alarm nach einer bestimmten Dauer.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Tipo de alarma</short>
+				<long>El tipo de la alarma. Puede ser «reloj» para una alarma a una hora específica del día o «temporizador» para una alarma que sonará una vez transcurrido un tiempo especificado.</long>
+			</locale>
+
+			<locale name="et">
+				<short>Äratuse tüüp</short>
+				
+			</locale>
+
+			<locale name="fi">
+				<short>Hälytyksen tyyppi</short>
+				<long>Hälytyksen tyyppi. Joko &quot;kello&quot; jolloin herätys tapahtuu tiettyyn päivän aikaan, tai &quot;ajastin&quot; jolloin hälytys tapahtuu tietyn ajan kuluttua.</long>
+			</locale>
+
+			<locale name="fo">
+				<short>Vekjara slag</short>
+				
+			</locale>
+
+			<locale name="fr">
+				<short>Type d&apos;alarme</short>
+				<long>Le type d&apos;alarme. Soit &quot;horaire&quot; pour une alarme se déclenchant à un moment spécifique du jour, ou &quot;minuteur&quot; pour une alarme se déclenchant après un laps de temps.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Tipo de alarma</short>
+				<long>Tipo de alarma. «Reloxo» para unha alarma a unha hora especifica do dia, ou «temporizador» para unha alarma despois dun período de tempo especificado</long>
+			</locale>
+
+			<locale name="he">
+				<short>Alarm Type</short>
+				<long>The type of the alarm. Either &quot;clock&quot; for an alarm at a specific time of day, or &quot;timer&quot; for an alarm after a specified period of time.</long>
+			</locale>
+
+			<locale name="hi">
+				<short>अलार्म क़िस्म</short>
+				<long>अलार्म का  प्रकार. दिन के किसी विशेष समय पर अलार्म के लिये &apos;घड़ी&apos; अथवा एक निर्धारित अवधि के बाद एक अलार्म के लिए &quot;टाइमर &apos;.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Riasztás típusa</short>
+				<long>Riasztás típusa. &quot;Ébresztőóra&quot; egy bizonyos időpontban riaszt, vagy &quot;Időzítő&quot; egy bizonyos idő múlva riaszt.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Tipe Alarm</short>
+				<long>Tipe alarm. Bisa &quot;clock&quot; untuk alarm pada suatu saat, atau &quot;timer&quot; untuk alarm setelah suatu perioda waktu yang dinyatakan.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラームの種類</short>
+				<long>アラームの種類。&quot;clock&quot; は指定した日時に動作します。&quot;timer&quot; は指定間隔ごとに動作します。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>მაღვიძარის ტიპი</short>
+				<long>განგაშის სახეობა. &quot;მაღვიძარა&quot; ჩაირთვება მოცემულ დროს, ხოლო &quot;წამზომი&quot; კი - მითითებული დროის შემდეგ.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Jenis penggera</short>
+				<long>Jenis penggera. Sama ada &quot;clock&quot; untuk penggera pada waktu tertentu sehari, atau &quot;timer&quot; bagi penggera selepas jangka masa tertentu.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Alarmtype</short>
+				<long>Alarmtypen. Enten &quot;clock&quot; for en alarm på en angitt tid på døgnet, eller&quot;timer&quot; for en alarm etter en angitt tidsperiode.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Alarm type</short>
+				<long>Het alarm-type. &quot;Klok&quot; voor een ingesteld alarm op een specifieke tijd, of &quot;timer&quot; voor een alarm na een verstreken tijdsperiode.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Varslingstype</short>
+				<long>Varslingstypa. Enten &quot;clock&quot; for ei varsling på ei gitt tid av døgnet, eller &quot;timer&quot; for ei varsling etter ei gitt tid.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Typ alarmu</short>
+				<long>Typ alarmu. Zegarowy - dla alarmów o określonej godzinie, czasowy - dla alarmów po upływie określonego czasu.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Tipo de Alarme</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Tipo de Alarme</short>
+				<long>Tipo de alarme.  Pode ser &quot;relógio&quot; para o alarme tocar a uma hora específica do dia ou &quot;regressivo&quot; para ele tocar após um período de tempo específico.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Тип сигнала</short>
+				<long>Тип будильника. &quot;По времени&quot; - в конкретное время дня или &quot;таймер&quot; - по истечении определенного периода.</long>
+			</locale>
+
+			<locale name="si">
+				<short>සංඥා වර්ගය</short>
+				<long>සංඥා වර්ගය අනුව දවසක විශේෂිත වේලාව දැක්වීම සදහා &quot;ඔරලෝසුව&quot; හෝ  සද විශේෂිත කාලයකට  පසුව සංඥා දැක්වීමට &quot;කාලගණනය&quot; යොදාගැනේ.</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Alarmtyp</short>
+				
+			</locale>
+
+			<locale name="tr">
+				<short>Alarm Türü</short>
+				<long>Alarmın türü. Günün belli bir zamanı çalması için &quot;Saat&quot;, belli bir süre sonunda çalması için &quot;Zamanlayıcı&quot; olabilir.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Тип сигналу</short>
+				<long>Тип будильника. Саме будильник - налагоджується на конкретний час доби, чи таймер - активується через певний час.</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>闹铃类型</short>
+				<long>闹钟类型。“时钟”为在特定时间起闹，“计时器”为经过一特定时间段后起闹。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>鬧鐘類型</short>
+				<long>鬧鐘的類型：「定時鬧鐘」可指定於某個時間動作、「倒數計時器」可指定在某段時間之後動作。</long>
+			</locale>
+		</schema>
+		
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/timestamp</key>
+	      	<owner>alarm-clock</owner>
+			<type>int</type>
+			<default>0</default>
+			<locale name="C">
+				<short>Alarm Timestamp</short>
+				<long>The UNIX timestamp for the alarm. Must be set before the
+				      alarm is activated.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>طابع التنبه</short>
+				<long>بصمة وقت التنبيه ليونكس.يجب تحديده قبل تغعيل المنبه.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Marca de tiempu de l&apos;alarma</short>
+				<long>Marca de tiempu UNIX pa l&apos;alarma. Tien de conseñase enantes d&apos;activar l&apos;alarma.</long>
+			</locale>
+
+			<locale name="be">
+				<short>Часовая адзнака сыгналу</short>
+				<long>Часовая пазнака UNIX для будзільніка. Павінна быць усталявана да актывацыі будзільніка.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Вмъкване на време</short>
+				<long>UNIX формат на времето. Трябва да бъде зададен преди алармата да е задействана.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Hora del despertador</short>
+				<long>L&apos;hora UNIX per l&apos;alarma. ﻿Ha de ser posat abans que l&apos;alarma s&apos;activi.</long>
+			</locale>
+
+			<locale name="da">
+				<short>Alarmtidsstempel</short>
+				<long>UNIX-tidsstempel for alarmen. Må indstilles før alarmen aktiveres.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Alarm Zeitstempel</short>
+				<long>Der Unix-Zeitstempel für den Alarm. Muss gesetzt sein, bevor dieser aktiviert ist.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Marca de tiempo de la alarma</short>
+				<long>La marca de tiempo UNIX para la alarma. Debe asignarse antes que la alarma sea activada.</long>
+			</locale>
+
+			<locale name="fi">
+				<short>Hälytyksen aikaleima</short>
+				<long>UNIX-aikaleima hälytykselle. Täytyy asettaa ennen hälytyksen alkamisajankohtaa.</long>
+			</locale>
+
+			<locale name="fo">
+				<short>Vekjara tíðarstempul</short>
+				<long>UNIX tíðastemplið fyri vekjaraklokkuna, má ásetast áðrenn vekjarin kann virkjast.</long>
+			</locale>
+
+			<locale name="fr">
+				<short>Horodatage de l&apos;alarme</short>
+				<long>La répétition (horodatage) de l&apos;alarme doit être configurée avant que l&apos;alarme soit activée.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Date e hora da alarma</short>
+				<long>Marca de tempo de UNIX para a alarma. Debe ser definido antes de que a alarma sexa activada.</long>
+			</locale>
+
+			<locale name="he">
+				<short>Alarm Timestamp</short>
+				<long>The UNIX timestamp for the alarm. Must be set before the alarm is activated.</long>
+			</locale>
+
+			<locale name="hi">
+				
+				<long>अलार्म के लिए UNIX टाइमस्टैम्प. अलार्म सक्रिय करने से पहले निर्धारित किया जाना चाहिए.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Riasztás időbélyege</short>
+				<long>UNIX időbélyeg a riasztáshoz. A riasztás aktiválása előtt be kell állítani.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Penanda Waktu Alarm</short>
+				<long>Penanda waktu UNIX bagi alarm. Mesti ditata sebelum alarm diaktifkan.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラームのタイムスタンプ</short>
+				<long>アラームに使用する UNIX のタイムスタンプ。アラームをオンにする前に設定する必要があります。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>მაღვიძარის დროის ანაბეჭდი</short>
+				<long>UNIX დროის ანაბეჭდი მაღვიძარისათვის. უნდა იყოს მითითებული მაღვიძარის გააქტიურებამდე.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Timestamp Penggera</short>
+				<long>Timestamp UNIX untuk penggera. Mesti diset sebelum penggera diaktifkan.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Alarmtidsstempel</short>
+				<long>UNIX-tidsstempelet for alarmen. Må settes før alarmen aktiveres.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Alarm timestamp</short>
+				<long>De UNIX timestamp voor het alarm. Dit moet worden ingesteld voor het alarm is geactiveerd.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Varslingstidsstempel</short>
+				<long>UNIX-tidsstempel for varslinga. Må settast før varslinga er starta.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Znaczniki Czasu Alarmu</short>
+				<long>Znaczniki czasu UNIX dla alarmu. Muszą być ustawione przed aktywacją alarmu.</long>
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Carimbo de Hora do Alarme</short>
+				<long>O carimbo de tempo UNIX do alarme.  Deve ser obrigatoriamente definido antes de se ativar o alarme.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Временная отметка сигнала</short>
+				<long>Временная отметка UNIX для будильника. Должна быть установлена до активации будильника.</long>
+			</locale>
+
+			<locale name="si">
+				<short>සම්මත සංඥාව</short>
+				<long>සංඥාව සදහා යුනික්ස් සලකුණ.සංඥාව ක්‍රියාත්මක කිරීමට පෙර සැකසිය යුතුය.</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Tidsstämpel för alarm</short>
+				<long>UNIX-tidsstämpeln för alarmet. Måste sättas innan alarmet aktiveras.</long>
+			</locale>
+
+			<locale name="tr">
+				<short>Alarm Tarih bilgisi</short>
+				<long>Alarm için UNIX tarih bilgisi. Alarm etkinleştirilmeden önce ayarlanmalıdır.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Часова мітка сигналу</short>
+				<long>Часова мітка UNIX для будильника. Має бути встановлена, щоб активувати будильник.</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>闹铃时间戳</short>
+				<long>闹钟的 UNIX 时间戳。必须在闹钟激活前设定。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>鬧鐘時間戳記</short>
+				<long>鬧鐘的 UNIX 時間戳記，必須在鬧鐘啟動前就先設定。</long>
+			</locale>
+		</schema>
+		
+    	
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/time</key>
+	      	<owner>alarm-clock</owner>
+			<type>int</type>
+			<default>0</default>
+			<locale name="C">
+				<short>Alarm Time</short>
+				<long>The time for the alarm. Should be in GMT for "clock"
+				      alarms or length in seconds for "timer" alarms.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>وقت التبيه</short>
+				<long>وقت التنبيه.يجب أن يكون بتوقيت غرينتش لتنبيهات &quot;ساعة&quot; أو بصيغة الثواني لتنبيهات &quot;مؤقت&quot;.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Hora d&apos;alarma</short>
+				<long>La hora de l&apos;alarma. Tien de ser una hora GMT p&apos;alarmes  «de reló» o bien la duración en segundos p&apos;alarmes «de temporizador».</long>
+			</locale>
+
+			<locale name="be">
+				<short>Час сыгналу</short>
+				<long>Час для нагадваньня. Павінен быць у GMT для «пагадзінных» нагадваньняў ці ў сэкундах для таймера.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Час на алармата</short>
+				<long>Час на алармата. Трябва да бъде в GMT за алармите, тип &quot;будилник&quot; или в продължителност в секунди за &quot;таймер&quot;.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Hora de l&apos;alarma</short>
+				<long>Hora de l&apos;alarma. Hauria d&apos;esser en GMT per a alarmes &quot;clock&quot; o duradaen segons per a alarmes &quot;timer&quot;.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Čas budíku</short>
+				
+			</locale>
+
+			<locale name="da">
+				<short>Alarmtid</short>
+				<long>Tiden for alarmen. Skal være i GMT for &quot;clock&quot;-alarmer eller længde i sekunder for &quot;timer&quot;-alarmer.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Alarm Zeit</short>
+				<long>Die Uhrzeit des Alarms. Sollte bei Uhrzeit im GMT Format oder bei Dauer Alarmen in Sekunden sein.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Hora de alarma</short>
+				<long>Hora para la alarma. Debe ser una hora GMT para alarmas «reloj» o bien la duración en segundos para alarmas «temporizador».</long>
+			</locale>
+
+			<locale name="fi">
+				<short>Herätysaika</short>
+				
+			</locale>
+
+			<locale name="fo">
+				<short>Vekjara tíðspunkt</short>
+				
+			</locale>
+
+			<locale name="fr">
+				<short>Heure de l&apos;alarme</short>
+				<long>L&apos;heure de l&apos;alarme doit être en GMT pour les alarmes &quot;horaires&quot; et en secondes pour les alarmes &quot;minuteurs&quot;.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Hora da alarma</short>
+				<long>Hora para a alarma. Debe estar en GMT para alarmas «reloxo» ou o tempo en segundos para alarmas «temporizador»</long>
+			</locale>
+
+			<locale name="he">
+				<short>זמן ההתרעה</short>
+				<long>The time for the alarm. Should be in GMT for &quot;clock&quot; alarms or length in seconds for &quot;timer&quot; alarms.</long>
+			</locale>
+
+			<locale name="hi">
+				
+				<long>अलार्म के लिए समय. &quot;घड़ी&quot; अलार्म के लिए GMT में अथवा &quot;टाइमर&quot; अलार्म के लिए सेकंड में होना चाहिए.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Figyelmeztetés időpontja</short>
+				<long>A riasztás ideje. &quot;Ébresztőóra&quot;-hoz az időt GMT-ben vagy &quot;Időzítő&quot;-nek a hosszat másodpercben kell megadni.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Waktu Alarm</short>
+				<long>Waktu bagi alarm. Mesti dalam GMT bagi alarm &quot;jam&quot; atau lama waktu dalam detik bagi alarm &quot;pewaktu&quot;.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラームの時間</short>
+				<long>アラームの時間。時刻の時はGMT(UTC)、タイマーの時は時間を秒で指定。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>მაღვიძარის დრო</short>
+				<long>ჩართვის დრო. მიუთითეთ დრო GMT-ს მიხედვით &quot;მაღვიძარისთვის&quot;, ან დრო წამებში &quot;წამზომისთვის&quot;.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Waktu Penggera</short>
+				<long>Waktu untuk penggera. Hendaklah dalam GMT untuk penggera &quot;jam&quot; atau jangka masa panjang dalam saat untuk penggera &quot;pemasa&quot;.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Alarmtid</short>
+				<long>Tiden for alarmen. Skal være i GMT for &quot;clock&quot;-alarmer eller lengde i sekunder for &quot;timer&quot;-alarmer.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Alarmtijd</short>
+				<long>De tijd voor het alarm. Dit moet GMT notatie zijn voor &quot;klok&quot; alarms of de lengte in seconden voor &quot;timer&quot; alarms.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Varslingstid</short>
+				<long>Tida for varslinga. Skal vere i GMT for &quot;clock&quot;-varslingar eller lengde i sekund for &quot;timer&quot;-varslingar.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Czas alarmu</short>
+				<long>Czas alarmu.Według czasu Greenwich dla alarmów zegarowych, długość w sekundach dla alarmów czasowych.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Tempo do Alarme</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Hora do Alarme</short>
+				<long>A hora para o alarme tocar.  Deve ser informado em GMT para alarmes de relógio ou em segundos para alarmes regressivos.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Время сигнала</short>
+				<long>Время срабатывания. Укажите в GMT для будильника &quot;по времени&quot; или в секундах для таймера.</long>
+			</locale>
+
+			<locale name="si">
+				<short>සංඥා කාලය</short>
+				<long>සංඥා සදහා කාලය.සම්මත කාලය ඔරලෝසු සංඥා හෝ කාල පරාසය අනුව කාලගණන සංඥාටද යෙදිය යුතුය.</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Alarmtid</short>
+				
+			</locale>
+
+			<locale name="tr">
+				<short>Alarm Zamanı</short>
+				<long>Alarmın çalacağı zaman. &quot;Zamanlayıcı&quot; alarmlar için saniye mertebesinde, &quot;Saat&quot; alarmları için GMT olmalıdır.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Час сигналу</short>
+				<long>Час запуску будильника. Встановіть час доби для будильника або кількість хвилин для таймера.</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>闹铃时间</short>
+				<long>闹铃时间。“时钟”闹钟下应为 GMT 时间，“计时器”闹钟下应为秒长。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>鬧鐘時間</short>
+				<long>鬧鐘的時間。「定時鬧鐘」用標準時間格式，「倒數計時器」用秒數。</long>
+			</locale>
+		</schema>
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/message</key>
+	      	<owner>alarm-clock</owner>
+			<type>string</type>
+			<locale name="C">
+				<default>Alarm!</default>
+				<short>Alarm Message</short>
+				<long>A short message which describes the alarm.</long>
+			</locale>
+
+			<locale name="ar">
+				<default>انذار</default>
+				<short>رسالة التنبيه .</short>
+				<long>رسالة قصيرة تصف التنبيه .</long>
+			</locale>
+
+			<locale name="ast">
+				<default>¡Alarma!</default>
+				<short>Mensaxe d&apos;alarma</short>
+				<long>Mensaxe curtiu que describe l&apos;alarma.</long>
+			</locale>
+
+			<locale name="be">
+				<default>Пад&apos;ём!</default>
+				<short>Паведамленьне будзільніка</short>
+				<long>Кароткае паведамленьне, якое апісвае будзільнік.</long>
+			</locale>
+
+			<locale name="bg">
+				<default>Аларма!</default>
+				<short>Съобщение на алармата</short>
+				<long>Кратко съобщение, което описва алармата.</long>
+			</locale>
+
+			<locale name="ca">
+				<default>Despertador!</default>
+				<short>Missatge del despertador</short>
+				<long>Descripció breu de l&apos;alarma</long>
+			</locale>
+
+			<locale name="cs">
+				<default>Budík!</default>
+				<short>Zpráva budíku</short>
+				<long>Zpráva popisující alarm.</long>
+			</locale>
+
+			<locale name="da">
+				<default>Alarm!</default>
+				<short>Alarmmeddelelse</short>
+				<long>En kort meddelelse, der beskriver alarmen.</long>
+			</locale>
+
+			<locale name="de">
+				<default>Alarm!</default>
+				<short>Alarm Nachricht</short>
+				<long>Eine kurze Nachricht die den Alarm beschreibt.</long>
+			</locale>
+
+			<locale name="es">
+				<default>¡Alarma!</default>
+				<short>Mensaje de la alarma</short>
+				<long>Una breve descripción de la alarma.</long>
+			</locale>
+
+			<locale name="et">
+				<default>Äratus</default>
+				<short>Äratuse sõnum</short>
+				
+			</locale>
+
+			<locale name="fi">
+				<default>Herätys!</default>
+				<short>Herätysviesti</short>
+				<long>Lyhyt herätystä kuvaava syy.</long>
+			</locale>
+
+			<locale name="fo">
+				<default>Vekjari!</default>
+				<short>Vekjara fráboðan</short>
+				<long>Eini stutt boð, ið greiåir frá vekjaranum.</long>
+			</locale>
+
+			<locale name="fr">
+				<default>Alarme !</default>
+				<short>Message de l&apos;alarme</short>
+				<long>Description de l&apos;alarme.</long>
+			</locale>
+
+			<locale name="gl">
+				<default>Alarma!</default>
+				<short>Mensaxe da alarma</short>
+				<long>Unha mensaxe curta que describa a alarma</long>
+			</locale>
+
+			<locale name="he">
+				<default>Alarm!</default>
+				<short>Alarm Message</short>
+				<long>A short message which describes the alarm.</long>
+			</locale>
+
+			<locale name="hi">
+				<default>अलार्म!</default>
+				
+				
+			</locale>
+
+			<locale name="hu">
+				<default>Ébresztő!</default>
+				<short>Figyelmeztető üzenet</short>
+				<long>Egy rövid üzenet a riasztásról.</long>
+			</locale>
+
+			<locale name="id">
+				<default>Alarm!</default>
+				<short>Pesan Alarm</short>
+				<long>Pesan singkat yang mendeskripsikan alarm.</long>
+			</locale>
+
+			<locale name="ja">
+				<default>アラーム</default>
+				<short>アラームのメッセージ</short>
+				<long>アラームのときに表示される短いメッセージ</long>
+			</locale>
+
+			<locale name="ka">
+				<default>განგაში!</default>
+				<short>მაღვიძარის შეტყობინება</short>
+				<long>მაღვიძარის მოკლე აღწერა</long>
+			</locale>
+
+			<locale name="ms">
+				<default>Penggera!</default>
+				<short>Mesej Penggera</short>
+				<long>Mesej ringkas menyatakan tentang penggera.</long>
+			</locale>
+
+			<locale name="nb">
+				<default>Alarm!</default>
+				<short>Alarmmelding</short>
+				<long>En kort melding som beskriver alarmen.</long>
+			</locale>
+
+			<locale name="nl">
+				<default>Alarm!</default>
+				<short>Alarmbericht</short>
+				<long>Een korte omschrijving van het alarm.</long>
+			</locale>
+
+			<locale name="nn">
+				<default>Varsling!</default>
+				<short>Varslingsmelding</short>
+				<long>Ei kort melding som beskriv varslinga.</long>
+			</locale>
+
+			<locale name="pl">
+				<default>Alarm!</default>
+				<short>Wiadomość alarmu</short>
+				<long>Krótka wiadomość opisująca alarm.</long>
+			</locale>
+
+			<locale name="pt">
+				
+				<short>Mensagem do Alarme</short>
+				<long>Uma pequena mensagem que descreva o alarme.</long>
+			</locale>
+
+			<locale name="pt_BR">
+				<default>Alarme!</default>
+				<short>Mensagem do Alarme</short>
+				<long>Uma pequena mensagem descrevendo o alarme.</long>
+			</locale>
+
+			<locale name="ru">
+				<default>Подъем!</default>
+				<short>Сообщение будильника</short>
+				<long>Краткое сообщение, описывающее будильник.</long>
+			</locale>
+
+			<locale name="si">
+				<default>සංඥාව!</default>
+				<short>සංඥා පණිවිඩය</short>
+				<long>කෙටි සංඥා පණිවිඩයක්</long>
+			</locale>
+
+			<locale name="sv">
+				<default>Alarm!</default>
+				<short>Alarm-meddelande</short>
+				<long>En kort beskrivning av alarmet</long>
+			</locale>
+
+			<locale name="tr">
+				<default>Alarm!</default>
+				<short>Alarm iletisi</short>
+				<long>Alarmı açıklayan kısa bir ileti.</long>
+			</locale>
+
+			<locale name="uk">
+				<default>Увага!</default>
+				<short>Повідомлення будильника</short>
+				<long>Короткий опис будильника</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<default>闹铃</default>
+				<short>闹钟消息</short>
+				<long>描述闹钟的简短消息。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<default>鬧鐘！</default>
+				<short>鬧鐘訊息</short>
+				<long>說明這個鬧鐘的簡短訊息。</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/active</key>
+	      	<owner>alarm-clock</owner>
+			<type>bool</type>
+			<default>false</default>
+			<locale name="C">
+				<short>Alarm Running State</short>
+				<long>Indicates whether the alarm has started.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>حالة تشغيل التنبيه</short>
+				<long>التحقق ما إذا كان المنبه قد بدأ.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Estáu de l&apos;alarma</short>
+				<long>Indica si comenzó l&apos;alarma.</long>
+			</locale>
+
+			<locale name="be">
+				<short>Прастора запуска будзільніка</short>
+				<long>Паказвае, ці было актывізавана нагадваньне.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Текущо състояние на алармата</short>
+				<long>Показва дали алармата е започнала.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Estat de funcionament del despertador</short>
+				<long>﻿Indica si l&apos;alarma ha començat.</long>
+			</locale>
+
+			<locale name="da">
+				<short>Alarmstatus</short>
+				<long>Angiv om alarm er startet.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Status des Alarms</short>
+				<long>Zeigt ob der Alarm gestartet worden ist.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Estado de la alarma</short>
+				<long>Indica si la alarma ha comenzado.</long>
+			</locale>
+
+			<locale name="fi">
+				
+				<long>Ilmoittaa onko hälytys on alkanut.</long>
+			</locale>
+
+			<locale name="fo">
+				<short>Vekjara koyrslustandir</short>
+				<long>Ábending um vekjaraklokkan er byrja.</long>
+			</locale>
+
+			<locale name="fr">
+				<short>Etat de l&apos;alarme en cours d&apos;exécution.</short>
+				<long>Indique si l&apos;alarme s&apos;est déclenchée</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Estado da alarma</short>
+				<long>Indica se a a alama comezou.</long>
+			</locale>
+
+			<locale name="he">
+				<short>Alarm Running State</short>
+				<long>Indicates whether the alarm has started.</long>
+			</locale>
+
+			<locale name="hi">
+				
+				<long>बताता है कि क्या अलार्म शुरू हो गया है.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Riasztás állapota</short>
+				<long>Jelzi, hogy a riasztás aktív-e.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Status Alarm Berjalan</short>
+				<long>Terindikasi apakah alarm sudah mulai.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラーム状態</short>
+				<long>アラームが開始されているかの表示</long>
+			</locale>
+
+			<locale name="ka">
+				<short>მაღვიძარის მდგომარეობა</short>
+				<long>აჩვენებს მაღვიძარა ჩართულია თუ არა.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Keadaan Penggera</short>
+				<long>Menandakan sama ada penggera telah bermula.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Alarm kjørestatus</short>
+				<long>Indikerer om alarmen har startet.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Alarmstatus</short>
+				<long>Geeft aan of het alarm is gestart.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Varsling kjøyrestatus</short>
+				<long>Indikerer om varslinga har starta.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Stan Działania Alarmu</short>
+				<long>Wskazuje, czy alarm został uruchomiony.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Estado Actual do Alarme</short>
+				<long>Indica se o alarme foi iniciado.</long>
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Estado de Funcionamento do Alarme</short>
+				<long>Indica se o alarme foi iniciado.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Область запуска будильника</short>
+				<long>Будильник включён</long>
+			</locale>
+
+			<locale name="si">
+				<short>සංඥා ක්‍රියාත්මක තත්වය</short>
+				<long>සංඥාවේ ආරම්භය දැක්වීම හෝ</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Tillstånd: Alarmet körs</short>
+				<long>Indikerar om alarmet har startat.</long>
+			</locale>
+
+			<locale name="tr">
+				<short>Alarm Çalışma Durumu</short>
+				<long>Alarmın başlayıp başlamadığını belirtir.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Запускання будильника</short>
+				<long>Будильник увімкнено</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>闹钟运行状态</short>
+				<long>用于指示闹钟是否启动。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>鬧鐘執行狀態</short>
+				<long>顯示鬧鐘是否已啟動。</long>
+			</locale>
+		</schema>
+		
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/repeat</key>
+	      	<owner>alarm-clock</owner>
+			<type>list</type>
+			<list_type>string</list_type>
+			<default>[]</default>
+			<locale name="C">
+				<short>Alarm Repeat</short>
+				<long>A list of days when the alarm should be repeated.
+				      This settings is only applicable for "clock" alarms.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>تكرار التنبيه .</short>
+				<long>سرد الأيام التي يجب أن يتكرر فيها التنبيه.هذا الإعداد فاعل فقط لمنبهات &quot;clock&quot;.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Repetición d&apos;alarma</short>
+				<long>Llista de los díes que tien de repetise l&apos;alarma. Estes preferencies s&apos;apliquen namái pa les alarmes «del reló».</long>
+			</locale>
+
+			<locale name="be">
+				<short>Паўтор сыгналу</short>
+				<long>Сьпіс дзен, калі трэба паўтараць нагадваньне. Налады ўжывальныя толькі для «пагадзінных» нагадваньняў.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Повтаряне на алармата</short>
+				<long>Списък с дните, в които трябва да се повтаря алармата. Настройката е приложима само към аларми тип &quot;будилник&quot;.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Repetició de l&apos;alarma</short>
+				<long>Llista de dies en què l&apos;alarma s&apos;hauria de repetir. Aquesta configuració només és aplicable per a &quot;clock&quot; alarmes.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Opakování budíku</short>
+				<long>Seznam dnů kdy se má alarm opakovat.Toto nastavení je pouze pro alarmy v režimu hodin.</long>
+			</locale>
+
+			<locale name="da">
+				<short>Gentagelse af alarm</short>
+				<long>En liste over dage hvor alarmen skal gentages. Denne indstilling er kun gyldig for &quot;clock&quot; -alarmer.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Alarm Wiederholung</short>
+				<long>Eine Liste der Tage, an denen der Alarm wiederholt wird. Diese Einstellung ist nur für Alarme mit Uhrzeit.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Repetición de la alarma</short>
+				<long>Una lista de días en que la alarma debería repetirse. Esta configuración solo se aplica para las alarmas «reloj».</long>
+			</locale>
+
+			<locale name="fi">
+				<short>Herätyksen toisto</short>
+				<long>Lista päivistä, jolloin tulisi herättää. Tämä asetus pätee vain &quot;kello&quot;-tyyppisille herätyksille.</long>
+			</locale>
+
+			<locale name="fo">
+				<short>Vekjara endurtøka</short>
+				<long>Listi yvir dagar ið vekjaraklokkan skal endurtakast. Henda setanin er einans galdandi fyri vekjara tíðir.</long>
+			</locale>
+
+			<locale name="fr">
+				<short>Répéter l&apos;Alarme</short>
+				<long>Liste des jours où l&apos;alarme doit se déclencher. Ne s&apos;applique qu&apos;aux alarmes de type &apos;horaire&apos;.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Repetición da alarma</short>
+				<long>Unha lista de dias nos que a alarma debe ser repetida. Estas comfiguracions son só aplicábeis para alarmas de «reloxo»</long>
+			</locale>
+
+			<locale name="he">
+				<short>חזרה על ההתרעה</short>
+				<long>A list of days when the alarm should be repeated. This settings is only applicable for &quot;clock&quot; alarms.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Figyelmeztetés ismétlése</short>
+				<long>A napok listája amikor a riasztások ismétlődni fognak. Ez a beállítás csak az &quot;ébresztőóra&quot; riasztásokhoz érhető el.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Ulangi Alarm</short>
+				<long>Daftar hari ketika alarm mesti diulang. Tatanan ini hanya berlaku bagi alarm &quot;jam&quot;.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラームのリピート間隔</short>
+				
+			</locale>
+
+			<locale name="ka">
+				<short>მაღვიძარის გამეორება</short>
+				<long>დღეების ჩამონათვალი, როცა განგაში გამეორდება. ეს პარამეტრი გამოყენებადია მხოლოდ &quot;მაღვიძარისთვის&quot;.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Penggera Diulang</short>
+				<long>Senarai hari yang penggera perlu diulang. Keutamaan ini hanya boleh digunakan untuk penggera &quot;jam&quot;.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Alarmrepetering</short>
+				<long>En liste av dager når alarmen skal repeteres. Denne innstillingen er kun gyldig for &quot;clock&quot;-alarmer.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Herhaling van het alarm</short>
+				<long>Een lijst met dagen dat het alarm herhaald moet worden. Deze instelling is alleen van toepassing op &quot;klok&quot; alarms.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Varslingsgjentaking</short>
+				<long>Ei liste over dagar kor varslinga skal gjentakast. Innstillinga er berre gjeldande for &quot;clock&quot; varslingar.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Powtarzanie alarmu</short>
+				<long>Lista dni w których alarm by się miał powtarzać. To ustawienie tylko dotyczy &quot;zegarowych&quot; alarmów.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Repetição do Alarme</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Repetição do Alarme</short>
+				<long>Uma lista de dias em que o alarme deve se repetir.  Essa configuração somente se aplica a alarmes de relógio.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Повтор будильника</short>
+				<long>Повтор будильника по дням. Настройка только для будильников &quot;по времени&quot;.</long>
+			</locale>
+
+			<locale name="si">
+				<short>සංඥා නැවත කිරිම</short>
+				<long>දවස අනුව සංඥාව නැවත දැක්විය යුතුය. කට්ටල අංග යෙදිය හැකිවන්නේ ඔරලෝසුවට පමණි.</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Återupprepa alarm</short>
+				<long>En lista på dagar när alarmet ska återupprepas. Denna inställning är endast tillgänglig för väckarklockor.</long>
+			</locale>
+
+			<locale name="tr">
+				<short>Alarm tekrarı</short>
+				<long>Alarmın tekrar edeceği günlerin listesi. Bu ayarlar sadece &quot;saat&quot; alarmlarına uygulanabilir.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Повторювання</short>
+				<long>Повторювання будильника у певні дні. Має сенс тільки для будильників (не таймерів)</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>循环闹铃</short>
+				<long>闹钟的重复列表。此设置仅应用于“时钟”闹钟。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>鬧鐘週期</short>
+				<long>在哪幾天啟動鬧鐘的清單，只適用於「定時鬧鐘」。</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/notify_type</key>
+	      	<owner>alarm-clock</owner>
+			<type>string</type>
+			<default>sound</default>
+			<locale name="C">
+				<short>Notification Type</short>
+				<long>The type of notification to use when the alarm goes off.
+					  This can be one of the following:
+					  "sound" to play a sound (specified in the "sound_file" property.)
+					  "command" to run a command (specified in the "command" property.)
+				</long>
+			</locale>
+
+			<locale name="ar">
+				<short>نوع الاشعار</short>
+				<long>نوع التنبيه المستخدم عند إيقاف المنبه.قد يكون شيئا مما يلي:&quot;صوت&quot; لتشغيل صوت (يحدد في خاصية &quot;sound_file&quot;.&quot;أكر&quot; لتنفيذ أمر ما (يحدد في خاصية &quot;command&quot;)</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Triba de notificación</short>
+				<long>La triba de notificación a utilizar cuando s&apos;activa l&apos;alarma. Pue ser una de les darréu: «soníu» pa reproducir un soníu (conseñáu na propiedá «sound_file») «comandu» pa executar un comandu (conseñáu na propiedá «command»)</long>
+			</locale>
+
+			<locale name="be">
+				<short>Тып апавяшчэньня</short>
+				<long>Што рабіць падчас спрацоўваньня будзільніка? Абярыце адзін з варыянтаў: прайграць гук (пазначаецца ў парамэтры «гукавы файл») альбо выканаць каманду (пазначаецца ў парамэтры «каманда»).</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Вид на известието</short>
+				<long>Вид известие, щом алармата се включи. Можете да избирате между просвирване на звук и изпълнение на команда.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Tipus de notificació</short>
+				<long>Tipus de notificació per fer servir quan l&apos;alarma sona. Pot ésser un dels següents tipus: &quot;sound&quot; per reproduïr un so (especificat a la propietat &quot;sound_file&quot;) &quot;command&quot; per executar un comandament (especificat a la propietat &quot;command&quot;)</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Typ upozornění</short>
+				
+			</locale>
+
+			<locale name="da">
+				<short>Varslingstype</short>
+				<long>Meddelelsestypen som skal bruges når alarmen starter. Denne kan være en af følgende: &quot;sound&quot; for at afspille en lyd (specifiseret i &quot;sound_file&quot; indstillingen.) &quot;command&quot; for at køre en kommando (specifiseret i &quot;command&quot; indstillingen.)</long>
+			</locale>
+
+			<locale name="de">
+				<short>Benachrichtigungstyp</short>
+				<long>Der Typ der Benachrichtigung wenn dieser ausgelöst wird. Dies kann einer der folgenden sein: &quot;Ton&quot; gibt einen Ton wieder ( festgelegt in der &quot;Ton_Datei&quot; Eigenschaft.) &quot;Befehl&quot; welcher einen Befehl ausführt ( festgelegt in der &quot;Befehl&quot; Eigenschaft.)</long>
+			</locale>
+
+			<locale name="es">
+				<short>Tipo de notificación</short>
+				<long>Tipo de notificación a utilizar cuando se active la alarma. Puede ser una de las siguientes: &quot;sound&quot; para reproducir un sonido (especificado en la propiedad &quot;sound_file&quot;) &quot;command&quot; para ejecutar un comando (especificado en la propiedad &quot;command&quot;)</long>
+			</locale>
+
+			<locale name="fi">
+				<short>Huomautuksen tyyppi</short>
+				
+			</locale>
+
+			<locale name="fo">
+				<short>Fráboðanar snið</short>
+				
+			</locale>
+
+			<locale name="fr">
+				<short>Type de notification</short>
+				<long>Le type de notification à utiliser lorsque l&apos;alarme se déclenche. Cela peut être l&apos;un des types de notifications suivants : &quot;son&quot; pour lire un son (spécifié dans la propriété &quot;sound_file&quot;), &quot;commande&quot; pour exécuter une commande (spécifiée dans la propriété &quot;commande&quot;)</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Tipo de notificación.</short>
+				<long>Tipo de notificación para usar cando a alarma se apaga. Isto pode ser un dos seguintes: «son» para reproducir un son (especificado na propiedade «Ficheiro_de_son») «orde» para executar unha orde (especificado na propiedade «orde»)</long>
+			</locale>
+
+			<locale name="he">
+				<short>Notification Type</short>
+				<long>The type of notification to use when the alarm goes off. This can be one of the following: &quot;sound&quot; to play a sound (specified in the &quot;sound_file&quot; property.) &quot;command&quot; to run a command (specified in the &quot;command&quot; property.)</long>
+			</locale>
+
+			<locale name="hi">
+				<short>अधिसूचना प्रकार</short>
+				<long>अलार्म बजने पर अधिसूचना का प्रकार. यह निम्न में से एक हो सकता है: ध्वनि बजाने के लिए &quot;ध्वनि&quot; (ध्वनि फाइल मे निर्दिष्ट ). कमांड चलाने के लिए &quot;कमांड&quot; (कमांड में निर्दिष्ट)</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Figyelmeztetés típusa</short>
+				<long>Figyelmeztetés típusa, amikor a riasztás elkezdődik. Ezek a következők lehetnek: &quot;hang &quot; valamilyen hang lejátszásához (paraméterezve a &quot;sound_file&quot;-ban.), &quot;parancs&quot; valamilyen parancs futtatásához (paraméterezve a &quot;command&quot;-ban)</long>
+			</locale>
+
+			<locale name="id">
+				<short>Jenis Pemberitahuan</short>
+				<long>Tipe pemberitahuan yang dipakai ketika alarm terjadi. Ini bisa salah satu dari: &quot;sound&quot; (suara) untuk memainkan suatu suara (dinyatakan dalam properti &quot;sound_file&quot;), &quot;command&quot; (perintah) untuk menjalankan suatu perintah (dinyatakan dalam properti &quot;command&quot;).</long>
+			</locale>
+
+			<locale name="ja">
+				<short>通知の種類</short>
+				<long>アラームが起動したときの通知の種類。次のいずれか1つです： &quot;sound&quot; は &quot;sound_file&quot; プロパティで指定した音ファイルを再生します。 &quot;command&quot; は &quot;command&quot; プロパティで指定したコマンドを実行します。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>შეტყობინების ტიპი</short>
+				<long>მოქმედება მაღვიძარის ჩართვისას. აირჩიეთ ერთ-ერთი: ხმოვანი ფაილის დაკვრა (უნდა მიუთითოთ &quot;sound_file&quot; ), ან ბრძანების შესრულება (მიუთითებთ ველში &quot;ბრძანება&quot;)</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Jenis Pemberitahuan</short>
+				<long>Jenis notifikasi untuk digunakan bila penggera berbunyi. Ini boleh dilakukan dengan cara: &quot;sound&quot; untuk main bunyi (dinyatakan dalam properti &quot;sound_file&quot;). &quot;command&quot; untuk jalan perintah (dinyatakan dalam properti &quot;command&quot;).</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Varslingstype</short>
+				<long>Notifiseringstypen som skal brukes når alarmen går av. Denne kan være en av følgende: &quot;sound&quot; for å spille en lyd (spesifisert i &quot;sound_file&quot; innstillingen.) &quot;command&quot; for å kjøre en kommando (spesifisert i &quot;command&quot; innstillingen.)</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Notificatie type</short>
+				
+			</locale>
+
+			<locale name="nn">
+				<short>Varslingstype</short>
+				<long>Notifiseringstypen som skal nyttast når varslinga går av. Vel ein av disse: &quot;sound&quot; for å spille ein lyd (spesifisert i &quot;sound_file&quot;-innstillinga), &quot;command&quot; for å køyre ein kommando (spesifisert i &quot;command&quot;-innstillinga).</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Typ powiadomienia</short>
+				<long>Typ powiadomienia po wyłączeniu alarmu.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Tipo de notificação</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Tipo de Notificação</short>
+				<long>Tipo de notificação a ser usado quando o alarme tocar.  Pode ser um dos seguintes: &quot;som&quot; para tocar um som (especificado na propriedade &quot;arquivo_de_som&quot;), &quot;comando&quot; para executar uma instrução (especificada na propriedade &quot;comando&quot;).</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Тип оповещения</short>
+				<long>Что делать при срабатывании будильника? Выберите один из вариантов: проиграть звук (указывается в настройке &quot;звуковой_файл&quot;) или выполнить команду (указывается в настройке &quot;команда&quot;).</long>
+			</locale>
+
+			<locale name="si">
+				<short>නිවේදන වර්ගය</short>
+				<long>නිවේදන වර්ගය අනුව සංඥාව පැමිණීම.</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Meddelandetyp</short>
+				
+			</locale>
+
+			<locale name="tr">
+				<short>Bildirim Türü</short>
+				<long>Alarm çalıştığında kullanılacak bildirim yöntemi. Bir ses dosyası çalınacak ise &quot;ses&quot; (&quot;sound_file&quot; özelliğinde belirtildiği üzere), bir komut koşulacak ise &quot;komut&quot; (&quot;komut&quot; özelliğinde belirtildiği gibi) olabilir.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Тип сповіщення</short>
+				<long>Яким чином активувати будильник? Оберіть один з варіантів: відтворити звук (вказаний у параметрі &quot;sound_file&quot; звуковий файл) або виконати команду (вказану у параметрі &quot;command&quot;)</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>通知类型</short>
+				<long>闹钟起闹时的通知类型。可以是下列之一：“响铃” 播放一个声音文件(在“声音文件”属性中指定。) “命令” 运行一个命令(在“命令”属性中指定。)</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>提醒方式</short>
+				<long>鬧鐘設定的時間到達時的提醒方式，可以是以下方式之一：「聲音」→播放聲音 (在「聲音檔案(_F)」處做設定)、「指令」→執行指令 (在「指令」處做設定)</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/sound_file</key>
+	      	<owner>alarm-clock</owner>
+			<type>string</type>
+			<default></default>
+			<locale name="C">
+				<short>Sound File</short>
+				<long>The sound file to play for the "sound" notification type.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>ملف الصوت</short>
+				<long>نوع ملف الصوت المستخدم للتنبيه.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Ficheru de soníu</short>
+				<long>Soníu a reproducir pa la triba de notificación «soníu».</long>
+			</locale>
+
+			<locale name="be">
+				<short>Гукавы файл</short>
+				<long>Гукавы файл для прайграваньня ў рэжыме «мелодыя»</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Аудио файл</short>
+				<long>Звуков файл, който да бъде възпроизведен за типа известяване &quot;звук&quot;.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Arxiu de so</short>
+				<long>Arxiu de so per reproduir pel tipus de &quot;sound&quot; de notificació.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Zvukový soubor</short>
+				
+			</locale>
+
+			<locale name="da">
+				<short>Lydfil</short>
+				<long>Lydfilen som skal afspilles for en &quot;sound&quot;-varsling.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Klangdatei</short>
+				<long>Der Ton zur Wiedergabe bei Benachrichtigungstyp mit Ton.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Archivo de sonido</short>
+				<long>Sonido a reproducir en el tipo de notificación de &quot;sonido&quot;.</long>
+			</locale>
+
+			<locale name="et">
+				<short>Helifail</short>
+				
+			</locale>
+
+			<locale name="fi">
+				<short>Äänitiedosto</short>
+				
+			</locale>
+
+			<locale name="fo">
+				<short>Ljóðfíla</short>
+				
+			</locale>
+
+			<locale name="fr">
+				<short>Fichier sonore</short>
+				<long>Le fichier audio à jouer pour une notification de type &quot;son&quot;.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Ficheiro de son</short>
+				<long>Ficheiro de son para reproducir no tipo de notificación «son»</long>
+			</locale>
+
+			<locale name="he">
+				<short>Sound File</short>
+				<long>The sound file to play for the &quot;sound&quot; notification type.</long>
+			</locale>
+
+			<locale name="hi">
+				<short>ध्वनि फ़ाइल</short>
+				<long>&quot;ध्वनि&quot; अधिसूचना प्रकार के लिए ध्वनि फ़ाइल.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Hangfájl</short>
+				<long>Hang fájl beállítása a &quot;hang&quot; riasztás típushoz.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Berkas Suara</short>
+				<long>Berkas suara untuk dimainkan bagi tipe pemberitahuan &quot;suara&quot;.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>アラーム音のファイル</short>
+				<long>&quot;sound&quot; 通知のときに再生される音ファイル。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>ხმოვანი ფაილი</short>
+				<long>დასაკვრელი ხმოვანი ფაილი &quot;ხმოვანი&quot; შეტყობინებისათვის.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Fail Bunyi</short>
+				<long>Fail bunyi untuk main bagi jenis notifikasi &quot;sound&quot;.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Lydfil</short>
+				<long>Lydfilen som skal spilles for &quot;sound&quot;-varsling.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Geluidsbestand</short>
+				<long>Het af te spelen geluidsbestand voor het &quot;geluid&quot; notificatie type.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Lydfil</short>
+				<long>Lydfilen som skal spelast for &quot;sound&quot;-varsling.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Plik dźwiękowy</short>
+				<long>Plik dźwiękowy dla powiadomienia dźwiękowego.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Ficheiro de Som</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Arquivo de Som</short>
+				<long>O arquivo de som a ser tocado quando o tipo de notificação for &quot;Som&quot;.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Звуковой файл</short>
+				<long>Звуковой файл для проигрывания в режиме &quot;звук&quot;.</long>
+			</locale>
+
+			<locale name="si">
+				<short>ශබ්ද ගොනුව</short>
+				<long>ශබ්ද ගොනුව ශබ්ද නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Ljudfil</short>
+				
+			</locale>
+
+			<locale name="tr">
+				<short>Ses Dosyası</short>
+				<long>&quot;Ses&quot; bildirimi için çalınacak ses dosyası.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Звуковий файл</short>
+				<long>Звуковий файл для відтворення у режимі «звук»</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>声音文件</short>
+				<long>“响铃”通知类型下要播放的声音文件。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>聲音檔案</short>
+				<long>用於「聲音」提醒類型要播放的聲音檔案。</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/sound_repeat</key>
+	      	<owner>alarm-clock</owner>
+			<type>bool</type>
+			<default>true</default>
+			<locale name="C">
+				<short>Repeat Sound</short>
+				<long>Whether to repeat the alarm sound.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>تكرار الصوت</short>
+				<long>سواء لإعادة تشغيل صوت التنبيه.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Repetir soníu</short>
+				<long>Si se tien de repetir el soníu d&apos;alarma.</long>
+			</locale>
+
+			<locale name="be">
+				<short>Паўтор мелодыі</short>
+				<long>Ці паўтараць мелодыю нагадваньня.</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Повторение на звука</short>
+				<long>Дали да се повтаря звука на алармата.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Repeteix el so.</short>
+				<long>Repeticions de l&apos;alarma sonora.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Opakovat zvuk</short>
+				<long>Jestli opakovat zvuk budíku.</long>
+			</locale>
+
+			<locale name="da">
+				<short>Gentag lyd</short>
+				<long>Om alarmlyden skal gentages.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Klang wiederholen</short>
+				<long>Ob der Alarm Ton wiederholt werden soll.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Repetir sonido</short>
+				<long>Repetición del sonido de la alarma.</long>
+			</locale>
+
+			<locale name="fi">
+				<short>Toista ääni</short>
+				<long>Toistetaanko herätysääni.</long>
+			</locale>
+
+			<locale name="fo">
+				<short>Endurtøku ljóð</short>
+				<long>Um vekjaraljóðurin skal endurtakast.</long>
+			</locale>
+
+			<locale name="fr">
+				<short>Répéter le Son</short>
+				<long>Si il faut répéter le son de l&apos;alarme.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Repetir son</short>
+				<long>Se se repite o son da alarma</long>
+			</locale>
+
+			<locale name="he">
+				<short>Repeat Sound</short>
+				<long>Whether to repeat the alarm sound.</long>
+			</locale>
+
+			<locale name="hi">
+				<short>ध्वनि दोहराएँ</short>
+				<long>क्या अलार्म ध्वनि दोहराई जानी चाहिए ?</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Hang ismétlése</short>
+				<long>Ismételje-e a riasztási hangot.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Ulangi Suara</short>
+				<long>Apakah akan mengulang suara alarm.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>リピートの音</short>
+				<long>アラーム音を連続再生するかどうか</long>
+			</locale>
+
+			<locale name="ka">
+				<short>ხმის გამეორება</short>
+				<long>მაღვიძარის ხმის გამეორება.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Ulang Bunyi</short>
+				<long>Sama ada untuk diulangi bunyi penggera.</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Repeter Lyd</short>
+				<long>Om alarmlyden skal gjentas.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Herhaal geluid</short>
+				<long>Of het alarm herhaald moet worden.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Gjenta lyd</short>
+				<long>Om varslingslyden skal gjentakast.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Powtarzanie dźwięku</short>
+				<long>Powtarzaj alarm dźwiękowy</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Repetir Som</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Som de repetição</short>
+				<long>Especificar se se deve repetir o som do alarme.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Повтор сигнала</short>
+				<long>Повторять звук будильника</long>
+			</locale>
+
+			<locale name="si">
+				<short>ශබ්ද නැවත කියවීම</short>
+				<long>එක්කෝ සංඥා ශබ්දය නැවත කියවීම</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Upprepa ljud</short>
+				<long>Om alarmljudet ska upprepas.</long>
+			</locale>
+
+			<locale name="tr">
+				<short>Sesi Tekrarla</short>
+				<long>Alarm sesinin tekrar edip etmeyeceği.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Повторювати сигнал</short>
+				<long>Повторювати звук будильника</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>重复响铃</short>
+				<long>是否要重复闹钟响铃。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>重播聲音</short>
+				<long>是否重複播放聲音。</long>
+			</locale>
+		</schema>
+		
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/alarm/command</key>
+	      	<owner>alarm-clock</owner>
+			<type>string</type>
+			<default>rhythmbox-client --play</default>
+			<locale name="C">
+				<short>Command</short>
+				<long>The command to run for the "command" notification type.</long>
+			</locale>
+
+			<locale name="ar">
+				<short>أمر</short>
+				<long>نوع الامر المستخدم لتنفيذ نوع التنبيه.</long>
+			</locale>
+
+			<locale name="ast">
+				<short>Comandu</short>
+				<long>Comandu a executar pa la triba de notificación «comandu».</long>
+			</locale>
+
+			<locale name="be">
+				<short>Загад</short>
+				<long>Загад для «загаднага» нагадваньня</long>
+			</locale>
+
+			<locale name="bg">
+				<short>Команда</short>
+				<long>Командата, която трябва да се изпълни за тип известяване  &quot;команда&quot;.</long>
+			</locale>
+
+			<locale name="ca">
+				<short>Comanda</short>
+				<long>El comandament per executar el  tipus de &quot;command&quot; de notificació.</long>
+			</locale>
+
+			<locale name="cs">
+				<short>Příkaz</short>
+				
+			</locale>
+
+			<locale name="da">
+				<short>Kommando</short>
+				<long>Kommandoen som skal køres for en &quot;command&quot;-varsling.</long>
+			</locale>
+
+			<locale name="de">
+				<short>Befehl</short>
+				<long>Der auszuführende Befehl bei Benachrichtigungenstyp mit Befehl.</long>
+			</locale>
+
+			<locale name="es">
+				<short>Orden</short>
+				<long>Orden para ejecutar en el tipo de notificación &quot;orden&quot;.</long>
+			</locale>
+
+			<locale name="et">
+				<short>Käsklus</short>
+				
+			</locale>
+
+			<locale name="fi">
+				<short>Komento</short>
+				
+			</locale>
+
+			<locale name="fo">
+				<short>Boð</short>
+				
+			</locale>
+
+			<locale name="fr">
+				<short>Commande</short>
+				<long>La commande à exécuter pour les alertes de type &apos;commande&apos;.</long>
+			</locale>
+
+			<locale name="gl">
+				<short>Orde</short>
+				<long>Otde para executar polo tipo de notificación «orde»</long>
+			</locale>
+
+			<locale name="he">
+				<short>Command</short>
+				<long>The command to run for the &quot;command&quot; notification type.</long>
+			</locale>
+
+			<locale name="hi">
+				<short>निर्देश</short>
+				<long>कमांड &quot;कमांड&quot; अधिसूचना प्रकार के को चलाने के लिए.</long>
+			</locale>
+
+			<locale name="hu">
+				<short>Parancs</short>
+				<long>Parancs szerkesztése a &quot;parancs&quot; riasztás típus futtatásához.</long>
+			</locale>
+
+			<locale name="id">
+				<short>Perintah</short>
+				<long>Perintah yang dijalankan bagi tipe pemberitahuan &quot;perintah&quot;.</long>
+			</locale>
+
+			<locale name="ja">
+				<short>コマンド</short>
+				<long>&quot;command&quot; 通知のときに実行されるコマンド。</long>
+			</locale>
+
+			<locale name="ka">
+				<short>ბრძანება</short>
+				<long>შესასრულებელი ბრძანება &quot;ბძანების&quot; შეტყობინებისათვის.</long>
+			</locale>
+
+			<locale name="ms">
+				<short>Arahan</short>
+				<long>Perintah untuk jalan bagi jenis notifikasi &quot;command&quot;</long>
+			</locale>
+
+			<locale name="nb">
+				<short>Kommando</short>
+				<long>Kommandoen som skal kjøres for &quot;command&quot;-varsling.</long>
+			</locale>
+
+			<locale name="nl">
+				<short>Actie</short>
+				<long>De uit te voeren actie voor het &quot;command&quot; notificatie type.</long>
+			</locale>
+
+			<locale name="nn">
+				<short>Kommando</short>
+				<long>Kommandoen som skal kjøyrast for &quot;command&quot;-varsling.</long>
+			</locale>
+
+			<locale name="pl">
+				<short>Polecenie</short>
+				<long>Komenda dla powiadomienia typu &quot;komenda&quot;.</long>
+			</locale>
+
+			<locale name="pt">
+				<short>Comando</short>
+				
+			</locale>
+
+			<locale name="pt_BR">
+				<short>Comando</short>
+				<long>O comando a ser executado quando o tipo de notificação for &quot;Comando&quot;.</long>
+			</locale>
+
+			<locale name="ru">
+				<short>Команда</short>
+				<long>Выполнить команду (если настроено выполнение команды)</long>
+			</locale>
+
+			<locale name="si">
+				<short>විධානය</short>
+				<long>&quot;විධානය&quot; නිවේදන වර්ගය ක්‍රියාත්මක කිරිමට</long>
+			</locale>
+
+			<locale name="sv">
+				<short>Kommando</short>
+				
+			</locale>
+
+			<locale name="tr">
+				<short>Komut</short>
+				<long>&quot;Komut&quot; bildirim türü için çalıştırılacak komut.</long>
+			</locale>
+
+			<locale name="uk">
+				<short>Команда</short>
+				<long>Виконати команду (якщо налагоджено)</long>
+			</locale>
+
+			<locale name="zh_CN">
+				<short>命令</short>
+				<long>“命令”通知类型下要运行的命令。</long>
+			</locale>
+
+			<locale name="zh_TW">
+				<short>指令</short>
+				<long>用於「指令」提醒類型要執行的指令。</long>
+			</locale>
+		</schema>
+		
+		<!--
+		<schema>
+	      	<key>/schemas/apps/alarm-clock/prefs/</key>
+	      	<owner>alarm-clock</owner>
+			<type></type>
+			<default></default>
+			<locale name="C">
+				<short></short>
+				<long></long>
+			</locale>
+		</schema>
+		-->
+	</schemalist>
+</gconfschemafile>
+		
+		

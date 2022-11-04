@@ -525,7 +525,7 @@ void alarm_applet_activate(GtkApplication* app, gpointer user_data)
         return;
     }
 
-#if 1
+#ifdef ENABLE_GCONF_MIGRATION
     // Call the GConf -> GSettings migration utility
     if(!g_spawn_command_line_sync("alarm-clock-applet-gconf-migration", NULL, NULL, NULL, NULL))
         g_spawn_command_line_sync("./gconf-migration/alarm-clock-applet-gconf-migration", NULL, NULL, NULL, NULL);

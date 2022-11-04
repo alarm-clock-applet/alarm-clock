@@ -142,6 +142,12 @@ install(
         "execute_process(COMMAND glib-compile-schemas \"${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas/\")"
 )
 
+add_custom_target(compile_gsettings_schema
+    COMMAND
+        glib-compile-schemas "${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas/"
+)
+add_dependencies(uninstall compile_gsettings_schema)
+
 # Icons
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/icons/icons"
     DESTINATION "share"
@@ -159,13 +165,10 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/icons/icons"
 # 3.12 first introduced TOUCH, and Ubuntu 18.04 has 3.10
 install(
     CODE
-    "file(WRITE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\" \"\")
-    file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\")"
+        "file(WRITE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\" \"\")
+        file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\")"
 )
 
-# Uninstall target
-add_custom_target(uninstall
-    COMMAND xargs -r -t rm -f < "${CMAKE_BINARY_DIR}/install_manifest.txt"
-)
-
-add_dependencies(alarm-clock-applet alarm-clock-applet-gconf-migration)
+if(ENABLE_GCONF_MIGRATION)
+    add_dependencies(alarm-clock-applet alarm-clock-applet-gconf-migration)
+endif()
