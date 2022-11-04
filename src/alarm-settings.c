@@ -601,7 +601,6 @@ void alarm_settings_changed_notify_type(GtkToggleButton* togglebutton, gpointer 
     AlarmSettingsDialog* dialog = applet->settings_dialog;
 
     const gchar* name = gtk_buildable_get_name(GTK_BUILDABLE(togglebutton));
-    ;
     gboolean value = gtk_toggle_button_get_active(togglebutton);
 
     if(!value) {
