@@ -243,9 +243,7 @@ static gchar* gnome_da_xml_get_string(const xmlNode* parent, const gchar* val_na
     g_return_val_if_fail(parent->children != NULL, ret_val);
     g_return_val_if_fail(val_name != NULL, ret_val);
 
-#if GLIB_CHECK_VERSION(2, 6, 0)
     sys_langs = g_get_language_names();
-#endif
 
     xml_val_name = xmlCharStrdup(val_name);
     len = xmlStrlen(xml_val_name);
