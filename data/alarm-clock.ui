@@ -12,11 +12,13 @@
     <property name="type_hint">normal</property>
     <property name="program_name">Alarm Clock</property>
     <property name="version">0.0.0</property>
-    <property name="copyright">© 2007-2015 Johannes H. Jensen</property>
+    <property name="copyright">© 2007-2015 Johannes H. Jensen
+© 2022 Tasos Sahanidis</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
-    <property name="website">http://alarm-clock.pseudoberries.com/</property>
-    <property name="website_label">alarm-clock.pseudoberries.com</property>
+    <property name="website">https://alarm-clock-applet.github.io/</property>
+    <property name="website_label">alarm-clock-applet.github.io</property>
     <property name="authors">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;
+Tasos Sahanidis &lt;code@tasossah.com&gt;
 
 Contributors:
 Arnaud Soyez &lt;weboide@codealpha.net&gt;
