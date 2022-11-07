@@ -14,10 +14,12 @@ target_include_directories(alarm-clock-applet-gconf-migration PRIVATE
     ${GIO_INCLUDE_DIRS}
 )
 
-target_link_directories(alarm-clock-applet-gconf-migration PRIVATE
-    ${GCONF2_LIBRARY_DIRS}
-    ${GIO_LIBRARY_DIRS}
-)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.13")
+    target_link_directories(alarm-clock-applet-gconf-migration PRIVATE
+        ${GCONF2_LIBRARY_DIRS}
+        ${GIO_LIBRARY_DIRS}
+    )
+endif()
 
 install(
     TARGETS alarm-clock-applet-gconf-migration

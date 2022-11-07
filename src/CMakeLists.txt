@@ -26,7 +26,12 @@ set_property(TARGET alarm-clock-applet PROPERTY C_STANDARD 11)
 
 target_compile_options(alarm-clock-applet PRIVATE ${GTK3_CFLAGS_OTHER})
 
-target_link_options(alarm-clock-applet PRIVATE "-rdynamic")
+# Really awful hack
+if(CMAKE_VERSION VERSION_LESS "3.13")
+    target_link_libraries(alarm-clock-applet PRIVATE "-rdynamic")
+else()
+    target_link_options(alarm-clock-applet PRIVATE "-rdynamic")
+endif()
 
 target_link_libraries(alarm-clock-applet PRIVATE
     ${GTK3_LIBRARIES}
@@ -44,13 +49,15 @@ target_include_directories(alarm-clock-applet PRIVATE
     ${APPINDICATOR_INCLUDE_DIRS}
 )
 
-target_link_directories(alarm-clock-applet PRIVATE
-    ${GTK3_LIBRARY_DIRS}
-    ${GST_LIBRARY_DIRS}
-    ${LIBXML2_LIBRARY_DIRS}
-    ${LIBNOTIFY_LIBRARY_DIRS}
-    ${APPINDICATOR_LIBRARY_DIRS}
-)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.13")
+    target_link_directories(alarm-clock-applet PRIVATE
+        ${GTK3_LIBRARY_DIRS}
+        ${GST_LIBRARY_DIRS}
+        ${LIBXML2_LIBRARY_DIRS}
+        ${LIBNOTIFY_LIBRARY_DIRS}
+        ${APPINDICATOR_LIBRARY_DIRS}
+    )
+endif()
 
 # All generated files will go to build/src, so include it
 target_include_directories(alarm-clock-applet PRIVATE
