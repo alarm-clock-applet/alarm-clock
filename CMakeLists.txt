@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 cmake_minimum_required(VERSION 3.10)
 
 project("alarm-clock-applet" VERSION 0.4.0)

@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * alarm-clock-gconf-migration.c -- GConf to GSettings migration
+ *
+ * Copyright (C) 2022 Tasos Sahanidis <code@tasossah.com>
+ */
+
 #include <glib.h>
 #include <gio/gio.h>
 #include <gconf/gconf-client.h>

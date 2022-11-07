@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 find_package(LibXml2 REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)

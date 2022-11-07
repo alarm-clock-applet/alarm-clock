@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * alarm-enums.h -- Enums used for alarms
+ *
+ * Copyright (C) 2022 Tasos Sahanidis <code@tasossah.com>
+ */
+
 typedef enum {
     ALARM_TYPE_INVALID = 0,
     ALARM_TYPE_CLOCK, /* Alarm at specific time */

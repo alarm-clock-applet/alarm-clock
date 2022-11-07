@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 set(POTFILE "alarm-clock-applet.pot")
 
 # Dummy target for LINGUAS to force regeneration

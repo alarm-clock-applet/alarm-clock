@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 pkg_check_modules(GCONF2 REQUIRED gconf-2.0)
 pkg_check_modules(GIO REQUIRED gio-2.0)
 
