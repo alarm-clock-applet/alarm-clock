@@ -1,0 +1,37 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: alarm-clock-applet
+Upstream-Contact: Tasos Sahanidis <tasos@tasossah.com>
+Source: https://alarm-clock-applet.github.io/
+
+Files: *
+Copyright: 2007-2008, 2010, Johannes H. Jensen <joh@pseudoberries.com>
+           2022, Tasos Sahanidis <tasos@tasossah.com>
+License: GPL-2+
+
+Files: data/icons/*
+Copyright: Lasse Gullvåg Sætre <lassegs@gmail.com>
+License: GPL-2+
+
+Files: debian/*
+Copyright: 2008, Johannes H. Jensen <joh@pseudoberries.com>
+           2009-2012, Chow Loong Jin <hyperair@debian.org>
+           2022, Tasos Sahanidis <tasos@tasossah.com>
+License: GPL-2+
+
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this package; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in `/usr/share/common-licenses/GPL-2'.

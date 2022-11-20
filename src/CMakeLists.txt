@@ -82,7 +82,7 @@ install(
     FILES
         "${CMAKE_SOURCE_DIR}/data/alarm-clock.ui"
         "${CMAKE_SOURCE_DIR}/data/alarm-clock.css"
-    DESTINATION "share/alarm-clock-applet/"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/alarm-clock-applet/"
 )
 
 # Desktop shortcut
@@ -100,7 +100,7 @@ add_custom_command(OUTPUT "alarm-clock-applet.desktop"
 install(
     FILES
         "${CMAKE_BINARY_DIR}/src/alarm-clock-applet.desktop"
-    DESTINATION "share/applications/"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications/"
 )
 
 # Autostart
@@ -133,7 +133,7 @@ install(
     FILES
         "${CMAKE_SOURCE_DIR}/data/io.github.alarm-clock-applet.gschema.xml"
         "${CMAKE_BINARY_DIR}/src/io.github.alarm-clock-applet.enums.gschema.xml"
-    DESTINATION "share/glib-2.0/schemas/"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/glib-2.0/schemas/"
 )
 
 # Generate enums from header
@@ -173,18 +173,18 @@ add_custom_command(OUTPUT "alarm-glib-enums.h"
 
 install(
     CODE
-        "execute_process(COMMAND glib-compile-schemas \"${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas/\")"
+        "execute_process(COMMAND glib-compile-schemas \"${CMAKE_INSTALL_FULL_DATAROOTDIR}/glib-2.0/schemas/\")"
 )
 
 add_custom_target(compile_gsettings_schema
     COMMAND
-        glib-compile-schemas "${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas/"
+        glib-compile-schemas "${CMAKE_INSTALL_FULL_DATAROOTDIR}/glib-2.0/schemas/"
 )
 add_dependencies(uninstall compile_gsettings_schema)
 
 # Icons
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/icons/icons"
-    DESTINATION "share"
+    DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}"
     FILE_PERMISSIONS
     OWNER_READ OWNER_WRITE
     GROUP_READ
@@ -199,8 +199,10 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/data/icons/icons"
 # 3.12 first introduced TOUCH, and Ubuntu 18.04 has 3.10
 install(
     CODE
-        "file(WRITE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\" \"\")
-        file(REMOVE \"${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\")"
+        "if(NOT DEFINED ENV{DESTDIR})
+            file(WRITE \"\${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\" \"\")
+            file(REMOVE \"\${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/.xdg-icon-resource-dummy\")
+        endif()"
 )
 
 if(ENABLE_GCONF_MIGRATION)

@@ -3,3 +3,10 @@ build/
 alarm-clock*tar.gz*
 *~
 *#
+obj-*
+.debhelper/
+*.debhelper.log
+*.substvars
+*-build-stamp
+debian/alarm-clock-applet
+debian/files

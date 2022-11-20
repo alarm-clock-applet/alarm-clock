@@ -1,0 +1,183 @@
+alarm-clock-applet (0.4.0) unstable; urgency=medium
+
+  * New upstream release 0.4.0
+
+ -- Tasos Sahanidis <tasos@tasossah.com>  Sun, 20 Nov 2022 18:22:20 +0200
+
+alarm-clock-applet (0.3.4-1) unstable; urgency=medium
+
+  * [0499cae] Fix debian/watch.
+    Launchpad URLs have changed again.
+  * [3becb10] Imported Upstream version 0.3.4
+  * [9a0d479] Update gstreamer deps
+  * [74a4d3e] No-change bump of Standards-Version to 3.9.6
+  * [6ddde20] Improve short description
+
+ -- Chow Loong Jin <hyperair@debian.org>  Tue, 19 May 2015 13:51:08 +0800
+
+alarm-clock-applet (0.3.3-1) unstable; urgency=low
+
+  * [05ffad2] New upstream bugfix release:
+    - Automatically detect daylight savings time (LP: #290733)
+    - Let the WM decide the initial position of the list window (LP: #800635)
+    - Check that media player was created successfully (LP: #823585)
+    - Don't show notifications when alarms are stopped/snoozed (LP: #908636)
+    - Update timestamp when type is changed for active alarms (LP: #885059)
+    - Use segment seeks to prevent playback delays when looping (LP: #977110)
+    - Enable alarm when closing the Edit alarm dialog (LP: #824337)
+  * [c6f6846] Drop upstreamed Set-appindicator-title.patch
+  * [6901288] Bump debhelper compat level to 9 for buildflags
+  * [224a210] Drop redundant clean rule
+  * [600f7b3] Don't override LDFLAGS directly.
+    Use DEB_LDFLAGS_MAINT_APPEND instead to append --as-needed stuff, as per the
+    dpkg-buildflags manpage.
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 04 Jun 2012 04:38:46 +0800
+
+alarm-clock-applet (0.3.2-3ubuntu2) quantal; urgency=low
+
+  * [7f8361d] Add patch to set appindicator title (LP: #992148)
+  * [954b717] Bump Standards-Version to 3.9.3
+    - Update debian/copyright format URL
+
+ -- Chow Loong Jin <hyperair@debian.org>  Tue, 01 May 2012 03:33:53 +0800
+
+alarm-clock-applet (0.3.2-3ubuntu1) precise; urgency=low
+
+  * [293a87a] Merge from Debian unstable, remaining changes:
+    + [67ffb6e] Add appindicator support
+
+ -- Chow Loong Jin <hyperair@debian.org>  Sun, 01 Apr 2012 02:20:35 +0800
+
+alarm-clock-applet (0.3.2-3) unstable; urgency=low
+
+  * [db69482] Change from "--hide" to "--hidden" in autostart desktop file.
+    Thanks to bojo42 (LP: #877037)
+
+ -- Chow Loong Jin <hyperair@debian.org>  Sun, 01 Apr 2012 01:53:08 +0800
+
+alarm-clock-applet (0.3.2-2ubuntu1) precise; urgency=low
+
+  * [01603b4] Merge from Debian Unstable, remaining changes:
+    + [67ffb6e] Add appindicator support
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 09 Jan 2012 12:02:08 +0800
+
+alarm-clock-applet (0.3.2-2) unstable; urgency=low
+
+  * [ba5585c] Add missing period to package description.
+    Thanks to Paul Stewart <paulbrianstewart@gmail.com> (LP: #830806)
+  * [a48460e] Add --hide option to autostart desktop file (LP: #877037)
+  * [63a9f44] Add gstreamer dependencies.
+    This should fix segfaults to do with not being able to create a media player
+    (Closes: #626364)
+  * [7eb7fbc] Update maintainer email address
+  * [294a018] Update copyright to DEP-5 format
+  * [1a1883d] No-change Standards-Version bump (3.9.1 → 3.9.2)
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 09 Jan 2012 11:41:59 +0800
+
+alarm-clock-applet (0.3.2-1ubuntu1) oneiric; urgency=low
+
+  * [67ffb6e] Add appindicator support
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Wed, 03 Aug 2011 12:56:52 +0800
+
+alarm-clock-applet (0.3.2-1) unstable; urgency=low
+
+  [ Chow Loong Jin ]
+  * [48e1cb8] New upstream release:
+    + New features:
+      - Add support for application indicators
+      - Countdown label for application indicator
+      - New status icon indicating triggered alarms
+    + Bugs fixed:
+      - Add countdown label (for application indicator) (LP: #565302)
+      - Create ~/.config/autostart if it doesn't exist (LP: #610632)
+      - Add support for libnotify 0.7 (LP: #671962)
+      - Properly stop triggered alarms that are not playing sound (LP: #682999)
+      - Add support for application indicators (LP: #704956)
+      - Clicking on status icon should bring up list instead of snoozing
+        (LP: #706832)
+    + Translation updates:
+      - ar, courtesy of Ahmed Mohammed
+      - ast, courtesy of Xuacu Saturio <xuacusk8@gmail.com>
+      - be, courtesy of Mikola Tsekhan <mail@tsekhan.com>
+      - ca, courtesy of I. De Marchi
+      - cs, courtesy of Oliwer <linuch@centrum.cz>
+      - de, courtesy of Christoph Wickert
+      - es, courtesy of Fitoschido <fitoschido@gmail.com>
+      - et, courtesy of Tarmo Ilves <tarmo.ilves.001@mail.ee>
+      - fi, courtesy of Jiri Grönroos
+      - fo, courtesy of Gunleif Joensen
+      - fr, courtesy of Nicolas Delvaux
+      - gl, courtesy of Miguel Anxo Bouzada <mbouzada@gmail.com>
+      - he, courtesy of Yaron <sh.yaron@gmail.com>
+      - hu, courtesy of Papp Bence <papp.bence89@gmail.com>
+      - id, courtesy of Arief Setiadi Wibowo <q_thrynx@yahoo.com>
+      - ja, courtesy of jugger Yamamoto
+      - ka, courtesy of Giorgi Maghlakelidze <acidlabz@gmail.com>
+      - la, courtesy of nivek1385 <nivek1385@yeltrahnivek.com>
+      - nb, courtesy of Johannes H. Jensen <joh@pseudoberries.com>
+      - nl, courtesy of Rachid
+      - pl, courtesy of XeonBloomfield
+      - pt_BR, courtesy of André Gondim <andregondim@ubuntu.com>
+      - ru, courtesy of Сергій Матрунчик (SkyMan)
+      - tr, courtesy of Burak Ilgıcıoğlu
+      - uk, courtesy of Сергій Матрунчик (SkyMan)
+      - zh_CN, courtesy of Lele Long <schemacs@gmail.com>
+      - zh_TW, courtesy of Cheng-Chia Tseng <pswo10680@gmail.com>
+  * [002292e] Drop README.source since we use debsrc3.0
+  * [8dbb35e] No-change Standards-Version (3.8.4 → 3.9.1)
+  * [45f456f] Drop override_dh_auto_install (no longer needed)
+
+  [ Peter Pentchev ]
+  * [e8eaaa5] Fix a typo in the get-orig-source target.
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Tue, 29 Mar 2011 00:25:40 +0800
+
+alarm-clock-applet (0.3.1-1) unstable; urgency=low
+
+  * New upstraem release
+  * debian/alarm-clock-applet.links:
+    + Link alarm-clock-applet.desktop into /etc/xdg/autostart to make it
+      start up automatically (Closes: #577276)
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Wed, 19 May 2010 00:26:36 +0800
+
+alarm-clock-applet (0.3.0-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control:
+    + No change bump of Standards-Version to 3.8.4
+    + Update build-deps:
+      - Drop libglade, libpanel-applet, libgnomevfs2, libgnome{2,ui}
+      - Add libxml2-dev and libunique-dev, intltool
+  * debian/patches/01_update-alarms-eta,patch:
+    + Dropped, applied upstream
+  * debian/(alarm-clock-applet.1, alarm-clock-applet.manpages):
+    + Add manpage for alarm-clock-applet, now that the binary is moved to
+      /usr/bin.
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Wed, 17 Mar 2010 09:02:44 +0800
+
+alarm-clock-applet (0.2.6-2) unstable; urgency=low
+
+  * debian/watch:
+    + Updated with new alarm clock tarball name
+  * debian/source/format,
+    debian/README.source:
+    + Use 3.0 (quilt) for patches and document it in README.source
+  * debian/patches/01_update-alarms-eta.patch:
+    + return TRUE after alarms_list_update_timer is called to make sure it
+      continues to be called every second (LP: #500600)
+  * debian/control:
+    + No change Standards-Version bump from 3.8.1 to 3.8.3
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Sun, 27 Dec 2009 15:30:59 +0800
+
+alarm-clock-applet (0.2.6-1) unstable; urgency=low
+
+  * Initial release (Closes: #531065)
+
+ -- Chow Loong Jin <hyperair@ubuntu.com>  Sat, 30 May 2009 23:24:27 +0800
