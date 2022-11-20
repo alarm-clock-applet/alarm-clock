@@ -22,6 +22,7 @@ add_executable(alarm-clock-applet
     io.github.alarm-clock-applet.enums.gschema.xml
     alarm-glib-enums.c alarm-glib-enums.h
     alarm-clock-applet.desktop
+    autostart/alarm-clock-applet.desktop
 )
 set_property(TARGET alarm-clock-applet PROPERTY C_STANDARD 11)
 
@@ -100,6 +101,31 @@ install(
     FILES
         "${CMAKE_BINARY_DIR}/src/alarm-clock-applet.desktop"
     DESTINATION "share/applications/"
+)
+
+# Autostart
+# Create a subdir and put the file in there so that we can keep the asme filename
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/src/autostart")
+add_custom_command(OUTPUT "autostart/alarm-clock-applet.desktop"
+    COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
+    --desktop
+    --template "${CMAKE_SOURCE_DIR}/data/alarm-clock-applet_autostart.desktop.in"
+    --output "alarm-clock-applet.desktop"
+    -d "${CMAKE_SOURCE_DIR}/po/"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/src/autostart/"
+    DEPENDS "${CMAKE_SOURCE_DIR}/data/alarm-clock-applet_autostart.desktop.in" translations
+)
+
+# CMAKE_INSTALL_FULL_SYSCONFDIR is /usr/local/etc/ which doesn't work in this case
+set(SYSCONFDIR_XDG "${CMAKE_INSTALL_FULL_SYSCONFDIR}")
+if(SYSCONFDIR_XDG STREQUAL "/usr/local/etc")
+    set(SYSCONFDIR_XDG "/etc")
+endif()
+
+install(
+    FILES
+        "${CMAKE_BINARY_DIR}/src/autostart/alarm-clock-applet.desktop"
+    DESTINATION "${SYSCONFDIR_XDG}/xdg/autostart/"
 )
 
 # GSettings schemas

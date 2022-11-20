@@ -30,7 +30,7 @@ install(
 install(
     FILES
         "alarm-clock.schemas"
-    DESTINATION "etc/gconf/schemas/"
+    DESTINATION "${CMAKE_INSTALL_FULL_SYSCONFDIR}/gconf/schemas/"
 )
 
 set(GCONF_CONFIG_SOURCE "")
