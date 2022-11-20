@@ -9,6 +9,7 @@
 #include <gio/gio.h>
 #include <gconf/gconf-client.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MIGRATED_KEY         "gconf-migrated"
 #define ALARM_GCONF_DIR      "/apps/alarm-clock"
@@ -16,21 +17,26 @@
 
 
 // Because gsettings-data-convert is absolutely broken on Ubuntu (at least 20.04)...
-int main()
+int main(int argc, char** argv)
 {
-    // First check if we have finished the migration
+    int force = (argc == 2 && !strcmp(argv[1], "--force"));
+
     GSettings* settings = g_settings_new("io.github.alarm-clock-applet");
-    GSettingsSchema* schema = NULL;
-    g_object_get(settings, "settings-schema", &schema, NULL);
 
-    // Maybe the key in the schema will be removed at some point in the future
-    // So let's assume that if we can't find the key, or if it's true, then the migration has been completed
-    gboolean migrated = !g_settings_schema_has_key(schema, MIGRATED_KEY) || g_settings_get_boolean(settings, MIGRATED_KEY);
-    g_settings_schema_unref(schema);
+    if(!force) {
+        // First, check if we have finished the migration
+        GSettingsSchema* schema = NULL;
+        g_object_get(settings, "settings-schema", &schema, NULL);
 
-    if(migrated) {
-        g_object_unref(settings);
-        return 0;
+        // Maybe the key in the schema will be removed at some point in the future
+        // So let's assume that if we can't find the key, or if it's true, then the migration has been completed
+        gboolean migrated = !g_settings_schema_has_key(schema, MIGRATED_KEY) || g_settings_get_boolean(settings, MIGRATED_KEY);
+        g_settings_schema_unref(schema);
+
+        if(migrated) {
+            g_object_unref(settings);
+            return 0;
+        }
     }
 
     g_print("Migrating config to GSettings...\n");
