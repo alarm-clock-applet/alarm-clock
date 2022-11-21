@@ -36,7 +36,14 @@ time_t get_alarm_timestamp(guint hour, guint minute, guint second)
 
     // DEBUG:
     char tmp[512];
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-y2k"
+#endif
     strftime(tmp, sizeof(tmp), "%c", tm);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
     g_debug("Alarm will trigger at %s", tmp);
 
     return mktime(tm);
