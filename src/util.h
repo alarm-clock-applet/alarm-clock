@@ -32,7 +32,7 @@ gboolean command_run(const gchar* command);
 gboolean is_executable_valid(gchar* executable);
 
 /* Get full path of a data file */
-char* alarm_applet_get_data_path(const char* name);
+gchar* alarm_applet_get_data_path(const char* name);
 
 guint block_signal_handlers_by_name(gpointer instance, const gchar* signal_name);
 

@@ -112,9 +112,9 @@ gboolean is_executable_valid(gchar* executable)
 /*
  * Get full path to a data file
  */
-char* alarm_applet_get_data_path(const char* name)
+gchar* alarm_applet_get_data_path(const char* name)
 {
-    char* filename;
+    gchar* filename;
 
     /* Try the file in the source tree first */
     filename = g_build_filename("..", "data", name, NULL);
@@ -166,9 +166,8 @@ guint unblock_signal_handlers_by_name(gpointer instance, const gchar* signal_nam
 guint block_list(GList* instances, gpointer func)
 {
     guint blocked = 0;
-    GList* l = NULL;
 
-    for(l = instances; l != NULL; l = l->next) {
+    for(GList* l = instances; l != NULL; l = l->next) {
         blocked += BLOCK(l->data, func);
     }
 
@@ -178,9 +177,8 @@ guint block_list(GList* instances, gpointer func)
 guint unblock_list(GList* instances, gpointer func)
 {
     guint unblocked = 0;
-    GList* l = NULL;
 
-    for(l = instances; l != NULL; l = l->next) {
+    for(GList* l = instances; l != NULL; l = l->next) {
         unblocked += UNBLOCK(l->data, func);
     }
 

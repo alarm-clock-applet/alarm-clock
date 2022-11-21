@@ -289,6 +289,7 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
     g_value_init(&strval, G_TYPE_STRING);
     g_value_transform(value, &strval);
     g_debug("Alarm(%p) #%d: set %s=%s", alarm, alarm->id, pspec->name, g_value_get_string(&strval));
+    g_value_unset(&strval);
 
     alarm->changed = TRUE; // Do this for all properties for now (not too much overhead, anyway)
 
@@ -302,7 +303,9 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
             }
             alarm->id = d;
 
-            priv->settings = g_settings_new_with_path("io.github.alarm-clock-applet.alarm", alarm_gsettings_get_dir(alarm));
+            gchar* gsettings_dir = alarm_gsettings_get_dir(alarm);
+            priv->settings = g_settings_new_with_path("io.github.alarm-clock-applet.alarm", gsettings_dir);
+            g_free(gsettings_dir);
 
             alarm_gsettings_connect(alarm);
         }
@@ -351,28 +354,28 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
         }
         break;
     case PROP_MESSAGE:
-        if(alarm->message)
-            g_free(alarm->message);
-
+        g_free(alarm->message);
         alarm->message = g_strdup(g_value_get_string(value));
         break;
     case PROP_REPEAT:
         alarm->repeat = g_value_get_flags(value);
 
-        if(alarm->active) {
+        if(alarm->active)
             alarm_update_timestamp(alarm);
-        }
+
         break;
     case PROP_NOTIFY_TYPE:
         alarm->notify_type = g_value_get_enum(value);
         break;
     case PROP_SOUND_FILE:
+        g_free(alarm->sound_file);
         alarm->sound_file = g_strdup(g_value_get_string(value));
         break;
     case PROP_SOUND_LOOP:
         alarm->sound_loop = g_value_get_boolean(value);
         break;
     case PROP_COMMAND:
+        g_free(alarm->command);
         alarm->command = g_strdup(g_value_get_string(value));
         break;
     default:
@@ -699,6 +702,9 @@ static void alarm_dispose(GObject* object)
     g_object_unref(priv->settings);
     alarm_timer_remove(alarm);
     alarm_clear(alarm);
+    g_free(alarm->command);
+    g_free(alarm->sound_file);
+    g_free(alarm->message);
 }
 
 // Called every time an alarm is created or deleted

@@ -29,7 +29,7 @@ GtkBuilder* alarm_applet_ui_load(const char* name, AlarmApplet* applet)
 {
     GtkBuilder* builder = NULL;
     GError* error = NULL;
-    char* filename;
+    gchar* filename;
 
     filename = alarm_applet_get_data_path(name);
 
@@ -228,7 +228,13 @@ void alarm_applet_ui_init(AlarmApplet* applet)
 
     /* Load CSS */
     GtkCssProvider* css = gtk_css_provider_new();
-    gtk_css_provider_load_from_path(css, alarm_applet_get_data_path("alarm-clock.css"), NULL);
+    gchar* css_filename = alarm_applet_get_data_path("alarm-clock.css");
+
+    gtk_css_provider_load_from_path(css, css_filename, NULL);
+
+    g_free(css_filename);
+    css_filename = NULL;
+
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(), GTK_STYLE_PROVIDER(css), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     /* Connect signals */

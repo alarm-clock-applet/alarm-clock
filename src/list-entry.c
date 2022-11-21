@@ -135,9 +135,12 @@ GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_ty
                 flist = g_list_append(flist, entry);
             }
         }
+        g_object_unref(info);
     }
 
     g_file_enumerator_close(result, NULL, NULL);
+    g_object_unref(result);
+    g_object_unref(dir);
 
     return flist;
 }
