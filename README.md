@@ -1,7 +1,7 @@
 # Alarm Clock
 This package contains an Alarm Clock for use with an AppIndicator implementation.
 
-![Alarm Applet Main Window](https://github.com/alarm-clock-applet/alarm-clock/blob/master/img/alarm-clock-applet.png?raw=true)
+![Alarm Applet Main Window](https://alarm-clock-applet.github.io/assets/screenshots/list-alarms.png)
 
 ## Requirements
 This program requires the following packages:
