@@ -25,7 +25,6 @@
 MediaPlayer* media_player_new(const gchar* uri, gboolean loop, MediaPlayerStateChangeCallback state_callback, gpointer data, MediaPlayerErrorHandler error_handler, gpointer error_data)
 {
     MediaPlayer* player;
-    GstElement *audiosink, *videosink;
 
     // Initialize struct
     player = g_new(MediaPlayer, 1);
@@ -44,16 +43,15 @@ MediaPlayer* media_player_new(const gchar* uri, gboolean loop, MediaPlayerStateC
 
     /* Set up player */
     player->player = gst_element_factory_make("playbin", "player");
-    audiosink = gst_element_factory_make("autoaudiosink", "player-audiosink");
-    videosink = gst_element_factory_make("autovideosink", "player-videosink");
 
-    if(!player->player || !audiosink || !videosink) {
-        g_critical("Could not create player.");
+    if(!player->player) {
+        g_critical("Could not create player. Try running with `GST_DEBUG=WARNING alarm-clock-applet`.");
+        g_free(player);
         return NULL;
     }
 
-    // Set uri and sinks
-    g_object_set(player->player, "uri", uri, "audio-sink", audiosink, "video-sink", videosink, NULL);
+    // Set uri
+    g_object_set(player->player, "uri", uri, NULL);
 
     return player;
 }
