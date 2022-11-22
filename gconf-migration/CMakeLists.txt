@@ -1,6 +1,15 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-pkg_check_modules(GCONF2 REQUIRED gconf-2.0)
 pkg_check_modules(GIO REQUIRED gio-2.0)
+pkg_check_modules(GCONF2 gconf-2.0)
+if(NOT GCONF2_FOUND)
+    if(ALLOW_MISSING_GCONF)
+        message(WARNING "GConf was not found but the package will still be built.\nIf you want to migrate old alarms created by alarm-clock-applet < 0.4.0, please install GConf and re-run CMake/rebuild the package.")
+        add_custom_target(alarm-clock-applet-gconf-migration)
+        return()
+    else()
+        message(FATAL_ERROR "GConf not found.\nPlease install it or pass `-DENABLE_GCONF_MIGRATION=OFF` if you do not want to migrate alarms created by alarm-clock-applet < 0.4.0.")
+    endif()
+endif()
 
 add_executable(alarm-clock-applet-gconf-migration alarm-clock-gconf-migration.c)
 set_property(TARGET alarm-clock-applet-gconf-migration PROPERTY C_STANDARD 11)

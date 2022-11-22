@@ -15,6 +15,7 @@ add_custom_target(uninstall
 )
 
 option(ENABLE_GCONF_MIGRATION "Enables GConf to GSettings migration for existing alarms (and adds a dependency to GConf)." ON)
+option(ALLOW_MISSING_GCONF "Allows the project to build with GConf missing. Useful for existing installations (AUR) that already had GConf." OFF)
 if(ENABLE_GCONF_MIGRATION)
     add_subdirectory("gconf-migration")
 endif()
