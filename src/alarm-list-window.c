@@ -319,7 +319,7 @@ static gboolean alarm_list_window_update_timer(gpointer data)
         gtk_tree_model_get(model, &iter, COLUMN_ALARM, &a, COLUMN_SHOW_ICON, &show_icon, -1);
 
         // Always update active alarms regardless of the changed state
-        if(a->active || a->changed) {
+        if(a->active || a->triggered || a->changed) {
             alarm_list_window_update_row(applet->list_window, &iter);
 
             // Blink icon on triggered alarms

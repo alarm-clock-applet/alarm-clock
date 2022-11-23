@@ -184,7 +184,7 @@ static void alarm_class_init(AlarmClass* class)
                                  0,                                              /* default */
                                  G_PARAM_CONSTRUCT | G_PARAM_READWRITE);
 
-    triggered_param = g_param_spec_boolean(PROP_NAME_TRIGGERED, "alarm triggered", "triggered flag of the alarm", FALSE, G_PARAM_READABLE);
+    triggered_param = g_param_spec_boolean(PROP_NAME_TRIGGERED, "alarm triggered", "triggered flag of the alarm", FALSE, G_PARAM_READWRITE);
 
     type_param = g_param_spec_enum(PROP_NAME_TYPE, "alarm type", "type of the alarm", ALARM_TYPE_TYPE, ALARM_DEFAULT_TYPE, G_PARAM_READWRITE);
 
@@ -276,16 +276,11 @@ static void alarm_init(Alarm* self)
 /* set an Alarm property */
 static void alarm_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
 {
-    Alarm* alarm;
     AlarmPrivate* priv = ALARM_PRIVATE(ALARM_CAST(object));
-
-    guint d;
-    gboolean b;
-
-    alarm = ALARM(object);
+    Alarm* alarm = ALARM(object);
 
     // DEBUGGING INFO
-    GValue strval = { 0 };
+    GValue strval = G_VALUE_INIT;
     g_value_init(&strval, G_TYPE_STRING);
     g_value_transform(value, &strval);
     g_debug("Alarm(%p) #%d: set %s=%s", alarm, alarm->id, pspec->name, g_value_get_string(&strval));
@@ -295,32 +290,31 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
 
     switch(prop_id) {
     case PROP_ID:
+    {
         // FIXME: This should be int64 to account for -1
-        d = g_value_get_uint(value);
-        if(d != alarm->id) {
-            if(priv->settings && alarm->id != -1) {
-                g_object_unref(priv->settings);
-            }
-            alarm->id = d;
+        guint d = g_value_get_uint(value);
+        if(alarm->id == d)
+            break;
 
-            gchar* gsettings_dir = alarm_gsettings_get_dir(alarm);
-            priv->settings = g_settings_new_with_path("io.github.alarm-clock-applet.alarm", gsettings_dir);
-            g_free(gsettings_dir);
-
-            alarm_gsettings_connect(alarm);
+        if(priv->settings && alarm->id != -1) {
+            g_object_unref(priv->settings);
         }
+        alarm->id = d;
+
+        gchar* gsettings_dir = alarm_gsettings_get_dir(alarm);
+        priv->settings = g_settings_new_with_path("io.github.alarm-clock-applet.alarm", gsettings_dir);
+        g_free(gsettings_dir);
+
+        alarm_gsettings_connect(alarm);
         break;
+    }
     case PROP_TRIGGERED:
-        // TODO: Should we map this to a GConf value?
+        // TODO: Should we map this to a GSettings value?
         //       The only case where this might be useful is where the program
         //       is restarted while having a triggered alarm so that we could
         //       re-trigger it when the program starts again...
-        b = g_value_get_boolean(value);
-
-        if(b != alarm->triggered) {
-            alarm->triggered = b;
-        }
-
+        alarm->triggered = g_value_get_boolean(value);
+        break;
     case PROP_TYPE:
         alarm->type = g_value_get_enum(value);
 
@@ -341,7 +335,6 @@ static void alarm_set_property(GObject* object, guint prop_id, const GValue* val
         alarm->timestamp = g_value_get_int64(value);
         break;
     case PROP_ACTIVE:
-        b = alarm->active;
         alarm->active = g_value_get_boolean(value);
 
         // g_debug ("[%p] #%d ACTIVE: old=%d new=%d", alarm, alarm->id, b, alarm->active);
@@ -464,6 +457,14 @@ static void alarm_player_changed(Alarm* alarm, MediaPlayerState state)
     g_debug("Alarm(%p) #%d: player_changed to %d", alarm, alarm->id, state);
 }
 
+static inline void alarm_set_triggered(Alarm* alarm, const gboolean triggered)
+{
+    GValue val = G_VALUE_INIT;
+    g_value_init(&val, G_TYPE_BOOLEAN);
+    g_value_set_boolean(&val, triggered);
+    g_object_set_property(G_OBJECT(alarm), PROP_NAME_TRIGGERED, &val);
+    g_value_unset(&val);
+}
 
 /*
  * ALARM signal {{
@@ -477,7 +478,7 @@ static void alarm_alarm(Alarm* alarm)
     alarm_clear(alarm);
 
     // Update triggered flag
-    alarm->triggered = TRUE;
+    alarm_set_triggered(alarm, TRUE);
 
     // Do we want to repeat this alarm?
     if(alarm_should_repeat(alarm)) {
@@ -587,7 +588,7 @@ static void alarm_cleared(Alarm* alarm)
     g_debug("Alarm(%p) #%d: cleared()", alarm, alarm->id);
 
     // Update triggered flag
-    alarm->triggered = FALSE;
+    alarm_set_triggered(alarm, FALSE);
 
     // Stop player
     alarm_player_stop(alarm);
