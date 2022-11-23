@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: alarm-clock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-28 12:54+0300\n"
-"PO-Revision-Date: 2011-08-05 06:54+0000\n"
+"PO-Revision-Date: 2022-11-23 19:37+0200\n"
 "Last-Translator: cmdrhenner <cmdrhenner@gmail.com>\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2012-06-03 17:12+0000\n"
-"X-Generator: Launchpad (build 15342)\n"
+"X-Generator: Poedit 2.3\n"
 
 #: data/alarm-clock.ui:302 data/alarm-clock.ui:324 data/alarm-clock.ui:346
 msgid "0"
@@ -91,11 +91,11 @@ msgstr "Konnte »%s« nicht wiedergeben: %s"
 
 #: src/alarm-settings.c:310
 msgid "Custom command..."
-msgstr "Benutzerdefinierter Befehl …"
+msgstr "Benutzerdefinierter Befehl ..."
 
 #: data/alarm-clock.ui:1402
 msgid "Custom..."
-msgstr "Benutzerdefiniert …"
+msgstr "Benutzerdefiniert ..."
 
 #: data/alarm-clock.ui:1040
 msgid "Delete"
@@ -119,7 +119,7 @@ msgstr "Den ausgewählten Alarm bearbeiten"
 
 #: data/alarm-clock.ui:1025
 msgid "Edit..."
-msgstr "Bearbeiten …"
+msgstr "Bearbeiten ..."
 
 #: data/alarm-clock.ui:1065
 msgid "Enable"
@@ -159,7 +159,7 @@ msgstr "Neuer Alarm"
 
 #: data/alarm-clock.ui:1010
 msgid "New..."
-msgstr "Neu …"
+msgstr "Neu ..."
 
 #: data/alarm-clock.ui:564 src/alarm.c:1355
 msgid "Once"
@@ -179,7 +179,7 @@ msgstr "Sa"
 
 #: src/alarm-settings.c:260 src/alarm-settings.c:440
 msgid "Select sound file..."
-msgstr "Tondatei wählen …"
+msgstr "Tondatei wählen ..."
 
 #: data/alarm-clock.ui:1451
 msgid "Show _alarms"
@@ -251,7 +251,7 @@ msgstr "Do"
 
 #: data/alarm-clock.ui:215
 msgid "Timer"
-msgstr "Stoppuhr"
+msgstr "Timer"
 
 #: data/alarm-clock.ui:404
 msgid "Tue"
