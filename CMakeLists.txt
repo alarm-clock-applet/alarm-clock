@@ -20,6 +20,8 @@ if(ENABLE_GCONF_MIGRATION)
     add_subdirectory("gconf-migration")
 endif()
 
+add_compile_options("-Wshadow")
+
 add_subdirectory("po")
 add_subdirectory("src")
 add_subdirectory("debian")
