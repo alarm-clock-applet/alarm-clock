@@ -18,21 +18,24 @@
 time_t get_alarm_timestamp(guint hour, guint minute, guint second)
 {
     time_t now;
-    struct tm* tm;
+    struct tm tm;
 
     time(&now);
-    tm = localtime(&now);
-
-    // Check if the alarm is for tomorrow
-    if(hour < tm->tm_hour || (hour == tm->tm_hour && minute < tm->tm_min) || (hour == tm->tm_hour && minute == tm->tm_min && second < tm->tm_sec)) {
-
-        g_debug("Alarm is for tomorrow.");
-        tm->tm_mday++;
+    tzset();
+    if(!localtime_r(&now, &tm)) {
+        memset(&tm, 0, sizeof(tm));
+        g_critical("get_alarm_timestamp: localtime failed");
     }
 
-    tm->tm_hour = hour;
-    tm->tm_min = minute;
-    tm->tm_sec = second;
+    // Check if the alarm is for tomorrow
+    if(hour < tm.tm_hour || (hour == tm.tm_hour && minute < tm.tm_min) || (hour == tm.tm_hour && minute == tm.tm_min && second < tm.tm_sec)) {
+        g_debug("Alarm is for tomorrow.");
+        tm.tm_mday++;
+    }
+
+    tm.tm_hour = hour;
+    tm.tm_min = minute;
+    tm.tm_sec = second;
 
     // DEBUG:
     char tmp[512];
@@ -40,13 +43,13 @@ time_t get_alarm_timestamp(guint hour, guint minute, guint second)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-y2k"
 #endif
-    strftime(tmp, sizeof(tmp), "%c", tm);
+    strftime(tmp, sizeof(tmp), "%c", &tm);
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
 #endif
     g_debug("Alarm will trigger at %s", tmp);
 
-    return mktime(tm);
+    return mktime(&tm);
 }
 
 /**

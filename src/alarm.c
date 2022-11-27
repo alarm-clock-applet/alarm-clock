@@ -998,34 +998,37 @@ static void alarm_set_timestamp(Alarm* alarm, guint hour, guint minute, guint se
     time_t now, new;
     gint i, d, wday;
     AlarmRepeat rep;
-    struct tm* tm;
+    struct tm tm;
 
     g_debug("Alarm(%p) #%d: set_timestamp (%d, %d, %d)", alarm, alarm->id, hour, minute, second);
 
     time(&now);
-    tm = localtime(&now);
+    tzset();
+    if(!localtime_r(&now, &tm)) {
+        memset(&tm, 0, sizeof(tm));
+        g_critical("Alarm #%d: localtime failed", alarm->id);
+    }
 
     // Automatically detect Daylight Savings Time (DST)
-    tm->tm_isdst = -1;
+    tm.tm_isdst = -1;
 
     if(alarm->repeat == ALARM_REPEAT_NONE) {
         // Check if the alarm is for tomorrow
-        if(!alarm_time_is_future(tm, hour, minute, second)) {
-
+        if(!alarm_time_is_future(&tm, hour, minute, second)) {
             g_debug("\tAlarm is for tomorrow.");
-            tm->tm_mday++;
+            tm.tm_mday++;
         }
     } else {
         // REPEAT SET: Find the closest repeat day
         wday = -1;
 
-        i = tm->tm_wday;
+        i = tm.tm_wday;
 
         // Try finding a day in this week
         for(; i < 7; i++) {
             rep = 1 << i;
             if(alarm->repeat & rep) {
-                if(i == tm->tm_wday && !alarm_time_is_future(tm, hour, minute, second))
+                if(i == tm.tm_wday && !alarm_time_is_future(&tm, hour, minute, second))
                     continue;
                 wday = i;
                 break;
@@ -1034,7 +1037,7 @@ static void alarm_set_timestamp(Alarm* alarm, guint hour, guint minute, guint se
 
         // If we haven't found a day in the current week, check next week
         if(wday == -1) {
-            for(i = 0; i <= tm->tm_wday; i++) {
+            for(i = 0; i <= tm.tm_wday; i++) {
                 rep = 1 << i;
                 if(alarm->repeat & rep) {
                     wday = i;
@@ -1045,7 +1048,7 @@ static void alarm_set_timestamp(Alarm* alarm, guint hour, guint minute, guint se
 
         g_debug("Closest WDAY = %d", wday);
 
-        if(wday == tm->tm_wday && (!alarm_time_is_future(tm, hour, minute, second)))
+        if(wday == tm.tm_wday && (!alarm_time_is_future(&tm, hour, minute, second)))
             wday = 7;
 
         // Calculate distance from now to wday
@@ -1053,19 +1056,19 @@ static void alarm_set_timestamp(Alarm* alarm, guint hour, guint minute, guint se
             g_debug("\tAlarm is in (forced) 1 week.");
             d = 7;
         } else {
-            d = alarm_wday_distance(tm->tm_wday, wday);
+            d = alarm_wday_distance(tm.tm_wday, wday);
         }
 
         g_debug("\tAlarm is in %d days.", d);
 
-        tm->tm_mday += d;
+        tm.tm_mday += d;
     }
 
-    tm->tm_hour = hour;
-    tm->tm_min = minute;
-    tm->tm_sec = second;
+    tm.tm_hour = hour;
+    tm.tm_min = minute;
+    tm.tm_sec = second;
 
-    new = mktime(tm);
+    new = mktime(&tm);
     g_debug("\tSetting to %d", (gint) new);
     g_object_set(alarm, "timestamp", new, NULL);
 }
