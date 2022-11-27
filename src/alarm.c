@@ -1103,30 +1103,21 @@ void alarm_get_time(Alarm* alarm, struct tm* res)
     }
 }
 
-static struct tm tm;
-
 /**
  * Get the remaining alarm time.
- *
- * The return value is a direct pointer to an internal struct and must NOT
- * be freed. The return value also changes for every call to alarm_get_remain,
- * so copy it if needed.
  */
-struct tm* alarm_get_remain(Alarm* alarm)
+void alarm_get_remain(Alarm* alarm, struct tm* res)
 {
-    time_t now;
-    // struct tm tm;
+    g_assert(res != NULL);
 
-    now = time(NULL);
-    tm.tm_sec = alarm->timestamp - now;
+    const time_t now = time(NULL);
+    res->tm_sec = alarm->timestamp - now;
 
-    tm.tm_min = tm.tm_sec / 60;
-    tm.tm_sec -= tm.tm_min * 60;
+    res->tm_min = res->tm_sec / 60;
+    res->tm_sec -= res->tm_min * 60;
 
-    tm.tm_hour = tm.tm_min / 60;
-    tm.tm_min -= tm.tm_hour * 60;
-
-    return &tm;
+    res->tm_hour = res->tm_min / 60;
+    res->tm_min -= res->tm_hour * 60;
 }
 
 /**

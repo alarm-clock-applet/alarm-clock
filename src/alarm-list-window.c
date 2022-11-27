@@ -183,8 +183,7 @@ static void alarm_list_window_update_row(AlarmListWindow* list_window, GtkTreeIt
 
     gchar tmp[200];
     gchar* tmp2;
-    struct tm* tm;
-    struct tm tm_storage;
+    struct tm tm;
 
     GdkPixbuf* type_col;
     GString* time_col;
@@ -194,19 +193,17 @@ static void alarm_list_window_update_row(AlarmListWindow* list_window, GtkTreeIt
     gtk_tree_model_get(GTK_TREE_MODEL(model), iter, COLUMN_ALARM, &a, -1);
 
     // If alarm is running (active), show remaining time
-    if(a->active) {
-        tm = alarm_get_remain(a);
-    } else {
-        tm = &tm_storage;
-        alarm_get_time(a, tm);
-    }
+    if(a->active)
+        alarm_get_remain(a, &tm);
+    else
+        alarm_get_time(a, &tm);
 
     if(a->type == ALARM_TYPE_CLOCK) {
         type_col = list_window->alarm_icon;
-        strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, tm);
+        strftime(tmp, sizeof(tmp), TIME_COL_CLOCK_FORMAT, &tm);
     } else {
         type_col = list_window->timer_icon;
-        strftime(tmp, sizeof(tmp), TIME_COL_TIMER_FORMAT, tm);
+        strftime(tmp, sizeof(tmp), TIME_COL_TIMER_FORMAT, &tm);
     }
 
     // Create time column

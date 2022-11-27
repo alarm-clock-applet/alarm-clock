@@ -152,7 +152,7 @@ void alarm_applet_label_update(AlarmApplet* applet)
     GList* l;
     Alarm* a;
     Alarm* next_alarm = NULL;
-    struct tm* tm;
+    struct tm tm;
     gchar* tmp;
 
     GVariant* state = g_action_get_state(G_ACTION(applet->action_toggle_show_label));
@@ -187,8 +187,8 @@ void alarm_applet_label_update(AlarmApplet* applet)
         return;
     }
 
-    tm = alarm_get_remain(next_alarm);
-    tmp = g_strdup_printf("%02d:%02d:%02d", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    alarm_get_remain(next_alarm, &tm);
+    tmp = g_strdup_printf("%02d:%02d:%02d", tm.tm_hour, tm.tm_min, tm.tm_sec);
     app_indicator_set_label(applet->app_indicator, tmp, NULL);
     g_free(tmp);
 }

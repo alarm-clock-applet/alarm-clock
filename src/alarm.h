@@ -181,7 +181,7 @@ void alarm_error_trigger(Alarm* alarm, AlarmErrorCode code, const gchar* msg);
 
 void alarm_get_time(Alarm* alarm, struct tm* res);
 
-struct tm* alarm_get_remain(Alarm* alarm);
+void alarm_get_remain(Alarm* alarm, struct tm* res);
 
 time_t alarm_get_remain_seconds(Alarm* alarm);
 
