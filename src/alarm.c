@@ -1077,9 +1077,10 @@ static void alarm_set_timestamp(Alarm* alarm, guint hour, guint minute, guint se
 void alarm_update_timestamp(Alarm* alarm)
 {
     if(alarm->type == ALARM_TYPE_CLOCK) {
-        struct tm* tm = alarm_get_time(alarm);
-        g_debug("Alarm(%p) #%d: update_timestamp_full: %d:%d:%d", alarm, alarm->id, tm->tm_hour, tm->tm_min, tm->tm_sec);
-        alarm_set_timestamp(alarm, tm->tm_hour, tm->tm_min, tm->tm_sec);
+        struct tm tm;
+        alarm_get_time(alarm, &tm);
+        g_debug("Alarm(%p) #%d: update_timestamp_full: %d:%d:%d", alarm, alarm->id, tm.tm_hour, tm.tm_min, tm.tm_sec);
+        alarm_set_timestamp(alarm, tm.tm_hour, tm.tm_min, tm.tm_sec);
     } else {
         /* ALARM_TYPE_TIMER */
         g_object_set(alarm, "timestamp", time(NULL) + alarm->time, NULL);
@@ -1089,9 +1090,14 @@ void alarm_update_timestamp(Alarm* alarm)
 /*
  * Get the alarm time.
  */
-struct tm* alarm_get_time(Alarm* alarm)
+void alarm_get_time(Alarm* alarm, struct tm* res)
 {
-    return gmtime(&(alarm->time));
+    g_assert(res != NULL);
+
+    if(!gmtime_r(&(alarm->time), res)) {
+        memset(res, 0, sizeof(struct tm));
+        g_critical("Alarm #%d: gmtime failed", alarm->id);
+    }
 }
 
 static struct tm tm;

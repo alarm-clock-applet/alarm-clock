@@ -184,6 +184,7 @@ static void alarm_list_window_update_row(AlarmListWindow* list_window, GtkTreeIt
     gchar tmp[200];
     gchar* tmp2;
     struct tm* tm;
+    struct tm tm_storage;
 
     GdkPixbuf* type_col;
     GString* time_col;
@@ -196,7 +197,8 @@ static void alarm_list_window_update_row(AlarmListWindow* list_window, GtkTreeIt
     if(a->active) {
         tm = alarm_get_remain(a);
     } else {
-        tm = alarm_get_time(a);
+        tm = &tm_storage;
+        alarm_get_time(a, tm);
     }
 
     if(a->type == ALARM_TYPE_CLOCK) {

@@ -102,21 +102,22 @@ static void alarm_settings_update_label(AlarmSettingsDialog* dialog)
 
 static void alarm_settings_update_time(AlarmSettingsDialog* dialog)
 {
-    struct tm* tm = alarm_get_time(dialog->alarm);
+    struct tm tm;
+    alarm_get_time(dialog->alarm, &tm);
     gint hour = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(dialog->hour_spin));
     gint min = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(dialog->min_spin));
     gint sec = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(dialog->sec_spin));
 
-    if(tm->tm_hour == hour && tm->tm_min == min && tm->tm_sec == sec) {
+    if(tm.tm_hour == hour && tm.tm_min == min && tm.tm_sec == sec) {
         // No change
         return;
     }
 
-    g_debug("AlarmSettingsDialog: update_time() to %d:%d:%d", tm->tm_hour, tm->tm_min, tm->tm_sec);
+    g_debug("AlarmSettingsDialog: update_time() to %d:%d:%d", tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->hour_spin), tm->tm_hour);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->min_spin), tm->tm_min);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->sec_spin), tm->tm_sec);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->hour_spin), tm.tm_hour);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->min_spin), tm.tm_min);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(dialog->sec_spin), tm.tm_sec);
 }
 
 static void alarm_settings_update_repeat(AlarmSettingsDialog* dialog)
@@ -450,14 +451,14 @@ void alarm_settings_changed_time(GtkSpinButton* spinbutton, gpointer data)
     AlarmApplet* applet = (AlarmApplet*)data;
     AlarmSettingsDialog* dialog = applet->settings_dialog;
     guint hour, min, sec;
-    struct tm* tm;
 
     g_assert(dialog->alarm != NULL);
 
-    tm = alarm_get_time(dialog->alarm);
-    hour = tm->tm_hour;
-    min = tm->tm_min;
-    sec = tm->tm_sec;
+    struct tm tm;
+    alarm_get_time(dialog->alarm, &tm);
+    hour = tm.tm_hour;
+    min = tm.tm_min;
+    sec = tm.tm_sec;
 
     // Check which spin button emitted the signal
     if(GTK_WIDGET(spinbutton) == dialog->hour_spin) {
