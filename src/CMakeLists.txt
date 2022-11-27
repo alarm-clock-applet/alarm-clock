@@ -28,6 +28,9 @@ set_property(TARGET alarm-clock-applet PROPERTY C_STANDARD 11)
 
 target_compile_options(alarm-clock-applet PRIVATE ${GTK3_CFLAGS_OTHER})
 
+# Set default log domain
+target_compile_definitions(alarm-clock-applet PUBLIC G_LOG_DOMAIN=\"alarm-clock-applet\")
+
 # Really awful hack
 if(CMAKE_VERSION VERSION_LESS "3.13")
     target_link_libraries(alarm-clock-applet PRIVATE "-rdynamic")
