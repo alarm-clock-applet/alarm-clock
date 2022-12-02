@@ -1,42 +1,66 @@
 =head1 NAME
 
-alarm-clock-applet - Alarm Clock applet for GNOME 
+alarm-clock-applet - Alarm Clock for your notification area
 
 =head1 SYNOPSIS
 
-alarm-clock-applet
+=over 8
+
+=item B<alarm-clock-applet --help>
+
+=item B<alarm-clock-applet [-h|--hidden]>
+
+=item B<alarm-clock-applet [-s|--stop-all]>
+
+=item B<alarm-clock-applet [-z|--snooze-all]>
+
+=back
 
 =head1 DESCRIPTION
 
-Alarm Clock is a fully-featured alarm clock appelt for the GNOME panel.
-It's easy to use yet powerful with support for multiple repeatable alarms, 
-as well as snoozing and a flexible notification system.
+B<Alarm Clock Applet> is an applet providing alarm clock functionality which
+lives within the notification area. It is easy to use yet powerful with
+support for multiple and repeatable alarms, as well as snoozing, and a
+flexible notification system.
 
-Two types of alarms are supported: Alarm Clocks and Timers.
+Two types of alarms are supported: B<Alarm Clocks> and B<Timers>.
 
-Notification is done by either playing a sound or launching an application.
+Notification can be done by either playing a sound, launching an application,
+showing a notification bubble, or any combination of the aforementioned
+options.
 
-Please see http://alarm-clock.pseudoberries.com/ for more information.
+Please see https://alarm-clock-applet.github.io/ for more information.
 
 =head1 OPTIONS
 
 =over 8
 
-=item B<--help>
+=item B<-s, --stop-all>
 
-Show help message
+Stops all alarms.
 
-=item B<--version>
+=item B<-z, --snooze-all>
+
+Snoozes all alarms.
+
+=item B<-?, --help>
+
+Shows help options.
+
+=item B<-v, --version>
 
 Displays information about the currently installed version and exists.
 
+=back
+
 =head1 BUGS
 
-Please report bugs at https://bugs.launchpad.net/alarm-clock/
+Please report bugs at https://github.com/alarm-clock-applet/alarm-clock/issues/
 
 =head1 AUTHORS
 
-B<Alarm Clock> was written by Johannes H. Jensen <joh@pseudoberries.com>.
+B<Alarm Clock Applet> was written by Tasos Sahanidis <tasos@tasossah.com> and
+Johannes H. Jensen <joh@pseudoberries.com>.
 
 =head1 COPYRIGHT
 
