@@ -211,3 +211,7 @@ install(
 if(ENABLE_GCONF_MIGRATION)
     add_dependencies(alarm-clock-applet alarm-clock-applet-gconf-migration)
 endif()
+
+# Manpage
+include(Pod2man)
+pod2man("${CMAKE_SOURCE_DIR}/src/alarm-clock-applet.pod" "${CMAKE_PROJECT_VERSION}" 1 "General Commands Manual")
