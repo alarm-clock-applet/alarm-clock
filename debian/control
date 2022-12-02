@@ -13,7 +13,9 @@ Build-Depends: debhelper (>= 11),
                gnome-icon-theme (>= 2.15.91),
                libxml2-dev,
                libayatana-appindicator3-dev (>= 0.5.3),
-               libgconf2-dev (>= 3.2.6)
+               libgconf2-dev (>= 3.2.6),
+               perl,
+               gzip
 Standards-Version: 3.9.6
 Vcs-Git: https://github.com/alarm-clock-applet/alarm-clock.git
 Vcs-Browser: https://github.com/alarm-clock-applet/alarm-clock
