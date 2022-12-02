@@ -1100,7 +1100,6 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="model">alarms-liststore</property>
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
-                <property name="rules_hint">True</property>
                 <property name="search_column">2</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
