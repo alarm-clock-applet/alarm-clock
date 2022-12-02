@@ -19,7 +19,7 @@ Build-Depends: debhelper (>= 11),
 Standards-Version: 3.9.6
 Vcs-Git: https://github.com/alarm-clock-applet/alarm-clock.git
 Vcs-Browser: https://github.com/alarm-clock-applet/alarm-clock
-Homepage: http://alarm-clock.pseudoberries.com/
+Homepage: https://alarm-clock-applet.github.io/
 
 Package: alarm-clock-applet
 Architecture: any
