@@ -21,6 +21,7 @@ option(ALLOW_MISSING_GCONF "Allows the project to build with GConf missing. Usef
 if(ENABLE_GCONF_MIGRATION)
     add_subdirectory("gconf-migration")
 endif()
+option(WITH_MANPAGE_COMPRESSION "Compresses the manpage with Gzip if installed." ON)
 
 add_compile_options("-Wshadow")
 
