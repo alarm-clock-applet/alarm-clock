@@ -214,4 +214,4 @@ endif()
 
 # Manpage
 include(Pod2man)
-pod2man("${CMAKE_SOURCE_DIR}/src/alarm-clock-applet.pod" "${CMAKE_PROJECT_VERSION}" 1 "General Commands Manual")
+pod2man("${CMAKE_SOURCE_DIR}/src/alarm-clock-applet.pod" "${PROJECT_VERSION}" 1 "General Commands Manual")
