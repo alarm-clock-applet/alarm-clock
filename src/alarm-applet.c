@@ -214,49 +214,6 @@ static void alarm_sound_file_changed(GObject* object, GParamSpec* param, gpointe
  * Apps list {{
  */
 
-static gchar* gnome_da_xml_get_string(const xmlNode* parent, const gchar* val_name)
-{
-    const gchar* const* sys_langs;
-    xmlChar* node_lang;
-    xmlNode* element;
-    gchar* ret_val = NULL;
-    xmlChar* xml_val_name;
-    gint len;
-    gint i;
-
-    g_return_val_if_fail(parent != NULL, ret_val);
-    g_return_val_if_fail(parent->children != NULL, ret_val);
-    g_return_val_if_fail(val_name != NULL, ret_val);
-
-    sys_langs = g_get_language_names();
-
-    xml_val_name = xmlCharStrdup(val_name);
-    len = xmlStrlen(xml_val_name);
-
-    for(element = parent->children; element != NULL; element = element->next) {
-        if(!xmlStrncmp(element->name, xml_val_name, len)) {
-            node_lang = xmlNodeGetLang(element);
-
-            if(node_lang == NULL) {
-                ret_val = (gchar*)xmlNodeGetContent(element);
-            } else {
-                for(i = 0; sys_langs[i] != NULL; i++) {
-                    if(!strcmp(sys_langs[i], (const char*)node_lang)) {
-                        ret_val = (gchar*)xmlNodeGetContent(element);
-                        // since sys_langs is sorted from most desirable to
-                        // least desirable, exit at first match
-                        break;
-                    }
-                }
-            }
-            xmlFree(node_lang);
-        }
-    }
-
-    xmlFree(xml_val_name);
-    return ret_val;
-}
-
 static const gchar* get_app_command(const gchar* app)
 {
     // TODO: Shouldn't be a global variable
@@ -283,81 +240,11 @@ static const gchar* get_app_command(const gchar* app)
 // Load stock apps into list
 void alarm_applet_apps_load(AlarmApplet* applet)
 {
-    AlarmListEntry* entry;
-    gchar *filename, *name, *icon, *command;
-    xmlDoc* xml_doc;
-    xmlNode *root, *section, *element;
-    gchar* executable;
-    const gchar* tmp;
-    const gchar* const* sysdirs;
-    gint i;
-
     if(applet->apps != NULL)
         alarm_list_entry_list_free(&(applet->apps));
 
-    // Locate g-d-a.xml
-    sysdirs = g_get_system_data_dirs();
-    for(i = 0; sysdirs[i] != NULL; i++) {
-        // We'll get the default media players from g-d-a.xml
-        // from gnome-control-center
-        filename = g_build_filename(sysdirs[i], "gnome-control-center", "default-apps", "gnome-default-applications.xml", NULL);
-
-        if(g_file_test(filename, G_FILE_TEST_EXISTS)) {
-            xml_doc = xmlParseFile(filename);
-
-            if(!xml_doc) {
-                g_warning("Could not load %s.", filename);
-                continue;
-            }
-
-            root = xmlDocGetRootElement(xml_doc);
-
-            for(section = root->children; section != NULL; section = section->next) {
-                if(!xmlStrncmp(section->name, (const xmlChar*)"media-players", 13)) {
-                    for(element = section->children; element != NULL; element = element->next) {
-                        if(!xmlStrncmp(element->name, (const xmlChar*)"media-player", 12)) {
-                            executable = gnome_da_xml_get_string(element, "executable");
-                            if(is_executable_valid(executable)) {
-                                name = gnome_da_xml_get_string(element, "name");
-                                icon = gnome_da_xml_get_string(element, "icon-name");
-
-                                // Lookup executable in app command map
-                                tmp = get_app_command(executable);
-                                if(tmp)
-                                    command = g_strdup(tmp);
-                                else {
-                                    // Fall back to command specified in XML
-                                    command = gnome_da_xml_get_string(element, "command");
-                                }
-
-
-                                g_debug("LOAD-APPS: Adding '%s': %s [%s]", name, command, icon);
-
-                                entry = alarm_list_entry_new(name, command, icon);
-
-                                g_free(name);
-                                g_free(command);
-                                g_free(icon);
-
-                                applet->apps = g_list_append(applet->apps, entry);
-                            }
-
-                            if(executable)
-                                g_free(executable);
-                        }
-                    }
-                }
-            }
-
-            g_free(filename);
-            break;
-        }
-
-        g_free(filename);
-    }
-
-    //	entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
-    //	applet->apps = g_list_append (applet->apps, entry);
+    // AlarmListEntry* entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
+    // applet->apps = g_list_append (applet->apps, entry);
 }
 
 /*

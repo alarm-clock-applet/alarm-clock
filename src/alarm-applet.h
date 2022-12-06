@@ -12,7 +12,6 @@
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
-#include <libxml/parser.h>
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>

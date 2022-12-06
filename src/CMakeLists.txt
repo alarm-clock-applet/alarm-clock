@@ -1,5 +1,4 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-find_package(LibXml2 REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 pkg_check_modules(GST REQUIRED gstreamer-1.0)
 pkg_check_modules(LIBNOTIFY REQUIRED libnotify)
@@ -41,7 +40,6 @@ endif()
 target_link_libraries(alarm-clock-applet PRIVATE
     ${GTK3_LIBRARIES}
     ${GST_LIBRARIES}
-    ${LIBXML2_LIBRARIES}
     ${LIBNOTIFY_LIBRARIES}
     ${APPINDICATOR_LIBRARIES}
 )
@@ -49,7 +47,6 @@ target_link_libraries(alarm-clock-applet PRIVATE
 target_include_directories(alarm-clock-applet PRIVATE
     ${GTK3_INCLUDE_DIRS}
     ${GST_INCLUDE_DIRS}
-    ${LIBXML2_INCLUDE_DIRS}
     ${LIBNOTIFY_INCLUDE_DIRS}
     ${APPINDICATOR_INCLUDE_DIRS}
 )
@@ -58,7 +55,6 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.13")
     target_link_directories(alarm-clock-applet PRIVATE
         ${GTK3_LIBRARY_DIRS}
         ${GST_LIBRARY_DIRS}
-        ${LIBXML2_LIBRARY_DIRS}
         ${LIBNOTIFY_LIBRARY_DIRS}
         ${APPINDICATOR_LIBRARY_DIRS}
     )

@@ -20,11 +20,7 @@ AlarmListEntry* alarm_list_entry_new(const gchar* name, const gchar* data, const
 {
     AlarmListEntry* entry;
 
-    entry = g_new(AlarmListEntry, 1);
-
-    entry->name = NULL;
-    entry->data = NULL;
-    entry->icon = NULL;
+    entry = g_new0(AlarmListEntry, 1);
 
     if(name)
         entry->name = g_strdup(name);
