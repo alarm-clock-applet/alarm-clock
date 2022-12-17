@@ -230,7 +230,6 @@ void alarm_action_new(GSimpleAction* action, GVariant* parameter, gpointer data)
     AlarmApplet* applet = (AlarmApplet*)data;
     AlarmListWindow* list_window = applet->list_window;
     Alarm* alarm;
-    AlarmListEntry* entry;
     GtkTreeIter iter;
     GtkTreeSelection* selection;
 
@@ -241,13 +240,13 @@ void alarm_action_new(GSimpleAction* action, GVariant* parameter, gpointer data)
 
     // Set first sound / app in list
     if(applet->sounds != NULL) {
-        entry = (AlarmListEntry*)applet->sounds->data;
+        AlarmListEntry* entry = (AlarmListEntry*)applet->sounds->data;
         g_object_set(alarm, "sound-file", entry->data, NULL);
     }
 
     if(applet->apps != NULL) {
-        entry = (AlarmListEntry*)applet->apps->data;
-        g_object_set(alarm, "command", entry->data, NULL);
+        GAppInfo* entry = G_APP_INFO(applet->apps->data);
+        g_object_set(alarm, "command", ALARM_APPLET_GET_APP_INFO_COMMAND(entry), NULL);
     }
 
     // Add alarm to list of alarms

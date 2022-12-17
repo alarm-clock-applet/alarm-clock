@@ -22,9 +22,6 @@ typedef struct {
     gchar* icon;
 } AlarmListEntry;
 
-
-AlarmListEntry* alarm_list_entry_new(const gchar* name, const gchar* data, const gchar* icon);
-
 void alarm_list_entry_free(AlarmListEntry* e);
 
 AlarmListEntry* alarm_list_entry_new_file(const gchar* uri, gchar** mime_ret, GError** error);

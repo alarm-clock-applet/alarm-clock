@@ -76,6 +76,7 @@ struct _AlarmApplet {
     /* Sounds & apps list */
     GList* sounds;
     GList* apps;
+    GHashTable* app_command_map;
 
     /* List-alarms UI */
     AlarmListWindow* list_window;
@@ -110,6 +111,9 @@ struct _AlarmApplet {
 };
 
 void alarm_applet_sounds_load(AlarmApplet* applet);
+
+const gchar* alarm_applet_get_app_info_command(const AlarmApplet* applet, GAppInfo* app);
+#define ALARM_APPLET_GET_APP_INFO_COMMAND(x) alarm_applet_get_app_info_command(applet, x)
 
 void alarm_applet_apps_load(AlarmApplet* applet);
 

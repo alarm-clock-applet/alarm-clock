@@ -88,6 +88,49 @@ void fill_combo_box(GtkComboBox* combo_box, GList* list, const gchar* custom_lab
     GtkTreeModel* model;
     GtkCellRenderer* renderer;
     GtkTreeIter iter;
+
+    g_debug("fill_combo_box... %d", g_list_length(list));
+
+    gtk_combo_box_set_row_separator_func(combo_box, is_separator, GINT_TO_POINTER(g_list_length(list)), NULL);
+
+    model = GTK_TREE_MODEL(gtk_list_store_new(2, G_TYPE_ICON, G_TYPE_STRING));
+    gtk_combo_box_set_model(combo_box, model);
+
+    gtk_cell_layout_clear(GTK_CELL_LAYOUT(combo_box));
+
+    renderer = gtk_cell_renderer_pixbuf_new();
+
+    /* not all cells have a pixbuf, this prevents the combo box from shrinking */
+    gtk_cell_renderer_set_fixed_size(renderer, -1, 22);
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo_box), renderer, FALSE);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), renderer, "gicon", GICON_COL, NULL);
+
+    renderer = gtk_cell_renderer_text_new();
+    gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo_box), renderer, TRUE);
+    gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo_box), renderer, "text", TEXT_COL, NULL);
+
+    for(l = list; l != NULL; l = g_list_next(l)) {
+        void* entry = l->data;
+
+        gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+        if(G_IS_APP_INFO(entry))
+            gtk_list_store_set(GTK_LIST_STORE(model), &iter, GICON_COL, g_app_info_get_icon(entry), TEXT_COL, g_app_info_get_display_name(entry), -1);
+        else
+            g_error("Unknown data type in fill_combo_box");
+    }
+
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, -1);
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter, GICON_COL, NULL, TEXT_COL, custom_label, -1);
+}
+
+void fill_combo_box_custom_list(GtkComboBox* combo_box, GList* list, const gchar* custom_label)
+{
+    GList* l;
+    GtkTreeModel* model;
+    GtkCellRenderer* renderer;
+    GtkTreeIter iter;
     AlarmListEntry* entry;
 
     g_debug("fill_combo_box... %d", g_list_length(list));

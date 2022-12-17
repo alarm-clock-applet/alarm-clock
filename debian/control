@@ -26,6 +26,7 @@ Architecture: any
 Depends: gstreamer1.0-plugins-base,
          gstreamer1.0-plugins-good,
          ${shlibs:Depends}, ${misc:Depends}
+Suggests: playerctl
 Description: alarm clock panel indicator
  Alarm Clock is a fully-featured alarm clock which resides in the notification
  area. It is easy to use yet powerful with support for multiple and repeatable

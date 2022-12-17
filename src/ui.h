@@ -21,10 +21,9 @@ void alarm_applet_update_tooltip(AlarmApplet* applet);
 
 void alarm_applet_icon_update(AlarmApplet* applet);
 
-/*
- * Shamelessly stolen from gnome-da-capplet.c
- */
 void fill_combo_box(GtkComboBox* combo_box, GList* list, const gchar* custom_label);
+
+void fill_combo_box_custom_list(GtkComboBox* combo_box, GList* list, const gchar* custom_label);
 
 void alarm_applet_notification_show(AlarmApplet* applet, const gchar* summary, const gchar* body, const gchar* icon);
 

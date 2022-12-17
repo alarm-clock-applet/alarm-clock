@@ -211,7 +211,7 @@ static void alarm_settings_update_sound(AlarmSettingsDialog* dialog)
     g_debug("AlarmSettingsDialog: update_sound()");
 
     /* Fill sounds list */
-    fill_combo_box(GTK_COMBO_BOX(dialog->notify_sound_combo), dialog->applet->sounds, _("Select sound file..."));
+    fill_combo_box_custom_list(GTK_COMBO_BOX(dialog->notify_sound_combo), dialog->applet->sounds, _("Select sound file..."));
 
     // Look for the selected sound file
     for(l = dialog->applet->sounds, pos = 0; l != NULL; l = l->next, pos++) {
@@ -238,15 +238,15 @@ static void alarm_settings_update_sound_repeat(AlarmSettingsDialog* dialog)
 
 static void alarm_settings_update_app(AlarmSettingsDialog* dialog)
 {
-    AlarmListEntry* item;
     GList* l;
     guint pos, len;
     gboolean custom = FALSE;
 
     pos = gtk_combo_box_get_active(GTK_COMBO_BOX(dialog->notify_app_combo));
-    item = g_list_nth_data(dialog->applet->apps, pos);
+    GAppInfo* item = G_APP_INFO(g_list_nth_data(dialog->applet->apps, pos));
 
-    if(item && g_strcmp0(item->data, dialog->alarm->command) == 0) {
+    const AlarmApplet* const applet = dialog->applet;
+    if(item && g_strcmp0(ALARM_APPLET_GET_APP_INFO_COMMAND(item), dialog->alarm->command) == 0) {
         // No change
         return;
     }
@@ -262,8 +262,8 @@ static void alarm_settings_update_app(AlarmSettingsDialog* dialog)
     // Look for the selected command
     len = g_list_length(dialog->applet->apps);
     for(l = dialog->applet->apps, pos = 0; l != NULL; l = l->next, pos++) {
-        item = (AlarmListEntry*)l->data;
-        if(strcmp(item->data, dialog->alarm->command) == 0) {
+        item = G_APP_INFO(l->data);
+        if(strcmp(ALARM_APPLET_GET_APP_INFO_COMMAND(item), dialog->alarm->command) == 0) {
             // Match!
             break;
         }
@@ -671,7 +671,6 @@ void alarm_settings_changed_app(GtkComboBox* combo, gpointer data)
         return;
     }
 
-    AlarmListEntry* item;
     guint current_index, len;
 
     current_index = gtk_combo_box_get_active(combo);
@@ -693,8 +692,8 @@ void alarm_settings_changed_app(GtkComboBox* combo, gpointer data)
     g_object_set(dialog->notify_app_command_entry, "sensitive", FALSE, NULL);
 
 
-    item = (AlarmListEntry*)g_list_nth_data(dialog->applet->apps, current_index);
-    g_object_set(dialog->alarm, "command", item->data, NULL);
+    GAppInfo* item = G_APP_INFO(g_list_nth_data(dialog->applet->apps, current_index));
+    g_object_set(dialog->alarm, "command", ALARM_APPLET_GET_APP_INFO_COMMAND(item), NULL);
 }
 
 void alarm_settings_changed_command(GtkEditable* editable, gpointer data)

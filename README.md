@@ -8,7 +8,7 @@ This program requires the following packages:
 ```
 cmake >= 3.10
 gettext >= 0.19.8
-glib-2.0 >= 2.16.0
+glib-2.0 >= 2.56.4
 gtk-3.0 >= 3.22.30
 gio-2.0 >= 2.56.4
 libnotify >= 0.7.7

@@ -24,8 +24,6 @@ static const gchar* supported_sound_mime_types[] = {
     NULL,
 };
 
-GHashTable* app_command_map = NULL;
-
 /*
  * }} DEFINTIIONS
  */
@@ -214,37 +212,109 @@ static void alarm_sound_file_changed(GObject* object, GParamSpec* param, gpointe
  * Apps list {{
  */
 
-static const gchar* get_app_command(const gchar* app)
+static const char* alarm_applet_app_info_command_common(const AlarmApplet* applet, GAppInfo* app)
 {
-    // TODO: Shouldn't be a global variable
-    if(app_command_map == NULL) {
-        app_command_map = g_hash_table_new(g_str_hash, g_str_equal);
+    g_assert(applet->app_command_map != NULL);
+    gchar* app_basename = g_path_get_basename(g_app_info_get_executable(app));
+    const char* const app_command_ret = g_hash_table_lookup(applet->app_command_map, app_basename);
+    g_free(app_basename);
+    app_basename = NULL;
+    return app_command_ret;
+}
 
-        // `rhythmbox-client --play' doesn't actually start playing unless
-        // Rhythmbox is already running. Sounds like a Bug.
-        g_hash_table_insert(app_command_map, "rhythmbox", "rhythmbox-client --play");
+const char* alarm_applet_get_app_info_command(const AlarmApplet* applet, GAppInfo* app)
+{
+    const char* const app_command_ret = alarm_applet_app_info_command_common(applet, app);
+    g_assert(app_command_ret != NULL);
+    return app_command_ret;
+}
 
-        g_hash_table_insert(app_command_map, "banshee", "banshee --play");
+static inline gboolean alarm_applet_app_info_command_exists(const AlarmApplet* applet, GAppInfo* app)
+{
+    return !!alarm_applet_app_info_command_common(applet, app);
+}
+#define ALARM_APPLET_GET_APP_INFO_COMMAND_EXISTS(x) alarm_applet_app_info_command_exists(applet, x)
 
-        // Note that totem should already be open with a file for this to work.
-        g_hash_table_insert(app_command_map, "totem", "totem --play");
+static inline gboolean command_exists_in_system(const gchar* cmd)
+{
+    int argcp;
+    char** argvp;
+    if(!g_shell_parse_argv(cmd, &argcp, &argvp, NULL))
+        return FALSE;
 
-        // Muine crashes and doesn't seem to have any play command
-        /*g_hash_table_insert (app_command_map,
-                             "muine", "muine");*/
+    /*
+        In particular, if command_line is an empty string (or a string containing only whitespace),
+        G_SHELL_ERROR_EMPTY_STRING will be returned. It’s guaranteed that argvp will be a non-empty
+        array if this function returns successfully.
+    */
+
+    gchar* found = g_find_program_in_path(argvp[0]);
+    if(!found) {
+        g_debug("Could not locate %s in PATH", argvp[0]);
+        g_strfreev(argvp);
+        return FALSE;
     }
 
-    return g_hash_table_lookup(app_command_map, app);
+    g_debug("located %s at %s", argvp[0], found);
+    g_free(found);
+    found = NULL;
+
+    g_strfreev(argvp);
+    return TRUE;
 }
+
+static const char* const app_list_content_type = "audio/x-vorbis+ogg";
 
 // Load stock apps into list
 void alarm_applet_apps_load(AlarmApplet* applet)
 {
-    if(applet->apps != NULL)
-        alarm_list_entry_list_free(&(applet->apps));
+    // Free the list if it exists already
+    g_list_free_full(g_steal_pointer(&applet->apps), g_object_unref);
 
-    // AlarmListEntry* entry = alarm_list_entry_new("Rhythmbox Music Player", "rhythmbox", "rhythmbox");
-    // applet->apps = g_list_append (applet->apps, entry);
+    // Get all supported apps
+    GList* app_list = g_app_info_get_recommended_for_type(app_list_content_type);
+
+    // Get default app
+    GAppInfo* default_audio_app = g_app_info_get_default_for_type(app_list_content_type, FALSE);
+    g_debug("Default vorbis player: %p %s %s", default_audio_app, g_app_info_get_display_name(default_audio_app), g_app_info_get_executable(default_audio_app));
+
+    // Move default app to the top
+    // First, find it in the list
+    GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_equal);
+    g_assert(default_audio_app_item != NULL);
+
+    g_object_unref(g_steal_pointer(&default_audio_app));
+
+    // Remove it
+    app_list = g_list_remove_link(app_list, default_audio_app_item);
+
+    // Then, prepend it
+    app_list = g_list_concat(default_audio_app_item, app_list);
+
+    // Finally, remove any unknown apps
+    for(GList* l = app_list; l;) {
+        GAppInfo* cur = G_APP_INFO(l->data);
+        const char* const executable = g_app_info_get_executable(cur);
+
+        g_debug("Found %s (%s)", g_app_info_get_display_name(cur), executable);
+
+        const gboolean exists = ALARM_APPLET_GET_APP_INFO_COMMAND_EXISTS(cur);
+        const char* app_cmd = NULL;
+        if(exists && command_exists_in_system((app_cmd = ALARM_APPLET_GET_APP_INFO_COMMAND(cur)))) {
+            l = g_list_next(l);
+            continue;
+        } else if (exists) {
+            g_debug("Removing %s because %s doesn't exist", executable, app_cmd);
+        } else {
+            g_debug("Removing %s because we don't know how to get it to play something", executable);
+        }
+
+        GList* to_remove = l;
+        l = g_list_next(l);
+        app_list = g_list_delete_link(app_list, to_remove);
+    }
+
+    applet->apps = app_list;
 }
 
 /*
@@ -368,9 +438,9 @@ alarm_applet_destroy (AlarmApplet *applet)
         alarm_list_entry_list_free(&(applet->apps));
     }
 
-    if (app_command_map) {
-        g_hash_table_destroy (app_command_map);
-        app_command_map = NULL;
+    if (applet->app_command_map) {
+        g_hash_table_destroy (applet->app_command_map);
+        applet->app_command_map = NULL;
     }
 
     // Free GConf dir
@@ -383,6 +453,30 @@ alarm_applet_destroy (AlarmApplet *applet)
 /*
  * INIT {{
  */
+
+static inline void alarm_applet_init_app_command_map(AlarmApplet* applet)
+{
+    applet->app_command_map = g_hash_table_new(g_str_hash, g_str_equal);
+
+    // `rhythmbox-client --play' doesn't actually start playing unless
+    // Rhythmbox is already running. Sounds like a Bug.
+    g_hash_table_insert(applet->app_command_map, "rhythmbox", "rhythmbox-client --play");
+
+    g_hash_table_insert(applet->app_command_map, "banshee", "banshee --play");
+
+    // Note that totem should already be open with a file for this to work.
+    g_hash_table_insert(applet->app_command_map, "totem", "totem --play");
+
+    g_hash_table_insert(applet->app_command_map, "audacious", "audacious --play");
+
+    // The following require playerctl
+    g_hash_table_insert(applet->app_command_map, "vlc", "playerctl -p vlc play");
+
+    g_hash_table_insert(applet->app_command_map, "celluloid", "playerctl -p io.github.celluloid_player.Celluloid play");
+
+    // mpv does not have an MPRIS implementation by default
+    g_hash_table_insert(applet->app_command_map, "mpv", "playerctl -p mpv play #Needs mpv-mpris");
+}
 
 void alarm_applet_activate(GtkApplication* app, gpointer user_data)
 {
@@ -412,6 +506,9 @@ void alarm_applet_activate(GtkApplication* app, gpointer user_data)
 
     // Load sounds from alarms
     alarm_applet_sounds_load(applet);
+
+    // Initialise map for app commands
+    alarm_applet_init_app_command_map(applet);
 
     // Load apps for alarms
     alarm_applet_apps_load(applet);

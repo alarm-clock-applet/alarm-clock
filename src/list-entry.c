@@ -13,25 +13,6 @@
 #include "list-entry.h"
 #include "util.h"
 
-/*
- * Creates a new AlarmListEntry.
- */
-AlarmListEntry* alarm_list_entry_new(const gchar* name, const gchar* data, const gchar* icon)
-{
-    AlarmListEntry* entry;
-
-    entry = g_new0(AlarmListEntry, 1);
-
-    if(name)
-        entry->name = g_strdup(name);
-    if(data)
-        entry->data = g_strdup(data);
-    if(icon)
-        entry->icon = g_strdup(icon);
-
-    return entry;
-}
-
 void alarm_list_entry_free(AlarmListEntry* e)
 {
     g_free(e->data);
