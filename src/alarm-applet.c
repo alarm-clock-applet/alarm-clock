@@ -311,7 +311,7 @@ void alarm_applet_apps_load(AlarmApplet* applet)
         if(exists && command_exists_in_system((app_cmd = ALARM_APPLET_GET_APP_INFO_COMMAND(cur)))) {
             l = g_list_next(l);
             continue;
-        } else if (exists) {
+        } else if(exists) {
             g_debug("Removing %s because %s doesn't exist", executable, app_cmd);
         } else {
             g_debug("Removing %s because we don't know how to get it to play something", executable);
