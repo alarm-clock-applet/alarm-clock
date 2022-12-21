@@ -264,6 +264,14 @@ static inline gboolean command_exists_in_system(const gchar* cmd)
 }
 
 static const char* const app_list_content_type = "audio/x-vorbis+ogg";
+static gint g_app_info_same_executable(GAppInfo* appinfo1, GAppInfo* appinfo2)
+{
+    const char* const first = g_app_info_get_executable(appinfo1);
+    const char* const second = g_app_info_get_executable(appinfo2);
+    g_assert(first != NULL);
+    g_assert(second != NULL);
+    return strcmp(first, second);
+}
 
 // Load stock apps into list
 void alarm_applet_apps_load(AlarmApplet* applet)
@@ -280,7 +288,7 @@ void alarm_applet_apps_load(AlarmApplet* applet)
 
     // Move default app to the top
     // First, find it in the list
-    GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_equal);
+    GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_same_executable);
     g_assert(default_audio_app_item != NULL);
 
     g_object_unref(g_steal_pointer(&default_audio_app));
