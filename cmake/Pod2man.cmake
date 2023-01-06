@@ -70,6 +70,7 @@ macro(pod2man PODFILE_FULL RELEASE SECTION CENTER)
             OUTPUT ${MANFILE_FULL}
             COMMAND ${POD2MAN} --utf8 --section="${SECTION}" --center="${CENTER}"
                 --release="${RELEASE}" --name="${NAME_UPCASE}" "${PODFILE_FULL}" "${MANFILE_FULL}"
+            DEPENDS ${PODFILE_FULL}
         )
 
         if(GZIP AND WITH_MANPAGE_COMPRESSION)
