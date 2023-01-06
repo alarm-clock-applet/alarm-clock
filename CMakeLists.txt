@@ -3,7 +3,31 @@ cmake_minimum_required(VERSION 3.10)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-project("alarm-clock-applet" VERSION 0.4.0 LANGUAGES C)
+set(HARDCODED_VERSION "0.4.0")
+set(IS_RELEASE FALSE)
+
+# Ask git for the version number
+execute_process(COMMAND git describe --tags --dirty
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_PROJECT_VER
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+if(IS_RELEASE)
+    set(GIT_PROJECT_VER "${HARDCODED_VERSION}")
+elseif(NOT GIT_PROJECT_VER)
+    set(GIT_PROJECT_VER "${HARDCODED_VERSION}-unknown")
+endif()
+
+string(REGEX REPLACE "-.*" "" PARSED_PROJECT_VER "${GIT_PROJECT_VER}")
+project("alarm-clock-applet" VERSION "${PARSED_PROJECT_VER}" LANGUAGES C)
+
+# Manually set the version string to keep the suffix
+set(PROJECT_VERSION "${GIT_PROJECT_VER}")
+
+if(NOT(PARSED_PROJECT_VER VERSION_EQUAL HARDCODED_VERSION))
+    message(AUTHOR_WARNING "Hardcoded version is not equal to git version. Please correct it!")
+endif()
 
 include_directories("${CMAKE_BINARY_DIR}")
 include(GNUInstallDirs)
