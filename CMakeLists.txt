@@ -47,7 +47,9 @@ if(ENABLE_GCONF_MIGRATION)
 endif()
 option(WITH_MANPAGE_COMPRESSION "Compresses the manpage with Gzip if installed." ON)
 
-add_compile_options("-Wshadow")
+add_compile_options("-Wshadow"
+    "-Werror=return-type"
+)
 
 add_subdirectory("po")
 add_subdirectory("src")
