@@ -223,7 +223,7 @@ msgstr "Αυτόματη εκκίνηση κατά την είσοδο"
 
 #: src/alarm-applet.c:650
 msgid "Start hidden"
-msgstr "Κυφή εκκίνηση"
+msgstr "Κρυφή εκκίνηση"
 
 #: data/alarm-clock.ui:1081
 msgid "Stop"
