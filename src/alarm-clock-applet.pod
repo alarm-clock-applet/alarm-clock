@@ -35,6 +35,10 @@ Please see https://alarm-clock-applet.github.io/ for more information.
 
 =over 8
 
+=item B<-h, --hidden>
+
+Starts the application minimized to tray.
+
 =item B<-s, --stop-all>
 
 Stops all alarms.
