@@ -12,7 +12,6 @@ glib-2.0 >= 2.56.4
 gtk-3.0 >= 3.22.30
 gio-2.0 >= 2.56.4
 libnotify >= 0.7.7
-libxml2 >= 2.9.4
 gstreamer-1.0 >= 1.14.5
 ayatana-appindicator3 >= 0.5.3
 gnome-icon-theme
@@ -32,7 +31,7 @@ The dependency to GConf can be removed by passing `-DENABLE_GCONF_MIGRATION=OFF`
 ### Ubuntu-specific packages
 All the dependencies on an Ubuntu system can be installed with:
 ```
-sudo apt install build-essential cmake libgconf2-dev libxml2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
+sudo apt install build-essential cmake libgconf2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
 ```
 
 ## Installation
