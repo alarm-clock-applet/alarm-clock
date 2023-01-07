@@ -26,7 +26,7 @@ void alarm_list_entry_free(AlarmListEntry* e);
 
 AlarmListEntry* alarm_list_entry_new_file(const gchar* uri, gchar** mime_ret, GError** error);
 
-GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_types[]);
+GList* alarm_list_entry_list_new(GList* flist, const gchar* dir_uri, const gchar* supported_types[], const gchar* const ignore[]);
 
 void alarm_list_entry_list_free(GList** list);
 

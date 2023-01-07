@@ -129,49 +129,76 @@ void alarm_applet_alarm_stop(AlarmApplet* applet, Alarm* alarm)
  * Sounds list {{
  */
 
+// Must be NULL terminated
+static const gchar* const sound_notification_paths[] = {
+    "sounds/gnome/default/alerts",
+    "sounds/ubuntu/notifications",
+    NULL
+};
+
+static const gchar* const freedesktop_sound_path[] = {
+    "sounds/freedesktop/stereo",
+    NULL
+};
+
+static const gchar* const freedesktop_sound_ignore[] = {
+    "audio-channel",
+    "network",
+    "phone",
+    "device",
+    "trash",
+    "suspend",
+    "dialog",
+    "power",
+    "screen-capture",
+    "window-question",
+    "onboard",
+    NULL
+};
+
 // Load sounds into list
 // TODO: Refactor to use a GHashTable with string hash
+GList* add_sound_dir_to_list(GList* sounds, const gchar* const* sound_paths, const gchar* const* ignore)
+{
+    const gchar* const* sysdirs = g_get_system_data_dirs();
+    for(gint i = 0; sysdirs[i] != NULL; i++) {
+        for(gint j = 0; sound_paths[j] != NULL; j++) {
+            gchar* tmp = g_build_filename(sysdirs[i], sound_paths[j], NULL);
+            if(g_file_test(tmp, G_FILE_TEST_IS_DIR)) {
+                // Load stock sounds
+                g_debug("AlarmApplet: sounds_load: Found %s!", tmp);
+                gchar* sounds_dir = g_strdup_printf("file://%s", tmp);
+                sounds = alarm_list_entry_list_new(sounds, sounds_dir, supported_sound_mime_types, ignore);
+                g_free(sounds_dir);
+            }
+            g_free(tmp);
+        }
+    }
+    return sounds;
+}
+
 void alarm_applet_sounds_load(AlarmApplet* applet)
 {
-    Alarm* alarm;
-    AlarmListEntry* entry;
-    GList *l, *l2;
-    gboolean found;
-
-    const gchar* const* sysdirs;
-    gchar* sounds_dir = NULL;
-    gchar* tmp;
-    gint i;
-
-    // g_assert (applet->alarms);
-
     // Free old list
     if(applet->sounds != NULL)
         alarm_list_entry_list_free(&(applet->sounds));
 
-    // Locate gnome sounds
-    sysdirs = g_get_system_data_dirs();
-    for(i = 0; !sounds_dir && sysdirs[i] != NULL; i++) {
-        tmp = g_build_filename(sysdirs[i], "sounds/gnome/default/alerts", NULL);
-        if(g_file_test(tmp, G_FILE_TEST_IS_DIR)) {
-            // Load stock sounds
-            g_debug("AlarmApplet: sounds_load: Found %s!", tmp);
-            sounds_dir = g_strdup_printf("file://%s", tmp);
-            applet->sounds = alarm_list_entry_list_new(sounds_dir, supported_sound_mime_types);
-            g_free(sounds_dir);
-        }
-        g_free(tmp);
-    }
+    // Locate gnome/ubuntu sounds
+    applet->sounds = add_sound_dir_to_list(applet->sounds, sound_notification_paths, NULL);
 
-    if(!sounds_dir) {
+    // If none of the preferred sound directories were found, try to load the freedesktop ones
+    if(!applet->sounds)
+        applet->sounds = add_sound_dir_to_list(applet->sounds, freedesktop_sound_path, freedesktop_sound_ignore);
+
+    if(!applet->sounds)
         g_warning("AlarmApplet: Could not locate sounds!");
-    }
 
     // Load custom sounds from alarms
-    for(l = applet->alarms; l != NULL; l = l->next) {
-        alarm = ALARM(l->data);
-        found = FALSE;
-        for(l2 = applet->sounds; l2 != NULL; l2 = l2->next) {
+    for(GList* l = applet->alarms; l != NULL; l = l->next) {
+        Alarm* alarm = ALARM(l->data);
+        gboolean found = FALSE;
+        AlarmListEntry* entry;
+        for(GList* l2 = applet->sounds; l2 != NULL; l2 = l2->next) {
             entry = (AlarmListEntry*)l2->data;
             if(strcmp(alarm->sound_file, entry->data) == 0) {
                 // FOUND

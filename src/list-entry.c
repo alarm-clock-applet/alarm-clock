@@ -54,14 +54,25 @@ AlarmListEntry* alarm_list_entry_new_file(const gchar* uri, gchar** mime_ret, GE
     return entry;
 }
 
-GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_types[])
+static inline gboolean is_ignored(const gchar* const name, const gchar* const ignore[])
+{
+    if(!ignore)
+        return FALSE;
+
+    for(gint j = 0; ignore[j] != NULL; j++) {
+        if(!strncmp(name, ignore[j], strlen(ignore[j])))
+            return TRUE;
+    }
+    return FALSE;
+}
+
+GList* alarm_list_entry_list_new(GList* flist, const gchar* dir_uri, const gchar* supported_types[], const gchar* const ignore[])
 {
     GError* error = NULL;
     GFile* dir;
     GFileEnumerator* result;
     GFileInfo* info;
 
-    GList* flist;
     AlarmListEntry* entry;
     const gchar* mime;
     gboolean valid;
@@ -81,8 +92,6 @@ GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_ty
 
     g_debug("Loading files in %s ...", dir_uri);
 
-    flist = NULL;
-
     while((info = g_file_enumerator_next_file(result, NULL, NULL))) {
         // g_debug ("-- %s", g_file_info_get_name (info));
         if(g_file_info_get_file_type(info) == G_FILE_TYPE_REGULAR) {
@@ -93,7 +102,7 @@ GList* alarm_list_entry_list_new(const gchar* dir_uri, const gchar* supported_ty
             if(supported_types != NULL) {
                 valid = FALSE;
                 for(i = 0; supported_types[i] != NULL; i++) {
-                    if(strstr(mime, supported_types[i]) != NULL) {
+                    if(strstr(mime, supported_types[i]) != NULL && !is_ignored(g_file_info_get_name(info), ignore)) {
                         // MATCH
                         // g_debug (" [ MATCH ]");
                         valid = TRUE;
