@@ -6,17 +6,30 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(HARDCODED_VERSION "0.4.0")
 set(IS_RELEASE FALSE)
 
-# Ask git for the version number
-execute_process(COMMAND git describe --tags --dirty
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_PROJECT_VER
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
 if(IS_RELEASE)
     set(GIT_PROJECT_VER "${HARDCODED_VERSION}")
-elseif(NOT GIT_PROJECT_VER)
-    set(GIT_PROJECT_VER "${HARDCODED_VERSION}-unknown")
+else()
+    # Ask git for the version number
+    execute_process(COMMAND git describe --tags --dirty
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_PROJECT_VER
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT GIT_PROJECT_VER)
+        # Try asking dpkg-parsechangelog for a version number
+        execute_process(COMMAND dpkg-parsechangelog -S Version
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            OUTPUT_VARIABLE GIT_PROJECT_VER
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+
+        # Did dpkg-parsechangelog fail too?
+        if(NOT GIT_PROJECT_VER)
+            set(GIT_PROJECT_VER "${HARDCODED_VERSION}-unknown")
+        elseif(NOT(GIT_PROJECT_VER MATCHES "-"))
+            set(GIT_PROJECT_VER "${GIT_PROJECT_VER}-deb")
+        endif()
+    endif()
 endif()
 
 string(REGEX REPLACE "-.*" "" PARSED_PROJECT_VER "${GIT_PROJECT_VER}")
