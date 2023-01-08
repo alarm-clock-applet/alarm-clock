@@ -28,26 +28,30 @@ The dependency to GConf can be removed by passing `-DENABLE_GCONF_MIGRATION=OFF`
 
 **WARNING: Doing so disables migration of old alarms.**
 
-### Ubuntu-specific packages
-All the dependencies on an Ubuntu system can be installed with:
+<!-- requirements_ubuntu -->
+### Debian/Ubuntu-specific dependency packages
+All the dependencies on a Debian/Ubuntu system can be installed with:
 ```
-sudo apt install build-essential cmake libgconf2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
+sudo apt install build-essential cmake libgconf2-dev libxml2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
 ```
+<!-- end requirements_ubuntu -->
 
-## Installation
-Extract with:
+<!-- build_from_source -->
+## Building and Installing
+Extract the source code with:
 ```
 tar zxvf alarm-clock-applet-<VERSION>.tar.gz
 cd alarm-clock-applet-<VERSION>
 ```
 
-Compile with the usual:
+And compile - install with the usual:
 ```
 mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make
 sudo make install
 ```
+<!-- end build_from_source -->
 
 ## Usage
 
