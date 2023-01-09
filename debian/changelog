@@ -1,3 +1,24 @@
+alarm-clock-applet (0.4.1) unstable; urgency=medium
+
+  * New upstream release 0.4.1
+    + Major Changes:
+      - The application has been ported to GTK 3,
+        and will thus look slightly different.
+      - Old GTK Tray Icon support has been removed. A desktop environment
+        with support for AppIndicators/StatusNotifierItem is required.
+      - Alarms have been migrated to GSettings.
+    + Notable Fixes:
+      - Many memory leaks (including a massive one while the UI was visible)
+      - Alarm labels bouncing horizontally every second
+      - Debug messages breaking alarms and timers
+      - Compile errors
+    + New Features:
+      - Default media players are now autodetected.
+      - More media players can be controlled using playerctl out of the box.
+      - More system sounds are now added to the list by default.
+
+ -- Tasos Sahanidis <tasos@tasossah.com>  Mon, 09 Jan 2023 07:00:08 +0200
+
 alarm-clock-applet (0.4.0) unstable; urgency=medium
 
   * New upstream release 0.4.0
