@@ -308,23 +308,31 @@ void alarm_applet_apps_load(AlarmApplet* applet)
 
     // Get all supported apps
     GList* app_list = g_app_info_get_recommended_for_type(app_list_content_type);
+    if(!app_list) {
+        g_debug("Could not find any recommended applications for %s", app_list_content_type);
+        return;
+    }
 
     // Get default app
     GAppInfo* default_audio_app = g_app_info_get_default_for_type(app_list_content_type, FALSE);
-    g_debug("Default vorbis player: %p %s %s", default_audio_app, g_app_info_get_display_name(default_audio_app), g_app_info_get_executable(default_audio_app));
+    if(default_audio_app) {
+        g_debug("Default vorbis player: %p %s %s", default_audio_app, g_app_info_get_display_name(default_audio_app), g_app_info_get_executable(default_audio_app));
 
-    // Move default app to the top
-    // First, find it in the list
-    GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_same_executable);
-    g_assert(default_audio_app_item != NULL);
+        // Move default app to the top
+        // First, find it in the list
+        GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_same_executable);
+        g_assert(default_audio_app_item != NULL);
 
-    g_object_unref(g_steal_pointer(&default_audio_app));
+        g_object_unref(g_steal_pointer(&default_audio_app));
 
-    // Remove it
-    app_list = g_list_remove_link(app_list, default_audio_app_item);
+        // Remove it
+        app_list = g_list_remove_link(app_list, default_audio_app_item);
 
-    // Then, prepend it
-    app_list = g_list_concat(default_audio_app_item, app_list);
+        // Then, prepend it
+        app_list = g_list_concat(default_audio_app_item, app_list);
+    } else {
+        g_debug("Could not get default application for %s", app_list_content_type);
+    }
 
     // Finally, remove any unknown apps
     for(GList* l = app_list; l;) {
