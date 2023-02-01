@@ -3,6 +3,9 @@ This package contains an Alarm Clock for use with an AppIndicator implementation
 
 ![Alarm Applet Main Window](https://alarm-clock-applet.github.io/assets/screenshots/list-alarms.png)
 
+## Installation
+Installation instructions can be found on the [project website](https://alarm-clock-applet.github.io/#install).
+
 ## Requirements
 This program requires the following packages:
 ```
@@ -36,8 +39,8 @@ sudo apt install build-essential cmake libgconf2-dev libxml2-dev libgtk-3-dev li
 ```
 <!-- end requirements_ubuntu -->
 
+## Building from source
 <!-- build_from_source -->
-## Building and Installing
 Download and extract the source code with:
 ```
 wget --content-disposition https://github.com/alarm-clock-applet/alarm-clock/archive/refs/tags/<VERSION>.tar.gz
