@@ -321,15 +321,20 @@ void alarm_applet_apps_load(AlarmApplet* applet)
         // Move default app to the top
         // First, find it in the list
         GList* default_audio_app_item = g_list_find_custom(app_list, default_audio_app, (GCompareFunc)g_app_info_same_executable);
-        g_assert(default_audio_app_item != NULL);
 
-        g_object_unref(g_steal_pointer(&default_audio_app));
+        if(default_audio_app_item) {
+            g_object_unref(g_steal_pointer(&default_audio_app));
 
-        // Remove it
-        app_list = g_list_remove_link(app_list, default_audio_app_item);
+            // Remove it
+            app_list = g_list_remove_link(app_list, default_audio_app_item);
 
-        // Then, prepend it
-        app_list = g_list_concat(default_audio_app_item, app_list);
+            // Then, prepend it
+            app_list = g_list_concat(default_audio_app_item, app_list);
+        } else {
+            // It is possible for the default app to not exist in the list. In this case, just prepend it
+            app_list = g_list_prepend(app_list, default_audio_app);
+        }
+
     } else {
         g_debug("Could not get default application for %s", app_list_content_type);
     }
