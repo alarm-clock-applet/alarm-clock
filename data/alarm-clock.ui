@@ -8,7 +8,7 @@
     <property name="title" translatable="yes">About Alarm Clock</property>
     <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
     <property name="type_hint">normal</property>
     <property name="program_name">Alarm Clock</property>
     <property name="version">0.0.0</property>
@@ -26,7 +26,7 @@ Chow Loong Jin &lt;hyperair@ubuntu.com&gt;
 Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="documenters">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
     <property name="artists">Lasse Gulvåg Sætre &lt;lassegs@gmail.com&gt;</property>
-    <property name="logo_icon_name">alarm-clock</property>
+    <property name="logo_icon_name">io.github.alarm-clock-applet.clock</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
     <child type="titlebar">
@@ -86,7 +86,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
     <property name="type_hint">dialog</property>
     <signal name="delete-event" handler="gtk_true" swapped="no"/>
     <signal name="destroy-event" handler="gtk_true" swapped="no"/>
@@ -150,7 +150,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
                         <property name="pixel_size">24</property>
-                        <property name="icon_name">alarm-clock</property>
+                        <property name="icon_name">io.github.alarm-clock-applet.clock</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -201,7 +201,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
                         <property name="pixel_size">24</property>
-                        <property name="icon_name">alarm-timer</property>
+                        <property name="icon_name">io.github.alarm-clock-applet.timer</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -793,7 +793,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="title" translatable="yes">Snooze alarm</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
     <property name="type_hint">normal</property>
     <child type="titlebar">
       <placeholder/>
@@ -964,7 +964,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Alarms</property>
     <property name="default_height">200</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
     <signal name="delete-event" handler="alarm_list_window_delete_event" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
@@ -1182,7 +1182,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="title" translatable="yes">Alarm Clock Preferences</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
     <property name="type_hint">dialog</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="delete-event" handler="gtk_widget_hide" swapped="no"/>
@@ -1316,7 +1316,7 @@ Please note that this feature is not supported by all desktop environments</prop
   <object class="GtkImage" id="show_alarms_icon">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="icon_name">alarm-clock</property>
+    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
   </object>
   <object class="GtkMenu" id="snooze-menu">
     <property name="visible">True</property>
