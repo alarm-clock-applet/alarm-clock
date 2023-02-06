@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Alarm Clock
 Comment=Wake up in the morning
-Icon=alarm-clock
+Icon=io.github.alarm-clock-applet.clock
 Exec=alarm-clock-applet --hidden
 Terminal=false
 Type=Application
