@@ -5,7 +5,7 @@ Source: https://alarm-clock-applet.github.io/
 
 Files: *
 Copyright: 2007-2008, 2010, Johannes H. Jensen <joh@pseudoberries.com>
-           2022, Tasos Sahanidis <tasos@tasossah.com>
+           2022-2023, Tasos Sahanidis <tasos@tasossah.com>
 License: GPL-2+
 
 Files: data/icons/*
@@ -15,7 +15,7 @@ License: GPL-2+
 Files: debian/*
 Copyright: 2008, Johannes H. Jensen <joh@pseudoberries.com>
            2009-2012, Chow Loong Jin <hyperair@debian.org>
-           2022, Tasos Sahanidis <tasos@tasossah.com>
+           2022-2023, Tasos Sahanidis <tasos@tasossah.com>
 License: GPL-2+
 
 License: GPL-2+
