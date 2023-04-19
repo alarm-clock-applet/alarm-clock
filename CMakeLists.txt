@@ -32,7 +32,7 @@ else()
     endif()
 endif()
 
-string(REGEX REPLACE "-.*" "" PARSED_PROJECT_VER "${GIT_PROJECT_VER}")
+string(REGEX REPLACE "[-+].*" "" PARSED_PROJECT_VER "${GIT_PROJECT_VER}")
 project("alarm-clock-applet" VERSION "${PARSED_PROJECT_VER}" LANGUAGES C)
 
 # Manually set the version string to keep the suffix
