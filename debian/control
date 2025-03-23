@@ -12,7 +12,6 @@ Build-Depends: debhelper (>= 11),
                libnotify-dev (>= 0.7.7),
                gnome-icon-theme (>= 2.15.91),
                libayatana-appindicator3-dev (>= 0.5.3),
-               libgconf2-dev (>= 3.2.6),
                perl,
                gzip
 Standards-Version: 3.9.6
