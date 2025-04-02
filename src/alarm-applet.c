@@ -131,6 +131,7 @@ void alarm_applet_alarm_stop(AlarmApplet* applet, Alarm* alarm)
 
 // Must be NULL terminated
 static const gchar* const sound_notification_paths[] = {
+    "sounds/mate/default/alerts",
     "sounds/gnome/default/alerts",
     "sounds/ubuntu/notifications",
     NULL
