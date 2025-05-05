@@ -18,7 +18,6 @@ libnotify >= 0.7.7
 gstreamer-1.0 >= 1.14.5
 ayatana-appindicator3 >= 0.5.3
 gnome-icon-theme
-gconf-2.0 >= 3.2.6
 pod2man
 gzip
 ```
@@ -35,7 +34,7 @@ The dependency to GConf can be removed by passing `-DENABLE_GCONF_MIGRATION=OFF`
 ### Debian/Ubuntu-specific dependency packages
 All the dependencies on a Debian/Ubuntu system can be installed with:
 ```
-sudo apt install build-essential cmake libgconf2-dev libxml2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
+sudo apt install build-essential cmake libxml2-dev libgtk-3-dev libgstreamer1.0-dev libnotify-dev libayatana-appindicator3-dev gettext gnome-icon-theme perl gzip
 ```
 <!-- end requirements_ubuntu -->
 
