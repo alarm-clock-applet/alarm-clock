@@ -385,14 +385,14 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <property name="margin-start">24</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="repeat-days">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkCheckButton" id="mon">
                         <property name="label" translatable="yes">Mon</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -408,7 +408,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="tue">
                         <property name="label" translatable="yes">Tue</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -424,7 +424,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="wed">
                         <property name="label" translatable="yes">Wed</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -440,7 +440,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="thu">
                         <property name="label" translatable="yes">Thu</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -456,7 +456,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="fri">
                         <property name="label" translatable="yes">Fri</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -472,7 +472,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="sat">
                         <property name="label" translatable="yes">Sat</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -488,7 +488,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="sun">
                         <property name="label" translatable="yes">Sun</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">False</property>
                         <property name="use-underline">True</property>
                         <property name="draw-indicator">True</property>
@@ -519,14 +519,14 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="repeat-buttons">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkButton" id="repeat_all_button">
                         <property name="label" translatable="yes">Every day</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_all" swapped="no"/>
                       </object>
@@ -540,7 +540,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_weekday_button">
                         <property name="label" translatable="yes">Weekdays</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_weekday" swapped="no"/>
                       </object>
@@ -554,7 +554,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_weekend_button">
                         <property name="label" translatable="yes">Weekends</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_weekend" swapped="no"/>
                       </object>
@@ -568,7 +568,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_clear_button">
                         <property name="label" translatable="yes">Once</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
+                        <property name="can-focus">False</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_clear" swapped="no"/>
                       </object>
