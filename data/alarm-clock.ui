@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAboutDialog" id="about-dialog">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">5</property>
     <property name="title" translatable="yes">About Alarm Clock</property>
     <property name="modal">True</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
-    <property name="type_hint">normal</property>
-    <property name="program_name">Alarm Clock</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
+    <property name="type-hint">normal</property>
+    <property name="program-name">Alarm Clock</property>
     <property name="version">0.0.0</property>
     <property name="copyright">© 2007-2015 Johannes H. Jensen
 © 2022-2023 Tasos Sahanidis</property>
     <property name="comments" translatable="yes">Get up in the morning!</property>
     <property name="website">https://alarm-clock-applet.github.io/</property>
-    <property name="website_label">alarm-clock-applet.github.io</property>
+    <property name="website-label">alarm-clock-applet.github.io</property>
     <property name="authors">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;
 Tasos Sahanidis &lt;code@tasossah.com&gt;
 
@@ -26,28 +26,25 @@ Chow Loong Jin &lt;hyperair@ubuntu.com&gt;
 Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="documenters">Johannes H. Jensen &lt;joh@pseudoberries.com&gt;</property>
     <property name="artists">Lasse Gulvåg Sætre &lt;lassegs@gmail.com&gt;</property>
-    <property name="logo_icon_name">io.github.alarm-clock-applet.clock</property>
+    <property name="logo-icon-name">io.github.alarm-clock-applet.clock</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox5">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area5">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -59,59 +56,56 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
   </object>
   <object class="GtkAdjustment" id="adjustment1">
     <property name="upper">99</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment2">
     <property name="upper">59</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment3">
     <property name="upper">59</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment4">
     <property name="upper">23</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkDialog" id="alarm-settings-dialog">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-    <property name="border_width">5</property>
+    <property name="border-width">5</property>
     <property name="title" translatable="yes">Edit alarm</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="window_position">center-on-parent</property>
-    <property name="destroy_with_parent">True</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
-    <property name="type_hint">dialog</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
+    <property name="type-hint">dialog</property>
     <signal name="delete-event" handler="gtk_true" swapped="no"/>
     <signal name="destroy-event" handler="gtk_true" swapped="no"/>
     <signal name="response" handler="alarm_settings_dialog_response" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox4">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="close-button">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -123,34 +117,34 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="spacing">2</property>
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkToggleButton" id="toggle-clock">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <signal name="toggled" handler="alarm_settings_changed_type" swapped="no"/>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkImage" id="image6">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="pixel_size">24</property>
-                        <property name="icon_name">io.github.alarm-clock-applet.clock</property>
+                        <property name="pixel-size">24</property>
+                        <property name="icon-name">io.github.alarm-clock-applet.clock</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -161,7 +155,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                     <child>
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Alarm Clock</property>
                         <property name="xalign">0</property>
@@ -187,21 +181,21 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToggleButton" id="toggle-timer">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <signal name="toggled" handler="alarm_settings_changed_type" swapped="no"/>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkImage" id="image7">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="pixel_size">24</property>
-                        <property name="icon_name">io.github.alarm-clock-applet.timer</property>
+                        <property name="pixel-size">24</property>
+                        <property name="icon-name">io.github.alarm-clock-applet.timer</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>
@@ -212,7 +206,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                     <child>
                       <object class="GtkLabel" id="label8">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Timer</property>
                         <property name="xalign">0</property>
@@ -243,122 +237,135 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
           </packing>
         </child>
         <child>
+          <!-- n-columns=4 n-rows=3 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="row_spacing">6</property>
-            <property name="column_spacing">6</property>
+            <property name="can-focus">False</property>
+            <property name="row-spacing">6</property>
+            <property name="column-spacing">6</property>
             <child>
               <object class="GtkEntry" id="label-entry">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="activates_default">True</property>
+                <property name="activates-default">True</property>
                 <property name="text" translatable="yes">Wake up sleepy head!</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="secondary-icon-activatable">False</property>
                 <signal name="changed" handler="alarm_settings_changed_label" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">0</property>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
                 <property name="width">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Time:</property>
-                <property name="use_markup">True</property>
-                <property name="use_underline">True</property>
-                <property name="mnemonic_widget">hour-spin</property>
+                <property name="use-markup">True</property>
+                <property name="use-underline">True</property>
+                <property name="mnemonic-widget">hour-spin</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Name:</property>
-                <property name="use_markup">True</property>
-                <property name="use_underline">True</property>
+                <property name="use-markup">True</property>
+                <property name="use-underline">True</property>
                 <property name="xalign">0</property>
               </object>
               <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
               </packing>
             </child>
             <child>
               <object class="GtkSpinButton" id="hour-spin">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="max_length">2</property>
-                <property name="width_chars">4</property>
+                <property name="max-length">2</property>
+                <property name="width-chars">4</property>
                 <property name="text" translatable="yes">0</property>
                 <property name="xalign">1</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="secondary-icon-activatable">False</property>
                 <property name="adjustment">adjustment4</property>
-                <property name="climb_rate">1</property>
+                <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <signal name="output" handler="alarm_settings_output_time" swapped="no"/>
                 <signal name="value-changed" handler="alarm_settings_changed_time" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
+                <property name="left-attach">1</property>
+                <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkSpinButton" id="minute-spin">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="max_length">2</property>
-                <property name="width_chars">4</property>
+                <property name="max-length">2</property>
+                <property name="width-chars">4</property>
                 <property name="text" translatable="yes">0</property>
                 <property name="xalign">1</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="secondary-icon-activatable">False</property>
                 <property name="adjustment">adjustment3</property>
-                <property name="climb_rate">1</property>
+                <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <signal name="output" handler="alarm_settings_output_time" swapped="no"/>
                 <signal name="value-changed" handler="alarm_settings_changed_time" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">2</property>
-                <property name="top_attach">1</property>
+                <property name="left-attach">2</property>
+                <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkSpinButton" id="second-spin">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="max_length">2</property>
-                <property name="width_chars">4</property>
+                <property name="max-length">2</property>
+                <property name="width-chars">4</property>
                 <property name="text" translatable="yes">0</property>
                 <property name="xalign">1</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
+                <property name="primary-icon-activatable">False</property>
+                <property name="secondary-icon-activatable">False</property>
                 <property name="adjustment">adjustment2</property>
-                <property name="climb_rate">1</property>
+                <property name="climb-rate">1</property>
                 <property name="numeric">True</property>
                 <signal name="output" handler="alarm_settings_output_time" swapped="no"/>
                 <signal name="value-changed" handler="alarm_settings_changed_time" swapped="no"/>
               </object>
               <packing>
-                <property name="left_attach">3</property>
-                <property name="top_attach">1</property>
+                <property name="left-attach">3</property>
+                <property name="top-attach">1</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
@@ -370,25 +377,25 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <child>
           <object class="GtkExpander" id="repeat-expand">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can-focus">True</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_start">24</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">24</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkCheckButton" id="mon">
                         <property name="label" translatable="yes">Mon</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -401,10 +408,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="tue">
                         <property name="label" translatable="yes">Tue</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -417,10 +424,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="wed">
                         <property name="label" translatable="yes">Wed</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -433,10 +440,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="thu">
                         <property name="label" translatable="yes">Thu</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -449,10 +456,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="fri">
                         <property name="label" translatable="yes">Fri</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -465,10 +472,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="sat">
                         <property name="label" translatable="yes">Sat</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -481,10 +488,10 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkCheckButton" id="sun">
                         <property name="label" translatable="yes">Sun</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="use-underline">True</property>
+                        <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="alarm_settings_changed_repeat" swapped="no"/>
                       </object>
                       <packing>
@@ -503,7 +510,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkSeparator">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -514,13 +521,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <child>
                       <object class="GtkButton" id="repeat_all_button">
                         <property name="label" translatable="yes">Every day</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_all" swapped="no"/>
                       </object>
                       <packing>
@@ -533,8 +540,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_weekday_button">
                         <property name="label" translatable="yes">Weekdays</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_weekday" swapped="no"/>
                       </object>
                       <packing>
@@ -547,8 +554,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_weekend_button">
                         <property name="label" translatable="yes">Weekends</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_weekend" swapped="no"/>
                       </object>
                       <packing>
@@ -561,8 +568,8 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                       <object class="GtkButton" id="repeat_clear_button">
                         <property name="label" translatable="yes">Once</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
                         <signal name="clicked" handler="alarm_settings_repeat_clear" swapped="no"/>
                       </object>
                       <packing>
@@ -583,9 +590,9 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child type="label">
               <object class="GtkLabel" id="repeat-label">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Repeat:</property>
-                <property name="use_underline">True</property>
+                <property name="use-underline">True</property>
               </object>
             </child>
           </object>
@@ -598,7 +605,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <child>
           <object class="GtkLabel" id="notification-label2">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes">Alert</property>
             <property name="xalign">0</property>
             <attributes>
@@ -614,20 +621,20 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <child>
           <object class="GtkBox" id="notification-box">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_start">12</property>
+            <property name="can-focus">False</property>
+            <property name="margin-start">12</property>
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
               <object class="GtkRadioButton" id="sound-radio">
                 <property name="label" translatable="yes">Play _sound</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <property name="halign">start</property>
-                <property name="use_underline">True</property>
+                <property name="use-underline">True</property>
                 <property name="active">True</property>
-                <property name="draw_indicator">True</property>
+                <property name="draw-indicator">True</property>
                 <signal name="toggled" handler="alarm_settings_changed_notify_type" swapped="no"/>
               </object>
               <packing>
@@ -637,54 +644,70 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               </packing>
             </child>
             <child>
+              <!-- n-columns=3 n-rows=3 -->
               <object class="GtkGrid" id="sound-box">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_start">12</property>
-                <property name="row_spacing">2</property>
-                <property name="column_spacing">2</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">12</property>
+                <property name="row-spacing">2</property>
+                <property name="column-spacing">2</property>
                 <child>
                   <object class="GtkComboBox" id="sound-combo">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
                     <signal name="changed" handler="alarm_settings_changed_sound" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkButton" id="sound-play">
                     <property name="label">gtk-media-play</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="use-stock">True</property>
                     <signal name="clicked" handler="alarm_settings_sound_preview" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkCheckButton" id="sound-loop-check">
                     <property name="label" translatable="yes">Repea_t sound</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
                     <property name="halign">start</property>
-                    <property name="use_underline">True</property>
-                    <property name="draw_indicator">True</property>
+                    <property name="use-underline">True</property>
+                    <property name="draw-indicator">True</property>
                     <signal name="toggled" handler="alarm_settings_changed_sound_repeat" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
                     <property name="width">2</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -697,12 +720,12 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               <object class="GtkRadioButton" id="app-radio">
                 <property name="label" translatable="yes">Start _Application</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <property name="halign">start</property>
-                <property name="use_underline">True</property>
+                <property name="use-underline">True</property>
                 <property name="active">True</property>
-                <property name="draw_indicator">True</property>
+                <property name="draw-indicator">True</property>
                 <property name="group">sound-radio</property>
                 <signal name="toggled" handler="alarm_settings_changed_notify_type" swapped="no"/>
               </object>
@@ -713,52 +736,68 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               </packing>
             </child>
             <child>
+              <!-- n-columns=3 n-rows=3 -->
               <object class="GtkGrid" id="app-box">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_start">12</property>
-                <property name="row_spacing">2</property>
-                <property name="column_spacing">2</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">12</property>
+                <property name="row-spacing">2</property>
+                <property name="column-spacing">2</property>
                 <child>
                   <object class="GtkComboBox" id="app-combo">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="hexpand">True</property>
                     <signal name="changed" handler="alarm_settings_changed_app" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkLabel" id="app-command-label2">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Co_mmand:</property>
-                    <property name="use_underline">True</property>
+                    <property name="use-underline">True</property>
                   </object>
                   <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">1</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkEntry" id="app-command-entry">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
+                    <property name="can-focus">True</property>
                     <property name="hexpand">True</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="secondary_icon_activatable">False</property>
+                    <property name="primary-icon-activatable">False</property>
+                    <property name="secondary-icon-activatable">False</property>
                     <signal name="changed" handler="alarm_settings_changed_command" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -784,38 +823,35 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <property name="lower">1</property>
     <property name="upper">99</property>
     <property name="value">5</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkDialog" id="snooze-dialog">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">5</property>
     <property name="title" translatable="yes">Snooze alarm</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
-    <property name="type_hint">normal</property>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
+    <property name="type-hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox8">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area8">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="button2">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -827,11 +863,11 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               <object class="GtkButton" id="snooze-dialog-button">
                 <property name="label" translatable="yes">_Snooze</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_underline">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-underline">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -843,21 +879,21 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkImage" id="image8">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="pixel_size">48</property>
-                <property name="icon_name">weather-few-clouds-night</property>
+                <property name="can-focus">False</property>
+                <property name="pixel-size">48</property>
+                <property name="icon-name">weather-few-clouds-night</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -868,13 +904,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="valign">center</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="label3">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">Snooze for:</property>
                     <property name="xalign">0</property>
                     <attributes>
@@ -890,14 +926,14 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkSpinButton" id="snooze-spin">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="max_length">2</property>
-                    <property name="invisible_char">•</property>
-                    <property name="width_chars">4</property>
+                    <property name="can-focus">True</property>
+                    <property name="max-length">2</property>
+                    <property name="invisible-char">•</property>
+                    <property name="width-chars">4</property>
                     <property name="text" translatable="yes">5</property>
                     <property name="xalign">1</property>
-                    <property name="primary_icon_activatable">False</property>
-                    <property name="secondary_icon_activatable">False</property>
+                    <property name="primary-icon-activatable">False</property>
+                    <property name="secondary-icon-activatable">False</property>
                     <property name="adjustment">adjustment5</property>
                     <property name="value">5</property>
                     <signal name="activate" handler="gtk_window_activate_default" object="snooze-dialog" swapped="yes"/>
@@ -911,7 +947,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
                 <child>
                   <object class="GtkLabel" id="label4">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="label" translatable="yes">minutes</property>
                   </object>
                   <packing>
@@ -961,32 +997,29 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     <signal name="rows-reordered" handler="alarm_list_window_rows_reordered" swapped="no"/>
   </object>
   <object class="GtkApplicationWindow" id="alarm-list-window">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes">Alarms</property>
-    <property name="default_height">200</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
+    <property name="default-height">200</property>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
     <signal name="delete-event" handler="alarm_list_window_delete_event" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkToolbar" id="alarm-toolbar">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkToolButton" id="new-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">New alarm</property>
-                <property name="action_name">win.alarm_new</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">New alarm</property>
+                <property name="action-name">win.alarm_new</property>
                 <property name="label" translatable="yes">New...</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-add</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-add</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -996,12 +1029,12 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="edit-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Edit the selected alarm</property>
-                <property name="action_name">win.alarm_edit</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Edit the selected alarm</property>
+                <property name="action-name">win.alarm_edit</property>
                 <property name="label" translatable="yes">Edit...</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-edit</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-edit</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1011,12 +1044,12 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="delete-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Delete the selected alarm</property>
-                <property name="action_name">win.alarm_delete</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Delete the selected alarm</property>
+                <property name="action-name">win.alarm_delete</property>
                 <property name="label" translatable="yes">Delete</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-remove</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-remove</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1026,7 +1059,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkSeparatorToolItem" id="toolbar-sep">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1036,12 +1069,12 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToggleToolButton" id="enable-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Enable/disable the selected alarm</property>
-                <property name="action_name">win.alarm_enable</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Enable/disable the selected alarm</property>
+                <property name="action-name">win.alarm_enable</property>
                 <property name="label" translatable="yes">Enable</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-apply</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-apply</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1051,13 +1084,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkToolButton" id="stop-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Stop the selected alarm</property>
-                <property name="is_important">True</property>
-                <property name="action_name">win.alarm_stop</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Stop the selected alarm</property>
+                <property name="is-important">True</property>
+                <property name="action-name">win.alarm_stop</property>
                 <property name="label" translatable="yes">Stop</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-cancel</property>
+                <property name="use-underline">True</property>
+                <property name="stock-id">gtk-cancel</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1067,13 +1100,13 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkMenuToolButton" id="snooze-button">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Snooze the selected alarm</property>
-                <property name="is_important">True</property>
-                <property name="action_name">win.alarm_snooze</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Snooze the selected alarm</property>
+                <property name="is-important">True</property>
+                <property name="action-name">win.alarm_snooze</property>
                 <property name="label" translatable="yes">Snooze</property>
-                <property name="use_underline">True</property>
-                <property name="icon_name">weather-few-clouds-night</property>
+                <property name="use-underline">True</property>
+                <property name="icon-name">weather-few-clouds-night</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1090,17 +1123,17 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
         <child>
           <object class="GtkScrolledWindow" id="list-alarms-scroll">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
+            <property name="can-focus">True</property>
+            <property name="shadow-type">in</property>
             <child>
               <object class="GtkTreeView" id="alarm-list-view">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                 <property name="model">alarms-liststore</property>
-                <property name="headers_visible">False</property>
-                <property name="headers_clickable">False</property>
-                <property name="search_column">2</property>
+                <property name="headers-visible">False</property>
+                <property name="headers-clickable">False</property>
+                <property name="search-column">2</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>
@@ -1177,38 +1210,35 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
     </child>
   </object>
   <object class="GtkDialog" id="preferences">
-    <property name="width_request">290</property>
-    <property name="can_focus">False</property>
+    <property name="width-request">290</property>
+    <property name="can-focus">False</property>
     <property name="title" translatable="yes">Alarm Clock Preferences</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
-    <property name="type_hint">dialog</property>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
+    <property name="type-hint">dialog</property>
     <signal name="close" handler="gtk_widget_hide" swapped="no"/>
     <signal name="delete-event" handler="gtk_widget_hide" swapped="no"/>
     <signal name="destroy-event" handler="gtk_widget_hide" swapped="no"/>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="prefs-container">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="closebutton1">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">False</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1220,19 +1250,19 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel" id="general-label">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">General</property>
                 <property name="xalign">0</property>
                 <attributes>
@@ -1249,14 +1279,14 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               <object class="GtkCheckButton" id="autostart-check">
                 <property name="label" translatable="yes">Start automatically at login</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Controls whether the application will start when the user logs in</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Controls whether the application will start when the user logs in</property>
                 <property name="halign">start</property>
-                <property name="margin_start">12</property>
-                <property name="action_name">app.autostart</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
+                <property name="margin-start">12</property>
+                <property name="action-name">app.autostart</property>
+                <property name="use-underline">True</property>
+                <property name="draw-indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1267,7 +1297,7 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
             <child>
               <object class="GtkLabel" id="appearance-label">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">Appearance</property>
                 <property name="xalign">0</property>
                 <attributes>
@@ -1284,15 +1314,15 @@ Kamal Mostafa &lt;kamal@canonical.com&gt;</property>
               <object class="GtkCheckButton" id="show-label-check">
                 <property name="label" translatable="yes">Show countdown label</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">Shows a countdown next to the tray icon
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Shows a countdown next to the tray icon
 Please note that this feature is not supported by all desktop environments</property>
                 <property name="halign">start</property>
-                <property name="margin_start">12</property>
-                <property name="action_name">app.show_countdown</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
+                <property name="margin-start">12</property>
+                <property name="action-name">app.show_countdown</property>
+                <property name="use-underline">True</property>
+                <property name="draw-indicator">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1315,30 +1345,30 @@ Please note that this feature is not supported by all desktop environments</prop
   </object>
   <object class="GtkImage" id="show_alarms_icon">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">io.github.alarm-clock-applet.clock</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">io.github.alarm-clock-applet.clock</property>
   </object>
   <object class="GtkMenu" id="snooze-menu">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkRadioMenuItem" id="snooze-menu-1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">1 minute</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <property name="active">True</property>
-        <property name="draw_as_radio">True</property>
+        <property name="draw-as-radio">True</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_activated" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkRadioMenuItem" id="snooze-menu-3">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">3 minutes</property>
-        <property name="use_underline">True</property>
-        <property name="draw_as_radio">True</property>
+        <property name="use-underline">True</property>
+        <property name="draw-as-radio">True</property>
         <property name="group">snooze-menu-1</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_activated" swapped="no"/>
       </object>
@@ -1346,10 +1376,10 @@ Please note that this feature is not supported by all desktop environments</prop
     <child>
       <object class="GtkRadioMenuItem" id="snooze-menu-5">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">5 minutes</property>
-        <property name="use_underline">True</property>
-        <property name="draw_as_radio">True</property>
+        <property name="use-underline">True</property>
+        <property name="draw-as-radio">True</property>
         <property name="group">snooze-menu-1</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_activated" swapped="no"/>
       </object>
@@ -1357,10 +1387,10 @@ Please note that this feature is not supported by all desktop environments</prop
     <child>
       <object class="GtkRadioMenuItem" id="snooze-menu-10">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">10 minutes</property>
-        <property name="use_underline">True</property>
-        <property name="draw_as_radio">True</property>
+        <property name="use-underline">True</property>
+        <property name="draw-as-radio">True</property>
         <property name="group">snooze-menu-1</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_activated" swapped="no"/>
       </object>
@@ -1368,64 +1398,64 @@ Please note that this feature is not supported by all desktop environments</prop
     <child>
       <object class="GtkMenuItem" id="snooze-menu-custom">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="label" translatable="yes">Custom...</property>
-        <property name="use_underline">True</property>
+        <property name="use-underline">True</property>
         <signal name="activate" handler="alarm_list_window_snooze_menu_custom_activated" swapped="no"/>
       </object>
     </child>
   </object>
   <object class="GtkImage" id="snooze_image">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">weather-few-clouds-night</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">weather-few-clouds-night</property>
   </object>
   <object class="GtkImage" id="stop_all_image">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="stock">gtk-cancel</property>
   </object>
   <object class="GtkMenu" id="status_menu">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_snooze">
         <property name="label" translatable="yes">Snooze all alarms</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Snooze all beeping alarms</property>
-        <property name="action_name">app.snooze_all</property>
+        <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Snooze all beeping alarms</property>
+        <property name="action-name">app.snooze_all</property>
         <property name="image">snooze_image</property>
-        <property name="use_stock">False</property>
+        <property name="use-stock">False</property>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_stop">
         <property name="label" translatable="yes">Stop all alarms</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Stop all beeping alarms</property>
-        <property name="action_name">app.stop_all</property>
+        <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Stop all beeping alarms</property>
+        <property name="action-name">app.stop_all</property>
         <property name="image">stop_all_image</property>
-        <property name="use_stock">False</property>
+        <property name="use-stock">False</property>
       </object>
     </child>
     <child>
       <object class="GtkSeparatorMenuItem" id="status_menu_sep1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_edit">
         <property name="label" translatable="yes">Show _alarms</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="tooltip_text" translatable="yes">Manage your alarms</property>
-        <property name="action_name">app.show_alarms_list</property>
-        <property name="use_underline">True</property>
+        <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Manage your alarms</property>
+        <property name="action-name">app.show_alarms_list</property>
+        <property name="use-underline">True</property>
         <property name="image">show_alarms_icon</property>
-        <property name="use_stock">False</property>
+        <property name="use-stock">False</property>
         <signal name="activate" handler="alarm_applet_status_menu_edit_cb" swapped="no"/>
       </object>
     </child>
@@ -1433,9 +1463,9 @@ Please note that this feature is not supported by all desktop environments</prop
       <object class="GtkImageMenuItem" id="status_menu_prefs">
         <property name="label">gtk-preferences</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="can-focus">False</property>
+        <property name="use-underline">True</property>
+        <property name="use-stock">True</property>
         <signal name="activate" handler="alarm_applet_status_menu_prefs_cb" swapped="no"/>
       </object>
     </child>
@@ -1443,26 +1473,26 @@ Please note that this feature is not supported by all desktop environments</prop
       <object class="GtkImageMenuItem" id="status_menu_about">
         <property name="label">gtk-about</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="can-focus">False</property>
+        <property name="use-underline">True</property>
+        <property name="use-stock">True</property>
         <signal name="activate" handler="alarm_applet_status_menu_about_cb" swapped="no"/>
       </object>
     </child>
     <child>
       <object class="GtkSeparatorMenuItem" id="status_menu_sep2">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
       </object>
     </child>
     <child>
       <object class="GtkImageMenuItem" id="status_menu_quit">
         <property name="label">gtk-quit</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="action_name">app.quit</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
+        <property name="can-focus">False</property>
+        <property name="action-name">app.quit</property>
+        <property name="use-underline">True</property>
+        <property name="use-stock">True</property>
       </object>
     </child>
   </object>
