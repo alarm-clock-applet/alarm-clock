@@ -836,6 +836,21 @@ static void alarm_settings_dialog_set_alarm(AlarmSettingsDialog* dialog, Alarm* 
     g_signal_connect(alarm, "notify", G_CALLBACK(alarm_changed), dialog);
 }
 
+static void alarm_settings_dialog_repeater_unfocusable_cb(GtkWidget* widget, gpointer expanded)
+{
+    gtk_widget_set_can_focus(widget, *(gboolean*)expanded);
+}
+
+static void alarm_settings_dialog_repeater_expanded_cb(GObject* expander, GParamSpec* param_spec, gpointer data)
+{
+    AlarmSettingsDialog* dialog = data;
+    gboolean expanded = gtk_expander_get_expanded(GTK_EXPANDER(expander));
+
+    for (size_t i = 0; i < sizeof(dialog->repeat_check)/sizeof(*dialog->repeat_check); i++)
+        alarm_settings_dialog_repeater_unfocusable_cb(dialog->repeat_check[i], &expanded);
+
+    gtk_container_foreach(dialog->repeat_buttons, alarm_settings_dialog_repeater_unfocusable_cb, &expanded);
+}
 
 /*
  * Create a new settings dialog
@@ -869,6 +884,8 @@ AlarmSettingsDialog* alarm_settings_dialog_new(AlarmApplet* applet)
 
     // REPEAT SETTINGS
     dialog->repeat_expand = GTK_WIDGET(gtk_builder_get_object(builder, "repeat-expand"));
+    dialog->repeat_buttons = GTK_CONTAINER(gtk_builder_get_object(builder, "repeat-buttons"));
+    g_signal_connect(dialog->repeat_expand, "notify::expanded", G_CALLBACK(alarm_settings_dialog_repeater_expanded_cb), dialog);
     dialog->repeat_label = GTK_WIDGET(gtk_builder_get_object(builder, "repeat-label"));
 
     // The check buttons have the same name as the 3 letter

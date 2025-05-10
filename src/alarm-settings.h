@@ -33,6 +33,7 @@ struct _AlarmSettingsDialog {
     GtkWidget* repeat_expand;
     GtkWidget* repeat_label;
     GtkWidget* repeat_check[7]; /* Mon, tue, ..., sun check boxes */
+    GtkContainer* repeat_buttons;
 
     /* Notification */
     GtkWidget* notify_sound_radio;
