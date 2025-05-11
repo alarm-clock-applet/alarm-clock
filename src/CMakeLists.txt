@@ -103,7 +103,7 @@ install(
 )
 
 # Autostart
-# Create a subdir and put the file in there so that we can keep the asme filename
+# Create a subdir and put the file in there so that we can keep the same filename
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/src/autostart")
 add_custom_command(OUTPUT "autostart/alarm-clock-applet.desktop"
     COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}

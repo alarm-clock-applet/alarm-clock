@@ -145,7 +145,7 @@ static gboolean alarm_string_to_enum(EnumStringPair lut[], const gchar* str, gin
     return FALSE;
 }
 
-const gchar* alarm_enum_to_string(EnumStringPair lut[], gint enum_val)
+static const gchar* alarm_enum_to_string(EnumStringPair lut[], gint enum_val)
 {
     for(int i = 0; lut[i].str; i++) {
         if(lut[i].enum_val == enum_val)
